@@ -11,7 +11,7 @@ public class User {
     private String nickName;
     private Integer score;
     private ArrayList<Map> myMap = new ArrayList<>();
-    private Kingdom kingdom;
+    private ArrayList<Kingdom> kingdom = new ArrayList<>();
     private ArrayList<String> answerToSecurityQuestion = new ArrayList<>(3);
     public User(String userName, String password, String email, String slogan) {
         this.userName = userName;

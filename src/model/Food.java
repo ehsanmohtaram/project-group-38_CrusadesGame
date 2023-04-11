@@ -1,4 +1,5 @@
 package model;
 
-public class Food {
+public enum Food {
+    BREAD,MEAT,APPLE,BEER
 }
