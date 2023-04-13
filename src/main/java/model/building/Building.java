@@ -6,13 +6,15 @@ import model.Resource;
 import java.util.HashMap;
 
 public class Building {
-    private HashMap<Resource, Integer> cost;
-    private Integer numberOfWorkers;
+    private Integer gold;
+    private Resource resource;
+    private Integer resourceNumber;
+    protected Integer hp;
     private Land position;
-    protected BuildingName buildingName;
-
-    public Building(Land position, BuildingName buildingName) {
+    private BuildingType buildingType;
+    public Building(Land position, BuildingType buildingType) {
         this.position = position;
-        this.buildingName = buildingName;
+        this.buildingType = buildingType;
     }
+
 }
