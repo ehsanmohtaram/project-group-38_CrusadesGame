@@ -1,6 +1,6 @@
 package model.building;
 
-import model.Land;
+import model.MapBlock;
 import model.unit.Unit;
 
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ public class Camp extends Building{
     private Integer numberOFLadderMan;
     private Integer numberOfEngineer;
 
-    public Camp(Land position, BuildingType buildingType) {
+    public Camp(MapBlock position, BuildingType buildingType) {
         super(position, buildingType);
     }
 

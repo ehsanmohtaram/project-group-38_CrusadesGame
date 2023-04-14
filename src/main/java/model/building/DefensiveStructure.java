@@ -1,9 +1,9 @@
 package model.building;
 
-import model.Land;
+import model.MapBlock;
 
 public class DefensiveStructure extends Building{
-    public DefensiveStructure(Land position, BuildingType buildingType) {
+    public DefensiveStructure(MapBlock position, BuildingType buildingType) {
         super(position, buildingType);
     }
 

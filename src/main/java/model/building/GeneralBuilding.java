@@ -1,10 +1,10 @@
 package model.building;
 
-import model.Land;
-import model.Resource;
+import model.MapBlock;
+import model.ResourceType;
 
 public class GeneralBuilding extends Building{
-    public GeneralBuilding(Land position, BuildingType buildingType) {
+    public GeneralBuilding(MapBlock position, BuildingType buildingType) {
         super(position, buildingType);
     }
 
@@ -18,9 +18,9 @@ public class GeneralBuilding extends Building{
         return generalBuildingType.RATE;
     }
 
-    public Resource getRESOURCE_NEEDED() {
+    public ResourceType getRESOURCE_NEEDED() {
         GeneralBuildingType generalBuildingType = (GeneralBuildingType) getBuildingType().specificConstant;
-        return generalBuildingType.RESOURCE_NEEDED;
+        return generalBuildingType.RESOURCE_Type_NEEDED;
     }
 
     public Integer getAMOUNT_OF_RESOURCE() {

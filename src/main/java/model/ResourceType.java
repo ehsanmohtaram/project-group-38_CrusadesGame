@@ -1,11 +1,11 @@
 package model;
 
-public enum Resource {
+public enum ResourceType {
     WOOD(10),
     ROCK(20);
     private int price;
 
-    Resource(int price) {
+    ResourceType(int price) {
         this.price = price;
     }
 }

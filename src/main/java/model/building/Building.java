@@ -1,15 +1,13 @@
 package model.building;
 
-import model.Land;
-import model.Resource;
-
-import java.util.HashMap;
+import model.MapBlock;
+import model.ResourceType;
 
 public class Building {
     protected Integer hp;
-    private Land position;
+    private MapBlock position;
     private BuildingType buildingType;
-    public Building(Land position, BuildingType buildingType) {
+    public Building(MapBlock position, BuildingType buildingType) {
         this.position = position;
         this.buildingType = buildingType;
         this.hp = buildingType.HP_IN_FIRST;
@@ -27,7 +25,7 @@ public class Building {
         return buildingType.GOLD;
     }
 
-    public Resource getRESOURCES() {
+    public ResourceType getRESOURCES() {
         return buildingType.RESOURCES;
     }
 
@@ -51,11 +49,11 @@ public class Building {
         this.hp = hp - amount;
     }
 
-    public Land getPosition() {
+    public MapBlock getPosition() {
         return position;
     }
 
-    public void setPosition(Land position) {
+    public void setPosition(MapBlock position) {
         this.position = position;
     }
 

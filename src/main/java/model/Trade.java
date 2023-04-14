@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Trade {
     private static ArrayList<Trade> trades = new ArrayList<>();
-    private Resource resourceType;
+    private ResourceType resourceType;
     private Integer resourceAmount;
     private User userSender;
     private User userReceiver;
@@ -12,7 +12,7 @@ public class Trade {
     private Integer id;
     private String massage;
 
-    public Trade(Resource resourceType, Integer resourceAmount, User userSender, User userReceiver, Integer price, String massage) {
+    public Trade(ResourceType resourceType, Integer resourceAmount, User userSender, User userReceiver, Integer price, String massage) {
         this.resourceType = resourceType;
         this.resourceAmount = resourceAmount;
         this.userSender = userSender;
@@ -25,7 +25,7 @@ public class Trade {
         return trades;
     }
 
-    public Resource getResourceType() {
+    public ResourceType getResourceType() {
         return resourceType;
     }
 

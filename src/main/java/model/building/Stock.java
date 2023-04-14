@@ -1,9 +1,9 @@
 package model.building;
 
-import model.Land;
+import model.MapBlock;
 
 public class Stock extends Building{
-    public Stock(Land position, BuildingType buildingType) {
+    public Stock(MapBlock position, BuildingType buildingType) {
         super(position, buildingType);
     }
 
