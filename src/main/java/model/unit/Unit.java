@@ -1,5 +1,6 @@
 package model.unit;
 
+import model.Kingdom;
 import model.MapBlock;
 
 import java.util.ArrayList;
@@ -7,17 +8,18 @@ import java.util.ArrayList;
 public class Unit {
     private Integer hp;
     private UnitType unitType;
-    private Integer xPosition;
-    private Integer yPosition;
-    private MapBlock locationBlock;
 
-    public Unit(UnitType unitType, Integer xPosition, Integer yPosition ,  MapBlock locationBlock) {
+    private MapBlock locationBlock;
+    private UnitState unitState;
+    private Kingdom owner;
+
+    public Unit(UnitType unitType, MapBlock locationBlock , Kingdom owner) {
         this.unitType = unitType;
-        this.xPosition = xPosition;
-        this.yPosition = yPosition;
         this.locationBlock = locationBlock;
+        this.owner = owner;
         hp = unitType.getHP_IN_START();
         locationBlock.addUnitHere(this);
+        unitState = UnitState.NOT_ACTIVE;
     }
 
     public Integer getHp() {
@@ -29,15 +31,27 @@ public class Unit {
     }
 
     public Integer getxPosition() {
-        return xPosition;
+        return locationBlock.getxPosition();
     }
 
     public Integer getyPosition() {
-        return yPosition;
+        return locationBlock.getyPosition();
     }
 
     public MapBlock getLocationBlock() {
         return locationBlock;
+    }
+
+    public UnitState getUnitState() {
+        return unitState;
+    }
+
+    public Kingdom getOwner() {
+        return owner;
+    }
+
+    public void setUnitState(UnitState unitState) {
+        this.unitState = unitState;
     }
 
     public void moveTo(MapBlock destination){
@@ -47,7 +61,6 @@ public class Unit {
     }
 
     public void fight(Unit enemy){
-
     }
 
 }

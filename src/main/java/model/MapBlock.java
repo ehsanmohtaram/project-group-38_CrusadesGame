@@ -11,6 +11,15 @@ public class MapBlock {
     private ArrayList<Unit> units = new ArrayList<>();
     private ArrayList<ResourceType> resourceTypes = new ArrayList<>();
     private MapBlockType mapBlockType;
+    private Integer xPosition;
+    private Integer yPosition;
+
+    public MapBlock(Integer xPosition, Integer yPosition) {
+        this.mapBlockType = MapBlockType.EARTH;
+        this.xPosition = xPosition;
+        this.yPosition = yPosition;
+    }
+
     public MapBlock() {
         mapBlockType = MapBlockType.EARTH;
     }
@@ -46,6 +55,15 @@ public class MapBlock {
     public void setMapBlockType(MapBlockType mapBlockType) {
         this.mapBlockType = mapBlockType;
     }
+
+    public Integer getxPosition() {
+        return xPosition;
+    }
+
+    public Integer getyPosition() {
+        return yPosition;
+    }
+
     public void addUnitHere(Unit toAdd){
         units.add(toAdd);
     }
