@@ -10,6 +10,8 @@ public class Controller {
     private ProfileMenu profileMenu;
     private ShopMenu shopMenu;
     private SignupMenu signupMenu;
+    private UnitMenu unitMenu;
+    private BuildingMenu buildingMenu;
 
     public Controller() {
         this.gameMenu = new GameMenu(this);
@@ -17,6 +19,8 @@ public class Controller {
         this.profileMenu = new ProfileMenu(this);
         this.shopMenu = new ShopMenu(this);
         this.signupMenu = new SignupMenu(this);
+        this.unitMenu = new UnitMenu(this);
+        this.buildingMenu = new BuildingMenu(this);
     }
     public void run() {
 

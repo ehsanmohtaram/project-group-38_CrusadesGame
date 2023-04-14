@@ -3,7 +3,7 @@ package model;
 import java.util.ArrayList;
 
 public class User {
-    public static ArrayList<User> USERS = new ArrayList<>();
+    public static ArrayList<User> users = new ArrayList<>();
     private String userName;
     private String password;
     private String email;
@@ -19,7 +19,7 @@ public class User {
         this.email = email;
         this.slogan = slogan;
         score = 0;
-        USERS.add(this);
+        users.add(this);
     }
     public String getUserName() {
         return userName;
@@ -35,6 +35,10 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Integer getScore() {
+        return score;
     }
 
     public String getNickName() {
@@ -59,6 +63,45 @@ public class User {
 
     public void setSlogan(String slogan) {
         this.slogan = slogan;
+    }
+
+    public static void addUser(String userName, String password, String email, String slogan){
+        User user = new User(userName, password, email, slogan);
+        users.add(user);
+    }
+
+    public static User getUserByUsername (String userName) {
+        for (User user : users) {
+            if (user.getUserName().equals(userName))
+                return user;
+        }
+        return null;
+    }
+
+    public void changePassword(String newPassword, String oldPassword) {
+        setPassword(newPassword);
+    }
+
+    public static Boolean isThereEmail(String email) {
+        for (User user : users) {
+            if (user.getEmail().equals(email))
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean isPasswordCorrect(String userName, String password){
+        User user = getUserByUsername(userName);
+        return user.getPassword().equals(password);
+    }
+    
+    public Integer getRank(){
+        int rank = 1;
+        for (User user : users) {
+            if (user.getScore() > score)
+                rank ++;
+        }
+        return rank;
     }
 
 
