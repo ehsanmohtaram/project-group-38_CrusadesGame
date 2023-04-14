@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class User {
     public static ArrayList<User> users = new ArrayList<>();
+    public static ArrayList<String> emails = new ArrayList<>();
     private String userName;
     private String password;
     private String email;
@@ -21,6 +22,19 @@ public class User {
         score = 0;
         users.add(this);
     }
+
+    public static void addUser(String userName, String password, String email, String slogan){
+        User user = new User(userName, password, email, slogan);
+        users.add(user);
+    }
+
+
+
+    public static User getUserByUsername (String userName) {
+        for (User user : users) if (user.getUserName().equals(userName)) return user;
+        return null;
+    }
+
     public String getUserName() {
         return userName;
     }
@@ -28,6 +42,8 @@ public class User {
     public void setUserName(String userName) {
         this.userName = userName;
     }
+
+
 
     public String getPassword() {
         return password;
@@ -37,9 +53,17 @@ public class User {
         this.password = password;
     }
 
+    public void changePassword(String newPassword, String oldPassword) {
+        setPassword(newPassword);
+    }
+
+
+
     public Integer getScore() {
         return score;
     }
+
+
 
     public String getNickName() {
         return nickName;
@@ -49,6 +73,12 @@ public class User {
         this.nickName = nickName;
     }
 
+
+
+    public static Boolean checkForEmailDuplication(String email) {
+        for (User user : users) if (user.getEmail().equals(email)) return true;
+        return false;
+    }
     public String getEmail() {
         return email;
     }
@@ -56,6 +86,8 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
+
 
     public String getSlogan() {
         return slogan;
@@ -65,43 +97,19 @@ public class User {
         this.slogan = slogan;
     }
 
-    public static void addUser(String userName, String password, String email, String slogan){
-        User user = new User(userName, password, email, slogan);
-        users.add(user);
+
+
+    public void setAnswerForSecurityQuestion(Integer securityQuestionNumber, String answer) {
+
+    }
+    public boolean checkSecurityQuestionAnswer(String answer) {
+        return true;
     }
 
-    public static User getUserByUsername (String userName) {
-        for (User user : users) {
-            if (user.getUserName().equals(userName))
-                return user;
-        }
-        return null;
-    }
 
-    public void changePassword(String newPassword, String oldPassword) {
-        setPassword(newPassword);
-    }
-
-    public static Boolean isThereEmail(String email) {
-        for (User user : users) {
-            if (user.getEmail().equals(email))
-                return true;
-        }
-        return false;
-    }
-
-    public static boolean isPasswordCorrect(String userName, String password){
-        User user = getUserByUsername(userName);
-        return user.getPassword().equals(password);
-    }
     
     public Integer getRank(){
-        int rank = 1;
-        for (User user : users) {
-            if (user.getScore() > score)
-                rank ++;
-        }
-        return rank;
+        return null;
     }
 
 

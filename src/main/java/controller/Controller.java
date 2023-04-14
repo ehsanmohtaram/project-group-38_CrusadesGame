@@ -1,5 +1,6 @@
 package controller;
 
+import model.User;
 import view.*;
 
 import java.util.regex.Matcher;
@@ -12,6 +13,8 @@ public class Controller {
     private SignupMenu signupMenu;
     private UnitMenu unitMenu;
     private BuildingMenu buildingMenu;
+    public static User currentUser;
+    public static boolean stayLoggedIn = false;
 
     public Controller() {
         this.gameMenu = new GameMenu(this);
