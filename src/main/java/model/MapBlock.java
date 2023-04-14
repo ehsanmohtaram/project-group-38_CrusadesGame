@@ -46,4 +46,24 @@ public class MapBlock {
     public void setMapBlockType(MapBlockType mapBlockType) {
         this.mapBlockType = mapBlockType;
     }
+    public void addUnitHere(Unit toAdd){
+        units.add(toAdd);
+    }
+
+    public void removeUnitFromHere(Unit toRemove){
+        units.remove(toRemove);
+    }
+
+    public Unit getLastUnitArrived(){
+        return units.get(units.size() - 1);
+    }
+
+    public void addBuilding(Building toAdd){
+        buildings.add(toAdd);
+    }
+
+    public void processNextTurn(){
+
+    }
+
 }

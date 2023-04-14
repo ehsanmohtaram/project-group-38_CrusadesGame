@@ -17,4 +17,28 @@ public enum UnitType {
         this.ATTACK_RANGE = ATTACK_RANGE;
         this.IS_ARAB = IS_ARAB;
     }
+
+    public Integer getHP_IN_START() {
+        return HP_IN_START;
+    }
+
+    public Integer getATTACK_RATE() {
+        return ATTACK_RATE;
+    }
+
+    public Integer getDEFENCE_RATE() {
+        return DEFENCE_RATE;
+    }
+
+    public Integer getVELOCITY() {
+        return VELOCITY;
+    }
+
+    public Integer getATTACK_RANGE() {
+        return ATTACK_RANGE;
+    }
+
+    public Boolean getIS_ARAB() {
+        return IS_ARAB;
+    }
 }
