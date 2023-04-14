@@ -13,6 +13,7 @@ public class Controller {
     private SignupMenu signupMenu;
     private UnitMenu unitMenu;
     private BuildingMenu buildingMenu;
+    private TradeMenu tradeMenu;
     public static User currentUser;
     public static boolean stayLoggedIn = false;
 
@@ -24,6 +25,7 @@ public class Controller {
         this.signupMenu = new SignupMenu(this);
         this.unitMenu = new UnitMenu(this);
         this.buildingMenu = new BuildingMenu(this);
+        this.tradeMenu = new TradeMenu(this);
     }
     public void run() {
 

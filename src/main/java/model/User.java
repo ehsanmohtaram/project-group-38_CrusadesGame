@@ -11,6 +11,7 @@ public class User {
     private String slogan;
     private String nickName;
     private Integer score;
+    private ArrayList<Trade> myTrades = new ArrayList<>();
     private ArrayList<Map> myMap = new ArrayList<>();
     private ArrayList<Kingdom> kingdom = new ArrayList<>();
     private ArrayList<String> answerToSecurityQuestion = new ArrayList<>(3);
@@ -87,8 +88,6 @@ public class User {
         this.email = email;
     }
 
-
-
     public String getSlogan() {
         return slogan;
     }
@@ -97,16 +96,12 @@ public class User {
         this.slogan = slogan;
     }
 
-
-
     public void setAnswerForSecurityQuestion(Integer securityQuestionNumber, String answer) {
 
     }
     public boolean checkSecurityQuestionAnswer(String answer) {
         return true;
     }
-
-
     
     public Integer getRank(){
         return null;
