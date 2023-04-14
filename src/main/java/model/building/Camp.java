@@ -12,7 +12,40 @@ public class Camp extends Building{
 
     public Camp(Land position, BuildingType buildingType) {
         super(position, buildingType);
-        numberOfEngineer = 0;
-        numberOFLadderMan = 0;
     }
+
+    public Integer getCOST_OF_LADDER_MAN() {
+        CampType campType = (CampType) getBuildingType().specificConstant;
+        return campType.COST_OF_LADDER_MAN;
+    }
+
+    public Integer getCOST_OF_ENGINEER() {
+        CampType campType = (CampType) getBuildingType().specificConstant;
+        return campType.COST_OF_LADDER_MAN;
+    }
+
+    public ArrayList<Unit> getUnits() {
+        return units;
+    }
+
+    public void setUnits(ArrayList<Unit> units) {
+        this.units = units;
+    }
+
+    public Integer getNumberOFLadderMan() {
+        return numberOFLadderMan;
+    }
+
+    public void setNumberOFLadderMan(Integer numberOFLadderMan) {
+        this.numberOFLadderMan = numberOFLadderMan;
+    }
+
+    public Integer getNumberOfEngineer() {
+        return numberOfEngineer;
+    }
+
+    public void setNumberOfEngineer(Integer numberOfEngineer) {
+        this.numberOfEngineer = numberOfEngineer;
+    }
+
 }
