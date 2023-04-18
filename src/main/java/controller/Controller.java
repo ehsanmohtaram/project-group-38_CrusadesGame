@@ -10,6 +10,8 @@ public class Controller {
     private LoginMenu loginMenu;
     private ProfileMenu profileMenu;
     private ShopMenu shopMenu;
+    private MainMenu mainMenu;
+    private SelectMapMenu selectMapMenu;
     private SignupMenu signupMenu;
     private UnitMenu unitMenu;
     private BuildingMenu buildingMenu;
@@ -24,9 +26,29 @@ public class Controller {
         this.signupMenu = new SignupMenu(this);
         this.unitMenu = new UnitMenu(this);
         this.buildingMenu = new BuildingMenu(this);
+        this.mainMenu = new MainMenu(this);
+        this.selectMapMenu = new SelectMapMenu(this);
     }
     public void run() {
-
+        if (loginMenu.run().equals("exit"))
+            return;
+        while (true) {
+            switch (mainMenu.run()) {
+                case "shop":
+                    shopMenu.run();
+                    break;
+                case "selectMap":
+                    selectMapMenu.run();
+                    break;
+                case "profile":
+                    profileMenu.run();
+                    break;
+                case "logout":
+                    if (loginMenu.run().equals("exit"))
+                        return;
+                    break;
+            }
+        }
     }
     public String createUser(Matcher matcher) {
         return null;
