@@ -1,11 +1,11 @@
 package controller;
 import model.Map;
 
-public class Game {
+public class Turn {
 
     private Map GameMap;
 
-    public Game(Map gameMap) {
+    public Turn(Map gameMap) {
         GameMap = gameMap;
     }
 
