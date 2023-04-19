@@ -12,7 +12,7 @@ public class Trade {
     private Integer id;
     private String massage;
 
-    public Trade(ResourceType resourceType, Integer resourceAmount, User userSender, User userReceiver, Integer price, String massage) {
+    public Trade(ResourceType resourceType, Integer resourceAmount, Integer price, User userSender, User userReceiver, String massage) {
         this.resourceType = resourceType;
         this.resourceAmount = resourceAmount;
         this.userSender = userSender;
