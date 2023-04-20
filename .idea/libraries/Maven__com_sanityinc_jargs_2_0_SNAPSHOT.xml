@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.sanityinc:jargs:2.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/sanityinc/jargs/2.0-SNAPSHOT/jargs-2.0-20130121.212743-2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/sanityinc/jargs/2.0-SNAPSHOT/jargs-2.0-20130121.212743-2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/sanityinc/jargs/2.0-SNAPSHOT/jargs-2.0-20130121.212743-2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

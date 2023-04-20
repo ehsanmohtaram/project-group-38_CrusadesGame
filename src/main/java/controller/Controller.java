@@ -3,6 +3,7 @@ package controller;
 import model.User;
 import view.*;
 
+import java.util.HashMap;
 import java.util.regex.Matcher;
 
 public class Controller {
@@ -50,8 +51,11 @@ public class Controller {
             }
         }
     }
-    public String createUser(Matcher matcher) {
-        return null;
+    public static String createUser(HashMap<String, String> options) {
+        for (String optionMap : options.keySet()) {
+            System.out.println(optionMap + " " + options.get(optionMap));
+        }
+        return "hello";
     }
     private String securityQuestion(Matcher matcher) {
         return null;
