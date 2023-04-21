@@ -21,7 +21,7 @@ public class Trade {
         this.massage = massage;
     }
 
-    public ArrayList<Trade> getTrades() {
+    public static ArrayList<Trade> getTrades() {
         return trades;
     }
 
@@ -53,7 +53,7 @@ public class Trade {
         return massage;
     }
 
-    public static void newTrade(Trade trade) {
 
-    }
+
+
 }

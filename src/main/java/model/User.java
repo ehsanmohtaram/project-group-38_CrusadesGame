@@ -11,7 +11,8 @@ public class User {
     private String slogan;
     private String nickName;
     private Integer score;
-    private ArrayList<Trade> myTrades = new ArrayList<>();
+    private ArrayList<Trade> myRequests = new ArrayList<>();
+    private ArrayList<Trade> mySuggestion = new ArrayList<>();
     private ArrayList<Map> myMap = new ArrayList<>();
     private ArrayList<Kingdom> kingdom = new ArrayList<>();
     private ArrayList<String> answerToSecurityQuestion = new ArrayList<>(3);
@@ -44,7 +45,13 @@ public class User {
         this.userName = userName;
     }
 
+    public ArrayList<Trade> getMyRequests() {
+        return myRequests;
+    }
 
+    public ArrayList<Trade> getMySuggestion() {
+        return mySuggestion;
+    }
 
     public String getPassword() {
         return password;

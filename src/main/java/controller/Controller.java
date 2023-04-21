@@ -1,5 +1,7 @@
 package controller;
 
+import model.ResourceType;
+import model.Trade;
 import model.User;
 import view.*;
 
@@ -12,6 +14,7 @@ public class Controller {
     private ProfileMenu profileMenu;
     private ShopMenu shopMenu;
     private MainMenu mainMenu;
+    private TradeMenu tradeMenu;
     private SelectMapMenu selectMapMenu;
     private SignupMenu signupMenu;
     private UnitMenu unitMenu;
@@ -29,12 +32,15 @@ public class Controller {
         this.buildingMenu = new BuildingMenu(this);
         this.mainMenu = new MainMenu(this);
         this.selectMapMenu = new SelectMapMenu(this);
+        this.tradeMenu = new TradeMenu(this);
     }
     public void run() {
-        if (loginMenu.run().equals("exit"))
-            return;
+//        if (loginMenu.run().equals("exit"))
+//            return;
         while (true) {
             switch (mainMenu.run()) {
+                case "trade":
+                    tradeMenu.run();
                 case "shop":
                     shopMenu.run();
                     break;
@@ -202,4 +208,30 @@ public class Controller {
     public String sell(Matcher matcher) {
         return null;
     }
+    public String newRequest(HashMap<String, String> options) {
+        User userReceiver;
+        for (String value : options.keySet()) {
+            if (options.get(value) == null)
+                return value + " option is not entered";
+        }
+        try {
+            ResourceType resourceType = ResourceType.valueOf(options.get("t").toUpperCase());
+            if ((userReceiver = User.getUserByUsername(options.get("u"))) != null) {
+                int resourceAmount = Integer.parseInt(options.get("a"));
+                int price = Integer.parseInt(options.get("p"));
+                String massage = options.get("m");
+                Trade trade = new Trade(resourceType, resourceAmount, price, currentUser, userReceiver, massage);
+                Trade.getTrades().add(trade);
+                currentUser.getMyRequests().add(trade);
+                userReceiver.getMySuggestion().add(trade);
+                return "The request was successfully registered";
+            }
+            else
+                return "Username with this ID was not found";
+        }
+        catch (Exception IllegalArgumentException){
+            return "This resource type does not exist";
+        }
+    }
+
 }
