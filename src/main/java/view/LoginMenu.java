@@ -19,7 +19,7 @@ public class LoginMenu {
         while (true) {
             command = CommandParser.getScanner().nextLine();
             if (command.matches("^exit$")) return "exit";
-            if ((optionPass = commandParser.validate(command,"user create","u|username/p|password/n|nickname/e|email")) != null)
+            if ((optionPass = commandParser.validate(command,"user create","u|username/p|password/n|nickname/e|email/?s|slogan")) != null)
                 System.out.println(Controller.createUser(optionPass));
         }
     }

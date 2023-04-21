@@ -19,6 +19,9 @@ public class CommandParser {
         inputCommand = mainCommandChecker(inputCommand, mainCommand);
         for (String key : optionParser(options).keySet())
             optionsParser.add(parser.addStringOption(key.charAt(0), optionParser(options).get(key)));
+        if (desireOptionParser(options).size() != 0)
+            for (String key : desireOptionParser(options).keySet())
+                optionsParser.add(parser.addStringOption(key.charAt(0), desireOptionParser(options).get(key)));
         inputCommand = inputCommand.trim();
         Matcher matcher = Pattern.compile("\\S+").matcher(inputCommand);
         int counter = 0;
@@ -37,19 +40,26 @@ public class CommandParser {
         String[] splitText = new String[commandParser.size()];
         splitText = commandParser.toArray(splitText);
         try {
-            if (checkForQuotContent(inputCommand).size() != 0 && splitText.length == optionsParser.size()*2) parser.parse(splitText);
-            else if (inputCommand.split("\\s+").length == optionsParser.size()*2) parser.parse(inputCommand.split("\\s+"));
-            else return null;
+            if (checkForQuotContent(inputCommand).size() != 0) parser.parse(splitText);
+            else parser.parse(inputCommand.split("\\s+"));
         }
-        catch (CmdLineParser.OptionException e) {
-            System.out.println("reede shode");
-            return null;
+        catch (CmdLineParser.OptionException ignored) {}
+        try {
+            if (parser.getRemainingArgs().length != 0) return null;
         }
+        catch (NullPointerException ignored) {}
         counter = 0;
-        for (String key : optionParser(options).keySet()) {
+        for (String key : optionParser(options.replaceAll("\\?","")).keySet()) {
             valueSetter.put(key, parser.getOptionValue(optionsParser.get(counter)));
             counter++;
         }
+        counter = 0;
+        for (String key : valueSetter.keySet())
+            if (valueSetter.get(key) == null && !desireOptionParser(options).containsKey(key)) {
+                System.out.println("Your " + optionParser(options).get(key) + " field is empty!");
+                counter++;
+            }
+        if (counter != 0) return null;
         return valueSetter;
     }
     public ArrayList<String> checkForQuotContent(String inputCommand) {
@@ -82,6 +92,20 @@ public class CommandParser {
             else optionDetect.put(singleOption.split("\\|")[0], null);
         }
         return optionDetect;
+    }
+
+    public HashMap<String, String> desireOptionParser(String options) {
+        HashMap<String, String> desireOptionDetect = new HashMap<>();
+        String[] longAndShortOptionDetect = options.split("/");
+        for (String singleOption : longAndShortOptionDetect) {
+            if (singleOption.contains("?")) {
+                singleOption = singleOption.replaceAll("\\?","");
+                if (singleOption.split("\\|").length == 2)
+                    desireOptionDetect.put(singleOption.split("\\|")[0], singleOption.split("\\|")[1]);
+                else desireOptionDetect.put(singleOption.split("\\|")[0], null);
+            }
+        }
+        return desireOptionDetect;
     }
 
     public String mainCommandChecker(String inputCommand, String mainCommand) {
