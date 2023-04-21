@@ -13,7 +13,6 @@ public class TradeMenu {
         this.controller = controller;
     }
     public void run() {
-        System.out.println("dl");
 //        String allUsers = null;
 //        for (User user : User.users) {
 //            allUsers += user.getUserName();
