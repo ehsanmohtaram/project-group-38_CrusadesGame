@@ -11,15 +11,13 @@ public class User {
     private String slogan;
     private String nickName;
     private Integer score;
-    private ArrayList<Trade> myRequests = new ArrayList<>();
-    private ArrayList<Trade> mySuggestion = new ArrayList<>();
-    private ArrayList<Trade> notification = new ArrayList<>();
-    private ArrayList<Trade> historyTrade = new ArrayList<>();
+    private ArrayList<Trade> myTrades = new ArrayList<>();
     private ArrayList<Map> myMap = new ArrayList<>();
     private ArrayList<Kingdom> kingdom = new ArrayList<>();
     private ArrayList<String> answerToSecurityQuestion = new ArrayList<>(3);
-    public User(String userName, String password, String email, String slogan) {
+    public User(String userName, String nickName,String password, String email, String slogan) {
         this.userName = userName;
+        this.nickName = nickName;
         this.password = password;
         this.email = email;
         this.slogan = slogan;
@@ -27,10 +25,12 @@ public class User {
         users.add(this);
     }
 
-    public static void addUser(String userName, String password, String email, String slogan){
-        User user = new User(userName, password, email, slogan);
+    public static void addUser(String userName, String nickName,String password, String email, String slogan){
+        User user = new User(userName, nickName, password, email, slogan);
         users.add(user);
     }
+
+
 
     public static User getUserByUsername (String userName) {
         for (User user : users) if (user.getUserName().equals(userName)) return user;
@@ -45,18 +45,7 @@ public class User {
         this.userName = userName;
     }
 
-    public ArrayList<Trade> getMyRequests() {
-        return myRequests;
-    }
 
-    public ArrayList<Trade> getHistoryTrade() {
-        return historyTrade;
-    }
-
-
-    public ArrayList<Trade> getMySuggestion() {
-        return mySuggestion;
-    }
 
     public String getPassword() {
         return password;
@@ -86,12 +75,10 @@ public class User {
         this.nickName = nickName;
     }
 
-    public ArrayList<Trade> getNotification() {
-        return notification;
-    }
+
 
     public static Boolean checkForEmailDuplication(String email) {
-        for (User user : users) if (user.getEmail().equals(email)) return true;
+        for (User user : users) if (user.getEmail().toLowerCase().equals(email)) return true;
         return false;
     }
     public String getEmail() {

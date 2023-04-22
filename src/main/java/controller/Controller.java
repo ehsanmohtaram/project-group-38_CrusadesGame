@@ -1,10 +1,12 @@
 package controller;
 
-import model.ResourceType;
-import model.Trade;
+import model.Database;
 import model.User;
+import org.json.simple.parser.ParseException;
 import view.*;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 
@@ -14,7 +16,6 @@ public class Controller {
     private ProfileMenu profileMenu;
     private ShopMenu shopMenu;
     private MainMenu mainMenu;
-    private TradeMenu tradeMenu;
     private SelectMapMenu selectMapMenu;
     private SignupMenu signupMenu;
     private UnitMenu unitMenu;
@@ -32,16 +33,18 @@ public class Controller {
         this.buildingMenu = new BuildingMenu(this);
         this.mainMenu = new MainMenu(this);
         this.selectMapMenu = new SelectMapMenu(this);
-        this.tradeMenu = new TradeMenu(this);
+
+        try {
+            FileWriter file = new FileWriter("src/main/resources/info.json");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     public void run() {
-//        if (loginMenu.run().equals("exit"))
-//            return;
+        if (loginMenu.run().equals("exit"))
+            return;
         while (true) {
             switch (mainMenu.run()) {
-                case "trade":
-                    showNotification();
-                    tradeMenu.run();
                 case "shop":
                     shopMenu.run();
                     break;
@@ -59,11 +62,25 @@ public class Controller {
         }
     }
     public static String createUser(HashMap<String, String> options) {
-        System.out.println("hello");
-        for (String optionMap : options.keySet()) {
-            System.out.println(optionMap + " " + options.get(optionMap));
-        }
-        return "hello";
+        for (String key : options.keySet())
+            if (!key.equals("s") && options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet())
+            if (options.get(key) != null && options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        if (options.get("u").matches(".*[^A-Za-z0-9_]+.*")) return "Incorrect format of username!";
+        if (User.getUserByUsername(options.get("u")) != null) return "Username already exists!";
+        if (!options.get("p").equals("random") && options.get("P") == null) return "Please fill password confirmation!";
+        if (!options.get("p").equals("random") &&
+                (options.get("p").length() < 6 ||
+                !options.get("p").matches(".*[a-z]+.*") ||
+                !options.get("p").matches(".*[A-Z]+.*") ||
+                !options.get("p").matches(".*[0-9]+.*") ||
+                !options.get("p").matches(".*\\W+.*"))) return "Weak password. Please set a strong password!";
+        if (!options.get("p").equals("random") && !options.get("p").equals(options.get("P")))
+            return "Password confirmation did not match the password!";
+        if (!options.get("e").matches("^[A-Za-z0-9_]+@[A-Za-z0-9_]+\\.[A-Za-z0-9_]+$")) return "Incorrect format of email!";
+        if (User.checkForEmailDuplication(options.get("e").toLowerCase())) return "Email already exists!";
+        Database.addUser(options.get("u"),options.get("p"),options.get("n"),options.get("e"),options.get("s"));
+        return "User created successfully!";
     }
     private String securityQuestion(Matcher matcher) {
         return null;
@@ -192,6 +209,15 @@ public class Controller {
     public String trade(Matcher matcher) {
         return null;
     }
+    public String showTradeList() {
+        return null;
+    }
+    public String tradeAccept(Matcher matcher) {
+        return null;
+    }
+    public String showTradeHistory(Matcher matcher) {
+        return null;
+    }
     public String showPriceList(Matcher matcher) {
          return null;
     }
@@ -200,73 +226,5 @@ public class Controller {
     }
     public String sell(Matcher matcher) {
         return null;
-    }
-    public String newRequest(HashMap<String, String> options) {
-        User userReceiver;
-        for (String value : options.keySet()) {
-            if (options.get(value) == null)
-                return value + " option is not entered";
-        }
-        try {
-            ResourceType resourceType = ResourceType.valueOf(options.get("t").toUpperCase());
-            if ((userReceiver = User.getUserByUsername(options.get("u"))) != null) {
-                int resourceAmount = Integer.parseInt(options.get("a"));
-                int price = Integer.parseInt(options.get("p"));
-                String massage = options.get("m");
-                Trade trade = new Trade(resourceType, resourceAmount, price, currentUser, userReceiver, massage, Trade.countId);
-                Trade.countId ++;
-                Trade.getTrades().add(trade);
-                currentUser.getMyRequests().add(trade);
-                userReceiver.getMySuggestion().add(trade);
-                userReceiver.getNotification().add(0, trade);
-                return "The request was successfully registered";
-            }
-            else
-                return "Username with this ID was not found";
-        }
-        catch (Exception IllegalArgumentException){
-            return "This resource type does not exist";
-        }
-    }
-    public String showTradeList() {
-        String output = "your suggestions:";
-        for (Trade trade : currentUser.getMySuggestion()) {
-            output += "\nResource type: " + trade.getResourceType().name() + "resource amount: " + trade.getResourceAmount()
-                    + "price: " + trade.getPrice() + "from: " + trade.getUserSender().getUserName()
-                    + "id: " + trade.getId() + "massage: " + trade.getMassage();
-        }
-        currentUser.getNotification().clear();
-        return output;
-    }
-    public String tradeAccept(HashMap<String, String> options) {
-        for (String value : options.keySet()) {
-            if (options.get(value) == null)
-                return value + " option is not entered";
-        }
-        for (Trade trade : currentUser.getMySuggestion()) {
-            if (trade.getId() == Integer.parseInt(options.get("i"))) {/////////////
-             break;
-            }
-        }
-        return "This ID was not found for you";
-    }
-    public String showTradeHistory() {
-        String output = "your history:";
-        for (Trade trade : currentUser.getHistoryTrade()) {
-                output += "\nResource type: " + trade.getResourceType().name() + "resource amount: " + trade.getResourceAmount()
-                        + "price: " + trade.getPrice()+ "id: " + trade.getId() + "massage: " + trade.getMassage();
-            if (trade.getUserSender().equals(currentUser))
-                output += " ...Requested...";
-            else
-                output += " ...Accepted...";
-        }
-        return output;
-    }
-    public String showNotification() {
-        String output = "your new suggestions:";
-        for (Trade trade : currentUser.getNotification()) {
-            output += "\nnew suggestion form " + trade.getUserSender() + "massage: " + trade.getMassage();
-        }
-        return output;
     }
 }

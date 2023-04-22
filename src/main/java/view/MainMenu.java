@@ -27,8 +27,6 @@ public class MainMenu {
                 return "profile";
             } else if (input.matches("\\s*start\\s+game\\s*")) {
                 return "selectMap";
-            } else if (input.matches("\\s*trade\\s+menu\\s*")) {
-                return "trade";
             } else if (input.equals("show current menu"))
                 System.out.println("Main Menu");
             else

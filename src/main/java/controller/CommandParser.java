@@ -33,6 +33,12 @@ public class CommandParser{
                 if (matcher.start() == checkForQuotStartPosition(inputCommand).get(counter))
                     commandParser.add(checkForQuotContent(inputCommand).get(counter));
             }
+            for (int i = 0; i < commandParser.size(); i++) {
+                if (i < commandParser.size() - 1 &&
+                        optionParser(options).containsKey(commandParser.get(i).replaceAll("-", "")) &&
+                                optionParser(options).containsKey(commandParser.get(i+1).replaceAll("-", "")))
+                    commandParser.add(i+1,"");
+            }
             if (towFactorDetector(options).size() != 0) {
                 for (String key : towFactorDetector(options).keySet())
                     for (int i = 0; i < commandParser.size(); i++)
@@ -48,6 +54,7 @@ public class CommandParser{
             splitText = commandParser.toArray(splitText);
             try { parser.parse(splitText);}
             catch (CmdLineParser.OptionException check) {
+                System.out.println(check.getMessage());
                 if (check.getMessage().matches("^Unknown option.*") || check.getMessage().matches("^Illegal option.*")) return null;
             }
             try {if (parser.getRemainingArgs().length != 0 && !parser.getRemainingArgs()[0].equals(""))  return null;}
@@ -121,9 +128,7 @@ public class CommandParser{
         return inputCommand.trim();
     }
 
-
     public static Scanner getScanner() {
         return scanner;
     }
-
 }
