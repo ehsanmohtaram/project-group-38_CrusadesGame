@@ -59,6 +59,7 @@ public class Controller {
         }
     }
     public static String createUser(HashMap<String, String> options) {
+        System.out.println("hello");
         for (String optionMap : options.keySet()) {
             System.out.println(optionMap + " " + options.get(optionMap));
         }

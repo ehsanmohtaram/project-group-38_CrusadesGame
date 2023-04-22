@@ -8,58 +8,58 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CommandParser {
+public class CommandParser{
     private static final Scanner scanner = new Scanner(System.in);
-    public HashMap<String, String> validate(String inputCommand, String mainCommand, String options) {
+    public HashMap<String, String> validate (String inputCommand, String mainCommand, String options) {
         ArrayList<String> commandParser = new ArrayList<>();
-        ArrayList<CmdLineParser.Option<String>> optionsParser = new ArrayList<>();
+        ArrayList<CmdLineParser.Option<String>> optionsParserSave = new ArrayList<>();
         HashMap<String, String> valueSetter = new HashMap<>();
         CmdLineParser parser = new CmdLineParser();
-        if (mainCommandChecker(inputCommand, mainCommand) == null) return null;
-        inputCommand = mainCommandChecker(inputCommand, mainCommand);
-        for (String key : optionParser(options).keySet())
-            optionsParser.add(parser.addStringOption(key.charAt(0), optionParser(options).get(key)));
-        if (desireOptionParser(options).size() != 0)
-            for (String key : desireOptionParser(options).keySet())
-                optionsParser.add(parser.addStringOption(key.charAt(0), desireOptionParser(options).get(key)));
         inputCommand = inputCommand.trim();
-        Matcher matcher = Pattern.compile("\\S+").matcher(inputCommand);
-        int counter = 0;
-        if (checkForQuotContent(inputCommand).size() != 0) {
+        if (mainCommandChecker(inputCommand, mainCommand, options) == null)  return null;
+        inputCommand = mainCommandChecker(inputCommand, mainCommand, options);
+        if (options != null) {
+            for (String key : optionParser(options.replaceAll("\\?","")).keySet())
+                optionsParserSave.add(parser.addStringOption(key.charAt(0), optionParser(options.replaceAll("\\?","")).get(key)));
+            Matcher matcher = Pattern.compile("\\S+").matcher(inputCommand);
+            int counter = 0;
             while (matcher.find()) {
-                if (matcher.start() == checkForQuotStartPosition(inputCommand).get(counter))
-                    commandParser.add(checkForQuotContent(inputCommand).get(counter));
-                else if (matcher.end() == checkForQuotEndPosition(inputCommand).get(counter) &&
+                if (matcher.start() > checkForQuotEndPosition(inputCommand).get(counter) &&
                         checkForQuotContent(inputCommand).size() - 1 > counter)
                     counter++;
-                else if (checkForQuotStartPosition(inputCommand).get(counter) > matcher.start() ||
+                if (checkForQuotStartPosition(inputCommand).get(counter) > matcher.start() ||
                         checkForQuotEndPosition(inputCommand).get(counter) < matcher.end())
                     commandParser.add(matcher.group());
+                if (matcher.start() == checkForQuotStartPosition(inputCommand).get(counter))
+                    commandParser.add(checkForQuotContent(inputCommand).get(counter));
             }
-        }
-        String[] splitText = new String[commandParser.size()];
-        splitText = commandParser.toArray(splitText);
-        try {
-            if (checkForQuotContent(inputCommand).size() != 0) parser.parse(splitText);
-            else parser.parse(inputCommand.split("\\s+"));
-        }
-        catch (CmdLineParser.OptionException ignored) {}
-        try {
-            if (parser.getRemainingArgs().length != 0) return null;
-        }
-        catch (NullPointerException ignored) {}
-        counter = 0;
-        for (String key : optionParser(options.replaceAll("\\?","")).keySet()) {
-            valueSetter.put(key, parser.getOptionValue(optionsParser.get(counter)));
-            counter++;
-        }
-        counter = 0;
-        for (String key : valueSetter.keySet())
-            if (valueSetter.get(key) == null && !desireOptionParser(options).containsKey(key)) {
-                System.out.println("Your " + optionParser(options).get(key) + " field is empty!");
+            if (towFactorDetector(options).size() != 0) {
+                for (String key : towFactorDetector(options).keySet())
+                    for (int i = 0; i < commandParser.size(); i++)
+                        if (key.equals(commandParser.get(i).replaceAll("-", "")) && i < commandParser.size() - 2)
+                            if (!optionParser(options).containsKey(commandParser.get(i + 1).replaceAll("-", "")) &&
+                                    !optionParser(options).containsKey(commandParser.get(i + 2).replaceAll("-", "")) &&
+                                    !optionParser(options).containsValue(commandParser.get(i + 1).replaceAll("-", "")) &&
+                                    !optionParser(options).containsValue(commandParser.get(i + 2).replaceAll("-", ""))) {
+                                valueSetter.put(key.toUpperCase(), commandParser.get(i + 2)); commandParser.remove(i+2);
+                            }
+            }
+            String[] splitText = new String[commandParser.size()];
+            splitText = commandParser.toArray(splitText);
+            try { parser.parse(splitText);}
+            catch (CmdLineParser.OptionException check) {
+                if (check.getMessage().matches("^Unknown option.*") || check.getMessage().matches("^Illegal option.*")) return null;
+            }
+            try {if (parser.getRemainingArgs().length != 0 && !parser.getRemainingArgs()[0].equals(""))  return null;}
+            catch (NullPointerException ignored) {}
+            counter = 0;
+            options = options.replaceAll("\\?","");
+            for (String key : optionParser(options).keySet()) {
+                valueSetter.put(key, parser.getOptionValue(optionsParserSave.get(counter)));
                 counter++;
             }
-        if (counter != 0) return null;
+        }
+        else valueSetter.put(null, null);
         return valueSetter;
     }
     public ArrayList<String> checkForQuotContent(String inputCommand) {
@@ -73,6 +73,7 @@ public class CommandParser {
         ArrayList<Integer> argPositionStart = new ArrayList<>();
         Matcher matcher = Pattern.compile("\"([^\"]*)\"").matcher(inputCommand);
         while (matcher.find()) argPositionStart.add(matcher.start());
+        if (argPositionStart.size() == 0) argPositionStart.add(-1);
         return argPositionStart;
     }
 
@@ -80,6 +81,7 @@ public class CommandParser {
         ArrayList<Integer> argPositionEnd = new ArrayList<>();
         Matcher matcher = Pattern.compile("\"([^\"]*)\"").matcher(inputCommand);
         while (matcher.find()) argPositionEnd.add(matcher.end());
+        if (argPositionEnd.size() == 0) argPositionEnd.add(-1);
         return argPositionEnd;
     }
 
@@ -87,14 +89,16 @@ public class CommandParser {
         HashMap<String, String> optionDetect = new HashMap<>();
         String[] longAndShortOptionDetect = options.split("/");
         for (String singleOption : longAndShortOptionDetect) {
-            if (singleOption.split("\\|").length == 2)
-                optionDetect.put(singleOption.split("\\|")[0], singleOption.split("\\|")[1]);
-            else optionDetect.put(singleOption.split("\\|")[0], null);
+            if (!singleOption.contains("?")) {
+                if (singleOption.split("\\|").length == 2)
+                    optionDetect.put(singleOption.split("\\|")[0], singleOption.split("\\|")[1]);
+                else optionDetect.put(singleOption.split("\\|")[0], null);
+            }
         }
         return optionDetect;
     }
 
-    public HashMap<String, String> desireOptionParser(String options) {
+    public HashMap<String, String> towFactorDetector(String options) {
         HashMap<String, String> desireOptionDetect = new HashMap<>();
         String[] longAndShortOptionDetect = options.split("/");
         for (String singleOption : longAndShortOptionDetect) {
@@ -108,13 +112,15 @@ public class CommandParser {
         return desireOptionDetect;
     }
 
-    public String mainCommandChecker(String inputCommand, String mainCommand) {
-        mainCommand = "^\\s*" + mainCommand.replaceAll(" ", "\\\\s+") + "\\s.*";
+    public String mainCommandChecker(String inputCommand, String mainCommand, String option) {
+        if (option != null) mainCommand = "^\\s*" + mainCommand.replaceAll(" ", "\\\\s+") + ".*";
+        else mainCommand = "^\\s*" + mainCommand.replaceAll(" ", "\\\\s+") + "$";
         if (!inputCommand.matches(mainCommand)) return null;
         mainCommand = mainCommand.replaceAll("\\.\\*","");
         inputCommand = inputCommand.replaceAll(mainCommand, "");
         return inputCommand.trim();
     }
+
 
     public static Scanner getScanner() {
         return scanner;
