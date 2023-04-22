@@ -13,6 +13,8 @@ public class User {
     private Integer score;
     private ArrayList<Trade> myRequests = new ArrayList<>();
     private ArrayList<Trade> mySuggestion = new ArrayList<>();
+    private ArrayList<Trade> notification = new ArrayList<>();
+    private ArrayList<Trade> historyTrade = new ArrayList<>();
     private ArrayList<Map> myMap = new ArrayList<>();
     private ArrayList<Kingdom> kingdom = new ArrayList<>();
     private ArrayList<String> answerToSecurityQuestion = new ArrayList<>(3);
@@ -30,8 +32,6 @@ public class User {
         users.add(user);
     }
 
-
-
     public static User getUserByUsername (String userName) {
         for (User user : users) if (user.getUserName().equals(userName)) return user;
         return null;
@@ -48,6 +48,11 @@ public class User {
     public ArrayList<Trade> getMyRequests() {
         return myRequests;
     }
+
+    public ArrayList<Trade> getHistoryTrade() {
+        return historyTrade;
+    }
+
 
     public ArrayList<Trade> getMySuggestion() {
         return mySuggestion;
@@ -81,7 +86,9 @@ public class User {
         this.nickName = nickName;
     }
 
-
+    public ArrayList<Trade> getNotification() {
+        return notification;
+    }
 
     public static Boolean checkForEmailDuplication(String email) {
         for (User user : users) if (user.getEmail().equals(email)) return true;

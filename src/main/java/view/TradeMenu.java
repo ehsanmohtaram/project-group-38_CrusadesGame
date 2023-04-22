@@ -13,18 +13,23 @@ public class TradeMenu {
         this.controller = controller;
     }
     public void run() {
-//        String allUsers = null;
-//        for (User user : User.users) {
-//            allUsers += user.getUserName();
-//        }
-//        System.out.print(allUsers);
+        String output = "all Users:";
+        for (User user : User.users) {
+            output += "\n" + user.getUserName();
+        }
+        System.out.println(output);
         HashMap<String, String> optionPass = new HashMap<>();
         String input;
         while (true) {
             input = CommandParser.getScanner().nextLine();
-            if ((optionPass = commandParser.validate(input, "trade", "t|resourceType/a|resourceAmount/p|price/m|massage/u|username")) != null) {
+            if ((optionPass = commandParser.validate(input, "trade", "t|resourceType/a|resourceAmount/p|price/m|massage/u|username")) != null)
                 System.out.println(controller.newRequest(optionPass));
-            }
+            else if (input.matches("\\s*trade\\s+list\\s*"))
+                System.out.println(controller.showTradeList());
+            else if ((optionPass = commandParser.validate(input, "trade accept","i|id/m|massage")) != null)
+                System.out.println(controller.tradeAccept(optionPass));
+            else if (input.matches("\\s*trade\\s+history\\s*"))
+                System.out.println(controller.showTradeHistory());
             else
                 System.out.println("Invalid Command");
         }
