@@ -1,6 +1,7 @@
 package controller;
 
 import com.sanityinc.jargs.CmdLineParser;
+import model.Database;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -129,6 +130,7 @@ public class CommandParser{
     }
 
     public static Scanner getScanner() {
+        Database.updateJson();
         return scanner;
     }
 }

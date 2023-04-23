@@ -36,12 +36,9 @@ public class Controller {
         this.buildingMenu = new BuildingMenu(this);
         this.mainMenu = new MainMenu(this);
         this.tradeMenu = new TradeMenu(this);
-        try {
-            FileWriter file = new FileWriter("src/main/resources/info.json");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        User.users.addAll(Database.setArrayOfUsers());
     }
+
     public void run() {
         if (loginMenu.run().equals("exit"))
             return;
@@ -91,8 +88,8 @@ public class Controller {
             password = Randomize.randomPassword();
             if (password == null) return "Please try again with new password!";
         } else password = options.get("p");
-        if (!options.get("e").matches("^[A-Za-z0-9_]+@[A-Za-z0-9_]+\\.[A-Za-z0-9_]+$")) return "Incorrect format of email!";
         if (User.checkForEmailDuplication(options.get("e").toLowerCase())) return "Email already exists!";
+        if (!options.get("e").matches("^[A-Za-z0-9_]+@[A-Za-z0-9_]+\\.[A-Za-z0-9_]+$")) return "Incorrect format of email!";
         if (username == null) username = options.get("u");
         if (options.get("s") != null && options.get("s").equals("random")) slogan = Randomize.randomSlogan();
         else slogan = options.get("s");
@@ -115,7 +112,7 @@ public class Controller {
         if (Integer.parseInt(optionPass.get("q")) < 1 ||
                 Integer.parseInt(optionPass.get("q")) > 3) return "Out of bound. Please choose a digit between 1 to 3.";
         if (!optionPass.get("c").equals(optionPass.get("a"))) return "Answer did not match with confirmation";
-        Database.addUser(username,password,nikName,email,slogan,Integer.parseInt(optionPass.get("q")) - 1,optionPass.get("a"));
+        User.addUser(username,password,nikName,email,slogan,Integer.parseInt(optionPass.get("q")) - 1,optionPass.get("a"));
         return "User has been added successfully!";
     }
     public String login(Matcher matcher) {

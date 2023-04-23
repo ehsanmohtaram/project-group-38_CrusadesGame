@@ -7,7 +7,6 @@ import java.util.Arrays;
 
 public class User {
     public static ArrayList<User> users = new ArrayList<>();
-    public static ArrayList<String> emails = new ArrayList<>();
     public final static ArrayList<String> questions = new ArrayList<>(Arrays.asList(
             "What is my father’s name?",
             "was my first pet’s name?",
@@ -38,6 +37,10 @@ public class User {
         this.answerToSecurityQuestion = answerToSecurityQuestion;
         score = 0;
         users.add(this);
+    }
+
+    public static void addUser(String username, String nickname,String password, String email, String slogan, Integer securityQuestionNumber, String answerToSecurityQuestion) {
+        new User(username,nickname,password,email,slogan,securityQuestionNumber,answerToSecurityQuestion);
     }
 
     public static User getUserByUsername (String userName) {
