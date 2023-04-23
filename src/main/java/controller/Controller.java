@@ -1,8 +1,8 @@
 package controller;
 
 import model.Database;
-import model.Randomize;
 import model.User;
+import model.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import view.*;
 
@@ -23,6 +23,7 @@ public class Controller {
     private BuildingMenu buildingMenu;
     public static User currentUser;
     public static boolean stayLoggedIn = false;
+    private Map gameMap;
 
     public Controller() {
         this.gameMenu = new GameMenu(this);
@@ -33,8 +34,6 @@ public class Controller {
         this.unitMenu = new UnitMenu(this);
         this.buildingMenu = new BuildingMenu(this);
         this.mainMenu = new MainMenu(this);
-        this.selectMapMenu = new SelectMapMenu(this);
-
         try {
             FileWriter file = new FileWriter("src/main/resources/info.json");
         } catch (IOException e) {
@@ -50,7 +49,9 @@ public class Controller {
                     shopMenu.run();
                     break;
                 case "selectMap":
-                    selectMapMenu.run();
+//                    currentUser.addToMyMap();
+                    MapDesignController mapDesignController = new MapDesignController(gameMap);
+                    mapDesignController.run();
                     break;
                 case "profile":
                     profileMenu.run();
@@ -145,6 +146,41 @@ public class Controller {
     public String displayInfo() {
         return null;
     }
+    public String showDefaultMaps(){
+        String result = "";
+        for (Map defaults: Map.DEFAULT_MAPS) {
+            result += defaults.getMapName() + ": " + defaults.getMapWidth() + " * " + defaults.getMapHeight() + '\n';
+        }
+        return result;
+    }
+
+    public String selectDefaultMap(String selectedIndex){
+        try{
+            int index = Integer.parseInt(selectedIndex);
+            gameMap = Map.getDefaultMap(index);
+            if(gameMap == null)
+                return "invalid number";
+            return "successful";
+        }
+        catch (Exception IllegalArgumentException){
+            return "invalid input, please select a number";
+        }
+    }
+
+    public String createNewMap(HashMap<String, String> options){
+
+        if (options.get("x").equals("") || options.get("x") == null ||
+            options.get("y").equals("") || options.get("y") == null) return "Please input width & height correctly ";
+        if(options.get("n") == null || options.get("n").equals(""))
+            return "you must choose a name for your map. use -n.";
+        int width = Integer.parseInt(options.get("x"));
+        int height = Integer.parseInt("y");
+        if(width < 0 || height < 0)
+            return "invalid bounds";
+        gameMap = new Map(width, height, options.get("n"));
+        return "successful";
+    }
+
     public String showMap() {
         return null;
     }
