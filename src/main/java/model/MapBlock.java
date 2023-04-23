@@ -13,7 +13,7 @@ public class MapBlock {
     private MapBlockType mapBlockType;
     private Integer xPosition;
     private Integer yPosition;
-
+    private Integer numberOfTrees;
     public MapBlock(Integer xPosition, Integer yPosition) {
         this.mapBlockType = MapBlockType.EARTH;
         this.xPosition = xPosition;
