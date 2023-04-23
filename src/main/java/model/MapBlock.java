@@ -1,6 +1,7 @@
 package model;
 
 import model.building.Building;
+import model.building.BuildingType;
 import model.unit.Unit;
 
 import java.util.ArrayList;
@@ -83,5 +84,13 @@ public class MapBlock {
     public void processNextTurn(){
 
     }
+
+    public static MapBlockType findEnumByLandType(String landType) {
+        for (MapBlockType searchForType : MapBlockType.values())
+            if (searchForType.name().toLowerCase().replaceAll("_"," ").equals(landType))
+                return searchForType;
+        return null;
+    }
+
 
 }

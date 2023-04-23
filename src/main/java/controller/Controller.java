@@ -17,7 +17,7 @@ public class Controller {
     private ProfileMenu profileMenu;
     private ShopMenu shopMenu;
     private MainMenu mainMenu;
-    private SelectMapMenu selectMapMenu;
+//    private SelectMapMenu selectMapMenu;
     private SignupMenu signupMenu;
     private UnitMenu unitMenu;
     private BuildingMenu buildingMenu;

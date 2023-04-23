@@ -63,4 +63,15 @@ public class Map implements Cloneable {
             return null;
         return (Map)(DEFAULT_MAPS.get(index).clone());
     }
+
+    public void changeType(int x , int y, MapBlockType type){
+        map[x][y].setMapBlockType(type);
+    }
+
+    public void changeType(int x1 , int y1, int x2, int y2, MapBlockType type){
+        for (int i = x1; i <= x2; i++)
+            for (int j = y1; j <= y2; j++)
+               map[i][j].setMapBlockType(type);
+    }
+
 }
