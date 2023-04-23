@@ -1,9 +1,9 @@
 package controller;
 
 import model.Database;
+import model.Randomize;
 import model.User;
-import model.*;
-import org.json.simple.parser.ParseException;
+import org.apache.commons.codec.digest.DigestUtils;
 import view.*;
 
 import java.io.FileWriter;
@@ -17,12 +17,12 @@ public class Controller {
     private ProfileMenu profileMenu;
     private ShopMenu shopMenu;
     private MainMenu mainMenu;
+    private SelectMapMenu selectMapMenu;
     private SignupMenu signupMenu;
     private UnitMenu unitMenu;
     private BuildingMenu buildingMenu;
     public static User currentUser;
     public static boolean stayLoggedIn = false;
-    private Map gameMap;
 
     public Controller() {
         this.gameMenu = new GameMenu(this);
@@ -33,6 +33,7 @@ public class Controller {
         this.unitMenu = new UnitMenu(this);
         this.buildingMenu = new BuildingMenu(this);
         this.mainMenu = new MainMenu(this);
+        this.selectMapMenu = new SelectMapMenu(this);
 
         try {
             FileWriter file = new FileWriter("src/main/resources/info.json");
@@ -49,9 +50,7 @@ public class Controller {
                     shopMenu.run();
                     break;
                 case "selectMap":
-//                    currentUser.addToMyMap();
-                    MapDesignController mapDesignController = new MapDesignController(gameMap);
-                    mapDesignController.run();
+                    selectMapMenu.run();
                     break;
                 case "profile":
                     profileMenu.run();
@@ -63,29 +62,55 @@ public class Controller {
             }
         }
     }
-    public static String createUser(HashMap<String, String> options) {
+    public String createUser(HashMap<String, String> options) {
+        String username = null; String password; String slogan;
         for (String key : options.keySet())
             if (!key.equals("s") && options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet())
             if (options.get(key) != null && options.get(key).equals("")) return "Illegal value. Please fill the options!";
         if (options.get("u").matches(".*[^A-Za-z0-9_]+.*")) return "Incorrect format of username!";
-        if (User.getUserByUsername(options.get("u")) != null) return "Username already exists!";
         if (!options.get("p").equals("random") && options.get("P") == null) return "Please fill password confirmation!";
         if (!options.get("p").equals("random") &&
-                (options.get("p").length() < 6 ||
-                !options.get("p").matches(".*[a-z]+.*") ||
-                !options.get("p").matches(".*[A-Z]+.*") ||
-                !options.get("p").matches(".*[0-9]+.*") ||
+                (options.get("p").length() < 6 || !options.get("p").matches(".*[a-z]+.*") ||
+                !options.get("p").matches(".*[A-Z]+.*") || !options.get("p").matches(".*[0-9]+.*") ||
                 !options.get("p").matches(".*\\W+.*"))) return "Weak password. Please set a strong password!";
+        if (User.getUserByUsername(options.get("u")) != null) {
+            System.out.println("Username already exists!");
+            username = Randomize.randomUsername(options.get("u"));
+            if (username == null) return "Please try again with new username!";
+        }
         if (!options.get("p").equals("random") && !options.get("p").equals(options.get("P")))
             return "Password confirmation did not match the password!";
+        if (options.get("p").equals("random")) {
+            password = Randomize.randomPassword();
+            if (password == null) return "Please try again with new password!";
+        } else password = options.get("p");
         if (!options.get("e").matches("^[A-Za-z0-9_]+@[A-Za-z0-9_]+\\.[A-Za-z0-9_]+$")) return "Incorrect format of email!";
         if (User.checkForEmailDuplication(options.get("e").toLowerCase())) return "Email already exists!";
-        Database.addUser(options.get("u"),options.get("p"),options.get("n"),options.get("e"),options.get("s"));
-        return "User created successfully!";
+        if (username == null) username = options.get("u");
+        if (options.get("s") != null && options.get("s").equals("random")) slogan = Randomize.randomSlogan();
+        else slogan = options.get("s");
+        password = DigestUtils.sha256Hex(password);
+        return securityQuestion(username,password,options.get("n"),options.get("e"),slogan);
     }
-    private String securityQuestion(Matcher matcher) {
-        return null;
+    private String securityQuestion(String username, String password, String nikName, String email, String slogan) {
+        System.out.println("Pick your security question: ");
+        for (int i = 0; i < 3 ;i++) System.out.println((i + 1) + ". " + User.questions.get(i));
+        CommandParser commandParser = new CommandParser();
+        String inputCommand = CommandParser.getScanner().nextLine();
+        HashMap<String, String> optionPass;
+        optionPass = commandParser.validate(inputCommand,"question pick","q|question/a|answer/c|confirmation");
+        if (optionPass == null) return "Invalid command!";
+        for (String key : optionPass.keySet())
+            if (optionPass.get(key) == null) return "Please input necessary options!";
+        for (String key : optionPass.keySet())
+            if (optionPass.get(key).equals("")) return "Illegal value. Please fill the options!";
+        if (!optionPass.get("q").matches("-?\\d+")) return "Illegal value. Please choose a digit.";
+        if (Integer.parseInt(optionPass.get("q")) < 1 ||
+                Integer.parseInt(optionPass.get("q")) > 3) return "Out of bound. Please choose a digit between 1 to 3.";
+        if (!optionPass.get("c").equals(optionPass.get("a"))) return "Answer did not match with confirmation";
+        Database.addUser(username,password,nikName,email,slogan,Integer.parseInt(optionPass.get("q")) - 1,optionPass.get("a"));
+        return "User has been added successfully!";
     }
     public String login(Matcher matcher) {
         return null;
@@ -120,41 +145,6 @@ public class Controller {
     public String displayInfo() {
         return null;
     }
-    public String showDefaultMaps(){
-        String result = "";
-        for (Map defaults: Map.DEFAULT_MAPS) {
-            result += defaults.getMapName() + ": " + defaults.getMapWidth() + " * " + defaults.getMapHeight() + '\n';
-        }
-        return result;
-    }
-
-    public String selectDefaultMap(String selectedIndex){
-        try{
-            int index = Integer.parseInt(selectedIndex);
-            gameMap = Map.getDefaultMap(index);
-            if(gameMap == null)
-                return "invalid number";
-            return "successful";
-        }
-        catch (Exception IllegalArgumentException){
-            return "invalid input, please select a number";
-        }
-    }
-
-    public String createNewMap(HashMap<String, String> options){
-
-        if (options.get("x").equals("") || options.get("x") == null ||
-            options.get("y").equals("") || options.get("y") == null) return "Please input width & height correctly ";
-        if(options.get("n") == null || options.get("n").equals(""))
-            return "you must choose a name for your map. use -n.";
-        int width = Integer.parseInt(options.get("x"));
-        int height = Integer.parseInt("y");
-        if(width < 0 || height < 0)
-            return "invalid bounds";
-        gameMap = new Map(width, height, options.get("n"));
-        return "successful";
-    }
-
     public String showMap() {
         return null;
     }
