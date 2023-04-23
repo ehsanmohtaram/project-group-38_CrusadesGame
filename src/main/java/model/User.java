@@ -1,10 +1,18 @@
 package model;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class User {
     public static ArrayList<User> users = new ArrayList<>();
     public static ArrayList<String> emails = new ArrayList<>();
+    public final static ArrayList<String> questions = new ArrayList<>(Arrays.asList(
+            "What is my father’s name?",
+            "was my first pet’s name?",
+            "What is my mother’s last name?"
+    ));
     private String userName;
     private String password;
     private String email;
@@ -14,23 +22,20 @@ public class User {
     private ArrayList<Trade> myTrades = new ArrayList<>();
     private ArrayList<Map> myMap = new ArrayList<>();
     private ArrayList<Kingdom> kingdom = new ArrayList<>();
-    private ArrayList<String> answerToSecurityQuestion = new ArrayList<>(3);
-    public User(String userName, String nickName,String password, String email, String slogan) {
+    private Integer securityQuestionNumber;
+    private String answerToSecurityQuestion;
+    public User(String userName, String nickName,String password, String email, String slogan, Integer securityQuestionNumber, String answerToSecurityQuestion) {
         this.userName = userName;
         this.nickName = nickName;
         this.password = password;
         this.email = email;
+        if (slogan == null) slogan = "";
         this.slogan = slogan;
+        this.securityQuestionNumber = securityQuestionNumber;
+        this.answerToSecurityQuestion = answerToSecurityQuestion;
         score = 0;
         users.add(this);
     }
-
-    public static void addUser(String userName, String nickName,String password, String email, String slogan){
-        User user = new User(userName, nickName, password, email, slogan);
-        users.add(user);
-    }
-
-
 
     public static User getUserByUsername (String userName) {
         for (User user : users) if (user.getUserName().equals(userName)) return user;
@@ -47,8 +52,8 @@ public class User {
 
 
 
-    public String getPassword() {
-        return password;
+    public boolean checkPassword(String password) {
+        return this.password.equals(DigestUtils.sha256Hex(password));
     }
 
     public void setPassword(String password) {
