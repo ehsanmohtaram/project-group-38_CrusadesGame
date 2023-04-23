@@ -1,19 +1,21 @@
 package controller;
 
 import model.Map;
-import view.SelectMapMenu;
+import view.DesignMapMenu;
+
+import java.util.regex.Matcher;
 
 public class MapDesignController {
     private Map gameMap;
-    private SelectMapMenu selectMapMenu;
+    private DesignMapMenu designMapMenu;
 
     public MapDesignController(Map gameMap) {
         this.gameMap = gameMap;
-        selectMapMenu = new SelectMapMenu(this);
+        designMapMenu = new DesignMapMenu(this);
     }
 
     public void run(){
-        switch (selectMapMenu.run()){
+        switch (designMapMenu.run()){
             case "start":
                 GameController gameController = new GameController(gameMap);
                 gameController.run();
@@ -22,4 +24,18 @@ public class MapDesignController {
                 return;
         }
     }
+
+    public String setTexture(Matcher matcher) {
+        return null;
+    }
+    public String clear(Matcher matcher) {
+        return null;
+    }
+    public String dropRock(Matcher matcher) {
+        return null;
+    }
+    public String dropTree(Matcher matcher) {
+        return null;
+    }
+
 }

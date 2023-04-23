@@ -228,18 +228,6 @@ public class Controller {
     public String disbandUnit() {
         return null;
     }
-    public String setTexture(Matcher matcher) {
-        return null;
-    }
-    public String clear(Matcher matcher) {
-        return null;
-    }
-    public String dropRock(Matcher matcher) {
-        return null;
-    }
-    public String dropTree(Matcher matcher) {
-        return null;
-    }
     public String dropUnit(Matcher matcher) {
         return null;
     }
