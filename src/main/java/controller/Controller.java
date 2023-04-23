@@ -17,7 +17,8 @@ public class Controller {
     private ProfileMenu profileMenu;
     private ShopMenu shopMenu;
     private MainMenu mainMenu;
-//    private SelectMapMenu selectMapMenu;
+    private TradeMenu tradeMenu;
+    private SelectMapMenu selectMapMenu;
     private SignupMenu signupMenu;
     private UnitMenu unitMenu;
     private BuildingMenu buildingMenu;
@@ -34,6 +35,7 @@ public class Controller {
         this.unitMenu = new UnitMenu(this);
         this.buildingMenu = new BuildingMenu(this);
         this.mainMenu = new MainMenu(this);
+        this.tradeMenu = new TradeMenu(this);
         try {
             FileWriter file = new FileWriter("src/main/resources/info.json");
         } catch (IOException e) {
@@ -45,11 +47,14 @@ public class Controller {
             return;
         while (true) {
             switch (mainMenu.run()) {
+                case "trade":
+                    showNotification();
+                    tradeMenu.run();
                 case "shop":
                     shopMenu.run();
                     break;
                 case "selectMap":
-//                    currentUser.addToMyMap();
+//                  currentUser.addToMyMap();
                     MapDesignController mapDesignController = new MapDesignController(gameMap);
                     mapDesignController.run();
                     break;
@@ -254,13 +259,22 @@ public class Controller {
     public String disbandUnit() {
         return null;
     }
+    public String setTexture(Matcher matcher) {
+        return null;
+    }
+    public String clear(Matcher matcher) {
+        return null;
+    }
+    public String dropRock(Matcher matcher) {
+        return null;
+    }
+    public String dropTree(Matcher matcher) {
+        return null;
+    }
     public String dropUnit(Matcher matcher) {
         return null;
     }
     public String trade(Matcher matcher) {
-        return null;
-    }
-    public String showTradeList() {
         return null;
     }
     public String tradeAccept(Matcher matcher) {
@@ -277,5 +291,73 @@ public class Controller {
     }
     public String sell(Matcher matcher) {
         return null;
+    }
+    public String newRequest(HashMap<String, String> options) {
+        User userReceiver;
+        for (String value : options.keySet()) {
+            if (options.get(value) == null)
+                return value + " option is not entered";
+        }
+        try {
+            ResourceType resourceType = ResourceType.valueOf(options.get("t").toUpperCase());
+            if ((userReceiver = User.getUserByUsername(options.get("u"))) != null) {
+                int resourceAmount = Integer.parseInt(options.get("a"));
+                int price = Integer.parseInt(options.get("p"));
+                String massage = options.get("m");
+                Trade trade = new Trade(resourceType, resourceAmount, price, currentUser, userReceiver, massage, Trade.countId);
+                Trade.countId ++;
+                Trade.getTrades().add(trade);
+                currentUser.getMyRequests().add(trade);
+                userReceiver.getMySuggestion().add(trade);
+                userReceiver.getNotification().add(0, trade);
+                return "The request was successfully registered";
+            }
+            else
+                return "Username with this ID was not found";
+        }
+        catch (Exception IllegalArgumentException){
+            return "This resource type does not exist";
+        }
+    }
+    public String showTradeList() {
+        String output = "your suggestions:";
+        for (Trade trade : currentUser.getMySuggestion()) {
+            output += "\nResource type: " + trade.getResourceType().name() + "resource amount: " + trade.getResourceAmount()
+                    + "price: " + trade.getPrice() + "from: " + trade.getUserSender().getUserName()
+                    + "id: " + trade.getId() + "massage: " + trade.getMassage();
+        }
+        currentUser.getNotification().clear();
+        return output;
+    }
+    public String tradeAccept(HashMap<String, String> options) {
+        for (String value : options.keySet()) {
+            if (options.get(value) == null)
+                return value + " option is not entered";
+        }
+        for (Trade trade : currentUser.getMySuggestion()) {
+            if (trade.getId() == Integer.parseInt(options.get("i"))) {/////////////
+             break;
+            }
+        }
+        return "This ID was not found for you";
+    }
+    public String showTradeHistory() {
+        String output = "your history:";
+        for (Trade trade : currentUser.getHistoryTrade()) {
+                output += "\nResource type: " + trade.getResourceType().name() + "resource amount: " + trade.getResourceAmount()
+                        + "price: " + trade.getPrice()+ "id: " + trade.getId() + "massage: " + trade.getMassage();
+            if (trade.getUserSender().equals(currentUser))
+                output += " ...Requested...";
+            else
+                output += " ...Accepted...";
+        }
+        return output;
+    }
+    public String showNotification() {
+        String output = "your new suggestions:";
+        for (Trade trade : currentUser.getNotification()) {
+            output += "\nnew suggestion form " + trade.getUserSender() + "massage: " + trade.getMassage();
+        }
+        return output;
     }
 }

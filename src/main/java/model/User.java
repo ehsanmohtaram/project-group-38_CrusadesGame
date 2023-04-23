@@ -19,7 +19,10 @@ public class User {
     private String slogan;
     private String nickName;
     private Integer score;
-    private ArrayList<Trade> myTrades = new ArrayList<>();
+    private ArrayList<Trade> myRequests = new ArrayList<>();
+    private ArrayList<Trade> mySuggestion = new ArrayList<>();
+    private ArrayList<Trade> notification = new ArrayList<>();
+    private ArrayList<Trade> historyTrade = new ArrayList<>();
     private ArrayList<Map> myMap = new ArrayList<>();
     private ArrayList<Kingdom> kingdom = new ArrayList<>();
     private Integer securityQuestionNumber;
@@ -50,6 +53,17 @@ public class User {
         this.userName = userName;
     }
 
+    public ArrayList<Trade> getMyRequests() {
+        return myRequests;
+    }
+
+    public ArrayList<Trade> getHistoryTrade() {
+        return historyTrade;
+    }
+
+    public ArrayList<Trade> getMySuggestion() {
+        return mySuggestion;
+    }
 
 
     public boolean checkPassword(String password) {
@@ -78,6 +92,10 @@ public class User {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    public ArrayList<Trade> getNotification() {
+        return notification;
     }
 
 

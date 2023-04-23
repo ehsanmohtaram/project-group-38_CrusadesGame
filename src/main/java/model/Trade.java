@@ -11,17 +11,19 @@ public class Trade {
     private Integer price;
     private Integer id;
     private String massage;
+    public static Integer countId = 1;
 
-    public Trade(ResourceType resourceType, Integer resourceAmount, Integer price, User userSender, User userReceiver, String massage) {
+    public Trade(ResourceType resourceType, Integer resourceAmount, Integer price, User userSender, User userReceiver, String massage , Integer id) {
         this.resourceType = resourceType;
         this.resourceAmount = resourceAmount;
         this.userSender = userSender;
         this.userReceiver = userReceiver;
         this.price = price;
         this.massage = massage;
+        this.id = id;
     }
 
-    public ArrayList<Trade> getTrades() {
+    public static ArrayList<Trade> getTrades() {
         return trades;
     }
 
@@ -53,7 +55,5 @@ public class Trade {
         return massage;
     }
 
-    public static void newTrade(Trade trade) {
 
-    }
 }

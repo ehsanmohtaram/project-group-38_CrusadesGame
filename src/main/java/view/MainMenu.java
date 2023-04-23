@@ -32,7 +32,9 @@ public class MainMenu {
             } else if ((options = commandParser.validate(input,"new map","x|width/y|height/n|name")) != null) {
                 controller.createNewMap(options);
                 return "selectMap";
-            }else if (commandParser.validate(input,"default map",null) != null) {
+            }else if (input.matches("\\s*trade\\s+menu\\s*")) {
+                return "trade";
+            } else if (commandParser.validate(input,"default map",null) != null) {
                 System.out.println(controller.showDefaultMaps());
                 System.out.println("please select one:(after selection you can still modify the map)");
                 while (true){
