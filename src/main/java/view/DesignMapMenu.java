@@ -2,19 +2,17 @@ package view;
 
 import controller.CommandParser;
 import controller.Controller;
-import controller.GameController;
 import controller.MapDesignController;
-import model.Map;
 
 import java.util.Scanner;
 import java.util.regex.Matcher;
 
-public class SelectMapMenu {
+public class DesignMapMenu {
     private Controller controller;
     private MapDesignController mapDesignController;
     private final CommandParser commandParser;
 
-    public SelectMapMenu(MapDesignController controller) {
+    public DesignMapMenu(MapDesignController controller) {
         this.mapDesignController = controller;
         commandParser = new CommandParser();
     }
