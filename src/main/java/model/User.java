@@ -10,6 +10,7 @@ public class User {
     public static ArrayList<User> users = new ArrayList<>();
     public static HashMap<User, Integer> loginDelays = new HashMap<>();
     public static HashMap<User, Boolean>  isDelayed= new HashMap<>();
+    public static HashMap<User, Long> whenDelayStarted = new HashMap<>();
     public final static ArrayList<String> questions = new ArrayList<>(Arrays.asList(
             "What is my father’s name?",
             "Was my first pet’s name?",
@@ -74,6 +75,16 @@ public class User {
     public static Boolean getStatueOfDelayOfUser(String userName) {
         User user = getUserByUsername(userName);
         return isDelayed.get(user);
+    }
+
+    public static void setStartOfDelay(String userName) {
+        User user = getUserByUsername(userName);
+        whenDelayStarted.put(user,System.currentTimeMillis());
+    }
+
+    public static Long getStartOfDelay(String userName) {
+        User user = getUserByUsername(userName);
+        return whenDelayStarted.get(user);
     }
 
 

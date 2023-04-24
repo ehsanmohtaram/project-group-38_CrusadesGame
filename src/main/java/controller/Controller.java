@@ -126,7 +126,8 @@ public class Controller {
             if (options.get(key) != null && !key.equals("s") && options.get(key).equals("")) return "Illegal value. Please fill the options!";
         if (User.getUserByUsername(options.get("u")) == null) return "Username and password did not match!";
         if (User.getStatueOfDelayOfUser(options.get("u")).equals(true))
-            return "You can not login for now. Please try again later.";
+            return "You can not login for now. Please try in " +
+                    (User.getTimeOfDelayOfUser(options.get("u")) - setDelay(options.get("u"))) + " seconds!";
         if (!User.getUserByUsername(options.get("u")).checkPassword(options.get("p"))) {
             setDelay(options.get("u"));
             return "Username and password did not match!";
@@ -137,16 +138,24 @@ public class Controller {
         return "login";
     }
 
-    public void setDelay(String username) {
-        User.setDelayForUser(username);
-        if (User.getTimeOfDelayOfUser(username) > 0) {
-            User.setDelayStatue(username);
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() { User.setDelayStatue(username); timer.cancel();}
-            }, User.getTimeOfDelayOfUser(username) * 1000L);
+    public Long setDelay(String username) {
+        if (User.getStatueOfDelayOfUser(username).equals(false)) {
+            User.setDelayForUser(username);
+            if (User.getTimeOfDelayOfUser(username) > 0) {
+                User.setStartOfDelay(username);
+                User.setDelayStatue(username);
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        User.setDelayStatue(username); timer.cancel();
+                    }
+                }, User.getTimeOfDelayOfUser(username) * 1000L);
+            }
         }
+        if (User.whenDelayStarted.containsKey(User.getUserByUsername(username)))
+            return (System.currentTimeMillis() - User.getStartOfDelay(username))/1000 ;
+        else return null;
     }
 
     public String forgetPassword(HashMap<String, String> options) {
