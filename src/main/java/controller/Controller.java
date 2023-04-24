@@ -22,7 +22,7 @@ public class Controller {
     private SignupMenu signupMenu;
     private UnitMenu unitMenu;
     private BuildingMenu buildingMenu;
-    public static User currentUser;
+    public static User currentUser = null;
     public static boolean stayLoggedIn = false;
     private Map gameMap;
 
@@ -37,11 +37,11 @@ public class Controller {
         this.mainMenu = new MainMenu(this);
         this.tradeMenu = new TradeMenu(this);
         User.users.addAll(Database.setArrayOfUsers());
+        for (User user : User.users) if (user.getLoggedIn()) currentUser = user;
     }
 
     public void run() {
-        if (loginMenu.run().equals("exit"))
-            return;
+        if (currentUser == null) if (loginMenu.run().equals("exit")) return;
         while (true) {
             switch (mainMenu.run()) {
                 case "trade":
@@ -65,30 +65,33 @@ public class Controller {
             }
         }
     }
+    public String passwordValidation(String password, String passwordConfirmation) {
+        if (!password.equals("random") && passwordConfirmation == null) {System.out.println("Please fill password confirmation!"); return null;}
+        if (!password.equals("random") &&
+                (password.length() < 6 || !password.matches(".*[a-z]+.*") ||
+                        !password.matches(".*[A-Z]+.*") || !password.matches(".*[0-9]+.*") ||
+                        !password.matches(".*\\W+.*"))) {System.out.println("Weak password. Please set a strong password!"); return null;}
+        if (!password.equals("random") && !password.equals(passwordConfirmation))
+        {System.out.println("Password confirmation did not match the password!"); return null;}
+        if (password.equals("random")) {
+            password = Randomize.randomPassword();
+            if (password == null) {System.out.println("Please try again with new password!"); return null;}
+        }
+        return password;
+    }
     public String createUser(HashMap<String, String> options) {
         String username = null; String password; String slogan;
         for (String key : options.keySet())
-            if (!key.equals("s") && !key.equals("P") && options.get(key) == null) {
-                System.out.println(key);return "Please input necessary options!";}
+            if (!key.equals("s") && !key.equals("P") && options.get(key) == null) {System.out.println(key); return "Please input necessary options!";}
         for (String key : options.keySet())
             if (options.get(key) != null && options.get(key).equals("")) return "Illegal value. Please fill the options!";
         if (options.get("u").matches(".*[^A-Za-z0-9_]+.*")) return "Incorrect format of username!";
-        if (!options.get("p").equals("random") && options.get("P") == null) return "Please fill password confirmation!";
-        if (!options.get("p").equals("random") &&
-                (options.get("p").length() < 6 || !options.get("p").matches(".*[a-z]+.*") ||
-                !options.get("p").matches(".*[A-Z]+.*") || !options.get("p").matches(".*[0-9]+.*") ||
-                !options.get("p").matches(".*\\W+.*"))) return "Weak password. Please set a strong password!";
         if (User.getUserByUsername(options.get("u")) != null) {
             System.out.println("Username already exists!");
             username = Randomize.randomUsername(options.get("u"));
             if (username == null) return "Please try again with new username!";
         }
-        if (!options.get("p").equals("random") && !options.get("p").equals(options.get("P")))
-            return "Password confirmation did not match the password!";
-        if (options.get("p").equals("random")) {
-            password = Randomize.randomPassword();
-            if (password == null) return "Please try again with new password!";
-        } else password = options.get("p");
+        if ((password = passwordValidation(options.get("p"), options.get("P"))) == null) return null;
         if (User.checkForEmailDuplication(options.get("e").toLowerCase())) return "Email already exists!";
         if (!options.get("e").matches("^[A-Za-z0-9_]+@[A-Za-z0-9_]+\\.[A-Za-z0-9_]+$")) return "Incorrect format of email!";
         if (username == null) username = options.get("u");
@@ -113,6 +116,7 @@ public class Controller {
         if (Integer.parseInt(optionPass.get("q")) < 1 ||
                 Integer.parseInt(optionPass.get("q")) > 3) return "Out of bound. Please choose a digit between 1 to 3.";
         if (!optionPass.get("c").equals(optionPass.get("a"))) return "Answer did not match with confirmation";
+        if (!Randomize.randomCaptcha().equals("done")) return "Captcha did not match with your input!";
         User.addUser(username,nikName,password,email,slogan,Integer.parseInt(optionPass.get("q")) - 1,optionPass.get("a"));
         return "User has been added successfully!";
     }
@@ -136,13 +140,30 @@ public class Controller {
             }
             return "Username and password did not match!";
         }
+        if (!Randomize.randomCaptcha().equals("done")) return "Captcha did not match with your input!";
         if (options.get("s") != null) User.getUserByUsername(options.get("u")).setLoggedIn(true);
         currentUser = User.getUserByUsername(options.get("u"));
         return "login";
     }
-    public String forgetPassword(Matcher matcher) {
-        return null;
+    public String forgetPassword(HashMap<String, String> options) {
+        if (options.get("u") == null) return "Please input necessary options!";
+        if (options.get("u").equals("")) return "Illegal value. Please fill the options!";
+        System.out.println("Please answer the following question : ");
+        System.out.print(User.questions.get(User.getUserByUsername(options.get("u")).getSecurityQuestionNumber()) + " ");
+        String confirm;
+        confirm = CommandParser.getScanner().nextLine();
+        if (!confirm.equals(User.getUserByUsername(options.get("u")).getAnswerToSecurityQuestion())) return "Your answer did not match!";
+        String inputCommand = CommandParser.getScanner().nextLine();
+        CommandParser commandParser = new CommandParser();
+        System.out.println("Set your new password like this : new password -p <password> <password confirmation>");
+        HashMap<String, String> optionPass = commandParser.validate(inputCommand, "new password","?p|password");
+        String password;
+        if ((password = passwordValidation(optionPass.get("p"),optionPass.get("P"))) == null) return "Password change failed!";
+        User.getUserByUsername(options.get("u")).setPassword(DigestUtils.sha256Hex(password));
+        return "Password changed successfully";
     }
+
+
     public String changeUsername(Matcher matcher) {
         return null;
     }

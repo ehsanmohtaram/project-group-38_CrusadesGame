@@ -12,7 +12,7 @@ public class User {
     public static HashMap<User, Boolean>  isDelayed= new HashMap<>();
     public final static ArrayList<String> questions = new ArrayList<>(Arrays.asList(
             "What is my father’s name?",
-            "was my first pet’s name?",
+            "Was my first pet’s name?",
             "What is my mother’s last name?"
     ));
     private String userName;
@@ -75,6 +75,7 @@ public class User {
         User user = getUserByUsername(userName);
         return isDelayed.get(user);
     }
+
 
     public String getUserName() {
         return userName;
@@ -151,13 +152,22 @@ public class User {
         this.slogan = slogan;
     }
 
+    public Boolean getLoggedIn() {
+        return isLoggedIn;
+    }
+
     public void setLoggedIn(Boolean loggedIn) {
         isLoggedIn = loggedIn;
     }
 
-    public void setAnswerForSecurityQuestion(Integer securityQuestionNumber, String answer) {
-
+    public Integer getSecurityQuestionNumber() {
+        return securityQuestionNumber;
     }
+
+    public String getAnswerToSecurityQuestion() {
+        return answerToSecurityQuestion;
+    }
+
     public boolean checkSecurityQuestionAnswer(String answer) {
         return true;
     }

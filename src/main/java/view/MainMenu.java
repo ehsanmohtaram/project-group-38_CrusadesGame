@@ -25,6 +25,8 @@ public class MainMenu {
             input = scanner.nextLine();
             if (commandParser.validate(input,"logout",null) != null) {
                 System.out.println("User logged out successfully!");
+                if (Controller.currentUser.getLoggedIn()) Controller.currentUser.setLoggedIn(false);
+                Controller.currentUser = null;
                 return "logout";
             } else if (commandParser.validate(input,"profile menu",null) != null) {
                 System.out.println("Entered profile menu!");

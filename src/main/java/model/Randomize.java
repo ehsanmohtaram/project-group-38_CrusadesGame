@@ -5,13 +5,46 @@ import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.PasswordGenerator;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Randomize {
-    public static String randomKapcha() {
-        return null;
+    public static String randomCaptcha() {
+        SecureRandom random = new SecureRandom();
+        StringBuilder putSpace = new StringBuilder();
+        String captcha;
+        int length = random.nextInt(4) + 4;
+        CharacterRule DR = new CharacterRule(EnglishCharacterData.Digit);
+        DR.setNumberOfCharacters(length);
+        PasswordGenerator passGen = new PasswordGenerator();
+        captcha = passGen.generatePassword(length, DR);
+        for (int i = 0; i < captcha.length(); i++) {
+            if (i > 0) putSpace.append(" ");
+            putSpace.append(captcha.charAt(i));
+        }
+        int width = 80; int height = 10;
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics generator = image.getGraphics();
+        generator.setFont(new Font("TimesRoman", Font.PLAIN, 8));
+        Graphics2D graphics = (Graphics2D) generator;
+        graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        graphics.drawString(putSpace.toString(), 0, 10);
+        for (int y = 0; y < height; y++) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int x = 0; x < width; x++)
+                stringBuilder.append(image.getRGB(x, y) == -16777216 ? " " : "0");
+            if (stringBuilder.toString().trim().isEmpty())
+                continue;
+            System.out.println(stringBuilder);
+        }
+        System.out.print("Please input the code in image : ");
+        String confirmation = CommandParser.getScanner().nextLine();
+        if (!captcha.equals(confirmation)) return "Captcha did not match with your input!";
+        System.out.println("Verified. You are a human!");
+        return "done";
     }
     public static String randomUsername(String username) {
         SecureRandom random = new SecureRandom();

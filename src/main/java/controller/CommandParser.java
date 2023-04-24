@@ -36,23 +36,28 @@ public class CommandParser{
                     commandParser.add(checkForQuotContent(inputCommand).get(counter));
             }
             for (int i = 0; i < commandParser.size(); i++) {
-                if (i < commandParser.size() - 1 &&
-                        optionParser(options.replaceAll("\\?","")).containsKey(commandParser.get(i).replaceAll("-", "")) &&
-                                optionParser(options.replaceAll("\\?","")).containsKey(commandParser.get(i+1).replaceAll("-", ""))) {
+                if (i < commandParser.size() - 1 && commandParser.get(i).matches("^-.*") && commandParser.get(i + 1).matches("^-.*") &&
+                        (optionParser(options.replaceAll("\\?","")).containsKey(commandParser.get(i).replaceAll("-", "")) ||
+                                optionParser(options.replaceAll("\\?","")).containsValue(commandParser.get(i).replaceAll("^--", ""))) &&
+                        (optionParser(options.replaceAll("\\?","")).containsKey(commandParser.get(i+1).replaceAll("-", "")) ||
+                                optionParser(options.replaceAll("\\?","")).containsValue(commandParser.get(i+1).replaceAll("^--", "")))) {
                     commandParser.add(i + 1, "");
                 }
-                if ((i == commandParser.size() - 1) && optionParser(options.replaceAll("\\?","")).containsKey(commandParser.get(i).replaceAll("-", ""))) {
+                if ((i == commandParser.size() - 1) && commandParser.get(i).matches("^-.*") &&
+                        (optionParser(options.replaceAll("\\?","")).containsKey(commandParser.get(i).replaceAll("-", "")) ||
+                        optionParser(options.replaceAll("\\?","")).containsValue(commandParser.get(i).replaceAll("^--", "")))) {
                     commandParser.add("");
                 }
             }
             if (towFactorDetector(options).size() != 0) {
                 for (String key : towFactorDetector(options).keySet())
                     for (int i = 0; i < commandParser.size(); i++)
-                        if (key.equals(commandParser.get(i).replaceAll("-", "")) && i < commandParser.size() - 2)
+                        if (key.equals(commandParser.get(i).replaceAll("-", "")) &&
+                                commandParser.get(i).matches("^-.*") && i < commandParser.size() - 2)
                             if (!optionParser(options).containsKey(commandParser.get(i + 1).replaceAll("-", "")) &&
                                     !optionParser(options).containsKey(commandParser.get(i + 2).replaceAll("-", "")) &&
-                                    !optionParser(options).containsValue(commandParser.get(i + 1).replaceAll("-", "")) &&
-                                    !optionParser(options).containsValue(commandParser.get(i + 2).replaceAll("-", ""))) {
+                                    !optionParser(options).containsValue(commandParser.get(i + 1).replaceAll("^--", "")) &&
+                                    !optionParser(options).containsValue(commandParser.get(i + 2).replaceAll("^--", ""))) {
                                 valueSetter.put(key.toUpperCase(), commandParser.get(i + 2)); commandParser.remove(i + 2);
                             }
             }
