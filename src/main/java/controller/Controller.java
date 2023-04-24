@@ -1,14 +1,13 @@
 package controller;
 
 import model.Database;
+import model.Map;
 import model.User;
 import model.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import view.*;
 
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.regex.Matcher;
 
 public class Controller {
@@ -29,7 +28,6 @@ public class Controller {
         this.loginMenu = new LoginMenu(this);
         this.profileMenu = new ProfileMenu(this);
         this.shopMenu = new ShopMenu(this);
-        this.signupMenu = new SignupMenu(this);
         this.unitMenu = new UnitMenu(this);
         this.buildingMenu = new BuildingMenu(this);
         this.mainMenu = new MainMenu(this);
@@ -63,6 +61,7 @@ public class Controller {
             }
         }
     }
+
     public String passwordValidation(String password, String passwordConfirmation) {
         if (!password.equals("random") && passwordConfirmation == null) {System.out.println("Please fill password confirmation!"); return null;}
         if (!password.equals("random") &&
@@ -77,6 +76,7 @@ public class Controller {
         }
         return password;
     }
+
     public String createUser(HashMap<String, String> options) {
         String username = null; String password; String slogan;
         for (String key : options.keySet())
@@ -98,6 +98,7 @@ public class Controller {
         password = DigestUtils.sha256Hex(password);
         return securityQuestion(username,password,options.get("n"),options.get("e"),slogan);
     }
+
     private String securityQuestion(String username, String password, String nikName, String email, String slogan) {
         System.out.println("Pick your security question: ");
         for (int i = 0; i < 3 ;i++) System.out.println((i + 1) + ". " + User.questions.get(i));
@@ -127,15 +128,7 @@ public class Controller {
         if (User.getStatueOfDelayOfUser(options.get("u")).equals(true))
             return "You can not login for now. Please try again later.";
         if (!User.getUserByUsername(options.get("u")).checkPassword(options.get("p"))) {
-            User.setDelayForUser(options.get("u"));
-            if (User.getTimeOfDelayOfUser(options.get("u")) > 0) {
-                User.setDelayStatue(options.get("u"));
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() { User.setDelayStatue(options.get("u")); timer.cancel();}
-                }, User.getTimeOfDelayOfUser(options.get("u")) * 1000L);
-            }
+            setDelay(options.get("u"));
             return "Username and password did not match!";
         }
         if (!Randomize.randomCaptcha().equals("done")) return "Captcha did not match with your input!";
@@ -143,6 +136,19 @@ public class Controller {
         currentUser = User.getUserByUsername(options.get("u"));
         return "login";
     }
+
+    public void setDelay(String username) {
+        User.setDelayForUser(username);
+        if (User.getTimeOfDelayOfUser(username) > 0) {
+            User.setDelayStatue(username);
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() { User.setDelayStatue(username); timer.cancel();}
+            }, User.getTimeOfDelayOfUser(username) * 1000L);
+        }
+    }
+
     public String forgetPassword(HashMap<String, String> options) {
         if (options.get("u") == null) return "Please input necessary options!";
         if (options.get("u").equals("")) return "Illegal value. Please fill the options!";
@@ -161,34 +167,80 @@ public class Controller {
         return "Password changed successfully";
     }
 
+    public String profileChange(HashMap<String, String> options) {
+        String username = null;
+        int counter = 0;
+        for (String key : options.keySet()) if (options.get(key) != null) counter++;
+        if (counter > 1 || counter == 0) return "Please input only one option!";
+        for (String key : options.keySet()) if (options.get(key) != null && options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        if (options.get("u") != null && options.get("u").matches(".*[^A-Za-z0-9_]+.*")) return "Incorrect format of username!";
+        if (options.get("u") != null && User.getUserByUsername(options.get("u")) != null) {
+            System.out.println("Username already exists!");
+            username = Randomize.randomUsername(options.get("u"));
+            if (username == null) return "Please try again with new username!";
+        }
+        if (options.get("u") != null && username == null) username = options.get("u");
+        if (options.get("e") != null && User.checkForEmailDuplication(options.get("e").toLowerCase())) return "Email already exists!";
+        if (options.get("e") != null && !options.get("e").matches("^[A-Za-z0-9_]+@[A-Za-z0-9_]+\\.[A-Za-z0-9_]+$")) return "Incorrect format of email!";
+        if (options.get("u") != null) {currentUser.setUserName(username); return "Username changed successfully!";}
+        if (options.get("e") != null) {currentUser.setEmail(options.get("e")); return "Email changed successfully!";}
+        if (options.get("n") != null) {currentUser.setNickName(options.get("n")); return "Nickname changed successfully!";}
+        if (options.get("s") != null) {currentUser.setSlogan(options.get("s")); return "Slogan changed successfully!";}
+        return "Profile menu updated";
+    }
 
-    public String changeUsername(Matcher matcher) {
-        return null;
+    public String changePassword(HashMap<String, String> options) {
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        if (!currentUser.checkPassword(options.get("o"))) return "Incorrect password! Please input your current password again!";
+        String password = options.get("n");
+        if (password.equals(options.get("o"))) return "Please enter a new password!";
+        if (password.length() < 6 || !password.matches(".*[a-z]+.*") ||
+                        !password.matches(".*[A-Z]+.*") || !password.matches(".*[0-9]+.*") ||
+                        !password.matches(".*\\W+.*")) return "Weak password. Please set a strong password!";
+        System.out.print("Please enter your new password again : ");
+        String confirm = CommandParser.getScanner().nextLine();
+        if (!confirm.equals(password)) return "Password confirmation did not match the password!";
+        if (!Randomize.randomCaptcha().equals("done")) return "Captcha did not match with your input!";
+        currentUser.setPassword(DigestUtils.sha256Hex(password));
+        return "Password changed successfully!";
     }
-    public String changeNickname(Matcher matcher) {
-        return null;
+
+    public String removeSlogan() {
+        if (currentUser.getSlogan().equals("")) return "Your slogan filed is already empty!";
+        else {currentUser.setSlogan(""); return "Slogan removed successfully!";}
     }
-    public String changeEmail(Matcher matcher) {
-        return null;
+
+    public List<User> calculateRank() {
+        List<User> sortUser = new ArrayList<>(User.users);
+        sortUser.sort((u1, u2) -> {
+            if (u1.getScore().compareTo(u2.getScore()) == 0)
+                return u1.getUserName().compareTo(u2.getUserName());
+            return u1.getScore().compareTo(u2.getScore());
+        });
+        return sortUser;
     }
-    public String changeSlogan(Matcher matcher) {
-        return null;
+
+    public String displayInfoSeparately(Boolean highScore, Boolean rank, Boolean slogan) {
+        if (highScore) return "Your highest score in game is : " + currentUser.getScore();
+        if (slogan) {
+            if (currentUser.getSlogan().equals("")) return "Slogan is empty!";
+            else return "Your slogan is : " + currentUser.getSlogan();
+        }
+        if (rank) return "Your rank is : " + (calculateRank().indexOf(currentUser) + 1);
+        return "Info Displayed";
+
     }
-    public String changePassword(Matcher matcher) {
-        return null;
+
+    public String displayAllInfo() {
+        return "Username : " + currentUser.getUserName() +
+                "\nNickName : " + currentUser.getNickName() +
+                "\nEmail : " + currentUser.getEmail() +
+                "\nSlogan : " + currentUser.getSlogan() +
+                "\nHighest Score : " + currentUser.getScore() +
+                "\nRank : " + (calculateRank().indexOf(currentUser) + 1);
     }
-    public String displayHighScore() {
-       return null;
-    }
-    public String displayRank() {
-        return null;
-    }
-    public String displaySlogan() {
-        return null;
-    }
-    public String displayInfo() {
-        return null;
-    }
+
     public String showDefaultMaps(){
         String result = "";
         for (Map defaults: Map.DEFAULT_MAPS) {
