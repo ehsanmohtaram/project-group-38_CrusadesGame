@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Map implements Cloneable {
     public static ArrayList<Map> Maps = new ArrayList<>();
     public static ArrayList<Map> DEFAULT_MAPS = new ArrayList<>(3);
+    private ArrayList<Kingdom> players;
     private String mapName;
     private MapBlock[][] map;
     private Boolean[][] access;
@@ -56,6 +57,18 @@ public class Map implements Cloneable {
 
     public int getMapHeight() {
         return mapHeight;
+    }
+
+    public void addPlayer(Kingdom kingdom){
+        players.add(kingdom);
+    }
+
+    public Kingdom getKingdomByOwner(User owner){
+        for (Kingdom find: players) {
+            if(find.getOwner().equals(owner))
+                return find;
+        }
+        return null;
     }
 
     public static Map getDefaultMap(int index) throws CloneNotSupportedException {

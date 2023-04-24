@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Kingdom {
+    private User owner;
     private Integer population;
     private Integer noneEmployed;
     private Integer fearRate;
@@ -19,12 +20,17 @@ public class Kingdom {
     private Integer foodRate;
     private Integer taxRate;
     private Flags flag;
-    public Kingdom(Flags flag , Building headquarter) {
+    public Kingdom(Flags flag , Building headquarter, User owner) {
         population = 5;
         popularity = 0;
         foodRate = -2;
         this.flag = flag;
         this.headquarter = headquarter;
+        this.owner = owner;
+    }
+
+    public User getOwner() {
+        return owner;
     }
 
     public Integer getPopulation() {

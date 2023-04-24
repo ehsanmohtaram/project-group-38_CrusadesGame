@@ -20,13 +20,9 @@ public class MapDesignController {
     }
 
     public void run(){
-        switch (designMapMenu.run()){
-            case "start":
-                GameController gameController = new GameController(gameMap);
-                gameController.run();
-                break;
-            case "back":
-                return;
+        if(designMapMenu.run().equals("start")){
+            GameController gameController = new GameController(gameMap);
+            gameController.run();
         }
     }
 

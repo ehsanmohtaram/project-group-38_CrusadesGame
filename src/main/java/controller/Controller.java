@@ -12,7 +12,6 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 
 public class Controller {
-    private GameMenu gameMenu;
     private LoginMenu loginMenu;
     private ProfileMenu profileMenu;
     private ShopMenu shopMenu;
@@ -27,7 +26,6 @@ public class Controller {
     private Map gameMap;
 
     public Controller() {
-        this.gameMenu = new GameMenu(this);
         this.loginMenu = new LoginMenu(this);
         this.profileMenu = new ProfileMenu(this);
         this.shopMenu = new ShopMenu(this);
