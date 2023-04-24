@@ -4,9 +4,12 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class User {
     public static ArrayList<User> users = new ArrayList<>();
+    public static HashMap<User, Integer> loginDelays = new HashMap<>();
+    public static HashMap<User, Boolean>  isDelayed= new HashMap<>();
     public final static ArrayList<String> questions = new ArrayList<>(Arrays.asList(
             "What is my father’s name?",
             "was my first pet’s name?",
@@ -17,6 +20,7 @@ public class User {
     private String email;
     private String slogan;
     private String nickName;
+    private Boolean isLoggedIn;
     private Integer score;
     private ArrayList<Trade> myRequests = new ArrayList<>();
     private ArrayList<Trade> mySuggestion = new ArrayList<>();
@@ -35,8 +39,11 @@ public class User {
         this.slogan = slogan;
         this.securityQuestionNumber = securityQuestionNumber;
         this.answerToSecurityQuestion = answerToSecurityQuestion;
+        isLoggedIn = false;
         score = 0;
         users.add(this);
+        loginDelays.put(this,-15);
+        isDelayed.put(this,false);
     }
 
     public static void addUser(String username, String nickname,String password, String email, String slogan, Integer securityQuestionNumber, String answerToSecurityQuestion) {
@@ -46,6 +53,27 @@ public class User {
     public static User getUserByUsername (String userName) {
         for (User user : users) if (user.getUserName().equals(userName)) return user;
         return null;
+    }
+
+    public static void setDelayForUser(String userName) {
+        User user = getUserByUsername(userName);
+        if (loginDelays.containsKey(user)) loginDelays.put(user,loginDelays.get(user) + 5);
+    }
+
+    public static Integer getTimeOfDelayOfUser(String userName) {
+        User user = getUserByUsername(userName);
+        return loginDelays.get(user);
+    }
+
+    public static void setDelayStatue(String userName) {
+        User user = getUserByUsername(userName);
+        if (isDelayed.get(user).equals(false)) isDelayed.put(user,true);
+        else isDelayed.put(user,false);
+    }
+
+    public static Boolean getStatueOfDelayOfUser(String userName) {
+        User user = getUserByUsername(userName);
+        return isDelayed.get(user);
     }
 
     public String getUserName() {
@@ -121,6 +149,10 @@ public class User {
 
     public void setSlogan(String slogan) {
         this.slogan = slogan;
+    }
+
+    public void setLoggedIn(Boolean loggedIn) {
+        isLoggedIn = loggedIn;
     }
 
     public void setAnswerForSecurityQuestion(Integer securityQuestionNumber, String answer) {

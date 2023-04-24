@@ -6,9 +6,9 @@ import model.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import view.*;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Matcher;
 
 public class Controller {
@@ -68,7 +68,8 @@ public class Controller {
     public String createUser(HashMap<String, String> options) {
         String username = null; String password; String slogan;
         for (String key : options.keySet())
-            if (!key.equals("s") && options.get(key) == null) return "Please input necessary options!";
+            if (!key.equals("s") && !key.equals("P") && options.get(key) == null) {
+                System.out.println(key);return "Please input necessary options!";}
         for (String key : options.keySet())
             if (options.get(key) != null && options.get(key).equals("")) return "Illegal value. Please fill the options!";
         if (options.get("u").matches(".*[^A-Za-z0-9_]+.*")) return "Incorrect format of username!";
@@ -112,11 +113,32 @@ public class Controller {
         if (Integer.parseInt(optionPass.get("q")) < 1 ||
                 Integer.parseInt(optionPass.get("q")) > 3) return "Out of bound. Please choose a digit between 1 to 3.";
         if (!optionPass.get("c").equals(optionPass.get("a"))) return "Answer did not match with confirmation";
-        User.addUser(username,password,nikName,email,slogan,Integer.parseInt(optionPass.get("q")) - 1,optionPass.get("a"));
+        User.addUser(username,nikName,password,email,slogan,Integer.parseInt(optionPass.get("q")) - 1,optionPass.get("a"));
         return "User has been added successfully!";
     }
-    public String login(Matcher matcher) {
-        return null;
+    public String login(HashMap<String, String> options) {
+        for (String key : options.keySet())
+            if (!key.equals("s") && options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet())
+            if (options.get(key) != null && !key.equals("s") && options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        if (User.getUserByUsername(options.get("u")) == null) return "Username and password did not match!";
+        if (User.getStatueOfDelayOfUser(options.get("u")).equals(true))
+            return "You can not login for now. Please try again later.";
+        if (!User.getUserByUsername(options.get("u")).checkPassword(options.get("p"))) {
+            User.setDelayForUser(options.get("u"));
+            if (User.getTimeOfDelayOfUser(options.get("u")) > 0) {
+                User.setDelayStatue(options.get("u"));
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() { User.setDelayStatue(options.get("u")); timer.cancel();}
+                }, User.getTimeOfDelayOfUser(options.get("u")) * 1000L);
+            }
+            return "Username and password did not match!";
+        }
+        if (options.get("s") != null) User.getUserByUsername(options.get("u")).setLoggedIn(true);
+        currentUser = User.getUserByUsername(options.get("u"));
+        return "login";
     }
     public String forgetPassword(Matcher matcher) {
         return null;

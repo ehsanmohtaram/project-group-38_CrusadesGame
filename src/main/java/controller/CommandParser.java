@@ -20,8 +20,9 @@ public class CommandParser{
         if (mainCommandChecker(inputCommand, mainCommand, options) == null)  return null;
         inputCommand = mainCommandChecker(inputCommand, mainCommand, options);
         if (options != null) {
-            for (String key : optionParser(options.replaceAll("\\?","")).keySet())
-                optionsParserSave.add(parser.addStringOption(key.charAt(0), optionParser(options.replaceAll("\\?","")).get(key)));
+            for (String key : optionParser(options.replaceAll("\\?","")).keySet()) {
+                optionsParserSave.add(parser.addStringOption(key.charAt(0), optionParser(options.replaceAll("\\?", "")).get(key)));
+            }
             Matcher matcher = Pattern.compile("\\S+").matcher(inputCommand);
             int counter = 0;
             while (matcher.find()) {
@@ -36,9 +37,13 @@ public class CommandParser{
             }
             for (int i = 0; i < commandParser.size(); i++) {
                 if (i < commandParser.size() - 1 &&
-                        optionParser(options).containsKey(commandParser.get(i).replaceAll("-", "")) &&
-                                optionParser(options).containsKey(commandParser.get(i+1).replaceAll("-", "")))
-                    commandParser.add(i+1,"");
+                        optionParser(options.replaceAll("\\?","")).containsKey(commandParser.get(i).replaceAll("-", "")) &&
+                                optionParser(options.replaceAll("\\?","")).containsKey(commandParser.get(i+1).replaceAll("-", ""))) {
+                    commandParser.add(i + 1, "");
+                }
+                if ((i == commandParser.size() - 1) && optionParser(options.replaceAll("\\?","")).containsKey(commandParser.get(i).replaceAll("-", ""))) {
+                    commandParser.add("");
+                }
             }
             if (towFactorDetector(options).size() != 0) {
                 for (String key : towFactorDetector(options).keySet())
@@ -48,17 +53,18 @@ public class CommandParser{
                                     !optionParser(options).containsKey(commandParser.get(i + 2).replaceAll("-", "")) &&
                                     !optionParser(options).containsValue(commandParser.get(i + 1).replaceAll("-", "")) &&
                                     !optionParser(options).containsValue(commandParser.get(i + 2).replaceAll("-", ""))) {
-                                valueSetter.put(key.toUpperCase(), commandParser.get(i + 2)); commandParser.remove(i+2);
+                                valueSetter.put(key.toUpperCase(), commandParser.get(i + 2)); commandParser.remove(i + 2);
                             }
             }
             String[] splitText = new String[commandParser.size()];
             splitText = commandParser.toArray(splitText);
             try { parser.parse(splitText);}
             catch (CmdLineParser.OptionException check) {
-                System.out.println(check.getMessage());
                 if (check.getMessage().matches("^Unknown option.*") || check.getMessage().matches("^Illegal option.*")) return null;
             }
-            try {if (parser.getRemainingArgs().length != 0 && !parser.getRemainingArgs()[0].equals(""))  return null;}
+            try {
+                if (parser.getRemainingArgs().length != 0 && !parser.getRemainingArgs()[0].matches("\\s*"))  return null;
+            }
             catch (NullPointerException ignored) {}
             counter = 0;
             options = options.replaceAll("\\?","");

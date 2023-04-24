@@ -37,6 +37,10 @@ public class Database {
             for (Object jsonValue : jsonToArray) users.add(gson.fromJson(jsonValue.toString(),User.class));
         }
         catch (Exception ignored) {}
+        for (User user : users) {
+            User.isDelayed.put(user,false);
+            User.loginDelays.put(user,-15);
+        }
         return users;
     }
 

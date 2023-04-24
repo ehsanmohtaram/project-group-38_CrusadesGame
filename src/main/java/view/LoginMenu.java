@@ -17,12 +17,18 @@ public class LoginMenu {
     }
     public String run() {
         HashMap<String, String> optionPass;
-        String command;
+        String command ,result;
         while (true) {
             command = CommandParser.getScanner().nextLine();
             if (commandParser.validate(command,"exit",null) != null) return "exit";
-            if ((optionPass = commandParser.validate(command,"user create","u|username/?p|password/n|nickname/e|email/s|slogan")) != null)
+            if (commandParser.validate(command,"show current menu",null) != null) System.out.println("Login Menu");
+            else if ((optionPass = commandParser.validate(command,"user create","u|username/?p|password/n|nickname/e|email/s|slogan")) != null)
                 System.out.println(controller.createUser(optionPass));
+            else if ((optionPass = commandParser.validate(command,"user login","u|username/p|password/s|stay-logged-in")) != null) {
+                result = controller.login(optionPass);
+                if (result.equals("login")) {System.out.println("User successfully logged in."); return "login";}
+                else System.out.println(result);
+            }
             else System.out.println("Invalid command!");
         }
     }
