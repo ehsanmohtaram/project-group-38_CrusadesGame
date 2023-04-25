@@ -3,14 +3,12 @@ package view;
 import controller.CommandParser;
 import controller.Controller;
 import controller.MapDesignController;
-
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.regex.Matcher;
 
 public class DesignMapMenu {
     private Controller controller;
-    private MapDesignController mapDesignController;
+    private final MapDesignController mapDesignController;
     private final CommandParser commandParser;
 
     public DesignMapMenu(MapDesignController controller) {
@@ -19,11 +17,10 @@ public class DesignMapMenu {
     }
 
     public String run(){
-        System.out.println("here you can design your map. when your map is ready type \'start\'");
+        System.out.println("here you can design your map. when your map is ready type 'start'");
         Scanner scanner = CommandParser.getScanner();
         HashMap<String , String > options;
         String input;
-        Matcher matcher;
         while (true) {
             input = scanner.nextLine();
             if ((options = commandParser.validate(input,"set texture",

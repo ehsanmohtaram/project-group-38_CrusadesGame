@@ -5,10 +5,9 @@ import controller.Controller;
 
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.regex.Matcher;
 
 public class MainMenu {
-    private Controller controller;
+    private final Controller controller;
     private final CommandParser commandParser;
 
     public MainMenu(Controller controller) {
@@ -20,7 +19,6 @@ public class MainMenu {
         Scanner scanner = CommandParser.getScanner();
         HashMap<String , String> options;
         String input;
-        Matcher matcher;
         while (true) {
             input = scanner.nextLine();
             if (commandParser.validate(input,"logout",null) != null) {
