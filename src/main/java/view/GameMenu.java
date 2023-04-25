@@ -16,7 +16,7 @@ public class GameMenu {
         this.gameController = gameController;
         commandParser = new CommandParser();
     }
-    public void run() {
+    public String run() {
         System.out.println("the game has been started! now you can play");
         Scanner scanner = CommandParser.getScanner();
         HashMap<String , String > options;
@@ -25,8 +25,7 @@ public class GameMenu {
             input = scanner.nextLine();
             if (commandParser.validate(input,"next turn", null) != null){
                 System.out.println(gameController.nextTurn());
-            }else if(input.equals("start"))
-                return;
+            }
             else
                 System.out.println("invalid command");
         }

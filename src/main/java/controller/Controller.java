@@ -13,13 +13,12 @@ import java.util.regex.Matcher;
 public class Controller {
     private LoginMenu loginMenu;
     private ProfileMenu profileMenu;
-    private ShopMenu shopMenu;
+
     private MainMenu mainMenu;
-    private TradeMenu tradeMenu;
+
     private DesignMapMenu designMapMenu;
     private SignupMenu signupMenu;
-    private UnitMenu unitMenu;
-    private BuildingMenu buildingMenu;
+
     public static User currentUser = null;
     public static boolean stayLoggedIn = false;
     private Map gameMap;
@@ -27,11 +26,7 @@ public class Controller {
     public Controller() {
         this.loginMenu = new LoginMenu(this);
         this.profileMenu = new ProfileMenu(this);
-        this.shopMenu = new ShopMenu(this);
-        this.unitMenu = new UnitMenu(this);
-        this.buildingMenu = new BuildingMenu(this);
         this.mainMenu = new MainMenu(this);
-        this.tradeMenu = new TradeMenu(this);
         User.users.addAll(Database.setArrayOfUsers());
         for (User user : User.users) if (user.getLoggedIn()) currentUser = user;
     }
@@ -40,12 +35,6 @@ public class Controller {
         if (currentUser == null) if (loginMenu.run().equals("exit")) return;
         while (true) {
             switch (mainMenu.run()) {
-                case "trade":
-                    showNotification();
-                    tradeMenu.run();
-                case "shop":
-                    shopMenu.run();
-                    break;
                 case "selectMap":
 //                  currentUser.addToMyMap();
                     MapDesignController mapDesignController = new MapDesignController(gameMap);
@@ -98,7 +87,6 @@ public class Controller {
         password = DigestUtils.sha256Hex(password);
         return securityQuestion(username,password,options.get("n"),options.get("e"),slogan);
     }
-
     private String securityQuestion(String username, String password, String nikName, String email, String slogan) {
         System.out.println("Pick your security question: ");
         for (int i = 0; i < 3 ;i++) System.out.println((i + 1) + ". " + User.questions.get(i));
@@ -390,73 +378,5 @@ public class Controller {
     }
     public String sell(Matcher matcher) {
         return null;
-    }
-    public String newRequest(HashMap<String, String> options) {
-        User userReceiver;
-        for (String value : options.keySet()) {
-            if (options.get(value) == null)
-                return value + " option is not entered";
-        }
-        try {
-            ResourceType resourceType = ResourceType.valueOf(options.get("t").toUpperCase());
-            if ((userReceiver = User.getUserByUsername(options.get("u"))) != null) {
-                int resourceAmount = Integer.parseInt(options.get("a"));
-                int price = Integer.parseInt(options.get("p"));
-                String massage = options.get("m");
-                Trade trade = new Trade(resourceType, resourceAmount, price, currentUser, userReceiver, massage, Trade.countId);
-                Trade.countId ++;
-                Trade.getTrades().add(trade);
-                currentUser.getMyRequests().add(trade);
-                userReceiver.getMySuggestion().add(trade);
-                userReceiver.getNotification().add(0, trade);
-                return "The request was successfully registered";
-            }
-            else
-                return "Username with this ID was not found";
-        }
-        catch (Exception IllegalArgumentException){
-            return "This resource type does not exist";
-        }
-    }
-    public String showTradeList() {
-        String output = "your suggestions:";
-        for (Trade trade : currentUser.getMySuggestion()) {
-            output += "\nResource type: " + trade.getResourceType().name() + "resource amount: " + trade.getResourceAmount()
-                    + "price: " + trade.getPrice() + "from: " + trade.getUserSender().getUserName()
-                    + "id: " + trade.getId() + "massage: " + trade.getMassage();
-        }
-        currentUser.getNotification().clear();
-        return output;
-    }
-    public String tradeAccept(HashMap<String, String> options) {
-        for (String value : options.keySet()) {
-            if (options.get(value) == null)
-                return value + " option is not entered";
-        }
-        for (Trade trade : currentUser.getMySuggestion()) {
-            if (trade.getId() == Integer.parseInt(options.get("i"))) {/////////////
-             break;
-            }
-        }
-        return "This ID was not found for you";
-    }
-    public String showTradeHistory() {
-        String output = "your history:";
-        for (Trade trade : currentUser.getHistoryTrade()) {
-                output += "\nResource type: " + trade.getResourceType().name() + "resource amount: " + trade.getResourceAmount()
-                        + "price: " + trade.getPrice()+ "id: " + trade.getId() + "massage: " + trade.getMassage();
-            if (trade.getUserSender().equals(currentUser))
-                output += " ...Requested...";
-            else
-                output += " ...Accepted...";
-        }
-        return output;
-    }
-    public String showNotification() {
-        String output = "your new suggestions:";
-        for (Trade trade : currentUser.getNotification()) {
-            output += "\nnew suggestion form " + trade.getUserSender() + "massage: " + trade.getMassage();
-        }
-        return output;
     }
 }

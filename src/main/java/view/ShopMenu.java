@@ -1,10 +1,11 @@
 package view;
 
 import controller.Controller;
+import controller.GameController;
 
 public class ShopMenu {
-    private Controller controller;
-    public ShopMenu (Controller controller) {
+    private GameController controller;
+    public ShopMenu (GameController controller) {
         this.controller = controller;
 
     }

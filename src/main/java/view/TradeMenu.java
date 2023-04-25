@@ -2,14 +2,15 @@ package view;
 
 import controller.CommandParser;
 import controller.Controller;
+import controller.GameController;
 import model.User;
 
 import java.util.HashMap;
 
 public class TradeMenu {
-    private Controller controller;
+    private GameController controller;
     private CommandParser commandParser = new CommandParser();
-    public TradeMenu (Controller controller){
+    public TradeMenu (GameController controller){
         this.controller = controller;
     }
     public void run() {
