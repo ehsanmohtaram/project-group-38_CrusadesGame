@@ -34,6 +34,5 @@ public class TradeMenu {
             else
                 System.out.println("Invalid Command");
         }
-
     }
 }

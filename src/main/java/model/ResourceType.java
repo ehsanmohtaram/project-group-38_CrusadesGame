@@ -8,4 +8,8 @@ public enum ResourceType {
     ResourceType(int price) {
         this.price = price;
     }
+
+    public int getPrice() {
+        return price;
+    }
 }

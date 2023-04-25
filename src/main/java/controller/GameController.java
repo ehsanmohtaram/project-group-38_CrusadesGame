@@ -1,9 +1,6 @@
 package controller;
 
-import model.Map;
-import model.ResourceType;
-import model.Trade;
-import model.User;
+import model.*;
 import view.*;
 
 import java.util.HashMap;
@@ -31,18 +28,18 @@ public class GameController {
         switch (gameMenu.run()){
             case "map":
                 break;
-        case "trade":
-            showNotification();
-            tradeMenu.run();
-        case "shop":
-            shopMenu.run();
-            break;
-        case "building":
-            buildingMenu.run();
-            break;
-        case "unit":
-            unitMenu.run();
-            break;
+            case "trade":
+                showNotification();
+                tradeMenu.run();
+            case "shop":
+                shopMenu.run();
+                break;
+            case "building":
+                buildingMenu.run();
+                break;
+            case "unit":
+                unitMenu.run();
+                break;
         }
     }
 
@@ -117,6 +114,83 @@ public class GameController {
             output += "\nnew suggestion form " + trade.getUserSender() + "massage: " + trade.getMassage();
         }
         return output;
+    }
+    public String showPriceList() {
+        String output = "Resource Types:";
+        for (ResourceType value : ResourceType.values()) {
+            int balance = gameMap.getKingdomByOwner(currentUser).getResources().get(value);
+            output += "\nname: " + value.name().toLowerCase() + " buyPrice: " + value.getPrice() +
+                    " sellPrice: " + value.getPrice()*(0.8) + " balance: " + balance;
+        }
+        output += "\nfoods:";
+        for (Food value : Food.values()) {
+            int balance = gameMap.getKingdomByOwner(currentUser).getFoods().get(value);
+            output += "\nname: " + value.name().toLowerCase() + " buyPrice: " + value.getPrice() +
+                    " sellPrice: " + value.getPrice()*(0.8) + " balance: " + balance;
+        }
+        return output;
+    }
+
+    public String buyFromShop(HashMap<String, String> options) {
+        Kingdom kingdom = gameMap.getKingdomByOwner(currentUser);
+        int amount = Integer.parseInt(options.get("a"));
+        try {
+            ResourceType resourceType = ResourceType.valueOf(options.get("i").toUpperCase());
+            if (amount * resourceType.getPrice() < kingdom.getBalance()) {
+                int resourceBalance = kingdom.getResources().get(resourceType);
+                kingdom.getResources().put(resourceType, resourceBalance + amount);
+                double cost = amount * resourceType.getPrice();
+                kingdom.setBalance(kingdom.getBalance() - cost);
+                return "The purchase was successful";
+            } else
+                return "Your balance is not enough";
+        }  catch (IllegalArgumentException illegalArgumentException){
+            try {
+                Food food = Food.valueOf(options.get("i").toUpperCase());
+                if (amount * food.getPrice() < kingdom.getBalance()) {
+                    int balance = kingdom.getFoods().get(food);
+                    kingdom.getFoods().put(food, balance + amount);
+                    int cost = amount * food.getPrice();
+                    kingdom.setBalance(kingdom.getBalance() - cost);
+                    return "The purchase was successful";
+                } else
+                    return "Your balance is not enough";
+            } catch (IllegalArgumentException illegalArgumentException1){
+                return "There are no imported resources or food";
+            }
+
+        }
+    }
+
+    public String sellFromShop(HashMap<String, String> options) {
+        Kingdom kingdom = gameMap.getKingdomByOwner(currentUser);
+        int amount = Integer.parseInt(options.get("a"));
+        try {
+            ResourceType resourceType = ResourceType.valueOf(options.get("i").toUpperCase());
+            int resourceBalance = kingdom.getResources().get(resourceType);
+            if (resourceBalance >= amount) {
+                double benefit = amount * resourceType.getPrice() * 0.8;
+                kingdom.setBalance(kingdom.getBalance() + benefit);
+                kingdom.getResources().put(resourceType, resourceBalance - amount);
+                return "The sell was successful";
+            } else
+                return "Your balance is not enough";
+
+        } catch (IllegalArgumentException illegalArgumentException) {
+            try {
+                Food food = Food.valueOf(options.get("i").toUpperCase());
+                int foodBalance = kingdom.getFoods().get(food);
+                if (foodBalance >= amount) {
+                    double benefit = amount * food.getPrice() * 0.8;
+                    kingdom.setBalance(kingdom.getBalance() + benefit);
+                    kingdom.getFoods().put(food, foodBalance - amount);
+                    return "The sell was successful";
+                } else
+                    return "Your balance is not enough";
+            } catch (IllegalArgumentException illegalArgumentException1) {
+                return "There are no imported resources or food";
+            }
+        }
     }
 
 }

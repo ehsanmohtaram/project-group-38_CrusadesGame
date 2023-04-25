@@ -12,9 +12,11 @@ public class Kingdom {
     private Integer noneEmployed;
     private Integer fearRate;
     private Integer popularity;
+    private Double balance;
 
     private Building headquarter;
     private HashMap<Food , Integer> foods = new HashMap<>();
+    private HashMap<ResourceType, Integer> resources = new HashMap<>();
     private ArrayList<Unit> units = new ArrayList<>();
     private ArrayList<Building> buildings = new ArrayList<>();
     private Integer foodRate;
@@ -27,6 +29,7 @@ public class Kingdom {
         this.flag = flag;
         this.headquarter = headquarter;
         this.owner = owner;
+        this.balance = 100.0;
     }
 
     public User getOwner() {
@@ -35,6 +38,14 @@ public class Kingdom {
 
     public Integer getPopulation() {
         return population;
+    }
+
+    public Double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Double balance) {
+        this.balance = balance;
     }
 
     public void setPopulation(Integer population) {
@@ -67,6 +78,14 @@ public class Kingdom {
 
     public Building getHeadquarter() {
         return headquarter;
+    }
+
+    public HashMap<Food, Integer> getFoods() {
+        return foods;
+    }
+
+    public HashMap<ResourceType, Integer> getResources() {
+        return resources;
     }
 
     public Integer getFoodRate() {
