@@ -3,6 +3,7 @@ package controller;
 import model.*;
 import view.*;
 
+import javax.xml.crypto.dsig.keyinfo.KeyName;
 import java.util.HashMap;
 
 public class GameController {
@@ -90,8 +91,16 @@ public class GameController {
                 return value + " option is not entered";
         }
         for (Trade trade : currentUser.getMySuggestion()) {
-            if (trade.getId() == Integer.parseInt(options.get("i"))) {/////////////
-                break;
+            if (trade.getId() == Integer.parseInt(options.get("i"))) {
+                Kingdom kingdom = gameMap.getKingdomByOwner(currentUser);
+                int cost = trade.getPrice() * trade.getResourceAmount();
+                if (kingdom.getBalance() > cost) {
+                    kingdom.setBalance(kingdom.getBalance() - cost);
+                    int resourceBalance = kingdom.getResources().get(trade.getResourceType());
+                    kingdom.getResources().put(trade.getResourceType(), resourceBalance + trade.getResourceAmount());
+                    return "The trade was successful";
+                } else
+                    return "Your balance is not enough";
             }
         }
         return "This ID was not found for you";
@@ -132,6 +141,10 @@ public class GameController {
     }
 
     public String buyFromShop(HashMap<String, String> options) {
+        for (String value : options.keySet()) {
+            if (options.get(value) == null)
+                return value + " option is not entered";
+        }
         Kingdom kingdom = gameMap.getKingdomByOwner(currentUser);
         int amount = Integer.parseInt(options.get("a"));
         try {
@@ -163,6 +176,10 @@ public class GameController {
     }
 
     public String sellFromShop(HashMap<String, String> options) {
+        for (String value : options.keySet()) {
+            if (options.get(value) == null)
+                return value + " option is not entered";
+        }
         Kingdom kingdom = gameMap.getKingdomByOwner(currentUser);
         int amount = Integer.parseInt(options.get("a"));
         try {
