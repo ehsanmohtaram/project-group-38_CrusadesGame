@@ -87,4 +87,7 @@ public class Map implements Cloneable {
                 map[i][j].setMapBlockType(type);
     }
 
+    public void clearBlock(int x , int y){
+        map[x][y] = new MapBlock(x , y);
+    }
 }
