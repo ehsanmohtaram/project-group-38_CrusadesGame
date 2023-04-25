@@ -10,8 +10,6 @@ import java.util.regex.Matcher;
 public class Controller {
     private final MainMenu mainMenu;
     private DesignMapMenu designMapMenu;
-    private SignupMenu signupMenu;
-
     public static User currentUser = null;
     public static boolean stayLoggedIn = false;
     private Map gameMap;
@@ -165,22 +163,5 @@ public class Controller {
     public String dropUnit(Matcher matcher) {
         return null;
     }
-    public String trade(Matcher matcher) {
-        return null;
-    }
-    public String tradeAccept(Matcher matcher) {
-        return null;
-    }
-    public String showTradeHistory(Matcher matcher) {
-        return null;
-    }
-    public String showPriceList(Matcher matcher) {
-         return null;
-    }
-    public String buy(Matcher matcher) {
-        return null;
-    }
-    public String sell(Matcher matcher) {
-        return null;
-    }
+
 }

@@ -36,7 +36,7 @@ public class MainMenu {
                 return "trade";
             } else if (commandParser.validate(input,"default map",null) != null) {
                 System.out.println(controller.showDefaultMaps());
-                System.out.println("please select one:(after selection you can still modify the map)");
+                System.out.println("please select one :(after selection you can still modify the map)");
                 while (true){
                     input = scanner.nextLine();
                     if(input.equals("back"))

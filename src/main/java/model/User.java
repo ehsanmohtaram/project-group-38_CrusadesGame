@@ -108,7 +108,6 @@ public class User {
         return mySuggestion;
     }
 
-
     public boolean checkPassword(String password) {
         return this.password.equals(DigestUtils.sha256Hex(password));
     }
@@ -116,12 +115,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
-    public void changePassword(String newPassword, String oldPassword) {
-        setPassword(newPassword);
-    }
-
-
 
     public Integer getScore() {
         return score;
@@ -177,14 +170,6 @@ public class User {
 
     public String getAnswerToSecurityQuestion() {
         return answerToSecurityQuestion;
-    }
-
-    public boolean checkSecurityQuestionAnswer(String answer) {
-        return true;
-    }
-    
-    public Integer getRank(){
-        return null;
     }
 
     public void addToMyMap(Map myNewMap) {
