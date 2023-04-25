@@ -43,7 +43,7 @@ public class MapDesignController {
             gameMap.changeType(bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3), mapBlockType);
         }else if(options.get("x") != null && options.get("y") != null){
             if(!options.get("x").matches("\\d+") || !options.get("y").matches("\\d+"))
-                return "please choose digits for bounds";
+                return "please choose digits for location";
             int x = Integer.parseInt(options.get("x"));
             int y = Integer.parseInt(options.get("y"));
             options.remove("x");
@@ -58,6 +58,13 @@ public class MapDesignController {
     }
 
     public String clear(HashMap<String , String> options) {
+        if(options.get("x") == null || options.get("y") == null)
+            return "you must specify a location";
+        if(!options.get("x").matches("\\d+") || !options.get("y").matches("\\d+"))
+            return "please choose digits for location";
+        int x = Integer.parseInt(options.get("x"));
+        int y = Integer.parseInt(options.get("y"));
+        gameMap.clearBlock(x,y);
         return null;
     }
     public String dropRock(HashMap<String , String> options) {
