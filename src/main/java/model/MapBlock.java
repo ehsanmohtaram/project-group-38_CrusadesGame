@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 public class MapBlock {
 
-    private ArrayList<Building> buildings = new ArrayList<>();
-    private ArrayList<Unit> units = new ArrayList<>();
-    private ArrayList<ResourceType> resourceTypes = new ArrayList<>();
+    private ArrayList<Building> buildings;
+    private ArrayList<Unit> units;
+    private ArrayList<ResourceType> resourceTypes;
     private MapBlockType mapBlockType;
     private Integer xPosition;
     private Integer yPosition;
@@ -19,6 +19,10 @@ public class MapBlock {
         this.mapBlockType = MapBlockType.EARTH;
         this.xPosition = xPosition;
         this.yPosition = yPosition;
+        resourceTypes = new ArrayList<>();
+        units = new ArrayList<>();
+        buildings = new ArrayList<>();
+        numberOfTrees = 0;
     }
 
     public MapBlock() {
@@ -91,6 +95,5 @@ public class MapBlock {
                 return searchForType;
         return null;
     }
-
 
 }

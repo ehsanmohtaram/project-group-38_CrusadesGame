@@ -1,14 +1,15 @@
 package view;
 
 import controller.CommandParser;
-import controller.Controller;
+import controller.LoginController;
+
 import java.util.HashMap;
 
 public class LoginMenu {
-    private final Controller controller;
+    private final LoginController loginController;
     private final CommandParser commandParser;
-    public LoginMenu (Controller controller) {
-        this.controller = controller;
+    public LoginMenu (LoginController loginController) {
+        this.loginController = loginController;
         commandParser = new CommandParser();
     }
     public String run() {
@@ -19,16 +20,16 @@ public class LoginMenu {
             if (commandParser.validate(command,"exit",null) != null) return "exit";
             if (commandParser.validate(command,"show current menu",null) != null) System.out.println("Login Menu");
             else if ((optionPass = commandParser.validate(command,"user create","u|username/?p|password/n|nickname/e|email/s|slogan")) != null) {
-                result = controller.createUser(optionPass);
+                result = loginController.createUser(optionPass);
                 if (result != null) System.out.println(result);
             }
             else if ((optionPass = commandParser.validate(command,"user login","u|username/p|password/s|stay-logged-in")) != null) {
-                result = controller.login(optionPass);
+                result = loginController.login(optionPass);
                 if (result.equals("login")) {System.out.println("User logged in successfully!"); return "login";}
                 else System.out.println(result);
             }
             else if ((optionPass = commandParser.validate(command,"forgot my password","u|username")) != null)
-                System.out.println(controller.forgetPassword(optionPass));
+                System.out.println(loginController.forgetPassword(optionPass));
             else System.out.println("Invalid command!");
         }
     }
