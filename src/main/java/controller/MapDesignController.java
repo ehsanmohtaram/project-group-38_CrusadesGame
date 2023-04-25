@@ -8,11 +8,10 @@ import view.DesignMapMenu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.regex.Matcher;
 
 public class MapDesignController {
-    private Map gameMap;
-    private DesignMapMenu designMapMenu;
+    private final Map gameMap;
+    private final DesignMapMenu designMapMenu;
 
     public MapDesignController(Map gameMap) {
         this.gameMap = gameMap;
