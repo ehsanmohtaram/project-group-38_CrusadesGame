@@ -43,6 +43,7 @@ public class Controller {
     }
 
     public String showDefaultMaps(){
+        Map.createDefaultMaps();
         String result = "";
         for (Map defaults: Map.DEFAULT_MAPS) {
             result += defaults.getMapName() + ": " + defaults.getMapWidth() + " * " + defaults.getMapHeight() + '\n';
@@ -53,7 +54,7 @@ public class Controller {
     public String selectDefaultMap(String selectedIndex){
         try{
             int index = Integer.parseInt(selectedIndex);
-            gameMap = Map.getDefaultMap(index);
+            gameMap = Map.getDefaultMap(index - 1);
             if(gameMap == null)
                 return "invalid number";
             return "successful";
@@ -64,13 +65,16 @@ public class Controller {
     }
 
     public String createNewMap(HashMap<String, String> options){
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        if (!options.get("x").matches("-?\\d+") || !options.get("y").matches("-?\\d+"))
-            return "Please input digits as x and y value!";
+        if(options.get("x") == null || options.get("y") == null)
+            return "you must choose width and height";
+        if (options.get("x").equals("") || options.get("y").equals(""))
+            return "Please input width & height correctly ";
+        if(options.get("n") == null || options.get("n").equals(""))
+            return "you must choose a name for your map. use -n.";
         int width = Integer.parseInt(options.get("x"));
         int height = Integer.parseInt(options.get("y"));
-        if(width < 0 || height < 0) return "invalid bounds";
+        if(width < 0 || height < 0)
+            return "invalid bounds";
         gameMap = new Map(width, height, options.get("n"));
         return "successful";
     }

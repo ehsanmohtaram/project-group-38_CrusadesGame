@@ -30,13 +30,15 @@ public class MainMenu {
                 System.out.println("Entered profile menu!");
                 return "profile";
             } else if ((options = commandParser.validate(input,"new map","x|width/y|height/n|name")) != null) {
-                controller.createNewMap(options);
-                return "selectMap";
+                String result = controller.createNewMap(options);
+                System.out.println(result);
+                if(result.equals("successful"))
+                    return "selectMap";
             }else if (input.matches("\\s*trade\\s+menu\\s*")) {
                 return "trade";
             } else if (commandParser.validate(input,"default map",null) != null) {
                 System.out.println(controller.showDefaultMaps());
-                System.out.println("please select one :(after selection you can still modify the map)");
+                System.out.println("please select one:(after selection you can still modify the map)");
                 while (true){
                     input = scanner.nextLine();
                     if(input.equals("back"))

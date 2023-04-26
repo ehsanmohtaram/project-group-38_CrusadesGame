@@ -1,6 +1,8 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class Map implements Cloneable {
     public static ArrayList<Map> Maps = new ArrayList<>();
@@ -8,23 +10,29 @@ public class Map implements Cloneable {
     private ArrayList<Kingdom> players;
     private String mapName;
     private MapBlock[][] map;
-    private Boolean[][] access;
+    private Boolean[][] accessToRight;
+    private Boolean[][] accessToDown;
     private int mapWidth;
     private int mapHeight;
-
-    {
-        createDefaultMaps();
-    }
 
     public Map(Integer mapWidth, Integer mapHeight, String mapName) {
         this.mapName = mapName;
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
         map = new MapBlock[mapWidth][mapHeight];
-        access = new Boolean[mapWidth * 2][mapHeight * 2];
-        for (int i = 0; i < mapWidth * 2; i++)
-            for (int j = 0; j < mapHeight * 2; j++)
-                access[i][j] = true;
+        accessToDown = new Boolean[mapWidth][mapHeight];
+        for (int i = 0; i < mapWidth; i++)
+            for (int j = 0; j < mapHeight; j++)
+                accessToDown[i][j] = true;
+        for (int i = 0; i < mapWidth; i++)
+            accessToDown[i][mapHeight - 1] = false;
+        accessToRight = new Boolean[mapWidth][mapHeight];
+        for (int i = 0; i < mapWidth; i++)
+            for (int j = 0; j < mapHeight; j++)
+                accessToRight[i][j] = true;
+        for (int i = 0; i < mapHeight; i++)
+            accessToRight[mapWidth - 1][i] = false;
+
         for (int i = 0; i < mapWidth; i++)
             for (int j = 0; j < mapHeight; j++)
                 map[i][j] = new MapBlock(i , j);
@@ -36,7 +44,7 @@ public class Map implements Cloneable {
     public MapBlock GetMapBlockByLocation(int x , int y){
         return map[x][y];
     }
-    private void createDefaultMaps(){
+    public static void createDefaultMaps(){
         Map defaultMap1 = new Map(60 , 60 , "jungle");
         Map defaultMap2 = new Map(60 , 60 , "graveyard");
         DEFAULT_MAPS.add(defaultMap1);
@@ -71,6 +79,12 @@ public class Map implements Cloneable {
         return null;
     }
 
+    public MapBlock getMapBlockByLocation(int xPosition , int yPosition){
+        if(xPosition < mapWidth && yPosition < mapHeight)
+            return map[xPosition][yPosition];
+        return null;
+    }
+
     public static Map getDefaultMap(int index) throws CloneNotSupportedException {
         if(index >= DEFAULT_MAPS.size())
             return null;
@@ -90,4 +104,28 @@ public class Map implements Cloneable {
     public void clearBlock(int x , int y){
         map[x][y] = new MapBlock(x , y);
     }
+
+    public void restrictAccess(int xPosition ,int yPosition , char direction){
+        Random random = new Random();
+        ArrayList<Character> directions = new ArrayList<Character>(List.of('w' , 'e' , 'n' , 's'));
+        if(direction == 'r')
+            direction = directions.get(random.nextInt()%4);
+        switch (direction){
+            case 'w':
+                if(xPosition != 0)
+                    accessToRight[xPosition - 1][yPosition] = false;
+                break;
+            case 'e':
+                accessToRight[xPosition][yPosition] = false;
+                break;
+            case 'n':
+                if(yPosition != 0)
+                    accessToDown[xPosition][yPosition - 1] = false;
+                break;
+            case 's':
+                accessToDown[xPosition][yPosition] = false;
+
+        }
+    }
+
 }

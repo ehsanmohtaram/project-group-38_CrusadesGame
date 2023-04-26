@@ -5,24 +5,28 @@ import model.building.BuildingType;
 import model.unit.Unit;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MapBlock {
 
     private ArrayList<Building> buildings;
     private ArrayList<Unit> units;
-    private ArrayList<ResourceType> resourceTypes;
+    private ArrayList<ResourceType> resources;
     private MapBlockType mapBlockType;
     private Integer xPosition;
     private Integer yPosition;
-    private Integer numberOfTrees;
+    private HashMap<Tree , Integer> numberOfTrees;
     public MapBlock(Integer xPosition, Integer yPosition) {
         this.mapBlockType = MapBlockType.EARTH;
         this.xPosition = xPosition;
         this.yPosition = yPosition;
-        resourceTypes = new ArrayList<>();
+        resources = new ArrayList<>();
         units = new ArrayList<>();
         buildings = new ArrayList<>();
-        numberOfTrees = 0;
+        numberOfTrees = new HashMap<>();
+        for (Tree tree: Tree.values()) {
+            numberOfTrees.put(tree , 0);
+        }
     }
 
     public MapBlock() {
@@ -45,12 +49,12 @@ public class MapBlock {
         this.units = units;
     }
 
-    public ArrayList<ResourceType> getResourceTypes() {
-        return resourceTypes;
+    public ArrayList<ResourceType> getResources() {
+        return resources;
     }
 
-    public void setResourceTypes(ArrayList<ResourceType> resourceTypes) {
-        this.resourceTypes = resourceTypes;
+    public void setResources(ArrayList<ResourceType> resources) {
+        this.resources = resources;
     }
 
     public MapBlockType getMapBlockType() {
@@ -86,7 +90,10 @@ public class MapBlock {
     }
 
     public void processNextTurn(){
+    }
 
+    public void addTree(Tree tree){
+        numberOfTrees.put(tree , numberOfTrees.get(tree) + 1);
     }
 
     public static MapBlockType findEnumByLandType(String landType) {
