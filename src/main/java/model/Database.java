@@ -34,13 +34,8 @@ public class Database {
             Gson gson = new Gson();
             JSONParser parser = new JSONParser();
             JSONArray jsonToArray = new JSONArray();
-            User user;
             if (json != null) jsonToArray = (JSONArray) parser.parse(json);
-            for (Object jsonValue : jsonToArray) {
-                user = gson.fromJson(jsonValue.toString(),User.class);
-                new User(user.getUserName(), user.getNickName(), user.getPassword(), user.getEmail(),
-                        user.getSlogan(), user.getSecurityQuestionNumber(), user.getAnswerToSecurityQuestion());
-            }
+            for (Object jsonValue : jsonToArray) users.add(gson.fromJson(jsonValue.toString(),User.class));
         }
         catch (Exception ignored) {}
         return users;

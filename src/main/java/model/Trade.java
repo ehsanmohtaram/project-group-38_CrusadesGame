@@ -1,7 +1,10 @@
 package model;
 
+import com.google.gson.annotations.JsonAdapter;
+
 import java.util.ArrayList;
 
+@JsonAdapter(TradeAdapter.class)
 public class Trade {
     private static ArrayList<Trade> trades = new ArrayList<>();
     private ResourceType resourceType;

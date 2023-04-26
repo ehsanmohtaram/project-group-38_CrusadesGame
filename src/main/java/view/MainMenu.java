@@ -2,7 +2,8 @@ package view;
 
 import controller.CommandParser;
 import controller.Controller;
-import java.util.HashMap;
+
+import java.util.*;
 
 public class MainMenu {
     private final Controller controller;

@@ -2,7 +2,6 @@ package view;
 
 import controller.CommandParser;
 import controller.ShopAndTradeController;
-import model.User;
 
 import java.util.HashMap;
 
@@ -14,10 +13,6 @@ public class TradeMenu {
         commandParser = new CommandParser();
     }
     public void run() {
-        StringBuilder output = new StringBuilder("All Users :");
-        output.append(" / ");
-        for (User user : User.users) output.append(user.getUserName()).append(" / ");
-        System.out.println(output);
         HashMap<String, String> optionPass;
         String input;
         while (true) {

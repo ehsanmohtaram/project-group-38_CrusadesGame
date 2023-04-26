@@ -21,16 +21,16 @@ public class GameMenu {
             if (commandParser.validate(input, "back", null) != null) return "back";
             if (commandParser.validate(input, "show current menu", null) != null)
                 System.out.println("Game menu");
-            else if (commandParser.validate(input, "trade", null) != null) {
+            else if (commandParser.validate(input, "trade menu", null) != null) {
                 System.out.println("You enter trade menu successfully!"); return "trade";
             }
-            else if (commandParser.validate(input, "shop", null) != null) {
+            else if (commandParser.validate(input, "shop menu", null) != null) {
                 System.out.println("You enter shop menu successfully!"); return "shop";
             }
-            else if (commandParser.validate(input, "building", null) != null) {
+            else if (commandParser.validate(input, "building menu", null) != null) {
                 System.out.println("You enter building menu successfully!"); return "building";
             }
-            else if (commandParser.validate(input, "unit", null) != null) {
+            else if (commandParser.validate(input, "unit menu ", null) != null) {
                 System.out.println("You enter unit menu successfully!"); return "unit";
             }
             else if (commandParser.validate(input,"next turn", null) != null){

@@ -2,11 +2,13 @@ package model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.internal.bind.DateTypeAdapter;
 import org.apache.commons.codec.digest.DigestUtils;
 import view.TradeMenu;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 
 public class User {
@@ -37,9 +39,13 @@ public class User {
     private Integer securityQuestionNumber;
     @Expose
     private String answerToSecurityQuestion;
+    @Expose
     private ArrayList<Trade> myRequests = new ArrayList<>();
+    @Expose
     private ArrayList<Trade> mySuggestion = new ArrayList<>();
+    @Expose
     private ArrayList<Trade> notification = new ArrayList<>();
+    @Expose
     private ArrayList<Trade> historyTrade = new ArrayList<>();
     private ArrayList<Map> myMap = new ArrayList<>();
     private ArrayList<Kingdom> kingdom = new ArrayList<>();

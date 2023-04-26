@@ -20,6 +20,10 @@ public class ShopAndTradeController {
     }
 
     public void runTrade() {
+        StringBuilder output = new StringBuilder("All Users :");
+        output.append(" / ");
+        for (User user : User.users) output.append(user.getUserName()).append(" / ");
+        System.out.println(output);
         System.out.println(showNotification());
         tradeMenu.run();
     }
