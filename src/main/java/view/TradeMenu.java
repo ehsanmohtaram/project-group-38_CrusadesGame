@@ -15,9 +15,8 @@ public class TradeMenu {
     }
     public void run() {
         StringBuilder output = new StringBuilder("All Users :");
-        for (User user : User.users) {
-            output.append("\n").append(user.getUserName());
-        }
+        output.append(" / ");
+        for (User user : User.users) output.append(user.getUserName()).append(" / ");
         System.out.println(output);
         HashMap<String, String> optionPass;
         String input;

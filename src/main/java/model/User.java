@@ -1,6 +1,9 @@
 package model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.JsonAdapter;
 import org.apache.commons.codec.digest.DigestUtils;
+import view.TradeMenu;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,21 +19,30 @@ public class User {
             "Was my first pet’s name?",
             "What is my mother’s last name?"
     ));
+    @Expose
     private String userName;
+    @Expose
     private String password;
+    @Expose
     private String email;
+    @Expose
     private String slogan;
+    @Expose
     private String nickName;
+    @Expose
     private Boolean isLoggedIn;
+    @Expose
     private Integer score;
+    @Expose
+    private Integer securityQuestionNumber;
+    @Expose
+    private String answerToSecurityQuestion;
     private ArrayList<Trade> myRequests = new ArrayList<>();
     private ArrayList<Trade> mySuggestion = new ArrayList<>();
     private ArrayList<Trade> notification = new ArrayList<>();
     private ArrayList<Trade> historyTrade = new ArrayList<>();
     private ArrayList<Map> myMap = new ArrayList<>();
     private ArrayList<Kingdom> kingdom = new ArrayList<>();
-    private Integer securityQuestionNumber;
-    private String answerToSecurityQuestion;
     public User(String userName, String nickName,String password, String email, String slogan, Integer securityQuestionNumber, String answerToSecurityQuestion) {
         this.userName = userName;
         this.nickName = nickName;
@@ -47,7 +59,7 @@ public class User {
         isDelayed.put(this,false);
     }
 
-    public static void addUser(String username, String nickname,String password, String email, String slogan, Integer securityQuestionNumber, String answerToSecurityQuestion) {
+    public static void addUser(String username, String nickname, String password, String email, String slogan, Integer securityQuestionNumber, String answerToSecurityQuestion) {
         new User(username,nickname,password,email,slogan,securityQuestionNumber,answerToSecurityQuestion);
     }
 
@@ -110,6 +122,10 @@ public class User {
 
     public boolean checkPassword(String password) {
         return this.password.equals(DigestUtils.sha256Hex(password));
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public void setPassword(String password) {

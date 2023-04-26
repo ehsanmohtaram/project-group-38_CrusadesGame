@@ -18,11 +18,10 @@ public class DesignMapMenu {
 
     public String run(){
         System.out.println("here you can design your map. when your map is ready type 'start'");
-        Scanner scanner = CommandParser.getScanner();
         HashMap<String , String > options;
         String input;
         while (true) {
-            input = scanner.nextLine();
+            input = CommandParser.getScanner().nextLine();
             if ((options = commandParser.validate(input,"set texture",
                     "x|positionX/y|positionY/x1|positionX1/y1|positionY1/x2|positionX2/y2|positionY2/t|type")) != null)
                 System.out.println(mapDesignController.setTexture(options));

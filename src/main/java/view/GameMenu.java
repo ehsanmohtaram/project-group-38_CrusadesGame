@@ -1,16 +1,12 @@
 package view;
 
 import controller.CommandParser;
-import controller.Controller;
 import controller.GameController;
-import controller.MapDesignController;
-
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.regex.Matcher;
 
 public class GameMenu {
-    private GameController gameController;
+    private final GameController gameController;
     private final CommandParser commandParser;
     public GameMenu (GameController gameController) {
         this.gameController = gameController;
@@ -18,16 +14,29 @@ public class GameMenu {
     }
     public String run() {
         System.out.println("the game has been started! now you can play");
-        Scanner scanner = CommandParser.getScanner();
         HashMap<String , String > options;
         String input;
         while (true) {
-            input = scanner.nextLine();
-            if (commandParser.validate(input,"next turn", null) != null){
+            input = CommandParser.getScanner().nextLine();
+            if (commandParser.validate(input, "back", null) != null) return "back";
+            if (commandParser.validate(input, "show current menu", null) != null)
+                System.out.println("Game menu");
+            else if (commandParser.validate(input, "trade", null) != null) {
+                System.out.println("You enter trade menu successfully!"); return "trade";
+            }
+            else if (commandParser.validate(input, "shop", null) != null) {
+                System.out.println("You enter shop menu successfully!"); return "shop";
+            }
+            else if (commandParser.validate(input, "building", null) != null) {
+                System.out.println("You enter building menu successfully!"); return "building";
+            }
+            else if (commandParser.validate(input, "unit", null) != null) {
+                System.out.println("You enter unit menu successfully!"); return "unit";
+            }
+            else if (commandParser.validate(input,"next turn", null) != null){
                 System.out.println(gameController.nextTurn());
             }
-            else
-                System.out.println("invalid command");
+            else System.out.println("invalid command");
         }
     }
 }

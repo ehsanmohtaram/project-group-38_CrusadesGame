@@ -87,18 +87,18 @@ public class ShopAndTradeController {
         StringBuilder output = new StringBuilder("your history:");
         for (Trade trade : currentUser.getHistoryTrade()) {
             output.append("\nResource type : ").append(trade.getResourceType().name())
-                    .append("resource amount : ").append(trade.getResourceAmount())
-                    .append("price : ").append(trade.getPrice()).append("id: ")
-                    .append(trade.getId()).append("massage : ").append(trade.getMassage());
+                    .append(" resource amount : ").append(trade.getResourceAmount())
+                    .append(" price : ").append(trade.getPrice()).append("id: ")
+                    .append(trade.getId()).append(" massage : ").append(trade.getMassage());
             if (trade.getUserSender().equals(currentUser)) output.append(" ...Requested... ");
             else output.append(" ...Accepted... ");
         }
         return output.toString();
     }
     public String showNotification() {
-        StringBuilder output = new StringBuilder("your new suggestions :");
+        StringBuilder output = new StringBuilder("your new suggestions : ");
         for (Trade trade : currentUser.getNotification()) {
-            output.append("\nnew suggestion from : ").append(trade.getUserSender())
+            output.append("\nnew suggestion from : ").append(trade.getUserSender().getUserName())
                     .append("massage : ").append(trade.getMassage());
         }
         return output.toString();

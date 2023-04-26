@@ -2,9 +2,7 @@ package view;
 
 import controller.CommandParser;
 import controller.Controller;
-
 import java.util.HashMap;
-import java.util.Scanner;
 
 public class MainMenu {
     private final Controller controller;
@@ -16,11 +14,10 @@ public class MainMenu {
     }
 
     public String run() {
-        Scanner scanner = CommandParser.getScanner();
         HashMap<String , String> options;
         String input;
         while (true) {
-            input = scanner.nextLine();
+            input = CommandParser.getScanner().nextLine();
             if (commandParser.validate(input,"logout",null) != null) {
                 System.out.println("User logged out successfully!");
                 if (Controller.currentUser.getLoggedIn()) Controller.currentUser.setLoggedIn(false);
@@ -34,13 +31,11 @@ public class MainMenu {
                 System.out.println(result);
                 if(result.equals("successful"))
                     return "selectMap";
-            }else if (input.matches("\\s*trade\\s+menu\\s*")) {
-                return "trade";
             } else if (commandParser.validate(input,"default map",null) != null) {
                 System.out.println(controller.showDefaultMaps());
                 System.out.println("please select one:(after selection you can still modify the map)");
                 while (true){
-                    input = scanner.nextLine();
+                    input = CommandParser.getScanner().nextLine();
                     if(input.equals("back"))
                         break;
                     String result = controller.selectDefaultMap(input);
@@ -50,8 +45,7 @@ public class MainMenu {
                 }
             } else if (commandParser.validate(input,"show current menu",null) != null)
                 System.out.println("Main Menu");
-            else
-                System.out.println("invalid command");
+            else System.out.println("invalid command");
         }
     }
 
