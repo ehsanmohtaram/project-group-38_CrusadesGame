@@ -21,10 +21,9 @@ public class CommandParser{
         inputCommand = mainCommandChecker(inputCommand, mainCommand, options);
         if (options != null) {
             for (String key : optionParser(options.replaceAll("\\?","")).keySet()) {
-                if (optionParser(options.replaceAll("\\?", "")).get(key) != null)
+                if (!key.equals(optionParser(options.replaceAll("\\?","")).get(key)))
                     optionsParserSave.add(parser.addStringOption(key.charAt(0), optionParser(options.replaceAll("\\?", "")).get(key)));
                 else optionsParserSave.add(parser.addStringOption(key));
-
             }
             Matcher matcher = Pattern.compile("\\S+").matcher(inputCommand);
             int counter = 0;
@@ -40,9 +39,9 @@ public class CommandParser{
             }
             for (int i = 0; i < commandParser.size(); i++) {
                 if (i < commandParser.size() - 1 && commandParser.get(i).matches("^-.*") && commandParser.get(i + 1).matches("^-.*") &&
-                        (optionParser(options.replaceAll("\\?","")).containsKey(commandParser.get(i).replaceAll("^-+", "")) ||
+                        (optionParser(options.replaceAll("\\?","")).containsKey(commandParser.get(i).replaceAll("-", "")) ||
                                 optionParser(options.replaceAll("\\?","")).containsValue(commandParser.get(i).replaceAll("^--", ""))) &&
-                        (optionParser(options.replaceAll("\\?","")).containsKey(commandParser.get(i+1).replaceAll("^-+", "")) ||
+                        (optionParser(options.replaceAll("\\?","")).containsKey(commandParser.get(i+1).replaceAll("-", "")) ||
                                 optionParser(options.replaceAll("\\?","")).containsValue(commandParser.get(i+1).replaceAll("^--", "")))) {
                     commandParser.add(i + 1, "");
                 }
@@ -57,8 +56,8 @@ public class CommandParser{
                     for (int i = 0; i < commandParser.size(); i++)
                         if (key.equals(commandParser.get(i).replaceAll("-", "")) &&
                                 commandParser.get(i).matches("^-.*") && i < commandParser.size() - 2)
-                            if (!optionParser(options).containsKey(commandParser.get(i + 1).replaceAll("^-+", "")) &&
-                                    !optionParser(options).containsKey(commandParser.get(i + 2).replaceAll("^-+", "")) &&
+                            if (!optionParser(options).containsKey(commandParser.get(i + 1).replaceAll("-", "")) &&
+                                    !optionParser(options).containsKey(commandParser.get(i + 2).replaceAll("-", "")) &&
                                     !optionParser(options).containsValue(commandParser.get(i + 1).replaceAll("^--", "")) &&
                                     !optionParser(options).containsValue(commandParser.get(i + 2).replaceAll("^--", ""))) {
                                 valueSetter.put(key.toUpperCase(), commandParser.get(i + 2)); commandParser.remove(i + 2);
@@ -114,7 +113,7 @@ public class CommandParser{
             if (!singleOption.contains("?")) {
                 if (singleOption.split("\\|").length == 2)
                     optionDetect.put(singleOption.split("\\|")[0], singleOption.split("\\|")[1]);
-                else optionDetect.put(singleOption.split("\\|")[0], null);
+                else optionDetect.put(singleOption.split("\\|")[0], singleOption.split("\\|")[0]);
             }
         }
         return optionDetect;
@@ -128,7 +127,7 @@ public class CommandParser{
                 singleOption = singleOption.replaceAll("\\?","");
                 if (singleOption.split("\\|").length == 2)
                     desireOptionDetect.put(singleOption.split("\\|")[0], singleOption.split("\\|")[1]);
-                else desireOptionDetect.put(singleOption.split("\\|")[0], null);
+                else desireOptionDetect.put(singleOption.split("\\|")[0], singleOption.split("\\|")[0]);
             }
         }
         return desireOptionDetect;
