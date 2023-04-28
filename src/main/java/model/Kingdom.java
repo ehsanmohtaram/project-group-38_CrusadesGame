@@ -35,8 +35,9 @@ public class Kingdom {
         foodRate = -2;
         this.flag = flag;
         this.owner = owner;
-        this.balance = 100.0;
+        this.balance = 200.0;
         this.headquarter = headquarter;
+        for (ResourceType resourceType : ResourceType.values()) resources.put(resourceType, 100);
         addBuilding(headquarter);
     }
 
@@ -153,6 +154,10 @@ public class Kingdom {
 
     public void addBuilding(Building toAdd){
         buildings.add(toAdd);
+    }
+
+    public Integer getResourceAmount(ResourceType resourceType) {
+        return resources.get(resourceType);
     }
 
 

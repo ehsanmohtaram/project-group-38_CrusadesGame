@@ -21,6 +21,7 @@ public class MapBlock {
         this.mapBlockType = MapBlockType.EARTH;
         this.xPosition = xPosition;
         this.yPosition = yPosition;
+        this.buildings = null;
         resources = new ArrayList<>();
         units = new ArrayList<>();
         numberOfTrees = new HashMap<>();
@@ -29,6 +30,10 @@ public class MapBlock {
 
     public ArrayList<Unit> getUnits() {
         return units;
+    }
+
+    public void setBuildings(Building buildings) {
+        this.buildings = buildings;
     }
 
     public void setUnits(ArrayList<Unit> units) {
@@ -65,6 +70,10 @@ public class MapBlock {
 
     public void removeUnitFromHere(Unit toRemove){
         units.remove(toRemove);
+    }
+
+    public Building getBuildings() {
+        return buildings;
     }
 
     public Unit getLastUnitArrived(){

@@ -19,9 +19,9 @@ public enum MapBlockType {
     PLAIN(true , false , false),
     OIL(true , false , false);
 
-    private boolean isAccessible;
-    private boolean isBuildable;
-    private boolean isCultivable;
+    private final boolean isAccessible;
+    private final boolean isBuildable;
+    private final boolean isCultivable;
 
     MapBlockType(boolean isAccessible, boolean isBuildable, boolean isCultivable) {
         this.isAccessible = isAccessible;

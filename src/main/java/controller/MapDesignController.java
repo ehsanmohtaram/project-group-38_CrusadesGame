@@ -120,7 +120,7 @@ public class MapDesignController {
                 changeYToString = yPosition + j;
                 if (checkLocationValidation(Integer.toString(changeXToString), Integer.toString(changeYToString)) != null)
                     return "You have to put your HeadQuarter in a suitable position!";
-                if (gameMap.isThereAKingdomHere(xPosition,yPosition)) return "You can not make your HeadQuarter next to others!";
+                if (gameMap.getMapBlockByLocation(xPosition,yPosition).getBuildings() != null) return "You can not make your HeadQuarter next to others!";
             }
         }
         return null;
@@ -152,10 +152,10 @@ public class MapDesignController {
             return "You already have put your kingdom in this map!";
         for (Kingdom kingdom : gameMap.getPlayers())
             if (kingdom.getFlag().name().equals(options.get("f").toUpperCase())) return "Another user choose this flag. Please choose another flag.";
-        Kingdom kingdom = new Kingdom(Flags.valueOf(options.get("f").toUpperCase()),
-                User.getUserByUsername(options.get("u")),
-                new Building(gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))), BuildingType.HEAD_QUARTER));
+        Building building = new Building(gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))), BuildingType.HEAD_QUARTER);
+        Kingdom kingdom = new Kingdom(Flags.valueOf(options.get("f").toUpperCase()), User.getUserByUsername(options.get("u")), building);
         gameMap.addPlayer(kingdom);
+        gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))).setBuildings(building);
         User.getUserByUsername(options.get("u")).addToMyMap(gameMap);
         return "User add to map successfully!";
     }

@@ -41,10 +41,11 @@ public class MainMenu {
                     System.out.println(result);
                     if(result.equals("Map was created successfully!")) return "selectMap";
                 }
-            } else if (commandParser.validate(input,"choose form my maps",null) != null) {
+            } else if (commandParser.validate(input,"choose from my maps",null) != null) {
                 result = controller.chooseFromMyMap();
                 if (!result.equals("start")) System.out.println(result);
                 else return "previous map";
+                //TODO MAKE A MENU
             }
             else if (commandParser.validate(input,"show current menu",null) != null)
                 System.out.println("Main Menu");

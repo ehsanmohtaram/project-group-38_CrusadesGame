@@ -92,12 +92,6 @@ public class Map implements Cloneable {
         return (Map)(DEFAULT_MAPS.get(index).clone());
     }
 
-    public Boolean isThereAKingdomHere(int x, int y) {
-        for (Kingdom kingdom : players)
-            if (kingdom.getHeadquarter().getPosition().equals(getMapBlockByLocation(x,y))) return true;
-        return false;
-    }
-
     public void changeType(int x , int y, MapBlockType type){
         map[x][y].setMapBlockType(type);
     }

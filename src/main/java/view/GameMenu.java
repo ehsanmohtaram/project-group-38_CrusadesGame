@@ -3,7 +3,6 @@ package view;
 import controller.CommandParser;
 import controller.GameController;
 import java.util.HashMap;
-import java.util.Scanner;
 
 public class GameMenu {
     private final GameController gameController;
@@ -29,6 +28,8 @@ public class GameMenu {
             else if (commandParser.validate(input, "building menu", null) != null) {
                 System.out.println("You enter building menu successfully!"); return "building";
             }
+            else if ((options = (commandParser.validate(input, "drop building","x|xPosition/y|yPosition/t|type"))) != null)
+                System.out.println(gameController.dropBuilding(options));
             else if (commandParser.validate(input, "unit menu ", null) != null) {
                 System.out.println("You enter unit menu successfully!"); return "unit";
             }
