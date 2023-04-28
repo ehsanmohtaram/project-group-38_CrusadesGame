@@ -33,9 +33,12 @@ public class Controller {
                     ProfileController profileController = new ProfileController();
                     profileController.run();
                     break;
+                case "previous map":
+                    GameController gameController = new GameController(gameMap);
+                    gameController.run();
+                    break;
                 case "logout":
-                    if (loginController.run().equals("exit"))
-                        return;
+                    if (loginController.run().equals("exit")) return;
                     break;
             }
         }
@@ -76,10 +79,26 @@ public class Controller {
             return "you must choose a name for your map. use -n.";
         int width = Integer.parseInt(options.get("x"));
         int height = Integer.parseInt(options.get("y"));
-        if(width < 0 || height < 0) return "invalid bounds";
+        if(width < 0 || height < 0) return "invalid bounds!";
         gameMap = new Map(width, height, options.get("n"));
         currentUser.addToMyMap(gameMap);
         return "Map was created successfully!";
+    }
+
+    public String chooseFromMyMap() {
+        int counter = 0;
+        String command;
+        if (currentUser.getMyMap().size() == 0) return "You do not have any map from past";
+        for (Map map : currentUser.getMyMap()) {
+            System.out.println((counter + 1) + ". " + map.getMapName() + ": " + map.getMapWidth() + " * " + map.getMapHeight());
+        }
+        System.out.print("Please choose one of the following maps to play : ");
+        command = CommandParser.getScanner().nextLine();
+        if (!command.matches("-?\\d+")) return "Please input a digit as your value.";
+        if (Integer.parseInt(command) > currentUser.getMyMap().size() || Integer.parseInt(command) < 1)
+            return "Invalid bounds!";
+        gameMap = currentUser.getMyMap().get(Integer.parseInt(command) - 1);
+        return "start";
     }
 
     public String showMap() {

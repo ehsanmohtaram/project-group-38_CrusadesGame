@@ -18,7 +18,7 @@ public class GameController {
 
     public void run(){
         ShopAndTradeController shopAndTradeController = new ShopAndTradeController();
-        System.out.println("The game has been started! Now you can play!");
+        System.out.println("Welcome to game menu:))");
         while (true) {
             switch (gameMenu.run()) {
                 case "map":

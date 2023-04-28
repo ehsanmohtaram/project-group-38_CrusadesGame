@@ -117,7 +117,9 @@ public class User {
         return score;
     }
 
-
+    public ArrayList<Map> getMyMap() {
+        return myMap;
+    }
 
     public String getNickName() {
         return nickName;

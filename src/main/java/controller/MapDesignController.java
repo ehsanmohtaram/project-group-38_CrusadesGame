@@ -150,6 +150,8 @@ public class MapDesignController {
             return checkingResult;
         if (gameMap.getKingdomByOwner(User.getUserByUsername(options.get("u"))) != null)
             return "You already have put your kingdom in this map!";
+        for (Kingdom kingdom : gameMap.getPlayers())
+            if (kingdom.getFlag().name().equals(options.get("f").toUpperCase())) return "Another user choose this flag. Please choose another flag.";
         Kingdom kingdom = new Kingdom(Flags.valueOf(options.get("f").toUpperCase()),
                 User.getUserByUsername(options.get("u")),
                 new Building(gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))), BuildingType.HEAD_QUARTER));

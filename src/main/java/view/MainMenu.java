@@ -16,7 +16,7 @@ public class MainMenu {
 
     public String run() {
         HashMap<String , String> options;
-        String input;
+        String input, result;
         while (true) {
             input = CommandParser.getScanner().nextLine();
             if (commandParser.validate(input,"logout",null) != null) {
@@ -28,7 +28,7 @@ public class MainMenu {
                 System.out.println("Entered profile menu!");
                 return "profile";
             } else if ((options = commandParser.validate(input,"new map","x|width/y|height/n|name")) != null) {
-                String result = controller.createNewMap(options);
+                result = controller.createNewMap(options);
                 System.out.println(result);
                 if(result.equals("successful")) return "selectMap";
             } else if (commandParser.validate(input,"default map",null) != null) {
@@ -37,13 +37,15 @@ public class MainMenu {
                 while (true){
                     input = CommandParser.getScanner().nextLine();
                     if(input.equals("back")) break;
-                    String result = controller.selectDefaultMap(input);
+                    result = controller.selectDefaultMap(input);
                     System.out.println(result);
                     if(result.equals("Map was created successfully!")) return "selectMap";
                 }
-            } //else if (commandParser.validate(input,"choose form my maps",null)) {
-
-            //}
+            } else if (commandParser.validate(input,"choose form my maps",null) != null) {
+                result = controller.chooseFromMyMap();
+                if (!result.equals("start")) System.out.println(result);
+                else return "previous map";
+            }
             else if (commandParser.validate(input,"show current menu",null) != null)
                 System.out.println("Main Menu");
             else System.out.println("invalid command");
