@@ -25,12 +25,15 @@ public class GameMenu {
             else if (commandParser.validate(input, "shop menu", null) != null) {
                 System.out.println("You enter shop menu successfully!"); return "shop";
             }
-            else if (commandParser.validate(input, "building menu", null) != null) {
-                System.out.println("You enter building menu successfully!"); return "building";
-            }
             else if ((options = (commandParser.validate(input, "drop building","x|xPosition/y|yPosition/t|type"))) != null)
                 System.out.println(gameController.dropBuilding(options));
-            else if (commandParser.validate(input, "unit menu", null) != null) {
+            else if ((options = commandParser.validate(input, "select building", "x|xPosition/y|yPosition")) != null) {
+                result = gameController.selectBuilding(options);
+                if (!result.equals("building"))
+                    System.out.println(result);
+                else return "building";
+            }
+            else if (commandParser.validate(input, "unit menu ", null) != null) {
                 System.out.println("You enter unit menu successfully!"); return "unit";
             }
             else if (commandParser.validate(input,"next turn", null) != null){
