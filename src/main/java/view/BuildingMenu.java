@@ -5,7 +5,8 @@ import controller.CommandParser;
 
 import java.util.HashMap;
 
-public class BuildingMenu {
+public class
+BuildingMenu {
     private final BuildingController buildingController;
     private final CommandParser commandParser;
 

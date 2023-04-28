@@ -22,6 +22,7 @@ public class GameController {
         while (true) {
             switch (gameMenu.run()) {
                 case "map":
+
                     break;
                 case "trade":
                     shopAndTradeController.runTrade();
@@ -44,5 +45,7 @@ public class GameController {
     public String nextTurn(){
         return null;
     }
+
+
 
 }

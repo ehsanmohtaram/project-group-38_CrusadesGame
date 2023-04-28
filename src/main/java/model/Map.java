@@ -81,7 +81,7 @@ public class Map implements Cloneable {
     }
 
     public MapBlock getMapBlockByLocation(int xPosition , int yPosition){
-        if(xPosition < mapWidth && yPosition < mapHeight)
+        if(xPosition < mapWidth && yPosition < mapHeight && xPosition >= 0 && yPosition >= 0)
             return map[xPosition][yPosition];
         return null;
     }

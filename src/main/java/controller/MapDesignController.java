@@ -168,5 +168,35 @@ public class MapDesignController {
         return null;
     }
 
+    public String showMap(HashMap<String, String> options){
+        String checkingResult;
+        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
+            return checkingResult;
+        String result = "";
+        int xPosition = Integer.parseInt(options.get("x")) ;
+        int yPosition = Integer.parseInt(options.get("y")) ;
+        String resetColor = "\033[0m";
+        for (int j = yPosition - 4; j <= yPosition + 4; j++) {
+            for (int fill = 0; fill < 3; fill++){
+                for (int i = xPosition - 10; i <= (xPosition + 10); i++) {
+                    MapBlock showedBlock;
+                    if ((showedBlock = gameMap.getMapBlockByLocation(i, j)) != null) {
+                        if(fill == 1){
+                            result += showedBlock.getMapBlockType().getColor() + "  "
+                                    + showedBlock.getLatestDetails() + "  " + resetColor + " ";
+                        }else {
+                            result += showedBlock.getMapBlockType().getColor() + "     " + resetColor + " ";
+                        }
+                    }else
+                        result += "\u001B[48;5;237m" + "XXXXX" + resetColor + " ";
+
+                }
+                result += '\n';
+            }
+            result += '\n';
+        }
+        return result.substring(0, result.length() - 2);
+    }
+
 }
 

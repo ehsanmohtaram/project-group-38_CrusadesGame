@@ -32,6 +32,9 @@ public class GameMenu {
             else if (commandParser.validate(input, "unit menu ", null) != null) {
                 System.out.println("You enter unit menu successfully!"); return "unit";
             }
+            else if (commandParser.validate(input, "show map ", null) != null) {
+                System.out.println("You you can see map. you can press back to continue playing "); return "map";
+            }
             else if (commandParser.validate(input,"next turn", null) != null){
                 System.out.println(gameController.nextTurn());
             }

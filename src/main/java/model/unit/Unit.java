@@ -12,6 +12,7 @@ public class Unit {
     private MapBlock locationBlock;
     private UnitState unitState;
     private Kingdom owner;
+    private boolean isMoving;
 
     public Unit(UnitType unitType, MapBlock locationBlock , Kingdom owner) {
         this.unitType = unitType;
@@ -20,6 +21,7 @@ public class Unit {
         hp = unitType.getHP_IN_START();
         locationBlock.addUnitHere(this);
         unitState = UnitState.NOT_ACTIVE;
+        isMoving = false;
     }
 
     public Integer getHp() {
@@ -53,14 +55,19 @@ public class Unit {
     public void setUnitState(UnitState unitState) {
         this.unitState = unitState;
     }
+    public boolean isMoving() {
+        return isMoving;
+    }
 
     public void moveTo(MapBlock destination){
         locationBlock.removeUnitFromHere(this);
         destination.addUnitHere(this);
+        isMoving = true;
         //toDo the function is not complete
     }
 
     public void fight(Unit enemy){
     }
+
 
 }

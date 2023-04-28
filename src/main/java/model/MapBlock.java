@@ -2,6 +2,7 @@ package model;
 
 import model.building.Building;
 import model.building.BuildingType;
+import model.building.DefensiveStructure;
 import model.unit.Unit;
 
 import java.util.ArrayList;
@@ -83,6 +84,23 @@ public class MapBlock {
             if (searchForType.name().toLowerCase().replaceAll("_"," ").equals(landType))
                 return searchForType;
         return null;
+    }
+
+    public String getLatestDetails(){
+        for (Unit moving: units) {
+            if(moving.isMoving())
+                return "S";
+        }
+        if(buildings != null) {
+            if (buildings instanceof DefensiveStructure)
+                return "W";
+            else
+                return "B";
+        }
+        for (Tree tree: numberOfTrees.keySet())
+            if(numberOfTrees.get(tree) != 0)
+                return "T";
+        return " ";
     }
 
 }
