@@ -18,13 +18,9 @@ public class Kingdom {
     private Integer taxRate;
     private Building headquarter;
     private ArrayList<Trade> myRequests = new ArrayList<>();
-
     private ArrayList<Trade> mySuggestion = new ArrayList<>();
-
     private ArrayList<Trade> notification = new ArrayList<>();
-
     private ArrayList<Trade> historyTrade = new ArrayList<>();
-    private ArrayList<Building> cart  = new ArrayList<>();
     private HashMap<Food ,Integer> foods = new HashMap<>();
     private HashMap<ResourceType, Integer> resources = new HashMap<>();
     private ArrayList<Unit> units = new ArrayList<>();
@@ -54,7 +50,7 @@ public class Kingdom {
     }
 
     public void setBalance(Double balance) {
-        this.balance = balance;
+        this.balance += balance;
     }
 
     public void setPopulation(Integer population) {
@@ -92,6 +88,9 @@ public class Kingdom {
     public HashMap<ResourceType, Integer> getResources() {
         return resources;
     }
+    public void setResourceAmount(ResourceType resourceType, Integer amount) {
+        resources.put(resourceType,resources.get(resourceType) + amount);
+    }
 
     public Integer getFoodRate() {
         return foodRate;
@@ -103,6 +102,10 @@ public class Kingdom {
 
     public Building getHeadquarter() {
         return headquarter;
+    }
+
+    public ArrayList<Building> getBuildings() {
+        return buildings;
     }
 
     public ArrayList<Trade> getMyRequests() {

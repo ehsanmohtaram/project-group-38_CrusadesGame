@@ -1,27 +1,26 @@
 package view;
 
-import controller.BuildingController;
 import controller.CommandParser;
-
+import controller.GameController;
 import java.util.HashMap;
 
 public class BuildingMenu {
-    private final BuildingController buildingController;
     private final CommandParser commandParser;
+    private final GameController gameController;
 
-    public BuildingMenu(BuildingController buildingController) {
-        this.buildingController = buildingController;
+    public BuildingMenu(GameController gameController) {
+        this.gameController = gameController;
         this.commandParser = new CommandParser();
     }
 
     public void run() {
         HashMap<String, String> optionPass;
-        String command ,result;
+        String command ;
         while (true) {
             command = CommandParser.getScanner().nextLine();
             if (commandParser.validate(command,"back",null) != null) return;
-            if (commandParser.validate(command,"show current menu",null) != null) System.out.println("Building Menu");
-
+            if (commandParser.validate(command,"show building info",null) != null)
+                System.out.println(gameController.buildingInfo());
             else System.out.println("Invalid command!");
         }
     }

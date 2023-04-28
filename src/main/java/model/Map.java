@@ -1,5 +1,7 @@
 package model;
 
+import model.building.Building;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -90,6 +92,15 @@ public class Map implements Cloneable {
         if(index >= DEFAULT_MAPS.size())
             return null;
         return (Map)(DEFAULT_MAPS.get(index).clone());
+    }
+
+    public User getBuildingOwnerByPosition(int x, int y) {
+        for (Kingdom kingdom : players) {
+            for (Building building : kingdom.getBuildings())
+                if (building.getPosition().getxPosition().equals(x) && building.getPosition().getyPosition().equals(y))
+                    return kingdom.getOwner();
+        }
+        return null;
     }
 
     public void changeType(int x , int y, MapBlockType type){

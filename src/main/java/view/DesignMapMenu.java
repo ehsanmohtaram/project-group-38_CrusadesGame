@@ -20,7 +20,7 @@ public class DesignMapMenu {
         while (true) {
             input = CommandParser.getScanner().nextLine();
             if ((options = commandParser.validate(input,"set texture",
-                    "x|positionX/y|positionY/x1|positionX1/y1|positionY1/x2|positionX2/y2|positionY2/t|type")) != null)
+                    "x|positionX/y|positionY/x1/y1/x2/y2/t|type")) != null)
                 System.out.println(mapDesignController.setTexture(options));
             else if ((options = commandParser.validate(input,"clear","x|positionX/y|positionY")) != null) {
                 System.out.println(mapDesignController.clear(options));
