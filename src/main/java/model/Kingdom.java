@@ -7,29 +7,37 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Kingdom {
-    private User owner;
+    private final User owner;
+    private final Flags flag;
     private Integer population;
     private Integer noneEmployed;
     private Integer fearRate;
     private Integer popularity;
     private Double balance;
-
+    private Integer foodRate;
+    private Integer taxRate;
     private Building headquarter;
-    private HashMap<Food , Integer> foods = new HashMap<>();
+    private ArrayList<Trade> myRequests = new ArrayList<>();
+
+    private ArrayList<Trade> mySuggestion = new ArrayList<>();
+
+    private ArrayList<Trade> notification = new ArrayList<>();
+
+    private ArrayList<Trade> historyTrade = new ArrayList<>();
+    private ArrayList<Building> cart  = new ArrayList<>();
+    private HashMap<Food ,Integer> foods = new HashMap<>();
     private HashMap<ResourceType, Integer> resources = new HashMap<>();
     private ArrayList<Unit> units = new ArrayList<>();
     private ArrayList<Building> buildings = new ArrayList<>();
-    private Integer foodRate;
-    private Integer taxRate;
-    private Flags flag;
-    public Kingdom(Flags flag , Building headquarter, User owner) {
+    public Kingdom(Flags flag, User owner, Building headquarter) {
         population = 5;
         popularity = 0;
         foodRate = -2;
         this.flag = flag;
-        this.headquarter = headquarter;
         this.owner = owner;
         this.balance = 100.0;
+        this.headquarter = headquarter;
+        addBuilding(headquarter);
     }
 
     public User getOwner() {
@@ -76,10 +84,6 @@ public class Kingdom {
         this.taxRate = taxRate;
     }
 
-    public Building getHeadquarter() {
-        return headquarter;
-    }
-
     public HashMap<Food, Integer> getFoods() {
         return foods;
     }
@@ -94,6 +98,37 @@ public class Kingdom {
 
     public Flags getFlag() {
         return flag;
+    }
+
+    public Building getHeadquarter() {
+        return headquarter;
+    }
+
+    public ArrayList<Trade> getMyRequests() {
+        return myRequests;
+    }
+
+    public void addRequest(Trade trade) {
+        myRequests.add(trade);
+    }
+
+    public void addSuggestion(Trade trade) {
+        mySuggestion.add(trade);
+    }
+
+    public void addNotification(Trade trade) {
+        notification.add(trade);
+    }
+    public ArrayList<Trade> getHistoryTrade() {
+        return historyTrade;
+    }
+
+    public ArrayList<Trade> getMySuggestion() {
+        return mySuggestion;
+    }
+
+    public ArrayList<Trade> getNotification() {
+        return notification;
     }
 
     public void setFoodRate(Integer foodRate) {
@@ -116,8 +151,11 @@ public class Kingdom {
         units.add(toAdd);
     }
 
-    private void addBuilding(Building toAdd){
+    public void addBuilding(Building toAdd){
         buildings.add(toAdd);
     }
+
+
+
 
 }

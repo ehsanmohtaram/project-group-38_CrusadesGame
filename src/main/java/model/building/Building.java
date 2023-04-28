@@ -10,7 +10,7 @@ public class Building {
     public Building(MapBlock position, BuildingType buildingType) {
         this.position = position;
         this.buildingType = buildingType;
-        this.hp = buildingType.HP_IN_FIRST;
+        this.hp = buildingType.getHP_IN_FIRST();
     }
 
     public static BuildingType findEnumByBuildingName(String buildingName) {
@@ -20,22 +20,6 @@ public class Building {
         return null;
     }
     //TODO category var may be needed
-
-    public Integer getGOLD() {
-        return buildingType.GOLD;
-    }
-
-    public ResourceType getRESOURCES() {
-        return buildingType.RESOURCES;
-    }
-
-    public Integer getRESOURCE_NUMBER() {
-        return buildingType.RESOURCE_NUMBER;
-    }
-
-    public Integer getHP_IN_FIRST() {
-        return buildingType.HP_IN_FIRST;
-    }
 
     public Enum<?> getSpecificConstant() {
         return buildingType.specificConstant;

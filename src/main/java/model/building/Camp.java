@@ -14,16 +14,6 @@ public class Camp extends Building{
         super(position, buildingType);
     }
 
-    public Integer getCOST_OF_LADDER_MAN() {
-        CampType campType = (CampType) getBuildingType().specificConstant;
-        return campType.COST_OF_LADDER_MAN;
-    }
-
-    public Integer getCOST_OF_ENGINEER() {
-        CampType campType = (CampType) getBuildingType().specificConstant;
-        return campType.COST_OF_LADDER_MAN;
-    }
-
     public ArrayList<Unit> getUnits() {
         return units;
     }

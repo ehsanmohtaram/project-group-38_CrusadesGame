@@ -45,9 +45,9 @@ public class ShopAndTradeController {
                 Trade trade = new Trade(resourceType, resourceAmount, price, currentUser, userReceiver, massage, Trade.countId);
                 Trade.countId ++;
                 Trade.getTrades().add(trade);
-                currentUser.getMyRequests().add(trade);
-                userReceiver.getMySuggestion().add(trade);
-                userReceiver.getNotification().add(0, trade);
+                gameMap.getKingdomByOwner(currentUser).addRequest(trade);
+                gameMap.getKingdomByOwner(userReceiver).addSuggestion(trade);
+                gameMap.getKingdomByOwner(userReceiver).addNotification(trade);
                 return "The request was successfully registered";
             }
             else
@@ -59,20 +59,20 @@ public class ShopAndTradeController {
     }
     public String showTradeList() {
         StringBuilder output = new StringBuilder("your suggestions :");
-        for (Trade trade : currentUser.getMySuggestion()) {
+        for (Trade trade : gameMap.getKingdomByOwner(currentUser).getMySuggestion()) {
             output.append("\nResource type : ").append(trade.getResourceType().name())
                     .append("resource amount : ").append(trade.getResourceAmount())
                     .append("price : ").append(trade.getPrice()).append("from : ")
                     .append(trade.getUserSender().getUserName()).append("id : ").append(trade.getId())
                     .append("massage : ").append(trade.getMassage());
         }
-        currentUser.getNotification().clear();
+        gameMap.getKingdomByOwner(currentUser).getNotification().clear();
         return output.toString();
     }
     public String tradeAccept(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        for (Trade trade : currentUser.getMySuggestion()) {
+        for (Trade trade : gameMap.getKingdomByOwner(currentUser).getMySuggestion()) {
             if (trade.getId() == Integer.parseInt(options.get("i"))) {
                 Kingdom kingdom = gameMap.getKingdomByOwner(currentUser);
                 int cost = trade.getPrice() * trade.getResourceAmount();
@@ -89,7 +89,7 @@ public class ShopAndTradeController {
     }
     public String showTradeHistory() {
         StringBuilder output = new StringBuilder("your history:");
-        for (Trade trade : currentUser.getHistoryTrade()) {
+        for (Trade trade : gameMap.getKingdomByOwner(currentUser).getHistoryTrade()) {
             output.append("\nResource type : ").append(trade.getResourceType().name())
                     .append(" resource amount : ").append(trade.getResourceAmount())
                     .append(" price : ").append(trade.getPrice()).append("id: ")
@@ -101,7 +101,7 @@ public class ShopAndTradeController {
     }
     public String showNotification() {
         StringBuilder output = new StringBuilder("your new suggestions : ");
-        for (Trade trade : currentUser.getNotification()) {
+        for (Trade trade : gameMap.getKingdomByOwner(currentUser).getNotification()) {
             output.append("\nnew suggestion from : ").append(trade.getUserSender().getUserName())
                     .append("massage : ").append(trade.getMassage());
         }

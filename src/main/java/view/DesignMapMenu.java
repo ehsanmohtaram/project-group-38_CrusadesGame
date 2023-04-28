@@ -1,13 +1,10 @@
 package view;
 
 import controller.CommandParser;
-import controller.Controller;
 import controller.MapDesignController;
 import java.util.HashMap;
-import java.util.Scanner;
 
 public class DesignMapMenu {
-    private Controller controller;
     private final MapDesignController mapDesignController;
     private final CommandParser commandParser;
 
@@ -17,9 +14,9 @@ public class DesignMapMenu {
     }
 
     public String run(){
-        System.out.println("here you can design your map. when your map is ready type 'start'");
+        System.out.println("You can design your map here. When your map is ready input 'start game'");
         HashMap<String , String > options;
-        String input;
+        String input, result;
         while (true) {
             input = CommandParser.getScanner().nextLine();
             if ((options = commandParser.validate(input,"set texture",
@@ -37,10 +34,12 @@ public class DesignMapMenu {
                 System.out.println(mapDesignController.dropBuilding(options));
             }else if ((options = commandParser.validate(input,"drop unit","x|positionX/y|positionY/t|type")) != null) {
                 System.out.println(mapDesignController.dropUnit(options));
-            }else if(input.equals("start"))
-                return "start";
-            else
-                System.out.println("invalid command");
+            }else if(commandParser.validate(input,"start game",null) != null) {
+                result = mapDesignController.startPlaying();
+                if (!result.equals("start")) System.out.println(result);
+                else return "start";
+            }
+            else System.out.println("invalid command");
         }
 
     }

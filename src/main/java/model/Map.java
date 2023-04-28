@@ -7,7 +7,7 @@ import java.util.Random;
 public class Map implements Cloneable {
     public static ArrayList<Map> Maps = new ArrayList<>();
     public static ArrayList<Map> DEFAULT_MAPS = new ArrayList<>(3);
-    private ArrayList<Kingdom> players;
+    private ArrayList<Kingdom> players = new ArrayList<>();
     private String mapName;
     private MapBlock[][] map;
     private Boolean[][] accessToRight;
@@ -41,9 +41,6 @@ public class Map implements Cloneable {
 //            for (MapBlock mapBlockWith : mapBlockHeight) mapBlockWith = new MapBlock();
     }
 
-    public MapBlock GetMapBlockByLocation(int x , int y){
-        return map[x][y];
-    }
     public static void createDefaultMaps(){
         Map defaultMap1 = new Map(60 , 60 , "jungle");
         Map defaultMap2 = new Map(60 , 60 , "graveyard");
@@ -79,6 +76,10 @@ public class Map implements Cloneable {
         return null;
     }
 
+    public ArrayList<Kingdom> getPlayers() {
+        return players;
+    }
+
     public MapBlock getMapBlockByLocation(int xPosition , int yPosition){
         if(xPosition < mapWidth && yPosition < mapHeight)
             return map[xPosition][yPosition];
@@ -89,6 +90,12 @@ public class Map implements Cloneable {
         if(index >= DEFAULT_MAPS.size())
             return null;
         return (Map)(DEFAULT_MAPS.get(index).clone());
+    }
+
+    public Boolean isThereAKingdomHere(int x, int y) {
+        for (Kingdom kingdom : players)
+            if (kingdom.getHeadquarter().getPosition().equals(getMapBlockByLocation(x,y))) return true;
+        return false;
     }
 
     public void changeType(int x , int y, MapBlockType type){
@@ -127,5 +134,6 @@ public class Map implements Cloneable {
 
         }
     }
+
 
 }

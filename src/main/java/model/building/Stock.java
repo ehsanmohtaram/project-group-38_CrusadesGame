@@ -7,8 +7,5 @@ public class Stock extends Building{
         super(position, buildingType);
     }
 
-    public Integer getCAPACITY() {
-        StockType stockType = (StockType) getBuildingType().specificConstant;
-        return stockType.CAPACITY;
-    }
+
 }

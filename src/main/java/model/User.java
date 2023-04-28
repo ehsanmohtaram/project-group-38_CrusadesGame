@@ -1,14 +1,10 @@
 package model;
 
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.internal.bind.DateTypeAdapter;
 import org.apache.commons.codec.digest.DigestUtils;
-import view.TradeMenu;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 
 public class User {
@@ -39,16 +35,7 @@ public class User {
     private Integer securityQuestionNumber;
     @Expose
     private String answerToSecurityQuestion;
-    @Expose
-    private ArrayList<Trade> myRequests = new ArrayList<>();
-    @Expose
-    private ArrayList<Trade> mySuggestion = new ArrayList<>();
-    @Expose
-    private ArrayList<Trade> notification = new ArrayList<>();
-    @Expose
-    private ArrayList<Trade> historyTrade = new ArrayList<>();
     private ArrayList<Map> myMap = new ArrayList<>();
-    private ArrayList<Kingdom> kingdom = new ArrayList<>();
     public User(String userName, String nickName,String password, String email, String slogan, Integer securityQuestionNumber, String answerToSecurityQuestion) {
         this.userName = userName;
         this.nickName = nickName;
@@ -114,18 +101,6 @@ public class User {
         this.userName = userName;
     }
 
-    public ArrayList<Trade> getMyRequests() {
-        return myRequests;
-    }
-
-    public ArrayList<Trade> getHistoryTrade() {
-        return historyTrade;
-    }
-
-    public ArrayList<Trade> getMySuggestion() {
-        return mySuggestion;
-    }
-
     public boolean checkPassword(String password) {
         return this.password.equals(DigestUtils.sha256Hex(password));
     }
@@ -151,11 +126,6 @@ public class User {
     public void setNickName(String nickName) {
         this.nickName = nickName;
     }
-
-    public ArrayList<Trade> getNotification() {
-        return notification;
-    }
-
 
 
     public static Boolean checkForEmailDuplication(String email) {

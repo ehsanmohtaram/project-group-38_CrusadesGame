@@ -11,12 +11,11 @@ public class Controller {
     private final MainMenu mainMenu;
     private DesignMapMenu designMapMenu;
     public static User currentUser = null;
-    public static boolean stayLoggedIn = false;
     private Map gameMap;
 
     public Controller() {
         this.mainMenu = new MainMenu(this);
-        User.users.addAll(Database.setArrayOfUsers());
+        Database.setArrayOfUsers();
         for (User user : User.users) if (user.getLoggedIn()) currentUser = user;
     }
 
@@ -44,20 +43,24 @@ public class Controller {
 
     public String showDefaultMaps(){
         Map.createDefaultMaps();
-        String result = "";
+        StringBuilder result = new StringBuilder();
+        int counter = 0;
         for (Map defaults: Map.DEFAULT_MAPS) {
-            result += defaults.getMapName() + ": " + defaults.getMapWidth() + " * " + defaults.getMapHeight() + '\n';
+            counter++;
+            result.append(counter).append(". ").append(defaults.getMapName()).append(": ")
+                    .append(defaults.getMapWidth()).append(" * ")
+                    .append(defaults.getMapHeight()).append("\n");
         }
-        return result;
+        result.deleteCharAt(result.length() - 1);
+        return result.toString();
     }
 
     public String selectDefaultMap(String selectedIndex){
         try{
             int index = Integer.parseInt(selectedIndex);
             gameMap = Map.getDefaultMap(index - 1);
-            if(gameMap == null)
-                return "invalid number";
-            return "successful";
+            if(gameMap == null) return "invalid number";
+            return "Map was created successfully!";
         }
         catch (Exception IllegalArgumentException){
             return "invalid input, please select a number";
@@ -73,10 +76,10 @@ public class Controller {
             return "you must choose a name for your map. use -n.";
         int width = Integer.parseInt(options.get("x"));
         int height = Integer.parseInt(options.get("y"));
-        if(width < 0 || height < 0)
-            return "invalid bounds";
+        if(width < 0 || height < 0) return "invalid bounds";
         gameMap = new Map(width, height, options.get("n"));
-        return "successful";
+        currentUser.addToMyMap(gameMap);
+        return "Map was created successfully!";
     }
 
     public String showMap() {

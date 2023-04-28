@@ -25,20 +25,29 @@ public class Database {
             fileWriter.write(jsonToArray.toString());
             fileWriter.close();
         }
-        catch (Exception ignored) {}
+        catch (Exception ignored) {
+            System.out.println("Json can not be updated");
+        }
     }
-    public static ArrayList<User> setArrayOfUsers() {
-        ArrayList<User> users = new ArrayList<>();
+    public static void setArrayOfUsers() {
         String json = changeJsonToString();
         try {
             Gson gson = new Gson();
             JSONParser parser = new JSONParser();
             JSONArray jsonToArray = new JSONArray();
+            User user;
             if (json != null) jsonToArray = (JSONArray) parser.parse(json);
-            for (Object jsonValue : jsonToArray) users.add(gson.fromJson(jsonValue.toString(),User.class));
+            for (Object jsonValue : jsonToArray) {
+                user = gson.fromJson(jsonValue.toString(),User.class);
+                new User(user.getUserName(), user.getNickName(), user.getPassword(), user.getEmail(),
+                        user.getSlogan(), user.getSecurityQuestionNumber(), user.getAnswerToSecurityQuestion());
+            }
         }
         catch (Exception ignored) {}
-        return users;
+        for (User user : User.users) {
+            User.isDelayed.put(user,false);
+            User.loginDelays.put(user,-15);
+        }
     }
 
     public static String changeJsonToString() {

@@ -13,7 +13,6 @@ public class GameMenu {
         commandParser = new CommandParser();
     }
     public String run() {
-        System.out.println("the game has been started! now you can play");
         HashMap<String , String > options;
         String input;
         while (true) {

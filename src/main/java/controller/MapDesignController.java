@@ -1,24 +1,23 @@
 
 package controller;
 
-import model.Map;
-import model.MapBlock;
-import model.MapBlockType;
-import model.Tree;
+import model.*;
+import model.building.Building;
+import model.building.BuildingType;
 import view.DesignMapMenu;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
-import java.util.regex.Matcher;
+
 
 public class MapDesignController {
-    private Map gameMap;
+    private final Map gameMap;
     private DesignMapMenu designMapMenu;
+    private final User currentUser;
 
     public MapDesignController(Map gameMap) {
         this.gameMap = gameMap;
         designMapMenu = new DesignMapMenu(this);
+        currentUser = Controller.currentUser;
     }
 
     public void run(){
@@ -112,8 +111,51 @@ public class MapDesignController {
         return "successfully dropped";
     }
 
-    public String addUserToMap(HashMap<String , String> options){
+    public String checkAroundHeadQuarterPosition(Integer xPosition, Integer yPosition) {
+        int changeXToString;
+        int changeYToString;
+        for (int i = -10; i < 10; i++) {
+            for (int j = -10; j < 10; j++) {
+                changeXToString = xPosition + i;
+                changeYToString = yPosition + j;
+                if (checkLocationValidation(Integer.toString(changeXToString), Integer.toString(changeYToString)) != null)
+                    return "You have to put your HeadQuarter in a suitable position!";
+                if (gameMap.isThereAKingdomHere(xPosition,yPosition)) return "You can not make your HeadQuarter next to others!";
+            }
+        }
         return null;
+    }
+
+    public String startPlaying(){
+        if (gameMap.getKingdomByOwner(currentUser) == null) return "You have not add yourself to map yet. Please add your kingdom!";
+        if (gameMap.getPlayers().size() < 2) return "Please at least add 2 players to start game!";
+        return "start";
+    }
+
+    public String addUserToMap(HashMap<String , String> options){
+        String checkingResult;
+        for (String key : options.keySet())
+            if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        if (!options.get("x").matches("-?\\d+") || !options.get("y").matches("-?\\d+"))
+            return "Please enter digits as value of X and Y position!";
+        if (User.getUserByUsername(options.get("u")) == null) return "User dose not exist. Please choose user from registered users";
+        try {Flags.valueOf(options.get("f").toUpperCase());}
+        catch (IllegalArgumentException illegalArgumentException)
+        {return "Your flag color did not exist in default colors!";}
+        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null ) return checkingResult;
+        if (!gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))).getMapBlockType().isAccessible())
+            return "You can not build your head quarter in this type of land!";
+        if ((checkingResult = checkAroundHeadQuarterPosition(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")))) != null)
+            return checkingResult;
+        if (gameMap.getKingdomByOwner(User.getUserByUsername(options.get("u"))) != null)
+            return "You already have put your kingdom in this map!";
+        Kingdom kingdom = new Kingdom(Flags.valueOf(options.get("f").toUpperCase()),
+                User.getUserByUsername(options.get("u")),
+                new Building(gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))), BuildingType.HEAD_QUARTER));
+        gameMap.addPlayer(kingdom);
+        User.getUserByUsername(options.get("u")).addToMyMap(gameMap);
+        return "User add to map successfully!";
     }
 
     public String dropUnit(HashMap<String , String> options){

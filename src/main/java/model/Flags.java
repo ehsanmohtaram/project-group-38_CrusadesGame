@@ -1,5 +1,12 @@
 package model;
 
 public enum Flags {
-    RED
+    RED,
+    BLUE,
+    BLACK,
+    YELLOW,
+    PURPLE,
+    GREEN,
+    WHITE,
+    ORANGE
 }

@@ -28,4 +28,16 @@ public enum MapBlockType {
         this.isBuildable = isBuildable;
         this.isCultivable = isCultivable;
     }
+
+    public boolean isAccessible() {
+        return isAccessible;
+    }
+
+    public boolean isBuildable() {
+        return isBuildable;
+    }
+
+    public boolean isCultivable() {
+        return isCultivable;
+    }
 }

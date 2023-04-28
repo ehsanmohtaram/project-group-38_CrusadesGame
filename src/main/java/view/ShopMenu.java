@@ -22,7 +22,7 @@ public class ShopMenu {
             if (commandParser.validate(input, "back", null) != null) return;
             if (commandParser.validate(input, "show current menu", null) != null)
                 System.out.println("Shop menu");
-            if (commandParser.validate(input, "show price list", null) != null)
+            else if (commandParser.validate(input, "show price list", null) != null)
                 System.out.println(shopAndTradeController.showPriceList());
             else if ((optionPass = commandParser.validate(input, "buy" , "i|itemName/a|itemAmount")) != null)
                 System.out.println(shopAndTradeController.buyFromShop(optionPass));
