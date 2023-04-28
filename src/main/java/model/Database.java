@@ -37,10 +37,13 @@ public class Database {
             JSONArray jsonToArray = new JSONArray();
             User user;
             if (json != null) jsonToArray = (JSONArray) parser.parse(json);
+            int counter = 0;
             for (Object jsonValue : jsonToArray) {
                 user = gson.fromJson(jsonValue.toString(),User.class);
                 new User(user.getUserName(), user.getNickName(), user.getPassword(), user.getEmail(),
                         user.getSlogan(), user.getSecurityQuestionNumber(), user.getAnswerToSecurityQuestion());
+                User.users.get(counter).setLoggedIn(user.getLoggedIn());
+                counter++;
             }
         }
         catch (Exception ignored) {}
