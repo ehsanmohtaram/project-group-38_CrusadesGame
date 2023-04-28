@@ -11,6 +11,7 @@ public class Controller {
     private final MainMenu mainMenu;
     private DesignMapMenu designMapMenu;
     public static User currentUser = null;
+    public static boolean stayLoggedIn = false;
     private Map gameMap;
 
     public Controller() {

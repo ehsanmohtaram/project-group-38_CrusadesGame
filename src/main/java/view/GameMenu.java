@@ -30,7 +30,7 @@ public class GameMenu {
             }
             else if ((options = (commandParser.validate(input, "drop building","x|xPosition/y|yPosition/t|type"))) != null)
                 System.out.println(gameController.dropBuilding(options));
-            else if (commandParser.validate(input, "unit menu ", null) != null) {
+            else if (commandParser.validate(input, "unit menu", null) != null) {
                 System.out.println("You enter unit menu successfully!"); return "unit";
             }
             else if (commandParser.validate(input,"next turn", null) != null){
