@@ -25,14 +25,14 @@ public class Randomize {
             if (i > 0) putSpace.append(" ");
             putSpace.append(captcha.charAt(i));
         }
-        int width = 100; int height = 10;
+        int width = 100; int height = 15;
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics generator = image.getGraphics();
-        generator.setFont(new Font("DialogInput", Font.PLAIN, 10));
+        generator.setFont(new Font("Arial", Font.PLAIN, 15));
         Graphics2D graphics = (Graphics2D) generator;
         graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        graphics.drawString(putSpace.toString(), 0, 10);
-        for (int y = 2; y < height; y++) {
+        graphics.drawString(putSpace.toString(), 0, 15);
+        for (int y = 4; y < height; y++) {
             StringBuilder stringBuilder = new StringBuilder();
             for (int x = 0; x < width; x++)
                 stringBuilder.append(image.getRGB(x, y) == -16777216 ? " " : "0");
