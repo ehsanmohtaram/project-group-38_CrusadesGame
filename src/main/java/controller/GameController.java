@@ -164,6 +164,7 @@ public class GameController {
                         if (unit.getOwner().equals(currentUser)) {
                             UnitState unitState = UnitState.valueOf(options.get("s").toUpperCase());
                             unit.setUnitState(unitState);
+                            return "The state is set correctly";
                         }
                     }
                 }
@@ -186,7 +187,8 @@ public class GameController {
                 for (Unit unit : gameMap.getMapBlockByLocation(x, y).getUnits()) {
                     if (unit.getUnitType().equals(unitType)) {
                         if (!(unit.getOwner().equals(currentUser))) {
-
+                            currentUnit.setForAttack(unit);
+                            return "attacked";
                         }
                     }
                 }
@@ -197,6 +199,27 @@ public class GameController {
         else
             return "your location out of bounds";
 
+    } //این سه تا دستور یونیت شباهت خیلی زیادی دارن. میشه یه تابع برا اروراش زد
+
+    public String setTaxRate(HashMap<String, String> options) {
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        int taxRate = Integer.parseInt(options.get("r"));
+        if (taxRate >= -3 && taxRate <= 8) {
+            Kingdom kingdom = gameMap.getKingdomByOwner(currentUser);
+            Double moneyForPay = 2 - (8 - taxRate) * 0.2;
+            if (kingdom.getPopularity() * moneyForPay <= kingdom.getBalance()) {
+                kingdom.setTaxRate(taxRate);
+                return "tax rate settled";
+                //در نکست ترن باید از حسابش به اندازه ای که دیگه هست کم بشه. اگه پول نداشت اونجا باید ریت رو بر روی صفر تنظیم کرد
+            } else
+                return "your balance is not enough";
+        } else
+            return "tax rate out of bounds";
+    }
+
+    public String showTaxRate(HashMap<String, String> options) {
+        return "tax rate: " + gameMap.getKingdomByOwner(currentUser).getTaxRate();
     }
 
 }
