@@ -13,6 +13,8 @@ public class MapDesignController {
     private final Map gameMap;
     private DesignMapMenu designMapMenu;
     private final User currentUser;
+    private int XofMap;
+    private int YofMap;
 
     public MapDesignController(Map gameMap) {
         this.gameMap = gameMap;
@@ -21,10 +23,21 @@ public class MapDesignController {
     }
 
     public void run(){
-        if(designMapMenu.run().equals("start")){
-            GameController gameController = new GameController(gameMap);
-            gameController.run();
+        while (true){
+            switch (designMapMenu.run()) {
+                case "start":
+                    GameController gameController = new GameController(gameMap);
+                    gameController.run();
+                    return;
+                case "map":
+                    MapController mapController = new MapController(gameMap, currentUser);
+                    mapController.run();
+            }
         }
+//        if(designMapMenu.run().equals("start")){
+//            GameController gameController = new GameController(gameMap);
+//            gameController.run();
+//        }
     }
 
     public String setTexture(HashMap<String , String> options) {
@@ -154,8 +167,9 @@ public class MapDesignController {
         for (Kingdom kingdom : gameMap.getPlayers())
             if (kingdom.getFlag().name().equals(options.get("f").toUpperCase())) return "Another user choose this flag. Please choose another flag.";
         Kingdom kingdom = new Kingdom(Flags.valueOf(options.get("f").toUpperCase()),
-                User.getUserByUsername(options.get("u")),
-                new Building(gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))), BuildingType.HEAD_QUARTER));
+                User.getUserByUsername(options.get("u")));
+        Building headQuarter = new Building(gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))), BuildingType.HEAD_QUARTER, kingdom);
+        kingdom.setHeadquarter(headQuarter);
         gameMap.addPlayer(kingdom);
         User.getUserByUsername(options.get("u")).addToMyMap(gameMap);
         return "User add to map successfully!";
@@ -173,30 +187,35 @@ public class MapDesignController {
         String checkingResult;
         if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
             return checkingResult;
-        String result = "";
         int xPosition = Integer.parseInt(options.get("x")) ;
         int yPosition = Integer.parseInt(options.get("y")) ;
-        String resetColor = "\033[0m";
-        for (int j = yPosition - 4; j <= yPosition + 4; j++) {
-            for (int fill = 0; fill < 3; fill++){
-                for (int i = xPosition - 10; i <= (xPosition + 10); i++) {
-                    MapBlock showedBlock;
-                    if ((showedBlock = gameMap.getMapBlockByLocation(i, j)) != null) {
-                        if(fill == 1){
-                            result += showedBlock.getMapBlockType().getColor() + "  "
-                                    + showedBlock.getLatestDetails() + "  " + resetColor + " ";
-                        }else {
-                            result += showedBlock.getMapBlockType().getColor() + "     " + resetColor + " ";
-                        }
-                    }else
-                        result += "\u001B[48;5;237m" + "XXXXX" + resetColor + " ";
-
-                }
-                result += '\n';
-            }
-            result += '\n';
-        }
-        return result.substring(0, result.length() - 2);
+        XofMap = xPosition;
+        YofMap = yPosition;
+        return gameMap.getPartOfMap(xPosition, yPosition);
+//        String result = "";
+//        int xPosition = Integer.parseInt(options.get("x")) ;
+//        int yPosition = Integer.parseInt(options.get("y")) ;
+//        String resetColor = "\033[0m";
+//        for (int j = yPosition - 4; j <= yPosition + 4; j++) {
+//            for (int fill = 0; fill < 3; fill++){
+//                for (int i = xPosition - 10; i <= (xPosition + 10); i++) {
+//                    MapBlock showedBlock;
+//                    if ((showedBlock = gameMap.getMapBlockByLocation(i, j)) != null) {
+//                        if(fill == 1){
+//                            result += showedBlock.getMapBlockType().getColor() + "  "
+//                                    + showedBlock.getLatestDetails() + "  " + resetColor + " ";
+//                        }else {
+//                            result += showedBlock.getMapBlockType().getColor() + "     " + resetColor + " ";
+//                        }
+//                    }else
+//                        result += "\u001B[48;5;237m" + "XXXXX" + resetColor + " ";
+//
+//                }
+//                result += '\n';
+//            }
+//            result += '\n';
+//        }
+//        return result.substring(0, result.length() - 2);
     }
 
 }

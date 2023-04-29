@@ -12,7 +12,8 @@ public class MapBlock {
 
     private Building buildings;
     private ArrayList<Unit> units;
-    private ArrayList<ResourceType> resources;
+    private ResourceType resource;
+    private int resourceAmount;
     private MapBlockType mapBlockType;
     private Integer xPosition;
     private Integer yPosition;
@@ -22,7 +23,7 @@ public class MapBlock {
         this.mapBlockType = MapBlockType.EARTH;
         this.xPosition = xPosition;
         this.yPosition = yPosition;
-        resources = new ArrayList<>();
+        resourceAmount = 0;
         units = new ArrayList<>();
         numberOfTrees = new HashMap<>();
         for (Tree tree: Tree.values()) numberOfTrees.put(tree , 0);
@@ -36,12 +37,16 @@ public class MapBlock {
         this.units = units;
     }
 
-    public ArrayList<ResourceType> getResources() {
-        return resources;
+    public ResourceType getResources() {
+        return resource;
     }
 
-    public void setResources(ArrayList<ResourceType> resources) {
-        this.resources = resources;
+    public int getResourceAmount(){
+        return resourceAmount;
+    }
+    public void setResources(ResourceType resource, int resourceAmount) {
+        this.resource = resource;
+        this.resourceAmount = resourceAmount;
     }
 
     public MapBlockType getMapBlockType() {
@@ -58,6 +63,14 @@ public class MapBlock {
 
     public Integer getyPosition() {
         return yPosition;
+    }
+
+    public Building getBuildings() {
+        return buildings;
+    }
+
+    public HashMap<Tree, Integer> getNumberOfTrees() {
+        return numberOfTrees;
     }
 
     public void addUnitHere(Unit toAdd){

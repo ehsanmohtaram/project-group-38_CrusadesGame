@@ -29,19 +29,22 @@ public class Kingdom {
     private HashMap<ResourceType, Integer> resources = new HashMap<>();
     private ArrayList<Unit> units = new ArrayList<>();
     private ArrayList<Building> buildings = new ArrayList<>();
-    public Kingdom(Flags flag, User owner, Building headquarter) {
+    public Kingdom(Flags flag, User owner) {
         population = 5;
         popularity = 0;
         foodRate = -2;
         this.flag = flag;
         this.owner = owner;
         this.balance = 100.0;
-        this.headquarter = headquarter;
         addBuilding(headquarter);
     }
 
     public User getOwner() {
         return owner;
+    }
+
+    public void setHeadquarter(Building headquarter) {
+        this.headquarter = headquarter;
     }
 
     public Integer getPopulation() {

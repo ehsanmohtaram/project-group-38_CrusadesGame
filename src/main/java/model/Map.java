@@ -135,5 +135,30 @@ public class Map implements Cloneable {
         }
     }
 
+    public String getPartOfMap (int xPosition , int yPosition){
+        String result = "";
+        String resetColor = "\033[0m";
+        for (int j = yPosition - 4; j <= yPosition + 4; j++) {
+            for (int fill = 0; fill < 3; fill++){
+                for (int i = xPosition - 10; i <= (xPosition + 10); i++) {
+                    MapBlock showedBlock;
+                    if ((showedBlock = map[i][j]) != null) {
+                        if(fill == 1){
+                            result += showedBlock.getMapBlockType().getColor() + "  "
+                                    + showedBlock.getLatestDetails() + "  " + resetColor + " ";
+                        }else {
+                            result += showedBlock.getMapBlockType().getColor() + "     " + resetColor + " ";
+                        }
+                    }else
+                        result += "\u001B[48;5;237m" + "XXXXX" + resetColor + " ";
+
+                }
+                result += '\n';
+            }
+            result += '\n';
+        }
+        return result.substring(0, result.length() - 2);
+    }
+
 
 }

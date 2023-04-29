@@ -1,5 +1,6 @@
 package model.building;
 
+import model.Kingdom;
 import model.MapBlock;
 import model.unit.Unit;
 
@@ -10,8 +11,8 @@ public class Camp extends Building{
     private Integer numberOFLadderMan;
     private Integer numberOfEngineer;
 
-    public Camp(MapBlock position, BuildingType buildingType) {
-        super(position, buildingType);
+    public Camp(MapBlock position, BuildingType buildingType, Kingdom owner) {
+        super(position, buildingType, owner);
     }
 
     public ArrayList<Unit> getUnits() {
