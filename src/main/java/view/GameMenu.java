@@ -28,7 +28,7 @@ public class GameMenu {
             else if ((options = (commandParser.validate(input, "drop building","x|xPosition/y|yPosition/t|type"))) != null)
                 System.out.println(gameController.dropBuilding(options));
             else if ((options = commandParser.validate(input, "select building", "x|xPosition/y|yPosition")) != null) {
-                result = gameController.selectBuilding(options);
+                String result = gameController.selectBuilding(options);
                 if (!result.equals("building")) System.out.println(result);
                 else return "building";
             }

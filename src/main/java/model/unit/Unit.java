@@ -3,16 +3,13 @@ package model.unit;
 import model.Kingdom;
 import model.MapBlock;
 
-import java.util.ArrayList;
-
 public class Unit {
     private Integer hp;
     private UnitType unitType;
-
     private MapBlock locationBlock;
     private UnitState unitState;
     private Kingdom owner;
-
+    private Unit forAttack;
     public Unit(UnitType unitType, MapBlock locationBlock , Kingdom owner) {
         this.unitType = unitType;
         this.locationBlock = locationBlock;
@@ -30,11 +27,11 @@ public class Unit {
         return unitType;
     }
 
-    public Integer getxPosition() {
+    public Integer getXPosition() {
         return locationBlock.getxPosition();
     }
 
-    public Integer getyPosition() {
+    public Integer getYPosition() {
         return locationBlock.getyPosition();
     }
 
@@ -48,6 +45,14 @@ public class Unit {
 
     public Kingdom getOwner() {
         return owner;
+    }
+
+    public Unit getForAttack() {
+        return forAttack;
+    }
+
+    public void setForAttack(Unit forAttack) {
+        this.forAttack = forAttack;
     }
 
     public void setUnitState(UnitState unitState) {

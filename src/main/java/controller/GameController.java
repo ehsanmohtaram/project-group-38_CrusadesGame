@@ -4,6 +4,7 @@ import model.*;
 import model.building.Building;
 import model.building.BuildingType;
 import model.unit.Unit;
+import model.unit.UnitState;
 import model.unit.UnitType;
 import view.*;
 import java.util.HashMap;
@@ -138,7 +139,7 @@ public class GameController {
         if (x <= gameMap.getMapWidth() && y <= gameMap.getMapHeight()) {
             if (!(gameMap.getMapBlockByLocation(x, y).getMapBlockType().name().equals("WATER")) ||
             !(gameMap.getMapBlockByLocation(x, y).getMapBlockType().name().equals("KOH")) || (gameMap.getMapBlockByLocation(x, y).getBuildings() != null)) {
-                if (currentUnit.getxPosition() - x + currentUnit.getyPosition() - y <= currentUnit.getUnitType().getVELOCITY()) {
+                if (currentUnit.getXPosition() - x + currentUnit.getYPosition() - y <= currentUnit.getUnitType().getVELOCITY()) {
                     //todo
                 } else
                     return "The speed of the soldier is not enough";
@@ -148,6 +149,54 @@ public class GameController {
         else
             return "your location out of bounds";
         return null;
+    }
+
+    public String setSituation(HashMap<String, String> options) {
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        int x = Integer.parseInt(options.get("x"));
+        int y = Integer.parseInt(options.get("y"));
+        if (x <= gameMap.getMapWidth() && y <= gameMap.getMapHeight()) {
+            UnitType unitType;
+            if ((unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll("\\s*",""))) != null){
+                for (Unit unit : gameMap.getMapBlockByLocation(x, y).getUnits()) {
+                    if (unit.getUnitType().equals(unitType)) {
+                        if (unit.getOwner().equals(currentUser)) {
+                            UnitState unitState = UnitState.valueOf(options.get("s").toUpperCase());
+                            unit.setUnitState(unitState);
+                        }
+                    }
+                }
+                return "You do not have such a soldier in this block";
+            } else
+                return "type entered not valid";
+        }
+        else
+            return "your location out of bounds";
+    }
+
+    public String attackOnUnit(HashMap<String, String> options) {
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        int x = Integer.parseInt(options.get("x"));
+        int y = Integer.parseInt(options.get("y"));
+        if (x <= gameMap.getMapWidth() && y <= gameMap.getMapHeight()) {
+            UnitType unitType;
+            if ((unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll("\\s*",""))) != null){
+                for (Unit unit : gameMap.getMapBlockByLocation(x, y).getUnits()) {
+                    if (unit.getUnitType().equals(unitType)) {
+                        if (!(unit.getOwner().equals(currentUser))) {
+
+                        }
+                    }
+                }
+                return "do not exist such a soldier in this block";
+            } else
+                return "type entered not valid";
+        }
+        else
+            return "your location out of bounds";
+
     }
 
 }
