@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class MapDesignController {
     private final Map gameMap;
-    private DesignMapMenu designMapMenu;
+    private final DesignMapMenu designMapMenu;
     private final User currentUser;
 
     public MapDesignController(Map gameMap) {
@@ -120,14 +120,14 @@ public class MapDesignController {
                 changeYToString = yPosition + j;
                 if (checkLocationValidation(Integer.toString(changeXToString), Integer.toString(changeYToString)) != null)
                     return "You have to put your HeadQuarter in a suitable position!";
-                if (gameMap.getMapBlockByLocation(xPosition,yPosition).getBuildings() != null) return "You can not make your HeadQuarter next to others!";
+                if (gameMap.getMapBlockByLocation(changeXToString,changeYToString).getBuildings() != null) return "You can not make your HeadQuarter next to others!";
             }
         }
         return null;
     }
 
     public String startPlaying(){
-        if (gameMap.getKingdomByOwner(currentUser) == null) return "You have not add yourself to map yet. Please add your kingdom!";
+        if (gameMap.getKingdomByOwner(currentUser) == null) return "You have not added yourself to map yet. Please add your kingdom!";
         if (gameMap.getPlayers().size() < 2) return "Please at least add 2 players to start game!";
         return "start";
     }

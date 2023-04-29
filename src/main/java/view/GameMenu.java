@@ -13,7 +13,7 @@ public class GameMenu {
     }
     public String run() {
         HashMap<String , String > options;
-        String input;
+        String input, result;
         while (true) {
             input = CommandParser.getScanner().nextLine();
             if (commandParser.validate(input, "back", null) != null) return "back";
@@ -29,8 +29,7 @@ public class GameMenu {
                 System.out.println(gameController.dropBuilding(options));
             else if ((options = commandParser.validate(input, "select building", "x|xPosition/y|yPosition")) != null) {
                 result = gameController.selectBuilding(options);
-                if (!result.equals("building"))
-                    System.out.println(result);
+                if (!result.equals("building")) System.out.println(result);
                 else return "building";
             }
             else if (commandParser.validate(input, "unit menu ", null) != null) {

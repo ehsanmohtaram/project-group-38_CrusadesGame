@@ -6,7 +6,6 @@ import model.building.BuildingType;
 import model.unit.Unit;
 import model.unit.UnitType;
 import view.*;
-
 import java.util.HashMap;
 
 public class GameController {

@@ -88,16 +88,19 @@ public class Controller {
 
     public String chooseFromMyMap() {
         int counter = 0;
-        String command;
         if (currentUser.getMyMap().size() == 0) return "You do not have any map from past";
+        StringBuilder stringBuilder = new StringBuilder();
         for (Map map : currentUser.getMyMap()) {
-            System.out.println((counter + 1) + ". " + map.getMapName() + ": " + map.getMapWidth() + " * " + map.getMapHeight());
+            stringBuilder.append(counter + 1).append(". ")
+                    .append(map.getMapName()).append(": ")
+                    .append(map.getMapWidth()).append(" * ")
+                    .append(map.getMapHeight());
         }
-        System.out.print("Please choose one of the following maps to play : ");
-        command = CommandParser.getScanner().nextLine();
+        return stringBuilder.toString();
+    }
+    public String chooseNumber(String command) {
         if (!command.matches("-?\\d+")) return "Please input a digit as your value.";
-        if (Integer.parseInt(command) > currentUser.getMyMap().size() || Integer.parseInt(command) < 1)
-            return "Invalid bounds!";
+        if (Integer.parseInt(command) > currentUser.getMyMap().size() || Integer.parseInt(command) < 1) return "Invalid bounds!";
         gameMap = currentUser.getMyMap().get(Integer.parseInt(command) - 1);
         return "start";
     }

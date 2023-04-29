@@ -36,15 +36,16 @@ public class Randomize {
             StringBuilder stringBuilder = new StringBuilder();
             for (int x = 0; x < width; x++)
                 stringBuilder.append(image.getRGB(x, y) == -16777216 ? " " : "0");
-            if (stringBuilder.toString().trim().isEmpty())
-                continue;
+            if (stringBuilder.toString().trim().isEmpty()) continue;
             System.out.println(stringBuilder);
         }
+        CommandParser commandParser = new CommandParser();
         System.out.print("Please input the code in image : ");
         String confirmation = CommandParser.getScanner().nextLine();
-        if (!captcha.equals(confirmation)) return "Captcha did not match with your input!";
-        System.out.println("Verified. You are a human!");
-        return "done";
+        if (commandParser.validate(confirmation, "back", null) != null) return "finished";
+        else if (commandParser.validate(confirmation, "change", null) != null) return randomCaptcha();
+        else if (!captcha.equals(confirmation)) {System.out.println("Captcha did not match with your input!"); return randomCaptcha();}
+        else {System.out.println("Verified. You are a human!"); return "done";}
     }
     public static String randomUsername(String username) {
         SecureRandom random = new SecureRandom();

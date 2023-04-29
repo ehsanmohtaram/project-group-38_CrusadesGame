@@ -43,9 +43,14 @@ public class MainMenu {
                 }
             } else if (commandParser.validate(input,"choose from my maps",null) != null) {
                 result = controller.chooseFromMyMap();
-                if (!result.equals("start")) System.out.println(result);
-                else return "previous map";
-                //TODO MAKE A MENU
+                System.out.println(result);
+                if (!result.equals("You do not have any map from past")) {
+                    System.out.println("Please choose one of the following maps to play : ");
+                    input = CommandParser.getScanner().nextLine();
+                    result = controller.chooseNumber(input);
+                    if (!result.equals("start")) System.out.println(result);
+                    else return "previous map";
+                }
             }
             else if (commandParser.validate(input,"show current menu",null) != null)
                 System.out.println("Main Menu");

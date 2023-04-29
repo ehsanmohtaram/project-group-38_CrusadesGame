@@ -4,9 +4,8 @@ import model.Randomize;
 import model.User;
 import org.apache.commons.codec.digest.DigestUtils;
 import view.LoginMenu;
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import java.util.*;
 
 public class LoginController {
     private final LoginMenu loginMenu;
@@ -75,6 +74,7 @@ public class LoginController {
         return "User has been added successfully!";
     }
     public String login(HashMap<String, String> options) {
+        String result;
         for (String key : options.keySet())
             if (!key.equals("s") && options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet())
@@ -87,7 +87,8 @@ public class LoginController {
             setDelay(options.get("u"));
             return "Username and password did not match!";
         }
-        if (!Randomize.randomCaptcha().equals("done")) return "Captcha did not match with your input!";
+        result = Randomize.randomCaptcha();
+        if (result.equals("finished")) return "Security field failed! Please try again.";
         if (options.get("s") != null) User.getUserByUsername(options.get("u")).setLoggedIn(true);
         Controller.currentUser = User.getUserByUsername(options.get("u"));
         return "login";
