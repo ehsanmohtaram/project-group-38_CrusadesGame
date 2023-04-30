@@ -202,7 +202,7 @@ public class GameController {
         if (taxRate >= -3 && taxRate <= 8) {
             Kingdom kingdom = gameMap.getKingdomByOwner(currentUser);
             Double moneyForPay = 2 - (8 - taxRate) * 0.2;
-            if (kingdom.getPopularity() * moneyForPay <= kingdom.getBalance()) {
+            if (kingdom.getPopulation() * moneyForPay <= kingdom.getBalance()) {
                 kingdom.setTaxRate(taxRate);
                 return "tax rate settled";
                 //در نکست ترن باید از حسابش به اندازه ای که دیگه هست کم بشه. اگه پول نداشت اونجا باید ریت رو بر روی صفر تنظیم کرد
@@ -212,8 +212,58 @@ public class GameController {
             return "tax rate out of bounds";
     }
 
-    public String showTaxRate(HashMap<String, String> options) {
+    public String showTaxRate() {
         return "tax rate: " + gameMap.getKingdomByOwner(currentUser).getTaxRate();
+    }
+
+    public String showPopularityFactors() {
+        return "-food\n-tax rate\n-religion\n-fear rate";
+
+    }
+
+    public String showPopularity() {
+        return "your popularity: " +gameMap.getKingdomByOwner(currentUser).getPopularity();
+    }
+
+    public String showFoodList() {
+        Kingdom kingdom = gameMap.getKingdomByOwner(currentUser);
+        String output = "food list:";
+        for (Food food : kingdom.getFoods().keySet()) {
+            output += "\n" + food.name().toLowerCase() + ": " + kingdom.getFoods().get(food);
+        }
+        return output;
+    }
+
+    public String setFoodRate(HashMap<String, String> options) {
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        if (options.get("n").matches("(\\-)?\\d+")) {
+            int rateNumber = Integer.parseInt(options.get("n"));
+            if (rateNumber <= 2 && rateNumber >= -2) {
+                gameMap.getKingdomByOwner(currentUser).setFoodRate(rateNumber);
+                return "food rate settled";
+            } else
+                return "rate number out of bounds";
+        } else
+            return "rate number is not valid";
+    }
+
+    public String showFoodRate() {
+        return "food rate: " + gameMap.getKingdomByOwner(currentUser).getFoodRate();
+    }
+
+    public String setFearRate(HashMap<String, String> options) {
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        if (options.get("n").matches("(\\-)?\\d+")) {
+            int rateNumber = Integer.parseInt(options.get("n"));
+            if (rateNumber <= 5 && rateNumber >= -5) {
+                gameMap.getKingdomByOwner(currentUser).setFearRate(rateNumber);
+                return "fear rate settled";
+            } else
+                return "rate number out of bounds";
+        } else
+            return "rate number is not valid";
     }
 
 }

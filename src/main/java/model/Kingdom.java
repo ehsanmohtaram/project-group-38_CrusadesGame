@@ -16,6 +16,7 @@ public class Kingdom {
     private Double balance;
     private Integer foodRate;
     private Integer taxRate;
+    private Integer efficiency;
     private Building headquarter;
     private ArrayList<Trade> myRequests = new ArrayList<>();
     private ArrayList<Trade> mySuggestion = new ArrayList<>();
@@ -33,7 +34,10 @@ public class Kingdom {
         this.owner = owner;
         this.balance = 200.0;
         this.headquarter = headquarter;
-        for (ResourceType resourceType : ResourceType.values()) resources.put(resourceType, 100);
+        for (ResourceType resourceType : ResourceType.values())
+            resources.put(resourceType, 100);
+        for (Food food : Food.values())
+            foods.put(food, 0);
         addBuilding(headquarter);
     }
 
@@ -51,6 +55,22 @@ public class Kingdom {
 
     public void setBalance(Double balance) {
         this.balance += balance;
+    }
+
+    public void setFearRate(Integer fearRate) {
+        this.fearRate = fearRate;
+    }
+
+    public void setEfficiency(Integer efficiency) {
+        this.efficiency = efficiency;
+    }
+
+    public Integer getEfficiency() {
+        return efficiency;
+    }
+
+    public ArrayList<Unit> getUnits() {
+        return units;
     }
 
     public void setPopulation(Integer population) {

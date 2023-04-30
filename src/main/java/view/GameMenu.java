@@ -37,13 +37,24 @@ public class GameMenu {
             } else if (commandParser.validate(input, "unit menu ", null) != null) {
                 System.out.println("You enter unit menu successfully!");
                 return "unit";
-            } else if (commandParser.validate(input, "next turn", null) != null) {
+            } else if (commandParser.validate(input, "next turn", null) != null)
                 System.out.println(gameController.nextTurn());
-            } else if ((options = commandParser.validate(input, "tax rate", "r|rateNumber")) != null) {
+            else if ((options = commandParser.validate(input, "tax rate", "r|rateNumber")) != null)
                 System.out.println(gameController.setTaxRate(options));
-            } else if ((options = commandParser.validate(input, "tax rate", null)) != null) {
-                System.out.println(gameController.showTaxRate(options));
-            }
+            else if (commandParser.validate(input, "tax rate show", null) != null)
+                System.out.println(gameController.showTaxRate());
+            else if (commandParser.validate(input, "show popularity factors", null) != null)
+                System.out.println(gameController.showPopularityFactors());
+            else if (commandParser.validate(input, "show popularity", null) != null)
+                System.out.println(gameController.showPopularity());
+            else if (commandParser.validate(input, "show food list", null) != null)
+                System.out.println(gameController.showFoodList());
+            else if ((options = commandParser.validate(input, "food rate", "r|rateNumber")) != null)
+                System.out.println(gameController.setFoodRate(options));
+            else if (commandParser.validate(input, "food rate show", null) != null)
+                System.out.println(gameController.showFoodRate());
+            else if ((options = commandParser.validate(input, "fear rate", "r|rateNumber")) != null)
+                System.out.println(gameController.setFearRate(options));
             else System.out.println("invalid command");
         }
     }
