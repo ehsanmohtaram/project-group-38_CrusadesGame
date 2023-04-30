@@ -12,7 +12,6 @@ import java.util.HashMap;
 public class GameController {
     public static Map gameMap;
     public static Building selectedBuilding;
-    private final BuildingMenu buildingMenu;
     private final GameMenu gameMenu;
     private final UnitMenu unitMenu;
     private final User currentUser;
@@ -22,7 +21,6 @@ public class GameController {
         GameController.gameMap = gameMap;
         this.gameMenu = new GameMenu(this);
         this.unitMenu = new UnitMenu(this);
-        this.buildingMenu = new BuildingMenu(this);
         currentUser = Controller.currentUser;
     }
 
@@ -40,7 +38,8 @@ public class GameController {
                     shopAndTradeController.runShop();
                     break;
                 case "building":
-                    buildingMenu.run();
+                    BuildingController buildingController = new BuildingController();
+                    buildingController.run();
                     break;
                 case "unit":
                     unitMenu.run();
@@ -98,11 +97,6 @@ public class GameController {
         return "building";
     }
 
-    public String buildingInfo() {
-        return "Building Name : " + selectedBuilding.getBuildingType().name().toLowerCase().replaceAll("_", " ") +
-                "\nBuilding hp : " + selectedBuilding.getHp();
-    }
-
     public String nextTurn(){
         return null;
     }
@@ -138,9 +132,9 @@ public class GameController {
         int y = Integer.parseInt(options.get("y"));
         if (x <= gameMap.getMapWidth() && y <= gameMap.getMapHeight()) {
             if (!(gameMap.getMapBlockByLocation(x, y).getMapBlockType().name().equals("WATER")) ||
-            !(gameMap.getMapBlockByLocation(x, y).getMapBlockType().name().equals("KOH")) || (gameMap.getMapBlockByLocation(x, y).getBuildings() != null)) {
+            !(gameMap.getMapBlockByLocation(x, y).getMapBlockType().name().equals("MOUNTAIN")) || (gameMap.getMapBlockByLocation(x, y).getBuildings() != null)) {
                 if (currentUnit.getXPosition() - x + currentUnit.getYPosition() - y <= currentUnit.getUnitType().getVELOCITY()) {
-                    //todo
+                    //TODO
                 } else
                     return "The speed of the soldier is not enough";
             } else
@@ -199,7 +193,7 @@ public class GameController {
         else
             return "your location out of bounds";
 
-    } //این سه تا دستور یونیت شباهت خیلی زیادی دارن. میشه یه تابع برا اروراش زد
+    } //TODO این سه تا دستور یونیت شباهت خیلی زیادی دارن. میشه یه تابع برا اروراش زد
 
     public String setTaxRate(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
