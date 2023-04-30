@@ -29,44 +29,54 @@ public class MapController {
     }
 
     public String moveMap(HashMap<String, String> options){
-        HashMap<String , Integer> validOptions = new HashMap<>();
+        HashMap<String , String> validOptions = new HashMap<>();
         for (String key: options.keySet()) {
             if(options.get(key) != null) {
                 if(!options.get(key).matches("\\d+") && !options.get(key).equals(""))
                     return "input numbers for directions";
+                else
+                    validOptions.put(key, options.get(key));
             }
-            else
-                options.remove(key);
         }
-        if(options.size() == 0)
-            return "you must specify location";
-        if(options.size() > 2)
+        if(validOptions.size() == 0)
+            return "you must specify direction";
+        if(validOptions.size() > 2)
             return "please specify one or two directions";
-        for (String key: options.keySet()) {
-            if(options.get(key).equals("")) {
-                setNewLocation(key , 1);
+        for (String key: validOptions.keySet()) {
+            if(validOptions.get(key).equals("")) {
+                if(!setNewLocation(key , 1))
+                    return "you reached end of map";
             }else
-                setNewLocation(key, Integer.parseInt(options.get(key)));
+                if(!setNewLocation(key, Integer.parseInt(validOptions.get(key))))
+                    return "you reached end of map";
         }
-        gameMap.getPartOfMap(currentX, currentY);
-        return "successful";
+        return gameMap.getPartOfMap(currentX, currentY);
     }
 
-    private void setNewLocation(String direction , int amount){
+    private boolean setNewLocation(String direction , int amount){
         switch (direction){
             case "u":
+                if(amount > currentY)
+                    return false;
                 currentY -= amount;
                 break;
             case "d":
+                if((amount + currentY) > gameMap.getMapHeight())
+                    return false;
                 currentY += amount;
                 break;
             case "l":
+                if(amount > currentX)
+                    return false;
                 currentX -= amount;
                 break;
             case "r":
+                if((amount + currentX) > gameMap.getMapWidth())
+                    return false;
                 currentX += amount;
                 break;
         }
+        return true;
     }
 
     public String showDetails(HashMap<String, String> options){

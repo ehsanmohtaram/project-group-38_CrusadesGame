@@ -15,7 +15,7 @@ public class DesignMapMenu {
 
     public String run(){
         System.out.println("You can design your map here. When your map is ready input 'start game'");
-        HashMap<String , String > options;
+        HashMap<String , String> options;
         String input, result;
         while (true) {
             input = CommandParser.getScanner().nextLine();
@@ -35,13 +35,18 @@ public class DesignMapMenu {
             }else if ((options = commandParser.validate(input,"drop unit","x|positionX/y|positionY/t|type")) != null) {
                 System.out.println(mapDesignController.dropUnit(options));
             }else if ((options = commandParser.validate(input,"show map","x|positionX/y|positionY")) != null) {
-                System.out.println(mapDesignController.showMap(options));
-                return "map";
+                result = mapDesignController.showMap(options);
+                System.out.println(result);
+                if(result.matches("map:\\sin[\\S\\s]+")) {
+                    System.out.println("you entered map menu");
+                    return "map";
+                }
             }else if(commandParser.validate(input,"start game",null) != null) {
                 result = mapDesignController.startPlaying();
                 if (!result.equals("start")) System.out.println(result);
                 else return "start";
-            }
+            } else if (commandParser.validate(input,"show current menu",null) != null)
+                System.out.println("design map Menu");
             else System.out.println("invalid command");
         }
 

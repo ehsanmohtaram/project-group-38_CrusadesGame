@@ -55,6 +55,14 @@ public class MapBlock {
 
     public void setMapBlockType(MapBlockType mapBlockType) {
         this.mapBlockType = mapBlockType;
+        if(mapBlockType.equals(MapBlockType.IRON)) {
+            resource = ResourceType.IRON;
+            resourceAmount = 30;
+        }
+        if(mapBlockType.equals(MapBlockType.SLATE)){
+            resource = ResourceType.ROCK;
+            resourceAmount = 100;
+        }
     }
 
     public Integer getxPosition() {
@@ -88,8 +96,13 @@ public class MapBlock {
     public void processNextTurn(){
     }
 
-    public void addTree(Tree tree){
+    public boolean addTree(Tree tree){
+        if(!mapBlockType.isCultivable())
+            return false;
         numberOfTrees.put(tree , numberOfTrees.get(tree) + 1);
+        resource = ResourceType.WOOD;
+        resourceAmount += (numberOfTrees.get(tree) * 5);
+        return true;
     }
 
     public static MapBlockType findEnumByLandType(String landType) {

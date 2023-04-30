@@ -14,7 +14,7 @@ public class GameMenu {
     }
     public String run() {
         HashMap<String , String > options;
-        String input;
+        String input, result;
         while (true) {
             input = CommandParser.getScanner().nextLine();
             if (commandParser.validate(input, "back", null) != null) return "back";
@@ -38,7 +38,9 @@ public class GameMenu {
             else if (commandParser.validate(input,"next turn", null) != null){
                 System.out.println(gameController.nextTurn());
             }else if ((options = commandParser.validate(input,"show map","x|positionX/y|positionY")) != null) {
-                System.out.println(gameController.showMap(options));
+                result = gameController.showMap(options);
+                System.out.println(result);
+                if(result.matches("map:\\sin[\\S\\s]+"))return "map";
             }
             else System.out.println("invalid command");
         }

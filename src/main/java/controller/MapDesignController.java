@@ -32,6 +32,7 @@ public class MapDesignController {
                 case "map":
                     MapController mapController = new MapController(gameMap, currentUser, XofMap, YofMap);
                     mapController.run();
+
             }
         }
 //        if(designMapMenu.run().equals("start")){
@@ -121,7 +122,8 @@ public class MapDesignController {
         if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
             return checkingResult;
 
-        gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")), Integer.parseInt(options.get("y"))).addTree(tree);
+        if(!gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")), Integer.parseInt(options.get("y"))).addTree(tree))
+            return "here is not cultivable";
         return "successfully dropped";
     }
 
