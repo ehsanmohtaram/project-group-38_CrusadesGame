@@ -12,7 +12,8 @@ public class MapBlock {
 
     private Building buildings;
     private ArrayList<Unit> units;
-    private ArrayList<ResourceType> resources;
+    private ResourceType resource;
+    private int resourceAmount;
     private MapBlockType mapBlockType;
     private Integer xPosition;
     private Integer yPosition;
@@ -23,7 +24,7 @@ public class MapBlock {
         this.xPosition = xPosition;
         this.yPosition = yPosition;
         this.buildings = null;
-        resources = new ArrayList<>();
+        resourceAmount = 0;
         units = new ArrayList<>();
         numberOfTrees = new HashMap<>();
         for (Tree tree: Tree.values()) numberOfTrees.put(tree , 0);
@@ -41,12 +42,16 @@ public class MapBlock {
         this.units = units;
     }
 
-    public ArrayList<ResourceType> getResources() {
-        return resources;
+    public ResourceType getResources() {
+        return resource;
     }
 
-    public void setResources(ArrayList<ResourceType> resources) {
-        this.resources = resources;
+    public int getResourceAmount(){
+        return resourceAmount;
+    }
+    public void setResources(ResourceType resource, int resourceAmount) {
+        this.resource = resource;
+        this.resourceAmount = resourceAmount;
     }
 
     public MapBlockType getMapBlockType() {
@@ -55,6 +60,14 @@ public class MapBlock {
 
     public void setMapBlockType(MapBlockType mapBlockType) {
         this.mapBlockType = mapBlockType;
+        if(mapBlockType.equals(MapBlockType.IRON)) {
+            resource = ResourceType.IRON;
+            resourceAmount = 30;
+        }
+        if(mapBlockType.equals(MapBlockType.SLATE)){
+            resource = ResourceType.ROCK;
+            resourceAmount = 100;
+        }
     }
 
     public Integer getxPosition() {
@@ -65,16 +78,20 @@ public class MapBlock {
         return yPosition;
     }
 
+    public Building getBuildings() {
+        return buildings;
+    }
+
+    public HashMap<Tree, Integer> getNumberOfTrees() {
+        return numberOfTrees;
+    }
+
     public void addUnitHere(Unit toAdd){
         units.add(toAdd);
     }
 
     public void removeUnitFromHere(Unit toRemove){
         units.remove(toRemove);
-    }
-
-    public Building getBuildings() {
-        return buildings;
     }
 
     public Unit getLastUnitArrived(){
@@ -84,8 +101,13 @@ public class MapBlock {
     public void processNextTurn(){
     }
 
-    public void addTree(Tree tree){
+    public boolean addTree(Tree tree){
+        if(!mapBlockType.isCultivable())
+            return false;
         numberOfTrees.put(tree , numberOfTrees.get(tree) + 1);
+        resource = ResourceType.WOOD;
+        resourceAmount += (numberOfTrees.get(tree) * 5);
+        return true;
     }
 
     public static MapBlockType findEnumByLandType(String landType) {

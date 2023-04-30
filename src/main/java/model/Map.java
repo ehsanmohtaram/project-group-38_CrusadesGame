@@ -44,14 +44,34 @@ public class Map implements Cloneable {
     }
 
     public static void createDefaultMaps(){
-        Map defaultMap1 = new Map(60 , 60 , "jungle");
+        Map defaultMap1 = new Map(60 , 50 , "jungle");
         Map defaultMap2 = new Map(60 , 60 , "graveyard");
         DEFAULT_MAPS.add(defaultMap1);
         DEFAULT_MAPS.add(defaultMap2);
         for (MapBlock[] mapBlockHeight : defaultMap1.map)
             for (MapBlock mapBlockWith : mapBlockHeight) mapBlockWith.setMapBlockType(MapBlockType.GRASSLAND);
 
-        //toDo: design two default maps
+        for (MapBlock b: defaultMap1.map[0]) b.setMapBlockType(MapBlockType.SEA);
+        for (MapBlock b: defaultMap1.map[1]) b.setMapBlockType(MapBlockType.BEACH);
+        for (MapBlock b: defaultMap1.map[defaultMap1.mapWidth - 1]) b.setMapBlockType(MapBlockType.SEA);
+        for (MapBlock b: defaultMap1.map[defaultMap1.mapWidth - 2]) b.setMapBlockType(MapBlockType.BEACH);
+        for (int i = 5; i < 45; i++) {
+            defaultMap1.map[25][i].setMapBlockType(MapBlockType.SHALLOW_WATER);
+            for (int j = 20; j < 22; j++)
+                defaultMap1.map[i][j].setMapBlockType(MapBlockType.RIVER);
+        }
+        for (int j = 10; j < 40; j++)
+            defaultMap1.map[20][j].setMapBlockType(MapBlockType.SLATE);
+
+        for (int i = 20; i < 35; i++) {
+            for (int j = 4; j < 12; j++) {
+                defaultMap1.map[i][j].setMapBlockType(MapBlockType.SLATE);
+            }
+            defaultMap1.map[i][30].setMapBlockType(MapBlockType.IRON);
+        }
+        for (MapBlock[] mapBlockHeight : defaultMap1.map)
+            for (MapBlock mapBlockWith : mapBlockHeight) mapBlockWith.addTree(Tree.OLIVE);
+
     }
 
     public String getMapName() {
@@ -138,6 +158,31 @@ public class Map implements Cloneable {
                 accessToDown[xPosition][yPosition] = false;
 
         }
+    }
+
+    public String getPartOfMap (int xPosition , int yPosition){
+        String result = "map: in " + xPosition + "," + yPosition + '\n';
+        String resetColor = "\033[0m";
+        for (int j = yPosition - 4; j <= yPosition + 4; j++) {
+            for (int fill = 0; fill < 3; fill++){
+                for (int i = xPosition - 10; i <= (xPosition + 10); i++) {
+                    MapBlock showedBlock;
+                    if ((showedBlock = getMapBlockByLocation(i, j)) != null) {
+                        if(fill == 1){
+                            result += showedBlock.getMapBlockType().getColor() + "  "
+                                    + showedBlock.getLatestDetails() + "  " + resetColor + " ";
+                        }else {
+                            result += showedBlock.getMapBlockType().getColor() + "     " + resetColor + " ";
+                        }
+                    }else
+                        result += "\u001B[48;5;237m" + "XXXXX" + resetColor + " ";
+
+                }
+                result += '\n';
+            }
+            result += '\n';
+        }
+        return result.substring(0, result.length() - 2);
     }
 
 

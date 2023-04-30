@@ -2,8 +2,8 @@ package view;
 
 import controller.CommandParser;
 import controller.GameController;
-
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class GameMenu {
     private final GameController gameController;
@@ -39,8 +39,13 @@ public class GameMenu {
             } else if (commandParser.validate(input, "unit menu ", null) != null) {
                 System.out.println("You enter unit menu successfully!");
                 return "unit";
-            } else if (commandParser.validate(input, "next turn", null) != null)
+            } else if (commandParser.validate(input, "next turn", null) != null){
                 System.out.println(gameController.nextTurn());
+            }else if ((options = commandParser.validate(input,"show map","x|positionX/y|positionY")) != null) {
+                result = gameController.showMap(options);
+                System.out.println(result);
+                if(result.matches("map:\\sin[\\S\\s]+"))return "map";
+            }
             else if ((options = commandParser.validate(input, "tax rate", "r|rateNumber")) != null)
                 System.out.println(gameController.setTaxRate(options));
             else if (commandParser.validate(input, "tax rate show", null) != null)

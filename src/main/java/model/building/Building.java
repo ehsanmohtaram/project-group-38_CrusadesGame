@@ -1,16 +1,18 @@
 package model.building;
 
+import model.Kingdom;
 import model.MapBlock;
-import model.ResourceType;
 
 public class Building {
     protected Integer hp;
     private MapBlock position;
     private BuildingType buildingType;
-    public Building(MapBlock position, BuildingType buildingType) {
+    private Kingdom owner;
+    public Building(MapBlock position, BuildingType buildingType, Kingdom owner) {
         this.position = position;
         this.buildingType = buildingType;
         this.hp = buildingType.getHP_IN_FIRST();
+        this.owner = owner;
     }
 
     public static BuildingType findEnumByBuildingName(String buildingName) {
@@ -27,6 +29,10 @@ public class Building {
 
     public Integer getHp() {
         return hp;
+    }
+
+    public Kingdom getOwner() {
+        return owner;
     }
 
     public void damage(Integer amount) {

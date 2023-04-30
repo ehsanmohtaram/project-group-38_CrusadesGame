@@ -22,18 +22,18 @@ public class Kingdom {
     private ArrayList<Trade> mySuggestion = new ArrayList<>();
     private ArrayList<Trade> notification = new ArrayList<>();
     private ArrayList<Trade> historyTrade = new ArrayList<>();
+    private ArrayList<Building> cart  = new ArrayList<>();
     private HashMap<Food ,Integer> foods = new HashMap<>();
     private HashMap<ResourceType, Integer> resources = new HashMap<>();
     private ArrayList<Unit> units = new ArrayList<>();
     private ArrayList<Building> buildings = new ArrayList<>();
-    public Kingdom(Flags flag, User owner, Building headquarter) {
+    public Kingdom(Flags flag, User owner) {
         population = 5;
         popularity = 0;
         foodRate = -2;
         this.flag = flag;
         this.owner = owner;
         this.balance = 200.0;
-        this.headquarter = headquarter;
         for (ResourceType resourceType : ResourceType.values())
             resources.put(resourceType, 100);
         for (Food food : Food.values())
@@ -43,6 +43,10 @@ public class Kingdom {
 
     public User getOwner() {
         return owner;
+    }
+
+    public void setHeadquarter(Building headquarter) {
+        this.headquarter = headquarter;
     }
 
     public Integer getPopulation() {
