@@ -96,7 +96,7 @@ public class MapController {
             result.append(unit.getUnitType().name().toLowerCase().replaceAll("-", " ")).append(" -> owner: ")
                     .append(unit.getOwner().getFlag().name()).append('\n') ;
         }
-        result.append("building:");
+        result.append("building:\n");
         if(detailsWanted.getBuildings() != null){
             result.append(detailsWanted.getBuildings().getBuildingType().name().toLowerCase().replaceAll("-", " "))
                     .append(" -> owner: ")
