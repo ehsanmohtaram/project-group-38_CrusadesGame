@@ -34,6 +34,8 @@ public class DesignMapMenu {
                 System.out.println(mapDesignController.dropBuilding(options));
             }else if ((options = commandParser.validate(input,"drop unit","x|positionX/y|positionY/t|type")) != null) {
                 System.out.println(mapDesignController.dropUnit(options));
+            }else if ((options = commandParser.validate(input,"show map","x|positionX/y|positionY")) != null) {
+                System.out.println(mapDesignController.showMap(options));
             }else if(commandParser.validate(input,"start game",null) != null) {
                 result = mapDesignController.startPlaying();
                 if (!result.equals("start")) System.out.println(result);

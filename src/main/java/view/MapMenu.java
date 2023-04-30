@@ -1,10 +1,11 @@
 package view;
 
 import controller.Controller;
+import controller.MapController;
 
 public class MapMenu {
-    private Controller controller;
-    public MapMenu (Controller controller){
+    private MapController controller;
+    public MapMenu (MapController controller){
         this.controller = controller;
     }
     public void run (){

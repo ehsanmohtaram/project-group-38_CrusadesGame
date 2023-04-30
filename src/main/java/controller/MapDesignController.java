@@ -40,10 +40,11 @@ public class MapDesignController {
                 return checkingResult;
             if((checkingResult = checkLocationValidation(options.get("x2") , options.get("y2"))) != null )
                 return checkingResult;
-            for (String key : options.keySet())
-                if(!key.equals("n"))
-                    bounds.add(Integer.parseInt(options.get(key)));
-            gameMap.changeType(bounds.get(0), bounds.get(1), bounds.get(2), bounds.get(3), mapBlockType);
+            int x1 = Integer.parseInt(options.get("x1"));
+            int x2 = Integer.parseInt(options.get("x2"));
+            int y1 = Integer.parseInt(options.get("y1"));
+            int y2 = Integer.parseInt(options.get("y2"));
+            gameMap.changeType(x1, y1, x2, y2, mapBlockType);
         }else if(options.get("x") != null && options.get("y") != null){
             if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
                 return checkingResult;
@@ -52,7 +53,7 @@ public class MapDesignController {
             options.remove("x");
             options.remove("y");
             for (String key : options.keySet())
-                if (!key.equals("n") && options.get(key) != null)
+                if (!key.equals("t") && options.get(key) != null)
                     return "choose two or four digits to specify area!";
             gameMap.changeType(x, y, mapBlockType);
         }else
@@ -166,6 +167,36 @@ public class MapDesignController {
 
     public String dropBuilding(HashMap<String , String> options){
         return null;
+    }
+
+    public String showMap(HashMap<String, String> options){
+        String checkingResult;
+        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
+            return checkingResult;
+        String result = "";
+        int xPosition = Integer.parseInt(options.get("x")) ;
+        int yPosition = Integer.parseInt(options.get("y")) ;
+        String resetColor = "\033[0m";
+        for (int j = yPosition - 4; j <= yPosition + 4; j++) {
+            for (int fill = 0; fill < 3; fill++){
+                for (int i = xPosition - 10; i <= (xPosition + 10); i++) {
+                    MapBlock showedBlock;
+                    if ((showedBlock = gameMap.getMapBlockByLocation(i, j)) != null) {
+                        if(fill == 1){
+                            result += showedBlock.getMapBlockType().getColor() + "  "
+                                    + showedBlock.getLatestDetails() + "  " + resetColor + " ";
+                        }else {
+                            result += showedBlock.getMapBlockType().getColor() + "     " + resetColor + " ";
+                        }
+                    }else
+                        result += "\u001B[48;5;237m" + "XXXXX" + resetColor + " ";
+
+                }
+                result += '\n';
+            }
+            result += '\n';
+        }
+        return result.substring(0, result.length() - 2);
     }
 
 }
