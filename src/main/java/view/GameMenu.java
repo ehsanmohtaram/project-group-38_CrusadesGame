@@ -37,6 +37,8 @@ public class GameMenu {
             }
             else if (commandParser.validate(input,"next turn", null) != null){
                 System.out.println(gameController.nextTurn());
+            }else if ((options = commandParser.validate(input,"show map","x|positionX/y|positionY")) != null) {
+                System.out.println(gameController.showMap(options));
             }
             else System.out.println("invalid command");
         }

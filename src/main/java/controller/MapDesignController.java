@@ -30,7 +30,7 @@ public class MapDesignController {
                     gameController.run();
                     return;
                 case "map":
-                    MapController mapController = new MapController(gameMap, currentUser);
+                    MapController mapController = new MapController(gameMap, currentUser, XofMap, YofMap);
                     mapController.run();
             }
         }

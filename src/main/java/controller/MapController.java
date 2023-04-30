@@ -16,7 +16,7 @@ public class MapController {
     private int currentX;
     private int currentY;
 
-    public MapController(Map gameMap, User currentUser) {
+    public MapController(Map gameMap, User currentUser, int currentX, int currentY) {
         this.gameMap = gameMap;
         this.currentUser = currentUser;
         this.currentX = currentX;
