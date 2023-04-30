@@ -10,7 +10,6 @@ import view.MapMenu;
 import java.util.HashMap;
 
 public class MapController {
-
     private final Map gameMap;
     private final User currentUser;
     private final MapMenu mapMenu;

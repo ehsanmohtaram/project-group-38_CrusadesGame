@@ -8,12 +8,14 @@ public class GameController {
     private final GameMenu gameMenu;
     private final UnitMenu unitMenu;
     private final User currentUser;
+    private Kingdom currentKingdom;
 
     public GameController(Map gameMap) {
         GameController.gameMap = gameMap;
         this.gameMenu = new GameMenu(this);
         this.unitMenu = new UnitMenu(this);
         currentUser = Controller.currentUser;
+        currentKingdom = gameMap.getKingdomByOwner(currentUser);
     }
 
     public void run(){
