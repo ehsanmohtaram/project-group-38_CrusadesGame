@@ -3,6 +3,7 @@ package controller;
 import model.*;
 import model.building.Building;
 import model.building.BuildingType;
+import model.building.SiegeType;
 import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
@@ -61,7 +62,9 @@ public class GameController {
 
     public String dropBuilding(HashMap<String, String> options) {
         try {BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));}
-        catch (Exception ignored) {return "There is not such building in the game!";}
+        catch (Exception ignored) {return "There is no such a building!";}
+        if (BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_")).specificConstant instanceof SiegeType)
+            return "There is no such a building!";
         String result;
         result = positionValidate(options.get("x"),options.get("y"));
         if (result != null) return result;
@@ -84,6 +87,14 @@ public class GameController {
         //TODO Farm should be check for being cultivable
         return buildingType.name().toLowerCase().replaceAll("_"," ") + " added successfully to your kingdom.";
     }
+
+    /*public String dropSiege(HashMap<String, String> options) {
+        try {BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));}
+        catch (Exception ignored) {return "There is no such a siege!";}
+        boolean check  = BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_")).specificConstant instanceof SiegeType;
+        if (!check)
+
+    }*/
 
     public String selectBuilding(HashMap<String, String> options) {
         String result;

@@ -1,29 +1,43 @@
 package model.building;
 
 public enum DefensiveStructureType {
-    SMALL_STONE_GATEHOUSE(0,0),
-    BIG_STONE_GATEHOUSE(0,0),
-    DRAWBRIDGE(0,0),
-    LOOKOUT_TOWER(20,30),
-    PERIMETER_TOWER(8,10),
-    DEFENSE_TURRET(8,10),
-    SQUARE_TOWER(10,15),
-    ROUND_TOWER(10,15),
-    HEAD_QUARTER(20,20);
+    WALL(2, 4, false, false),
+    BIG_WALL(2, 6, false, false),
+    SMALL_STONE_GATEHOUSE(0, 6, false, true),
+    BIG_STONE_GATEHOUSE(0, 10, false, true),
+    DRAWBRIDGE(0,0, false , false),
+    LOOKOUT_TOWER(5,8, false,false),
+    PERIMETER_TOWER(3,12, true, true),
+    DEFENSE_TURRET(4,8, false, false),
+    SQUARE_TOWER(3,12, true ,true),
+    ROUND_TOWER(3,15 , true, true),
+    HEAD_QUARTER(2,20, false ,true);
 
-    private final Integer FIRE_RANG;
-    private final Integer DEFEND_RANGE;
+    private final Integer furtherFireRange;
+    private final Integer unitsCapacity;
+    private final Boolean isHoldSiege;
+    private final Boolean tunnelImmune;
 
-    DefensiveStructureType(Integer FIRE_RANG, Integer DEFEND_RANGE) {
-        this.FIRE_RANG = FIRE_RANG;
-        this.DEFEND_RANGE = DEFEND_RANGE;
+    DefensiveStructureType(Integer furtherFireRange, Integer unitsCapacity, Boolean isHoldSiege, Boolean tunnelImmune) {
+        this.furtherFireRange = furtherFireRange;
+        this.unitsCapacity = unitsCapacity;
+        this.isHoldSiege = isHoldSiege;
+        this.tunnelImmune = tunnelImmune;
     }
 
-    public Integer getFIRE_RANG() {
-        return FIRE_RANG;
+    public Integer getFurtherFireRange() {
+        return furtherFireRange;
     }
 
-    public Integer getDEFEND_RANGE() {
-        return DEFEND_RANGE;
+    public Integer getUnitsCapacity() {
+        return unitsCapacity;
+    }
+
+    public Boolean getHoldSiege() {
+        return isHoldSiege;
+    }
+
+    public Boolean getTunnelImmune() {
+        return tunnelImmune;
     }
 }

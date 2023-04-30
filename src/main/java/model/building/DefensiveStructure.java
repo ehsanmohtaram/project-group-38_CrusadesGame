@@ -7,4 +7,6 @@ public class DefensiveStructure extends Building{
         super(position, buildingType);
     }
 
+    //TODO Siege
+
 }
