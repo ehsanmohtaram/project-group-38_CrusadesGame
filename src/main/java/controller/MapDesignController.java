@@ -169,7 +169,8 @@ public class MapDesignController {
         Building headQuarter = new Building(gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))), BuildingType.HEAD_QUARTER, kingdom);
         kingdom.setHeadquarter(headQuarter);
         gameMap.addPlayer(kingdom);
-        gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))).setBuildings(building);
+   //     gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))).setBuildings(building);
+        //toDo resolve conflict problems
         User.getUserByUsername(options.get("u")).addToMyMap(gameMap);
         return "User add to map successfully!";
     }

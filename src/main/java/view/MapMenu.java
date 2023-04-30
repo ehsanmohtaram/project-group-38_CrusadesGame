@@ -3,7 +3,6 @@ package view;
 import controller.CommandParser;
 import controller.Controller;
 import controller.MapController;
-
 import java.util.HashMap;
 
 public class MapMenu {

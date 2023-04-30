@@ -87,7 +87,7 @@ public class GameController {
             return "You do not have enough gold to buy this building.";
         if (buildingType.getRESOURCE_NUMBER() > gameMap.getKingdomByOwner(currentUser).getResourceAmount(buildingType.getRESOURCES()))
             return "You do not have enough " + buildingType.getRESOURCES().name().toLowerCase() + " to buy this building.";
-        Building building = new Building(mapBlock, buildingType);
+        Building building = new Building(mapBlock, buildingType, currentKingdom);
         gameMap.getKingdomByOwner(currentUser).setBalance((double) -buildingType.getGOLD());
         gameMap.getKingdomByOwner(currentUser).setResourceAmount(buildingType.getRESOURCES(),-buildingType.getRESOURCE_NUMBER());
         mapBlock.setBuildings(building);
