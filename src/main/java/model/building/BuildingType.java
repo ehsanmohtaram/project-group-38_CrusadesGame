@@ -24,6 +24,7 @@ public enum BuildingType {
     TREBUCHET(150, null, 0, 500, SiegeType.TREBUCHET),
     //Camp equipment
     BARRACK(0, ResourceType.ROCK,15,500, CampType.BARRACK),
+    SIEGE_TENT(0 ,null, 0, 100, CampType.SIEGE_TENT),
     FLETCHER(100, ResourceType.WOOD,20,300, GeneralBuildingType.FLETCHER),
     ARMOURY(0, ResourceType.WOOD,5,300, StockType.ARMOURY);
     private final Integer GOLD;

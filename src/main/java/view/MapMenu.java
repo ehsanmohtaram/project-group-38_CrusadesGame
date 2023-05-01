@@ -1,13 +1,12 @@
 package view;
 
 import controller.CommandParser;
-import controller.Controller;
 import controller.MapController;
 import java.util.HashMap;
 
 public class MapMenu {
-    private MapController controller;
-    private CommandParser commandParser;
+    private final MapController controller;
+    private final CommandParser commandParser;
 
     public MapMenu (MapController controller){
         this.controller = controller;
@@ -15,7 +14,7 @@ public class MapMenu {
     }
     public void run (){
         HashMap<String , String> options;
-        String input, result;
+        String input;
         while (true) {
             input = CommandParser.getScanner().nextLine();
             if ((options = commandParser.validate(input,"move", "u|up/d|down/l|left/r|right")) != null)
@@ -24,7 +23,7 @@ public class MapMenu {
                 System.out.println(controller.showDetails(options));
             else if (commandParser.validate(input,"show current menu",null) != null)
                 System.out.println("map Menu");
-            else if (commandParser.validate(input,"exit",null) != null)
+            else if (commandParser.validate(input,"back",null) != null)
                 return;
             else
                 System.out.println("invalid command");

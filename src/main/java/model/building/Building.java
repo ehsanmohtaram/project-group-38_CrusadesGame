@@ -15,12 +15,6 @@ public class Building {
         this.owner = owner;
     }
 
-    public static BuildingType findEnumByBuildingName(String buildingName) {
-        for (BuildingType searchForBuilding : BuildingType.values())
-            if (searchForBuilding.name().toLowerCase().replaceAll("_"," ").equals(buildingName))
-                return searchForBuilding;
-        return null;
-    }
     //TODO category var may be needed
 
     public Enum<?> getSpecificConstant() {
@@ -43,15 +37,11 @@ public class Building {
         return position;
     }
 
-    public void setPosition(MapBlock position) {
-        this.position = position;
-    }
-
     public BuildingType getBuildingType() {
         return buildingType;
     }
 
-    public void setBuildingType(BuildingType buildingType) {
-        this.buildingType = buildingType;
+    public void setPosition(MapBlock position) {
+        this.position = position;
     }
 }

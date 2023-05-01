@@ -11,6 +11,7 @@ import java.util.HashMap;
 public class MapBlock {
 
     private Building buildings;
+    private Building siege;
     private ArrayList<Unit> units;
     private ResourceType resource;
     private int resourceAmount;
@@ -24,6 +25,7 @@ public class MapBlock {
         this.xPosition = xPosition;
         this.yPosition = yPosition;
         this.buildings = null;
+        this.siege = null;
         resourceAmount = 0;
         units = new ArrayList<>();
         numberOfTrees = new HashMap<>();
@@ -80,6 +82,14 @@ public class MapBlock {
 
     public Building getBuildings() {
         return buildings;
+    }
+
+    public Building getSiege() {
+        return siege;
+    }
+
+    public void setSiege(Building siege) {
+        this.siege = siege;
     }
 
     public HashMap<Tree, Integer> getNumberOfTrees() {
