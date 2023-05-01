@@ -1,6 +1,6 @@
 package model.building;
-
 import model.ResourceType;
+
 
 public enum BuildingType {
     CATHEDRAL(0,null,0,1000, null),
@@ -25,6 +25,9 @@ public enum BuildingType {
     //Camp equipment
     BARRACK(0, ResourceType.ROCK,15,500, CampType.BARRACK),
     SIEGE_TENT(0 ,null, 0, 100, CampType.SIEGE_TENT),
+    ENGINEER_GUILD(100, ResourceType.WOOD, 10, 500, CampType.ENGINEER_GUILD),
+    MERCENARY_POST(0, ResourceType.WOOD, 10, 500, CampType.MERCENARY_POST),
+    //
     FLETCHER(100, ResourceType.WOOD,20,300, GeneralBuildingType.FLETCHER),
     ARMOURY(0, ResourceType.WOOD,5,300, StockType.ARMOURY);
     private final Integer GOLD;

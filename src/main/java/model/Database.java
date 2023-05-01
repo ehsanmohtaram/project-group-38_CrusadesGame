@@ -31,7 +31,7 @@ public class Database {
     public static void setArrayOfUsers() {
         String json = changeJsonToString();
         try {
-            Gson gson = new Gson();
+            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
             JSONParser parser = new JSONParser();
             JSONArray jsonToArray = new JSONArray();
             User user;

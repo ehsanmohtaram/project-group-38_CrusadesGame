@@ -8,8 +8,7 @@ import java.util.ArrayList;
 
 public class Camp extends Building{
     private ArrayList<Unit> units = new ArrayList<>();
-    private Integer numberOFLadderMan;
-    private Integer numberOfEngineer;
+    private Integer capacity;
 
     public Camp(MapBlock position, BuildingType buildingType, Kingdom owner) {
         super(position, buildingType, owner);
@@ -23,20 +22,11 @@ public class Camp extends Building{
         this.units = units;
     }
 
-    public Integer getNumberOFLadderMan() {
-        return numberOFLadderMan;
+    public Integer getCapacity() {
+        return capacity;
     }
 
-    public void setNumberOFLadderMan(Integer numberOFLadderMan) {
-        this.numberOFLadderMan = numberOFLadderMan;
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
     }
-
-    public Integer getNumberOfEngineer() {
-        return numberOfEngineer;
-    }
-
-    public void setNumberOfEngineer(Integer numberOfEngineer) {
-        this.numberOfEngineer = numberOfEngineer;
-    }
-
 }
