@@ -67,6 +67,9 @@ public class GameController {
     }
 
     public String dropBuilding(HashMap<String, String> options) {
+        for (String key : options.keySet())
+            if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         try {BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));}
         catch (Exception ignored) {return "There is no such a building!";}
         if (BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_")).specificConstant instanceof SiegeType)
@@ -94,6 +97,10 @@ public class GameController {
         return buildingType.name().toLowerCase().replaceAll("_"," ") + " added successfully to your kingdom.";
     }
 
+    public void buildingMaker(Enum<?> setEnum) {
+        //if (setEnum instanceof DefensiveStructureType)
+    }
+
     public MapBlock findTheNearestFreeBlock(int x, int y) {
         int counter = 1;
         while (true) {
@@ -112,6 +119,9 @@ public class GameController {
         }
     }
     public String dropSiege(HashMap<String, String> options) {
+        for (String key : options.keySet())
+            if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         try {BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));}
         catch (Exception ignored) {return "There is no such a siege!";}
         boolean check  = BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_")).specificConstant instanceof SiegeType;
@@ -151,6 +161,9 @@ public class GameController {
     }
 
     public String selectBuilding(HashMap<String, String> options) {
+        for (String key : options.keySet())
+            if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         String result;
         result = positionValidate(options.get("x"),options.get("y"));
         if (result != null) return result;
@@ -164,6 +177,9 @@ public class GameController {
     }
 
     public String moveSiege(HashMap<String , String> options) {
+        for (String key : options.keySet())
+            if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         String firstResult, secondResult;
         firstResult = positionValidate(options.get("x"),options.get("y"));
         if (firstResult != null) return firstResult;

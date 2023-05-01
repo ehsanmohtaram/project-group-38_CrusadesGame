@@ -16,8 +16,8 @@ public class MapBlock {
     private ResourceType resource;
     private int resourceAmount;
     private MapBlockType mapBlockType;
-    private Integer xPosition;
-    private Integer yPosition;
+    private final Integer xPosition;
+    private final Integer yPosition;
     private HashMap<Tree , Integer> numberOfTrees;
 
     public MapBlock(Integer xPosition, Integer yPosition) {
