@@ -391,6 +391,20 @@ public class GameController {
         }
     }
 
+    public void updateFearRateByKingdom(Kingdom kingdom) {
+        kingdom.setEfficiency(100 - 10 * kingdom.getFearRate());
+        kingdom.setPopularity(kingdom.getPopularity() - 2 * (kingdom.getFearRate()));
+    }
+
+    public void updateReligionByKingdom(Kingdom kingdom) {
+        for (Building building : kingdom.getBuildings()) {
+            if (building.getBuildingType().name().equals("CHURCH"))
+                kingdom.setPopularity(kingdom.getPopularity() + 5);
+            else if (building.getBuildingType().name().equals("CATHEDRAL"))
+                kingdom.setPopularity(kingdom.getPopularity() + 10);
+        }
+    }
+
     public Integer getPopularityByTaxRate(int taxRate) {
         if (taxRate == -3)
             return 7;
