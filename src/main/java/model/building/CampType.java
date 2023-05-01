@@ -1,7 +1,8 @@
 package model.building;
 
 public enum CampType {
-    BARRACK(0,0);
+    BARRACK(0,0),
+    SIEGE_TENT(0,0);
     private final Integer COST_OF_LADDER_MAN;
     private final Integer COST_OF_ENGINEER;
 

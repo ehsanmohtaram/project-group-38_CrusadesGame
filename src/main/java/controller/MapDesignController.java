@@ -156,7 +156,7 @@ public class MapDesignController {
         catch (IllegalArgumentException illegalArgumentException)
         {return "Your flag color did not exist in default colors!";}
         if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null ) return checkingResult;
-        if (!gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))).getMapBlockType().isBuildable())
+        if (!gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))).getMapBlockType().isAccessible())
             return "You can not build your head quarter in this type of land!";
         if ((checkingResult = checkAroundHeadQuarterPosition(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")))) != null)
             return checkingResult;
@@ -164,13 +164,11 @@ public class MapDesignController {
             return "You already have put your kingdom in this map!";
         for (Kingdom kingdom : gameMap.getPlayers())
             if (kingdom.getFlag().name().equals(options.get("f").toUpperCase())) return "Another user choose this flag. Please choose another flag.";
-        Kingdom kingdom = new Kingdom(Flags.valueOf(options.get("f").toUpperCase()),
-                User.getUserByUsername(options.get("u")));
+        Kingdom kingdom = new Kingdom(Flags.valueOf(options.get("f").toUpperCase()), User.getUserByUsername(options.get("u")));
         Building headQuarter = new Building(gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))), BuildingType.HEAD_QUARTER, kingdom);
         kingdom.setHeadquarter(headQuarter);
         gameMap.addPlayer(kingdom);
         gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))).setBuildings(headQuarter);
-        //toDo resolve conflict problems
         User.getUserByUsername(options.get("u")).addToMyMap(gameMap);
         return "User add to map successfully!";
     }

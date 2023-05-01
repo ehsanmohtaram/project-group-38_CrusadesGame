@@ -53,6 +53,7 @@ public class BuildingController {
                 for (Unit unit : gameMap.getMapBlockByLocation(xPosition + i, yPosition + j).getUnits())
                     if (!unit.getOwner().equals(gameMap.getKingdomByOwner(currentUser)))
                         return "This block is near to your building block and it should be free of soldier enemies while building is being repaid.";
+        if (selectedBuilding.getHp().equals(buildingType.getHP_IN_FIRST())) return "Building hp is full.";
         selectedBuilding.damage(selectedBuilding.getHp() - selectedBuilding.getBuildingType().getHP_IN_FIRST());
         return "Building repaired successfully!";
     }

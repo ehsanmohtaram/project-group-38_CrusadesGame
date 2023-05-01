@@ -114,15 +114,6 @@ public class Map implements Cloneable {
         return (Map)(DEFAULT_MAPS.get(index).clone());
     }
 
-    public User getBuildingOwnerByPosition(int x, int y) {
-        for (Kingdom kingdom : players) {
-            for (Building building : kingdom.getBuildings())
-                if (building.getPosition().getxPosition().equals(x) && building.getPosition().getyPosition().equals(y))
-                    return kingdom.getOwner();
-        }
-        return null;
-    }
-
     public void changeType(int x , int y, MapBlockType type){
         map[x][y].setMapBlockType(type);
     }

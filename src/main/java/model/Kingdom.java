@@ -11,6 +11,7 @@ public class Kingdom {
     private final Flags flag;
     private Integer population;
     private Integer noneEmployed;
+    private Integer engineer;
     private Integer fearRate;
     private Integer popularity;
     private Double balance;
@@ -161,6 +162,14 @@ public class Kingdom {
 
     public void setFoodRate(Integer foodRate) {
         this.foodRate = foodRate;
+    }
+
+    public Integer getEngineer() {
+        return engineer;
+    }
+
+    public void setEngineer(Integer engineer) {
+        this.engineer = engineer;
     }
 
     public void ChangeFearRate(Integer amount) {
