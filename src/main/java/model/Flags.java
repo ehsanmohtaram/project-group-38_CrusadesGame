@@ -8,5 +8,5 @@ public enum Flags {
     PURPLE,
     GREEN,
     WHITE,
-    ORANGE
+    ORANGE;
 }
