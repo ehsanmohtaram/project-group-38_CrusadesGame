@@ -156,7 +156,7 @@ public class MapDesignController {
         catch (IllegalArgumentException illegalArgumentException)
         {return "Your flag color did not exist in default colors!";}
         if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null ) return checkingResult;
-        if (!gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))).getMapBlockType().isAccessible())
+        if (!gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))).getMapBlockType().isBuildable())
             return "You can not build your head quarter in this type of land!";
         if ((checkingResult = checkAroundHeadQuarterPosition(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")))) != null)
             return checkingResult;
@@ -169,7 +169,7 @@ public class MapDesignController {
         Building headQuarter = new Building(gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))), BuildingType.HEAD_QUARTER, kingdom);
         kingdom.setHeadquarter(headQuarter);
         gameMap.addPlayer(kingdom);
-   //     gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))).setBuildings(building);
+        gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))).setBuildings(headQuarter);
         //toDo resolve conflict problems
         User.getUserByUsername(options.get("u")).addToMyMap(gameMap);
         return "User add to map successfully!";

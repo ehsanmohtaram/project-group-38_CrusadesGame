@@ -3,15 +3,16 @@ package view;
 import controller.CommandParser;
 import controller.Controller;
 import controller.GameController;
+import controller.UnitController;
 
 import java.util.HashMap;
 
 public class UnitMenu {
-    private GameController gameController;
+    private UnitController unitController;
     private CommandParser commandParser;
 
-    public UnitMenu(GameController gameController) {
-        this.gameController = gameController;
+    public UnitMenu(UnitController unitController) {
+        this.unitController = unitController;
         commandParser = new CommandParser();
     }
 
@@ -20,14 +21,12 @@ public class UnitMenu {
         String input;
         while (true) {
             input = CommandParser.getScanner().nextLine();
-            if ((options = commandParser.validate(input, "select unit", "x|positionX/y|positionY/t|type/n|number")) != null)
-                System.out.println(gameController.selectUnit(options));
-            else if ((options = commandParser.validate(input, "move unit to", "x|positionX/y|positionY")) != null)
-                System.out.println(gameController.moveUnit(options));
+            if ((options = commandParser.validate(input, "move unit to", "x|positionX/y|positionY")) != null)
+                System.out.println(unitController.moveUnit(options));
             else if((options = commandParser.validate(input, "set", "x|positionX/y|positionY/t|type/s|situation")) != null)
-                System.out.println(gameController.setSituation(options));
+                System.out.println(unitController.setSituation(options));
             else if ((options = commandParser.validate(input, "attack", "x|positionX/y|positionY/t|type")) != null)
-                System.out.println(gameController.attackOnUnit(options));
+                System.out.println(unitController.attackOnUnit(options));
             else
                 System.out.println("Invalid command");
         }

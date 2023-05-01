@@ -85,25 +85,25 @@ public class MapController {
         if(!options.get("x").matches("\\d+") || !options.get("x").matches("\\d+"))
             return "please choose digits for location";
         int xPosition = Integer.parseInt(options.get("x"));
-        int yPosition = Integer.parseInt(options.get("x"));
+        int yPosition = Integer.parseInt(options.get("y"));
         MapBlock detailsWanted;
         if((detailsWanted = gameMap.getMapBlockByLocation(xPosition , yPosition)) == null)
             return "index out of bounds";
         StringBuilder result = new StringBuilder("type: "
-                + detailsWanted.getMapBlockType().name().toLowerCase().replaceAll("-", " ") + '\n');
+                + detailsWanted.getMapBlockType().name().toLowerCase().replaceAll("_", " ") + '\n');
         result.append("Units:\n");
         for (Unit unit: detailsWanted.getUnits()) {
-            result.append(unit.getUnitType().name().toLowerCase().replaceAll("-", " ")).append(" -> owner: ")
+            result.append(unit.getUnitType().name().toLowerCase().replaceAll("_", " ")).append(" -> owner: ")
                     .append(unit.getOwner().getFlag().name()).append('\n') ;
         }
         result.append("building:\n");
         if(detailsWanted.getBuildings() != null){
-            result.append(detailsWanted.getBuildings().getBuildingType().name().toLowerCase().replaceAll("-", " "))
+            result.append(detailsWanted.getBuildings().getBuildingType().name().toLowerCase().replaceAll("_", " "))
                     .append(" -> owner: ")
                     .append(detailsWanted.getBuildings().getOwner().getFlag().name()).append('\n') ;
         }
         if(detailsWanted.getResources() != null){
-            result.append(detailsWanted.getResourceAmount()).append(" unit of ").append(detailsWanted.getResources().name().toLowerCase());
+            result.append(detailsWanted.getResourceAmount()).append(" units of ").append(detailsWanted.getResources().name().toLowerCase());
         }
         return result.toString();
     }

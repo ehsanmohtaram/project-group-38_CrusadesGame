@@ -38,10 +38,12 @@ public class GameMenu {
                 result = gameController.selectBuilding(options);
                 if (!result.equals("building")) System.out.println(result);
                 else return "building";
-            } else if (commandParser.validate(input, "unit menu ", null) != null) {
-                System.out.println("You enter unit menu successfully!");
-                return "unit";
-            } else if (commandParser.validate(input, "next turn", null) != null){
+            } else if ((options = commandParser.validate(input, "select unit", "x|positionX/y|positionY/t|type/n|number")) != null) {
+                result = gameController.selectUnit(options);
+                System.out.println(result);
+                if(result.equals("unit selected")) return "unit";
+            }
+            else if (commandParser.validate(input, "next turn", null) != null){
                 System.out.println(gameController.nextTurn());
             }else if ((options = commandParser.validate(input,"show map","x|positionX/y|positionY")) != null) {
                 result = gameController.showMap(options);

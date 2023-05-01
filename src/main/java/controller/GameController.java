@@ -16,9 +16,8 @@ public class GameController {
     public static Map gameMap;
     public static Building selectedBuilding;
     private final GameMenu gameMenu;
-    private final UnitMenu unitMenu;
     private final User currentUser;
-    private Unit currentUnit;
+    private Unit selectedUnit;
     private Kingdom currentKingdom;
     private int XofMap;
     private int YofMap;
@@ -26,7 +25,6 @@ public class GameController {
     public GameController(Map gameMap) {
         GameController.gameMap = gameMap;
         this.gameMenu = new GameMenu(this);
-        this.unitMenu = new UnitMenu(this);
         currentUser = Controller.currentUser;
         currentKingdom = gameMap.getKingdomByOwner(currentUser);
     }
@@ -51,7 +49,7 @@ public class GameController {
                     buildingController.run();
                     break;
                 case "unit":
-                    unitMenu.run();
+                    UnitController unitController = new UnitController(gameMap, currentKingdom, selectedUnit);
                     break;
                 case "back": return;
             }
@@ -125,7 +123,7 @@ public class GameController {
             if(options.get(key) == null)
                 return "input necessary options";
         for (String key: options.keySet())
-            if(options.get(key).matches("\\d*") )
+            if(!options.get(key).matches("\\d*") )
             return "input numbers as arguments";
         int xPosition = Integer.parseInt(options.get("x")) ;
         int yPosition = Integer.parseInt(options.get("y")) ;
@@ -145,7 +143,7 @@ public class GameController {
                 for (Unit unit : gameMap.getMapBlockByLocation(x, y).getUnits()) {
                     if (unit.getUnitType().equals(unitType)) {
                         if (unit.getOwner().equals(currentUser)) {
-                            currentUnit = unit;
+                            selectedUnit = unit;
                             return "unit selected";
                         }
                     }
@@ -157,76 +155,6 @@ public class GameController {
         else
             return "your location out of bounds";
     }
-
-    public String moveUnit(HashMap<String, String > options) {
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        int x = Integer.parseInt(options.get("x"));
-        int y = Integer.parseInt(options.get("y"));
-        if (x <= gameMap.getMapWidth() && y <= gameMap.getMapHeight()) {
-            if (!(gameMap.getMapBlockByLocation(x, y).getMapBlockType().name().equals("WATER")) ||
-            !(gameMap.getMapBlockByLocation(x, y).getMapBlockType().name().equals("MOUNTAIN")) || (gameMap.getMapBlockByLocation(x, y).getBuildings() != null)) {
-                if (currentUnit.getXPosition() - x + currentUnit.getYPosition() - y <= currentUnit.getUnitType().getVELOCITY()) {
-                    //TODO
-                } else
-                    return "The speed of the soldier is not enough";
-            } else
-                return "The soldier can go to that location";
-        }
-        else
-            return "your location out of bounds";
-        return null;
-    }
-
-    public String setSituation(HashMap<String, String> options) {
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        int x = Integer.parseInt(options.get("x"));
-        int y = Integer.parseInt(options.get("y"));
-        if (x <= gameMap.getMapWidth() && y <= gameMap.getMapHeight()) {
-            UnitType unitType;
-            if ((unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll("\\s*",""))) != null){
-                for (Unit unit : gameMap.getMapBlockByLocation(x, y).getUnits()) {
-                    if (unit.getUnitType().equals(unitType)) {
-                        if (unit.getOwner().equals(currentUser)) {
-                            UnitState unitState = UnitState.valueOf(options.get("s").toUpperCase());
-                            unit.setUnitState(unitState);
-                            return "The state is set correctly";
-                        }
-                    }
-                }
-                return "You do not have such a soldier in this block";
-            } else
-                return "type entered not valid";
-        }
-        else
-            return "your location out of bounds";
-    }
-
-    public String attackOnUnit(HashMap<String, String> options) {
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        int x = Integer.parseInt(options.get("x"));
-        int y = Integer.parseInt(options.get("y"));
-        if (x <= gameMap.getMapWidth() && y <= gameMap.getMapHeight()) {
-            UnitType unitType;
-            if ((unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll("\\s*",""))) != null){
-                for (Unit unit : gameMap.getMapBlockByLocation(x, y).getUnits()) {
-                    if (unit.getUnitType().equals(unitType)) {
-                        if (!(unit.getOwner().equals(currentUser))) {
-                            currentUnit.setForAttack(unit);
-                            return "attacked";
-                        }
-                    }
-                }
-                return "do not exist such a soldier in this block";
-            } else
-                return "type entered not valid";
-        }
-        else
-            return "your location out of bounds";
-
-    } //TODO این سه تا دستور یونیت شباهت خیلی زیادی دارن. میشه یه تابع برا اروراش زد
 
     public String setTaxRate(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
