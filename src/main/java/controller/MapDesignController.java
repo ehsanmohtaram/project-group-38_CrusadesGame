@@ -65,7 +65,7 @@ public class MapDesignController {
             for (String key : options.keySet())
                 if (!key.equals("t") && options.get(key) != null)
                     return "choose two or four digits to specify area!";
-            gameMap.changeType(x, y, mapBlockType);
+            gameMap.changeType(x, y , x , y , mapBlockType);
         }else
             return "you must choose at least two digits for bounds";
         return "type changed successfully";
@@ -105,7 +105,7 @@ public class MapDesignController {
         int xPosition = Integer.parseInt(options.get("x"));
         int yPosition = Integer.parseInt(options.get("y"));
 
-        gameMap.restrictAccess(xPosition , yPosition , options.get("d").charAt(0));
+        gameMap.changeAccess(xPosition , yPosition , options.get("d").charAt(0), false );
         return "successfully dropped";
     }
     public String dropTree(HashMap<String , String> options) {

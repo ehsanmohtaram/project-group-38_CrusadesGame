@@ -1,7 +1,5 @@
 package model;
 
-import model.building.Building;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -14,9 +12,9 @@ public class Map implements Cloneable {
     private MapBlock[][] map;
     private Boolean[][] accessToRight;
     private Boolean[][] accessToDown;
+    private ArrayList<Character> directions = new ArrayList<Character>(List.of('w' , 'e' , 'n' , 's'));
     private int mapWidth;
     private int mapHeight;
-
     public Map(Integer mapWidth, Integer mapHeight, String mapName) {
         this.mapName = mapName;
         this.mapHeight = mapHeight;
@@ -114,39 +112,47 @@ public class Map implements Cloneable {
         return (Map)(DEFAULT_MAPS.get(index).clone());
     }
 
-    public void changeType(int x , int y, MapBlockType type){
-        map[x][y].setMapBlockType(type);
-    }
+//    public void changeType(int x , int y, MapBlockType type){
+//        map[x][y].setMapBlockType(type);
+//    }
 
     public void changeType(int x1 , int y1, int x2, int y2, MapBlockType type){
         for (int i = x1; i <= x2; i++)
-            for (int j = y1; j <= y2; j++)
+            for (int j = y1; j <= y2; j++) {
                 map[i][j].setMapBlockType(type);
+                if (type.isAccessible())
+                    for (char direction : directions)
+                        changeAccess(i, j, direction, true);
+                else
+                    for (char direction : directions)
+                        changeAccess(i, j, direction, false);
+
+            }
+
     }
 
     public void clearBlock(int x , int y){
         map[x][y] = new MapBlock(x , y);
     }
 
-    public void restrictAccess(int xPosition ,int yPosition , char direction){
+    public void changeAccess(int xPosition , int yPosition , char direction, boolean isAccessible){
         Random random = new Random();
-        ArrayList<Character> directions = new ArrayList<Character>(List.of('w' , 'e' , 'n' , 's'));
         if(direction == 'r')
             direction = directions.get(random.nextInt()%4);
         switch (direction){
             case 'w':
                 if(xPosition != 0)
-                    accessToRight[xPosition - 1][yPosition] = false;
+                    accessToRight[xPosition - 1][yPosition] = isAccessible;
                 break;
             case 'e':
-                accessToRight[xPosition][yPosition] = false;
+                accessToRight[xPosition][yPosition] = isAccessible;
                 break;
             case 'n':
                 if(yPosition != 0)
-                    accessToDown[xPosition][yPosition - 1] = false;
+                    accessToDown[xPosition][yPosition - 1] = isAccessible;
                 break;
             case 's':
-                accessToDown[xPosition][yPosition] = false;
+                accessToDown[xPosition][yPosition] = isAccessible;
 
         }
     }

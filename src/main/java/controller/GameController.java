@@ -6,6 +6,9 @@ import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
 import view.*;
+
+import javax.swing.plaf.PanelUI;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -26,7 +29,7 @@ public class GameController {
         currentKingdom = gameMap.getKingdomByOwner(currentUser);
     }
 
-    public void run(){
+    public void run() {
         ShopAndTradeController shopAndTradeController = new ShopAndTradeController();
         System.out.println("Welcome to game menu:))");
         while (true) {
@@ -64,6 +67,12 @@ public class GameController {
     }
 
     public String dropBuilding(HashMap<String, String> options) {
+        try {
+            BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));
+        } catch (Exception ignored) {
+            return "There is no such a building!";
+        }
+        if (BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_")).specificConstant instanceof SiegeType)
         for (String key : options.keySet())
             if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
@@ -116,6 +125,7 @@ public class GameController {
             if (counter > gameMap.getMapHeight() && counter > gameMap.getMapWidth()) return null;
         }
     }
+
     public String dropSiege(HashMap<String, String> options) {
         for (String key : options.keySet())
             if (options.get(key) == null) return "Please input necessary options!";
@@ -123,6 +133,12 @@ public class GameController {
         try {BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));}
         catch (Exception ignored) {return "There is no such a siege!";}
         boolean check  = BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_")).specificConstant instanceof SiegeType;
+        try {
+            BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));
+        } catch (Exception ignored) {
+            return "There is no such a siege!";
+        }
+        boolean check = BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_")).specificConstant instanceof SiegeType;
         if (!check) return "There is no such a siege!";
         String result;
         result = positionValidate(options.get("x"),options.get("y"));
@@ -178,6 +194,7 @@ public class GameController {
         for (String key : options.keySet())
             if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+    public String moveSiege(HashMap<String, String> options) {
         String firstResult, secondResult;
         firstResult = positionValidate(options.get("x"),options.get("y"));
         if (firstResult != null) return firstResult;
@@ -375,6 +392,85 @@ public class GameController {
                 return "rate number out of bounds";
         } else
             return "rate number is not valid";
+    }
+
+    public void updateTaxRateByKingdom(Kingdom kingdom) {
+        Double cost = getCostByTaxRate(kingdom.getTaxRate()) * kingdom.getPopulation();
+        if ((kingdom.getTaxRate() < 0) && (cost >= kingdom.getBalance())) {
+            kingdom.setTaxRate(0);
+            System.out.println("your tax rate set to zero");
+        }else {
+            kingdom.setBalance(kingdom.getBalance() - cost);
+            kingdom.setPopularity(kingdom.getPopularity() + getPopularityByTaxRate(kingdom.getTaxRate()));
+        }
+    }
+
+    public void updateFearRateByKingdom(Kingdom kingdom) {
+        kingdom.setEfficiency(100 - 10 * kingdom.getFearRate());
+        kingdom.setPopularity(kingdom.getPopularity() - 2 * (kingdom.getFearRate()));
+    }
+
+    public void updateReligionByKingdom(Kingdom kingdom) {
+        for (Building building : kingdom.getBuildings()) {
+            if (building.getBuildingType().name().equals("CHURCH"))
+                kingdom.setPopularity(kingdom.getPopularity() + 5);
+            else if (building.getBuildingType().name().equals("CATHEDRAL"))
+                kingdom.setPopularity(kingdom.getPopularity() + 10);
+        }
+    }
+
+    public Integer getPopularityByTaxRate(int taxRate) {
+        if (taxRate == -3)
+            return 7;
+        else if (taxRate == -2)
+            return 5;
+        else if (taxRate == -1)
+            return 3;
+        else if (taxRate == 0)
+            return 1;
+        else if (taxRate == 1)
+            return -2;
+        else if (taxRate == 2)
+            return -4;
+        else if (taxRate == 3)
+            return -6;
+        else if (taxRate == 4)
+            return -8;
+        else if (taxRate == 5)
+            return -12;
+        else if (taxRate == 6)
+            return -16;
+        else if (taxRate == 7)
+            return -20;
+        else
+            return -24;
+    }
+
+    public Double getCostByTaxRate(int taxRate) {
+        if (taxRate == -3)
+            return 1.0;
+        else if (taxRate == -2)
+            return 0.8;
+        else if (taxRate == -1)
+            return 0.6;
+        else if (taxRate == 0)
+            return 0.0;
+        else if (taxRate == 1)
+            return -0.6;
+        else if (taxRate == 2)
+            return -0.8;
+        else if (taxRate == 3)
+            return -1.0;
+        else if (taxRate == 4)
+            return -1.2;
+        else if (taxRate == 5)
+            return -1.4;
+        else if (taxRate == 6)
+            return -1.6;
+        else if (taxRate == 7)
+            return -1.8;
+        else
+            return -2.0;
     }
 
 }

@@ -167,6 +167,10 @@ public class Kingdom {
         return engineer;
     }
 
+    public void setPopularity(Integer popularity) {
+        this.popularity = popularity;
+    }
+
     public void setEngineer(Integer engineer) {
         this.engineer = engineer;
     }
