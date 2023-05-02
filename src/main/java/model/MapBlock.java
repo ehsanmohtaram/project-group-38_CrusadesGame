@@ -40,8 +40,8 @@ public class MapBlock {
         this.buildings = buildings;
     }
 
-    public void setUnits(ArrayList<Unit> units) {
-        this.units = units;
+    public void setUnits(Unit unit) {
+        units.add(unit);
     }
 
     public ResourceType getResources() {

@@ -49,6 +49,8 @@ public class BuildingMenu {
             if (commandParser.validate(command, "back", null) != null) return "back";
             if (commandParser.validate(command, "repair", null) != null)
                 System.out.println(buildingController.repairBuilding());
+            else if ((optionPass =commandParser.validate(command, "create unit","t|type/c|count")) != null)
+                System.out.println(buildingController.createUnit(optionPass));
             else System.out.println("Invalid command");
         }
     }
