@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public class BuildingController {
     private final BuildingMenu buildingMenu;
-    private final Building selectedBuilding;
+    private Building selectedBuilding;
     private final Map gameMap;
     private final Kingdom currentKingdom;
     public BuildingController() {
@@ -67,7 +67,7 @@ public class BuildingController {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         try {UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));}
-        catch (Exception ignored) {System.out.println("There is no such a unit found!");}
+        catch (Exception ignored) {return "There is no such a unit found!";}
         if (!options.get("c").matches("-?\\d+")) return "Please input a digit as count value!";
         if (Integer.parseInt(options.get("c")) < 0 || Integer.parseInt(options.get("c")) > 20 ) return "Invalid bounds!";
         UnitType unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));
@@ -82,7 +82,8 @@ public class BuildingController {
         if (unitType.getArmour_Needed() != null)
             if (currentKingdom.getResourceAmount(unitType.getArmour_Needed().getResourceType()) < unitType.getArmour_Needed().getResourceAmount() * count)
                 return "You do not have enough resources for units equipment!";
-        Camp camp = (Camp) selectedBuilding;
+        Building building = selectedBuilding;
+        Camp camp = (Camp) building;
         if (campType.getCapacity() < camp.getCapacity()) return "Your camp is full. Please make a new camp!";
         if (currentKingdom.getNoneEmployed() < count) return "You do not have enough population to make new units!";
         Unit unit = new Unit(unitType, selectedBuilding.getPosition(), currentKingdom);

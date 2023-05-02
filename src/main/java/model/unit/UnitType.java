@@ -15,7 +15,7 @@ public enum UnitType {
     ENGINEER(10 , 0 , 3, 1,4, -1, null, null),
     BLACK_MONK(30, 10, 2, 1 ,8, -1, Weapons.MACE, null),
     ARCHER_BOW(20, 5, 4, 5 ,7, 1, null ,null),
-    SALVES(5, 3, 4, 1 ,5, 1, null ,null),
+    SLAVES(5, 3, 4, 1 ,5, 1, null ,null),
     SLINGERS(10, 5, 4, 3 ,5, 1, null ,null),
     ASSASSINS(30, 10, 3, 1 ,9, 1, null ,null),
     HORSE_ARCHERS(30, 10, 5, 9 , 12, 1, null ,null),
