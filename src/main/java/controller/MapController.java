@@ -2,11 +2,9 @@ package controller;
 
 import model.Map;
 import model.MapBlock;
-import model.MapBlockType;
 import model.User;
 import model.unit.Unit;
 import view.MapMenu;
-
 import java.util.HashMap;
 
 public class MapController {

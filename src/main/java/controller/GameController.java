@@ -6,9 +6,6 @@ import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
 import view.*;
-
-import javax.swing.plaf.PanelUI;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -67,12 +64,6 @@ public class GameController {
     }
 
     public String dropBuilding(HashMap<String, String> options) {
-        try {
-            BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));
-        } catch (Exception ignored) {
-            return "There is no such a building!";
-        }
-        if (BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_")).specificConstant instanceof SiegeType)
         for (String key : options.keySet())
             if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
@@ -94,12 +85,7 @@ public class GameController {
             return "You do not have enough gold to buy this building.";
         if (buildingType.getRESOURCE_NUMBER() > gameMap.getKingdomByOwner(currentUser).getResourceAmount(buildingType.getRESOURCES()))
             return "You do not have enough " + buildingType.getRESOURCES().name().toLowerCase() + " to buy this building.";
-        Building building;
-        if (buildingType.specificConstant == null) building = new Building(mapBlock, buildingType, currentKingdom);
-        else if (buildingType.specificConstant instanceof DefensiveStructureType) building = new DefensiveStructure(mapBlock, buildingType, currentKingdom);
-        else if (buildingType.specificConstant instanceof CampType) building = new Camp(mapBlock, buildingType, currentKingdom);
-        else if (buildingType.specificConstant instanceof StockType) building = new Stock(mapBlock, buildingType, currentKingdom);
-        else building = new GeneralBuilding(mapBlock, buildingType, currentKingdom);
+        Building building = new Building(mapBlock, buildingType, currentKingdom);
         currentKingdom.setBalance((double) -buildingType.getGOLD());
         currentKingdom.setResourceAmount(buildingType.getRESOURCES(),-buildingType.getRESOURCE_NUMBER());
         mapBlock.setBuildings(building);
@@ -125,7 +111,6 @@ public class GameController {
             if (counter > gameMap.getMapHeight() && counter > gameMap.getMapWidth()) return null;
         }
     }
-
     public String dropSiege(HashMap<String, String> options) {
         for (String key : options.keySet())
             if (options.get(key) == null) return "Please input necessary options!";
@@ -133,12 +118,6 @@ public class GameController {
         try {BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));}
         catch (Exception ignored) {return "There is no such a siege!";}
         boolean check  = BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_")).specificConstant instanceof SiegeType;
-        try {
-            BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));
-        } catch (Exception ignored) {
-            return "There is no such a siege!";
-        }
-        boolean check = BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_")).specificConstant instanceof SiegeType;
         if (!check) return "There is no such a siege!";
         String result;
         result = positionValidate(options.get("x"),options.get("y"));
@@ -194,7 +173,6 @@ public class GameController {
         for (String key : options.keySet())
             if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-    public String moveSiege(HashMap<String, String> options) {
         String firstResult, secondResult;
         firstResult = positionValidate(options.get("x"),options.get("y"));
         if (firstResult != null) return firstResult;
