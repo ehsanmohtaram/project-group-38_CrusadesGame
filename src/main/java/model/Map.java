@@ -157,6 +157,20 @@ public class Map implements Cloneable {
         }
     }
 
+    public Boolean checkAccess(int xPosition, int yPosition, char direction){
+        switch (direction){
+            case 'w':
+                if(xPosition != 0) return accessToRight[xPosition - 1][yPosition];
+            case 'e':
+                return accessToRight[xPosition][yPosition];
+            case 'n':
+                if(yPosition != 0) return accessToDown[xPosition][yPosition - 1];
+            case 's':
+                return accessToDown[xPosition][yPosition];
+        }
+        return null;
+    }
+
     public String getPartOfMap (int xPosition , int yPosition){
         String result = "map: in " + xPosition + "," + yPosition + '\n';
         String resetColor = "\033[0m";
