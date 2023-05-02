@@ -12,14 +12,15 @@ public class Camp extends Building{
 
     public Camp(MapBlock position, BuildingType buildingType, Kingdom owner) {
         super(position, buildingType, owner);
+        capacity = 0;
     }
 
     public ArrayList<Unit> getUnits() {
         return units;
     }
 
-    public void setUnits(ArrayList<Unit> units) {
-        this.units = units;
+    public void setUnits(Unit unit) {
+        units.add(unit);
     }
 
     public Integer getCapacity() {
@@ -27,6 +28,6 @@ public class Camp extends Building{
     }
 
     public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
+        this.capacity += capacity;
     }
 }

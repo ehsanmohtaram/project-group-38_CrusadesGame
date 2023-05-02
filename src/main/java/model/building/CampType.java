@@ -1,14 +1,14 @@
 package model.building;
 
 public enum CampType {
-    BARRACK(20, false),
-    SIEGE_TENT(5, null),
-    ENGINEER_GUILD(10 ,null),
-    MERCENARY_POST(20, true);
+    BARRACK(20, 0),
+    SIEGE_TENT(5, -1),
+    ENGINEER_GUILD(10 ,-1),
+    MERCENARY_POST(20, 1);
     private final Integer capacity;
-    private final Boolean isArab;
+    private final Integer isArab;
 
-    CampType(Integer capacity, Boolean isArab) {
+    CampType(Integer capacity, Integer isArab) {
         this.capacity = capacity;
         this.isArab = isArab;
     }
@@ -17,7 +17,7 @@ public enum CampType {
         return capacity;
     }
 
-    public Boolean getArab() {
+    public Integer getIsArab() {
         return isArab;
     }
 }

@@ -7,7 +7,6 @@ import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitType;
 import view.BuildingMenu;
-
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -15,13 +14,12 @@ public class BuildingController {
     private final BuildingMenu buildingMenu;
     private final Building selectedBuilding;
     private final Map gameMap;
-    private final User currentUser;
     private final Kingdom currentKingdom;
     public BuildingController() {
         buildingMenu = new BuildingMenu(this);
         selectedBuilding = GameController.selectedBuilding;
         gameMap = GameController.gameMap;
-        currentUser = Controller.currentUser;
+        User currentUser = Controller.currentUser;
         currentKingdom = gameMap.getKingdomByOwner(currentUser);
     }
 
@@ -46,7 +44,7 @@ public class BuildingController {
     }
 
     public String repairBuilding() {
-        //TODO ENGINEER
+        //TODO ENGEENEAR
         BuildingType buildingType = selectedBuilding.getBuildingType();
         if (buildingType.getRESOURCE_NUMBER() > currentKingdom.getResourceAmount(buildingType.getRESOURCES()))
             return "You do not have enough " + buildingType.getRESOURCES().name().toLowerCase() + " to buy this building.";
@@ -66,8 +64,7 @@ public class BuildingController {
     }
 
     public String createUnit(HashMap<String, String> options) {
-        for (String key : options.keySet())
-            if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         try {UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));}
         catch (Exception ignored) {System.out.println("There is no such a unit found!");}
@@ -75,10 +72,29 @@ public class BuildingController {
         if (Integer.parseInt(options.get("c")) < 0 || Integer.parseInt(options.get("c")) > 20 ) return "Invalid bounds!";
         UnitType unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));
         CampType campType = (CampType) selectedBuilding.getBuildingType().specificConstant;
-        if (!Objects.equals(campType.getArab(), unitType.getIS_ARAB())) return "You can not build this type of unit here!";
-        //if (unitType.getPRICE() +  > currentKingdom.getBalance()) return "You do not have enough balance to buy this unit!";
-        //if (campType.getCapacity() < )
-            return null;
-
+        if (!Objects.equals(campType.getIsArab(), unitType.getIS_ARAB())) return "You can not build this type of unit here!";
+        int count = Integer.parseInt(options.get("c"));
+        if (unitType.getPRICE() * count > currentKingdom.getBalance()) return "You do not have enough balance to buy this unit!";
+        //TODO BUILDING WEAPON AND STOCK ...
+        if (unitType.getWEAPON_NEEDED() != null)
+            if (currentKingdom.getResourceAmount(unitType.getWEAPON_NEEDED().getResourceType()) < unitType.getWEAPON_NEEDED().getResourceAmount() * count)
+                return "You do not have enough resources for units equipment!";
+        if (unitType.getArmour_Needed() != null)
+            if (currentKingdom.getResourceAmount(unitType.getArmour_Needed().getResourceType()) < unitType.getArmour_Needed().getResourceAmount() * count)
+                return "You do not have enough resources for units equipment!";
+        Camp camp = (Camp) selectedBuilding;
+        if (campType.getCapacity() < camp.getCapacity()) return "Your camp is full. Please make a new camp!";
+        if (currentKingdom.getNoneEmployed() < count) return "You do not have enough population to make new units!";
+        Unit unit = new Unit(unitType, selectedBuilding.getPosition(), currentKingdom);
+        for (int i = 0; i < count ;i++) {camp.setUnits(unit); selectedBuilding.getPosition().setUnits(unit);}
+        currentKingdom.addUnit(unit);
+        camp.setCapacity(count);
+        currentKingdom.setBalance((double) -unitType.getPRICE() * count );
+        currentKingdom.setNoneEmployed(-count);
+        if (unitType.getWEAPON_NEEDED() != null)
+            currentKingdom.setResourceAmount(unitType.getWEAPON_NEEDED().getResourceType(), -unitType.getWEAPON_NEEDED().getResourceAmount() * count);
+        if (unitType.getArmour_Needed() != null)
+            currentKingdom.setResourceAmount(unitType.getArmour_Needed().getResourceType(), -unitType.getArmour_Needed().getResourceAmount() * count);
+        return count + " " + unitType.name().toLowerCase().replaceAll("_"," ") + " has been made!";
     }
 }

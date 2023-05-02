@@ -23,13 +23,13 @@ public class Kingdom {
     private ArrayList<Trade> mySuggestion = new ArrayList<>();
     private ArrayList<Trade> notification = new ArrayList<>();
     private ArrayList<Trade> historyTrade = new ArrayList<>();
-    private ArrayList<Building> cart  = new ArrayList<>();
     private HashMap<Food ,Integer> foods = new HashMap<>();
     private HashMap<ResourceType, Integer> resources = new HashMap<>();
     private ArrayList<Unit> units = new ArrayList<>();
     private ArrayList<Building> buildings = new ArrayList<>();
     public Kingdom(Flags flag, User owner) {
-        population = 5;
+        population = noneEmployed = 5;
+        engineer = 0;
         popularity = 0;
         foodRate = -2;
         this.flag = flag;
@@ -39,7 +39,6 @@ public class Kingdom {
             resources.put(resourceType, 100);
         for (Food food : Food.values())
             foods.put(food, 0);
-        addBuilding(headquarter);
     }
 
     public User getOwner() {
@@ -87,7 +86,7 @@ public class Kingdom {
     }
 
     public void setNoneEmployed(Integer noneEmployed) {
-        this.noneEmployed = noneEmployed;
+        this.noneEmployed += noneEmployed;
     }
 
     public Integer getFearRate() {
