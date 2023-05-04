@@ -169,4 +169,6 @@ public class User {
     public void addToMyMap(Map myNewMap) {
         this.myMap.add(myNewMap);
     }
+
+
 }

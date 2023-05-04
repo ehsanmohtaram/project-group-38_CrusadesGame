@@ -6,13 +6,14 @@ import model.unit.Unit;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Kingdom {
+public class Kingdom{
     private final User owner;
     private final Flags flag;
     private Integer population;
     private Integer noneEmployed;
     private Integer engineer;
     private Integer fearRate;
+    private Integer maxFearRate;
     private Integer popularity;
     private Double balance;
     private Integer foodRate;
@@ -23,7 +24,7 @@ public class Kingdom {
     private ArrayList<Trade> mySuggestion = new ArrayList<>();
     private ArrayList<Trade> notification = new ArrayList<>();
     private ArrayList<Trade> historyTrade = new ArrayList<>();
-    private HashMap<Food ,Integer> foods = new HashMap<>();
+    private HashMap<Food ,Double> foods = new HashMap<>();
     private HashMap<ResourceType, Integer> resources = new HashMap<>();
     private ArrayList<Unit> units = new ArrayList<>();
     private ArrayList<Building> buildings = new ArrayList<>();
@@ -38,7 +39,7 @@ public class Kingdom {
         for (ResourceType resourceType : ResourceType.values())
             resources.put(resourceType, 100);
         for (Food food : Food.values())
-            foods.put(food, 0);
+            foods.put(food, 0.0);
     }
 
     public User getOwner() {
@@ -67,6 +68,14 @@ public class Kingdom {
 
     public void setEfficiency(Integer efficiency) {
         this.efficiency = efficiency;
+    }
+
+    public Integer getMaxFearRate() {
+        return maxFearRate;
+    }
+
+    public void setMaxFearRate(Integer maxFearRate) {
+        this.maxFearRate = maxFearRate;
     }
 
     public Integer getEfficiency() {
@@ -105,7 +114,7 @@ public class Kingdom {
         this.taxRate = taxRate;
     }
 
-    public HashMap<Food, Integer> getFoods() {
+    public HashMap<Food, Double> getFoods() {
         return foods;
     }
 
@@ -183,7 +192,7 @@ public class Kingdom {
         this.popularity += amount;
     }
 
-    public void addFood(Food toAdd , int amount){
+    public void addFood(Food toAdd , double amount){
         foods.put(toAdd , amount);
     }
 
@@ -198,6 +207,7 @@ public class Kingdom {
     public Integer getResourceAmount(ResourceType resourceType) {
         return resources.get(resourceType);
     }
+
 
 
 

@@ -389,17 +389,57 @@ public class GameController {
     }
 
     public void updateFearRateByKingdom(Kingdom kingdom) {
+        int x = kingdom.getHeadquarter().getPosition().getxPosition();
+        int y = kingdom.getHeadquarter().getPosition().getyPosition();
+        for (MapBlock[] mapBlocks : gameMap.getSurroundingArea(x, y, 1)) {
+            for (MapBlock block: mapBlocks) {
+                if (block.getBuildings().getBuildingType().equals(BuildingType.BALLISTA))
+                    if (kingdom.getMaxFearRate() > 0)
+                         kingdom.setMaxFearRate(kingdom.getMaxFearRate() - 1);
+            }
+        }
+        if (kingdom.getFearRate() > kingdom.getMaxFearRate())
+            kingdom.setFearRate(kingdom.getMaxFearRate());
         kingdom.setEfficiency(100 - 10 * kingdom.getFearRate());
         kingdom.setPopularity(kingdom.getPopularity() - 2 * (kingdom.getFearRate()));
+    }
+
+    public void updateFoodRate(Kingdom kingdom) {
+        int balanceFood = 0;
+        int diversity = 0;
+        double reduceFood = (1 + (0.5 * kingdom.getFoodRate())) * kingdom.getPopulation();
+        for (Double foodValue : kingdom.getFoods().values()) {
+            if (foodValue > 0)
+                diversity++;
+            balanceFood += foodValue;
+        }
+        if (balanceFood < reduceFood)
+            kingdom.setFoodRate(-2);
+        if (kingdom.getFoodRate() != -2) {
+            kingdom.setPopularity(kingdom.getPopularity() + diversity + (4 * kingdom.getFoodRate()));
+            for (Double foodValue : kingdom.getFoods().values()) {
+                if (foodValue < reduceFood) {
+                    reduceFood -= foodValue;
+                    foodValue = 0.0;
+                    continue;
+                }
+                foodValue -= reduceFood;
+                break;
+            }
+        }
     }
 
     public void updateReligionByKingdom(Kingdom kingdom) {
         for (Building building : kingdom.getBuildings()) {
             if (building.getBuildingType().name().equals("CHURCH"))
-                kingdom.setPopularity(kingdom.getPopularity() + 5);
+                kingdom.setPopularity(kingdom.getPopularity() + 3);
             else if (building.getBuildingType().name().equals("CATHEDRAL"))
-                kingdom.setPopularity(kingdom.getPopularity() + 10);
+                kingdom.setPopularity(kingdom.getPopularity() + 5);
         }
+    }
+
+    public void updatePopulation(Kingdom kingdom) {
+        kingdom.setPopulation(kingdom.getPopulation() + kingdom.getPopularity());
     }
 
     public Integer getPopularityByTaxRate(int taxRate) {
@@ -455,5 +495,6 @@ public class GameController {
         else
             return -2.0;
     }
+
 
 }
