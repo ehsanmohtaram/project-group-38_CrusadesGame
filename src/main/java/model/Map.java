@@ -183,4 +183,14 @@ public class Map implements Cloneable {
     }
 
 
+    public MapBlock[][] getSurroundingArea(int xPosition, int yPosition, int range){
+        MapBlock[][] output = new MapBlock[2 * range + 1][2 * range + 1];
+        for (int j = yPosition - range; j <= yPosition + range; j++) {
+            for (int i = xPosition - range; i <= (xPosition + range); i++) {
+                output[i - (xPosition - range)][j - (yPosition - range)] = map[i][j];
+            }
+        }
+        return output;
+    }
+
 }

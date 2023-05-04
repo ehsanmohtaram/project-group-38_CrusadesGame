@@ -96,7 +96,7 @@ public class GameController {
         mapBlock.setBuildings(building);
         currentKingdom.addBuilding(building);
         //TODO Farm should be check for being cultivable
-        return buildingType.name().toLowerCase().replaceAll("_"," ") + " added successfully to your kingdom.";
+        return buildingType.name().toLowerCase().replaceAll("_"," ") + " added successfully to kingdom.";
     }
 
     public MapBlock findTheNearestFreeBlock(int x, int y) {

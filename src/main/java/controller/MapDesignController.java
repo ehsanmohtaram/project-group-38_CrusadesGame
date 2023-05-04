@@ -2,8 +2,7 @@
 package controller;
 
 import model.*;
-import model.building.Building;
-import model.building.BuildingType;
+import model.building.*;
 import view.DesignMapMenu;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -156,7 +155,7 @@ public class MapDesignController {
         catch (IllegalArgumentException illegalArgumentException)
         {return "Your flag color did not exist in default colors!";}
         if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null ) return checkingResult;
-        if (!gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))).getMapBlockType().isAccessible())
+        if (!gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))).getMapBlockType().isBuildable())
             return "You can not build your head quarter in this type of land!";
         if ((checkingResult = checkAroundHeadQuarterPosition(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")))) != null)
             return checkingResult;
@@ -178,7 +177,43 @@ public class MapDesignController {
     }
 
     public String dropBuilding(HashMap<String , String> options){
-        return null;
+        String checkingResult;
+        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
+            return checkingResult;
+        for (String key : options.keySet())
+            if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        try {BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));}
+        catch (Exception ignored) {return "There is no such a building!";}
+        if (BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_")).specificConstant instanceof SiegeType)
+            return "There is no such a building!";
+        MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        if (!mapBlock.getMapBlockType().isBuildable())
+            return "You can not build your building here. Please choose another location!";
+        if (mapBlock.getBuildings() != null || mapBlock.getSiege() != null)
+            return "This block already has filled with another building. Please choose another location!";
+        Flags kingdomFlag;
+        Kingdom buildingOwner = null;
+        try {kingdomFlag = Flags.valueOf(options.get("f").toUpperCase());}
+        catch (IllegalArgumentException illegalArgumentException)
+        {return "Your flag color did not exist in default colors!";}
+        for (Kingdom existing: gameMap.getPlayers())
+            if(existing.getFlag() == kingdomFlag)
+                buildingOwner = existing;
+        if(buildingOwner == null)
+            return "no such kingdom has been added to map";
+        BuildingType buildingType = BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));
+        if (buildingType.equals(BuildingType.HEAD_QUARTER)) return "You can not buy this building!";
+        Building building;
+        if (buildingType.specificConstant == null) building = new Building(mapBlock, buildingType, buildingOwner);
+        else if (buildingType.specificConstant instanceof DefensiveStructureType) building = new DefensiveStructure(mapBlock, buildingType, buildingOwner);
+        else if (buildingType.specificConstant instanceof CampType) building = new Camp(mapBlock, buildingType, buildingOwner);
+        else if (buildingType.specificConstant instanceof StockType) building = new Stock(mapBlock, buildingType, buildingOwner);
+        else building = new GeneralBuilding(mapBlock, buildingType, buildingOwner);
+        mapBlock.setBuildings(building);
+        buildingOwner.addBuilding(building);
+        //TODO Farm should be check for being cultivable
+        return buildingType.name().toLowerCase().replaceAll("_"," ") + " added to " + kingdomFlag.name() + " kingdom.";
     }
 
     public String showMap(HashMap<String, String> options){
