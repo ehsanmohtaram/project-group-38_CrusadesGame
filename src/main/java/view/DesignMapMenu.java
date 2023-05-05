@@ -32,7 +32,7 @@ public class DesignMapMenu {
                 System.out.println(mapDesignController.addUserToMap(options));
             }else if ((options = commandParser.validate(input,"drop building","x|positionX/y|positionY/t|type/f|flag")) != null) {
                 System.out.println(mapDesignController.dropBuilding(options));
-            }else if ((options = commandParser.validate(input,"drop unit","x|positionX/y|positionY/t|type")) != null) {
+            }else if ((options = commandParser.validate(input,"drop unit","x|positionX/y|positionY/t|type/f|flag")) != null) {
                 System.out.println(mapDesignController.dropUnit(options));
             }else if ((options = commandParser.validate(input,"show map","x|positionX/y|positionY")) != null) {
                 result = mapDesignController.showMap(options);

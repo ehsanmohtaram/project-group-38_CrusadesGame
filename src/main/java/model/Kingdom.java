@@ -20,6 +20,7 @@ public class Kingdom{
     private Integer taxRate;
     private Integer efficiency;
     private Building headquarter;
+    private Integer kingdomRange;
     private ArrayList<Trade> myRequests = new ArrayList<>();
     private ArrayList<Trade> mySuggestion = new ArrayList<>();
     private ArrayList<Trade> notification = new ArrayList<>();
@@ -33,6 +34,7 @@ public class Kingdom{
         engineer = 0;
         popularity = 0;
         foodRate = -2;
+        kingdomRange = 5;
         this.flag = flag;
         this.owner = owner;
         this.balance = 200.0;
@@ -208,8 +210,14 @@ public class Kingdom{
         return resources.get(resourceType);
     }
 
-
-
+    public boolean checkOutOfRange(int xPosition , int yPosition){
+        if(buildings.size() > 60)
+            kingdomRange = 10;
+        if(Math.abs(yPosition - headquarter.getPosition().getyPosition()) >= kingdomRange
+                || Math.abs(xPosition - headquarter.getPosition().getxPosition()) >= kingdomRange)
+            return true;
+        return false;
+    }
 
 
 }

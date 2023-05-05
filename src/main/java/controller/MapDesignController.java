@@ -3,6 +3,9 @@ package controller;
 
 import model.*;
 import model.building.*;
+import model.unit.Unit;
+import model.unit.UnitState;
+import model.unit.UnitType;
 import view.DesignMapMenu;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -173,7 +176,35 @@ public class MapDesignController {
     }
 
     public String dropUnit(HashMap<String , String> options){
-        return null;
+        String checkingResult;
+        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
+            return checkingResult;
+        if(options.get("t") == null || options.get("f") == null)
+            return "you must specify details like type and flag";
+        if(options.get("t").equals("") || options.get("f").equals(""))
+            return "Illegal value. Please fill the options";
+        UnitType unitType;
+        try {unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));}
+        catch (Exception ignored) {return "There is no such a building!";}
+        MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        if (!mapBlock.getMapBlockType().isAccessible())
+            return "You can not drop units on this types of lands. Please choose another location!";
+        Flags kingdomFlag;
+        Kingdom unitOwner = null;
+        try {kingdomFlag = Flags.valueOf(options.get("f").toUpperCase());}
+        catch (IllegalArgumentException illegalArgumentException)
+        {return "Your flag color did not exist in default colors!";}
+        for (Kingdom existing: gameMap.getPlayers())
+            if(existing.getFlag() == kingdomFlag)
+                unitOwner = existing;
+        if(unitOwner == null)
+            return "no such kingdom has been added to map";
+        if(unitOwner.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition()))
+            return "drop units near their kingdom";
+        Unit shouldBeAdd = new Unit(unitType, mapBlock, unitOwner);
+        shouldBeAdd.setUnitState(UnitState.STANDING);
+        return "unit added successfully";
+
     }
 
     public String dropBuilding(HashMap<String , String> options){
@@ -202,8 +233,10 @@ public class MapDesignController {
                 buildingOwner = existing;
         if(buildingOwner == null)
             return "no such kingdom has been added to map";
+        if(buildingOwner.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition()))
+            return "drop buildings near their kingdom";
         BuildingType buildingType = BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));
-        if (buildingType.equals(BuildingType.HEAD_QUARTER)) return "You can not buy this building!";
+        if (buildingType.equals(BuildingType.HEAD_QUARTER)) return "You have already dropped headquarter!";
         Building building;
         if (buildingType.specificConstant == null) building = new Building(mapBlock, buildingType, buildingOwner);
         else if (buildingType.specificConstant instanceof DefensiveStructureType) building = new DefensiveStructure(mapBlock, buildingType, buildingOwner);
