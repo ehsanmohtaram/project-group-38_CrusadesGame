@@ -121,10 +121,10 @@ public class Map implements Cloneable {
             for (int j = y1; j <= y2; j++) {
                 map[i][j].setMapBlockType(type);
                 if (type.isAccessible())
-                    for (char direction : directions)
+                    for (Direction direction : Direction.values())
                         changeAccess(i, j, direction, true);
                 else
-                    for (char direction : directions)
+                    for (Direction direction : Direction.values())
                         changeAccess(i, j, direction, false);
 
             }
@@ -135,23 +135,23 @@ public class Map implements Cloneable {
         map[x][y] = new MapBlock(x , y);
     }
 
-    public void changeAccess(int xPosition , int yPosition , char direction, boolean isAccessible){
-        Random random = new Random();
-        if(direction == 'r')
-            direction = directions.get(random.nextInt()%4);
+    public void changeAccess(int xPosition , int yPosition , Direction direction, boolean isAccessible){
+//        Random random = new Random();
+//        if(direction == 'r')
+//            direction = directions.get(random.nextInt()%4);
         switch (direction){
-            case 'w':
+            case WEST:
                 if(xPosition != 0)
                     accessToRight[xPosition - 1][yPosition] = isAccessible;
                 break;
-            case 'e':
+            case EAST:
                 accessToRight[xPosition][yPosition] = isAccessible;
                 break;
-            case 'n':
+            case NORTH:
                 if(yPosition != 0)
                     accessToDown[xPosition][yPosition - 1] = isAccessible;
                 break;
-            case 's':
+            case SOUTH:
                 accessToDown[xPosition][yPosition] = isAccessible;
 
         }

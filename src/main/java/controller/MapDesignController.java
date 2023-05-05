@@ -8,6 +8,7 @@ import model.unit.UnitType;
 import view.DesignMapMenu;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 
 public class MapDesignController {
@@ -103,7 +104,16 @@ public class MapDesignController {
         int xPosition = Integer.parseInt(options.get("x"));
         int yPosition = Integer.parseInt(options.get("y"));
 
-        gameMap.changeAccess(xPosition , yPosition , options.get("d").charAt(0), false );
+        if(options.get("d").charAt(0) == 'r'){
+            Random random = new Random();
+            options.put("d", String.valueOf("snwr".charAt(random.nextInt(4)) ));
+        }
+        Direction trueDirection = null;
+        for (Direction direction: Direction.values())
+            if(direction.name().toLowerCase().charAt(0) == options.get("d").charAt(0))
+                trueDirection = direction;
+
+        gameMap.changeAccess(xPosition , yPosition , trueDirection, false );
         return "successfully dropped";
     }
     public String dropTree(HashMap<String , String> options) {
