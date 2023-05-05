@@ -1,7 +1,7 @@
 package model.unit;
 
 public enum UnitState {
-    AGGRESSIVE,
+    STANDING,
     OFFENSIVE,
     DEFENSIVE,
     NOT_ACTIVE;

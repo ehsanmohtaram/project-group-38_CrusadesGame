@@ -158,10 +158,17 @@ public class Map implements Cloneable {
     }
 
     public String getPartOfMap (int xPosition , int yPosition){
-        String result = "map: in " + xPosition + "," + yPosition + '\n';
+        String result = "map: in " + xPosition + "," + yPosition + '\n' + "    ";
         String resetColor = "\033[0m";
+        for (int i = xPosition - 10; i <= (xPosition + 10); i++)
+            result += String.format(" %3d  " , i);
+        result += '\n';
         for (int j = yPosition - 4; j <= yPosition + 4; j++) {
             for (int fill = 0; fill < 3; fill++){
+                if(fill == 1)
+                    result += String.format("%3d " , j);
+                else
+                    result += "    ";
                 for (int i = xPosition - 10; i <= (xPosition + 10); i++) {
                     MapBlock showedBlock;
                     if ((showedBlock = getMapBlockByLocation(i, j)) != null) {
@@ -177,6 +184,9 @@ public class Map implements Cloneable {
                 }
                 result += '\n';
             }
+//            for (int i = xPosition - 10; i <= (xPosition + 10); i++) {
+//                result += String.format("%2d,%2d" , i , j) + ' ';
+//            }
             result += '\n';
         }
         return result.substring(0, result.length() - 2);
