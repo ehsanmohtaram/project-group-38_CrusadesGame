@@ -13,11 +13,12 @@ public class GameController {
     public static Map gameMap;
     public static Building selectedBuilding;
     private final GameMenu gameMenu;
-    private final User currentUser;
+    private User currentUser;
     private Unit selectedUnit;
     private Kingdom currentKingdom;
     private int XofMap;
     private int YofMap;
+    private int step = 0;
 
     public GameController(Map gameMap) {
         GameController.gameMap = gameMap;
@@ -197,7 +198,27 @@ public class GameController {
     }
 
     public String nextTurn(){
+        updateReligionByKingdom(currentKingdom);
+        updateFearRateByKingdom(currentKingdom);
+        updateFoodRateByKingdom(currentKingdom);
+        updateTaxRateByKingdom(currentKingdom);
+        updatePopulation(currentKingdom);
+        //کارای دیگه ....
+
+
+
+
+
+
+        currentUser = gameMap.getPlayers().get(step).getOwner();
+        currentKingdom = gameMap.getPlayers().get(step);
+        step++;
+        if (step == gameMap.getPlayers().size()) {
+            //اعمال جنگ و این داستانا
+            step = 1;
+        }
         return null;
+
     }
 
     public String showMap(HashMap<String, String> options){
@@ -393,9 +414,12 @@ public class GameController {
         int y = kingdom.getHeadquarter().getPosition().getyPosition();
         for (MapBlock[] mapBlocks : gameMap.getSurroundingArea(x, y, 1)) {
             for (MapBlock block: mapBlocks) {
-                if (block.getBuildings().getBuildingType().equals(BuildingType.BALLISTA))
-                    if (kingdom.getMaxFearRate() > 0)
-                         kingdom.setMaxFearRate(kingdom.getMaxFearRate() - 1);
+                try {
+                    if (block.getBuildings().getBuildingType().equals(BuildingType.BALLISTA))
+                        if (kingdom.getMaxFearRate() > 0)
+                            kingdom.setMaxFearRate(kingdom.getMaxFearRate() - 1);
+                } catch (NullPointerException nullPointerException){
+                }
             }
         }
         if (kingdom.getFearRate() > kingdom.getMaxFearRate())
@@ -404,7 +428,7 @@ public class GameController {
         kingdom.setPopularity(kingdom.getPopularity() - 2 * (kingdom.getFearRate()));
     }
 
-    public void updateFoodRate(Kingdom kingdom) {
+    public void updateFoodRateByKingdom(Kingdom kingdom) {
         int balanceFood = 0;
         int diversity = 0;
         double reduceFood = (1 + (0.5 * kingdom.getFoodRate())) * kingdom.getPopulation();

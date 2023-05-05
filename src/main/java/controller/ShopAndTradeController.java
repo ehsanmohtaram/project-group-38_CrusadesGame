@@ -118,7 +118,7 @@ public class ShopAndTradeController {
         }
         output.append("\nFoods :");
         for (Food value : Food.values()) {
-            int balance = gameMap.getKingdomByOwner(currentUser).getFoods().get(value);
+            double balance = gameMap.getKingdomByOwner(currentUser).getFoods().get(value);
             output.append("\nname : ").append(value.name().toLowerCase())
                     .append("buyPrice : ").append(value.getPrice())
                     .append("sellPrice : ").append(value.getPrice() * (0.8))
@@ -146,7 +146,7 @@ public class ShopAndTradeController {
             try {
                 Food food = Food.valueOf(options.get("i").toUpperCase());
                 if (amount * food.getPrice() < kingdom.getBalance()) {
-                    int balance = kingdom.getFoods().get(food);
+                    double balance = kingdom.getFoods().get(food);
                     kingdom.getFoods().put(food, balance + amount);
                     int cost = amount * food.getPrice();
                     kingdom.setBalance(kingdom.getBalance() - cost);
@@ -179,7 +179,7 @@ public class ShopAndTradeController {
         } catch (IllegalArgumentException illegalArgumentException) {
             try {
                 Food food = Food.valueOf(options.get("i").toUpperCase());
-                int foodBalance = kingdom.getFoods().get(food);
+                double foodBalance = kingdom.getFoods().get(food);
                 if (foodBalance >= amount) {
                     double benefit = amount * food.getPrice() * 0.8;
                     kingdom.setBalance(kingdom.getBalance() + benefit);
