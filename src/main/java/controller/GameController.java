@@ -13,12 +13,11 @@ public class GameController {
     public static Map gameMap;
     public static Building selectedBuilding;
     private final GameMenu gameMenu;
-    private User currentUser;
+    private final User currentUser;
     private Unit selectedUnit;
     private Kingdom currentKingdom;
     private int XofMap;
     private int YofMap;
-    private int step = 0;
 
     public GameController(Map gameMap) {
         GameController.gameMap = gameMap;
@@ -84,13 +83,15 @@ public class GameController {
         if (buildingType.equals(BuildingType.HEAD_QUARTER)) return "You can not buy this building!";
         if (buildingType.getGOLD() > currentKingdom.getBalance())
             return "You do not have enough gold to buy this building.";
-        if (buildingType.getRESOURCE_NUMBER() > gameMap.getKingdomByOwner(currentUser).getResourceAmount(buildingType.getRESOURCES()))
+        if (buildingType.getRESOURCES() != null &&
+                buildingType.getRESOURCE_NUMBER() > gameMap.getKingdomByOwner(currentUser).getResourceAmount(buildingType.getRESOURCES()))
             return "You do not have enough " + buildingType.getRESOURCES().name().toLowerCase() + " to buy this building.";
         Building building;
         if (buildingType.specificConstant == null) building = new Building(mapBlock, buildingType, currentKingdom);
         else if (buildingType.specificConstant instanceof DefensiveStructureType) building = new DefensiveStructure(mapBlock, buildingType, currentKingdom);
         else if (buildingType.specificConstant instanceof CampType) building = new Camp(mapBlock, buildingType, currentKingdom);
         else if (buildingType.specificConstant instanceof StockType) building = new Stock(mapBlock, buildingType, currentKingdom);
+        else if(buildingType.specificConstant instanceof ProducerType) building = new Producer(mapBlock, buildingType, currentKingdom);
         else building = new GeneralBuilding(mapBlock, buildingType, currentKingdom);
         currentKingdom.setBalance((double) -buildingType.getGOLD());
         currentKingdom.setResourceAmount(buildingType.getRESOURCES(),-buildingType.getRESOURCE_NUMBER());
@@ -198,27 +199,7 @@ public class GameController {
     }
 
     public String nextTurn(){
-        updateReligionByKingdom(currentKingdom);
-        updateFearRateByKingdom(currentKingdom);
-        updateFoodRateByKingdom(currentKingdom);
-        updateTaxRateByKingdom(currentKingdom);
-        updatePopulation(currentKingdom);
-        //کارای دیگه ....
-
-
-
-
-
-
-        currentUser = gameMap.getPlayers().get(step).getOwner();
-        currentKingdom = gameMap.getPlayers().get(step);
-        step++;
-        if (step == gameMap.getPlayers().size()) {
-            //اعمال جنگ و این داستانا
-            step = 1;
-        }
         return null;
-
     }
 
     public String showMap(HashMap<String, String> options){
@@ -414,12 +395,9 @@ public class GameController {
         int y = kingdom.getHeadquarter().getPosition().getyPosition();
         for (MapBlock[] mapBlocks : gameMap.getSurroundingArea(x, y, 1)) {
             for (MapBlock block: mapBlocks) {
-                try {
-                    if (block.getBuildings().getBuildingType().equals(BuildingType.BALLISTA))
-                        if (kingdom.getMaxFearRate() > 0)
-                            kingdom.setMaxFearRate(kingdom.getMaxFearRate() - 1);
-                } catch (NullPointerException nullPointerException){
-                }
+                if (block.getBuildings().getBuildingType().equals(BuildingType.BALLISTA))
+                    if (kingdom.getMaxFearRate() > 0)
+                         kingdom.setMaxFearRate(kingdom.getMaxFearRate() - 1);
             }
         }
         if (kingdom.getFearRate() > kingdom.getMaxFearRate())
@@ -428,7 +406,7 @@ public class GameController {
         kingdom.setPopularity(kingdom.getPopularity() - 2 * (kingdom.getFearRate()));
     }
 
-    public void updateFoodRateByKingdom(Kingdom kingdom) {
+    /*public void updateFoodRate(Kingdom kingdom) {
         int balanceFood = 0;
         int diversity = 0;
         double reduceFood = (1 + (0.5 * kingdom.getFoodRate())) * kingdom.getPopulation();
@@ -451,7 +429,7 @@ public class GameController {
                 break;
             }
         }
-    }
+    }*/
 
     public void updateReligionByKingdom(Kingdom kingdom) {
         for (Building building : kingdom.getBuildings()) {

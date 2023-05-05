@@ -1,12 +1,12 @@
 package controller;
 
-import model.Kingdom;
-import model.Map;
-import model.User;
+import model.*;
 import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitType;
 import view.BuildingMenu;
+
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -97,5 +97,30 @@ public class BuildingController {
         if (unitType.getArmour_Needed() != null)
             currentKingdom.setResourceAmount(unitType.getArmour_Needed().getResourceType(), -unitType.getArmour_Needed().getResourceAmount() * count);
         return count + " " + unitType.name().toLowerCase().replaceAll("_"," ") + " has been made!";
+    }
+
+    public String produceResource(HashMap<String, String> options) {
+        ResourceType resourceType;
+        Weapons weapons;
+        int counter = 0;
+        try {resourceType = ResourceType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));}
+        catch (Exception ignored) {counter++;}
+        try {weapons = Weapons.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));}
+        catch (Exception ignored) {counter++;}
+        if (counter == 0) return "Invalid type. This building did not produce this type of resource!";
+        ProducerType producerType = (ProducerType) selectedBuilding.getBuildingType().specificConstant;
+        //if (Objects.equals(producerType.getTypeOfResource(), weapons.))
+            //weapons =
+        //if (Objects.equals(producerType.getTypeOfResource(), resourceType))
+        return null;
+    }
+
+    public String showResources() {
+        Stock stock = (Stock) selectedBuilding;
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Enum<?> showResources : stock.getResourceValues().keySet())
+            stringBuilder.append(showResources.name().toLowerCase().replaceAll("_"," ")).append(" : ")
+                    .append(stock.getResourceValues().get(showResources)).append("\n");
+        return stringBuilder.toString();
     }
 }

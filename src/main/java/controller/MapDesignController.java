@@ -1,4 +1,3 @@
-
 package controller;
 
 import model.*;
@@ -74,14 +73,11 @@ public class MapDesignController {
     }
 
     private String checkLocationValidation (String xPosition , String yPosition){
-        if(xPosition == null || yPosition == null)
-            return "you must specify a location";
-        if(!xPosition.matches("\\d+") || !yPosition.matches("\\d+"))
-            return "please choose digits for location";
+        if(xPosition == null || yPosition == null) return "you must specify a location";
+        if(!xPosition.matches("-?\\d+") || !yPosition.matches("-?\\d+")) return "please choose digits for location";
         int x = Integer.parseInt(xPosition);
         int y = Integer.parseInt(yPosition);
-        if(gameMap.getMapBlockByLocation(x , y) == null)
-            return "index out of bounds";
+        if(gameMap.getMapBlockByLocation(x , y) == null) return "index out of bounds";
         return null;
     }
 
@@ -146,31 +142,48 @@ public class MapDesignController {
         return "start";
     }
 
+    public ArrayList<Integer> checkForMainStockPosition(int x, int y) {
+        ArrayList<Integer> stockPosition = new ArrayList<>();
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if (i != 0 && j != 0) continue;
+                if (i == 0 && j == 0) continue;
+                if (gameMap.getMapBlockByLocation(x + i, y + j).getMapBlockType().isBuildable()) {
+                    stockPosition.add(x + i); stockPosition.add(y + j);
+                    return stockPosition;
+                }
+            }
+        }
+        return stockPosition;
+    }
+
     public String addUserToMap(HashMap<String , String> options){
         String checkingResult;
-        for (String key : options.keySet())
-            if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        if (!options.get("x").matches("-?\\d+") || !options.get("y").matches("-?\\d+"))
-            return "Please enter digits as value of X and Y position!";
         if (User.getUserByUsername(options.get("u")) == null) return "User dose not exist. Please choose user from registered users";
         try {Flags.valueOf(options.get("f").toUpperCase());}
-        catch (IllegalArgumentException illegalArgumentException)
-        {return "Your flag color did not exist in default colors!";}
+        catch (Exception ignored) {return "Your flag color did not exist in default colors!";}
         if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null ) return checkingResult;
-        if (!gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))).getMapBlockType().isBuildable())
+        int xPosition = Integer.parseInt(options.get("x")) , yPosition = Integer.parseInt(options.get("y"));
+        if (!gameMap.getMapBlockByLocation(xPosition,yPosition).getMapBlockType().isBuildable())
             return "You can not build your head quarter in this type of land!";
-        if ((checkingResult = checkAroundHeadQuarterPosition(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")))) != null)
-            return checkingResult;
+        if ((checkingResult = checkAroundHeadQuarterPosition(xPosition,yPosition)) != null) return checkingResult;
         if (gameMap.getKingdomByOwner(User.getUserByUsername(options.get("u"))) != null)
             return "You already have put your kingdom in this map!";
         for (Kingdom kingdom : gameMap.getPlayers())
-            if (kingdom.getFlag().name().equals(options.get("f").toUpperCase())) return "Another user choose this flag. Please choose another flag.";
+            if (kingdom.getFlag().name().equals(options.get("f").toUpperCase())) return "Another user choose this flag.";
+        if (checkForMainStockPosition(xPosition, yPosition).size() == 0) return "There is no space around Head Quarter to put stock pile!";
         Kingdom kingdom = new Kingdom(Flags.valueOf(options.get("f").toUpperCase()), User.getUserByUsername(options.get("u")));
-        Building headQuarter = new Building(gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))), BuildingType.HEAD_QUARTER, kingdom);
-        kingdom.setHeadquarter(headQuarter);
+        DefensiveStructure headQuarter = new DefensiveStructure(gameMap.getMapBlockByLocation(xPosition,yPosition), BuildingType.HEAD_QUARTER, kingdom);
+        int newXPosition = checkForMainStockPosition(xPosition, yPosition).get(0);
+        int newYPosition = checkForMainStockPosition(xPosition, yPosition).get(1);
+        Stock stock = new Stock(gameMap.getMapBlockByLocation(newXPosition, newYPosition), BuildingType.STOCKPILE, kingdom);
         gameMap.addPlayer(kingdom);
-        gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y"))).setBuildings(headQuarter);
+        kingdom.setHeadquarter(headQuarter); kingdom.addBuilding(headQuarter);
+        gameMap.getMapBlockByLocation(xPosition,yPosition).setBuildings(headQuarter);
+        kingdom.addBuilding(stock);
+        gameMap.getMapBlockByLocation(newXPosition,newYPosition).setBuildings(stock);
         User.getUserByUsername(options.get("u")).addToMyMap(gameMap);
         return "User add to map successfully!";
     }

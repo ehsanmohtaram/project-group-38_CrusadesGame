@@ -1,7 +1,9 @@
 package model.building;
 
 public enum StockType {
-    ARMOURY(50);
+    ARMOURY(50),
+    FOOD_STOCKPILE(50),
+    STOCKPILE(50);
     private final Integer CAPACITY;
 
 
@@ -12,4 +14,5 @@ public enum StockType {
     public Integer getCAPACITY() {
         return CAPACITY;
     }
+
 }

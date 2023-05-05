@@ -133,7 +133,9 @@ public class MapBlock {
                 return "S";
         }
         if(buildings != null) {
-            if (buildings instanceof DefensiveStructure)
+            if (buildings.getBuildingType().equals(BuildingType.HEAD_QUARTER))
+                return "H";
+            else if (buildings instanceof DefensiveStructure)
                 return "W";
             else
                 return "B";

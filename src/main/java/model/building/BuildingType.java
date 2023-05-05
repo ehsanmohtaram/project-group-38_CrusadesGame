@@ -27,9 +27,13 @@ public enum BuildingType {
     SIEGE_TENT(0 ,null, 0, 100, CampType.SIEGE_TENT),
     ENGINEER_GUILD(100, ResourceType.WOOD, 10, 500, CampType.ENGINEER_GUILD),
     MERCENARY_POST(0, ResourceType.WOOD, 10, 500, CampType.MERCENARY_POST),
-    //
-    FLETCHER(100, ResourceType.WOOD,20,300, GeneralBuildingType.FLETCHER),
-    ARMOURY(0, ResourceType.WOOD,5,300, StockType.ARMOURY);
+    //Stock
+    STOCKPILE(0 , null, 0, 300, StockType.STOCKPILE),
+    FOOD_STOCKPILE(0, ResourceType.WOOD, 5, 300, StockType.FOOD_STOCKPILE),
+    ARMOURY(0, ResourceType.WOOD,5,300, StockType.ARMOURY),
+    //Producer
+    FLETCHER(100, ResourceType.WOOD,20,300, GeneralBuildingType.FLETCHER);
+
     private final Integer GOLD;
     private final ResourceType RESOURCES;
     private final Integer RESOURCE_NUMBER;

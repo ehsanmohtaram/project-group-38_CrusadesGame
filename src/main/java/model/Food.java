@@ -1,7 +1,7 @@
 package model;
 
 public enum Food {
-    BREAD(10),MEAT(2),APPLE(4),BEER(2);
+    BREAD(2),MEAT(10),APPLE(1),CHEESE(3);
     private final int price;
 
     Food(int price) {

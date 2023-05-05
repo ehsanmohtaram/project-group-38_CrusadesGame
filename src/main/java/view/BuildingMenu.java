@@ -49,7 +49,7 @@ public class BuildingMenu {
             if (commandParser.validate(command, "back", null) != null) return "back";
             if (commandParser.validate(command, "repair", null) != null)
                 System.out.println(buildingController.repairBuilding());
-            else if ((optionPass =commandParser.validate(command, "create unit","t|type/c|count")) != null)
+            else if ((optionPass = commandParser.validate(command, "create unit","t|type/c|count")) != null)
                 System.out.println(buildingController.createUnit(optionPass));
             else System.out.println("Invalid command");
         }
@@ -71,6 +71,20 @@ public class BuildingMenu {
         while (true) {
             command = CommandParser.getScanner().nextLine();
             if (commandParser.validate(command, "back", null) != null) return "back";
+            if (commandParser.validate(command, "show stock content", null) != null)
+                System.out.println(buildingController.showResources());
+            else System.out.println("Invalid command");
+        }
+    }
+
+    public String produceBuildingRun() {
+        HashMap<String, String> optionPass;
+        String command, result;
+        while (true) {
+            command = CommandParser.getScanner().nextLine();
+            if (commandParser.validate(command, "back", null) != null) return "back";
+            else if ((optionPass = commandParser.validate(command, "produce resource","t|type/c|count")) != null)
+                System.out.println(buildingController.produceResource(optionPass));
             else System.out.println("Invalid command");
         }
     }

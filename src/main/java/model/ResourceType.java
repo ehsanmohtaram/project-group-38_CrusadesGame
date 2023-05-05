@@ -6,7 +6,8 @@ public enum ResourceType {
     IRON(5),
     WHEAT(1),
     FLOUR(2),
-    LEATHER(3);
+    LEATHER(3),
+    OIL(2);
     private final int price;
 
     ResourceType(int price) {
