@@ -76,31 +76,16 @@ public class GameController {
         return null;
     }
 
-    public String dropBuilding(HashMap<String, String> options) {
-        for (String key : options.keySet())
-            if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        try {BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));}
-        catch (Exception ignored) {return "There is no such a building!";}
-        if (BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_")).specificConstant instanceof SiegeType)
-            return "There is no such a building!";
-        String result;
-        result = positionValidate(options.get("x"),options.get("y"));
-        if (result != null) return result;
-        MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
-        if (!currentKingdom.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition()))
-            return "This block is out of range of your kingdom!";
-        if (!mapBlock.getMapBlockType().isBuildable())
-            return "You can not build your building here. Please choose another location!";
-        if (mapBlock.getBuildings() != null || mapBlock.getSiege() != null)
-            return "This block already has filled with another building. Please choose another location!";
-        BuildingType buildingType = BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));
-        if (buildingType.equals(BuildingType.HEAD_QUARTER)) return "You can not buy this building!";
-        if (buildingType.getGOLD() > currentKingdom.getBalance())
-            return "You do not have enough gold to buy this building.";
-        if (buildingType.getRESOURCES() != null &&
-                buildingType.getRESOURCE_NUMBER() > gameMap.getKingdomByOwner(currentUser).getResourceAmount(buildingType.getRESOURCES()))
-            return "You do not have enough " + buildingType.getRESOURCES().name().toLowerCase() + " to buy this building.";
+    public String checkSpecificBuilding(MapBlock mapBlock, BuildingType buildingType) {
+        ProducerType producerType;
+        if (buildingType.specificConstant instanceof ProducerType) {
+            producerType = (ProducerType) buildingType.specificConstant;
+            if (producerType.getFarm() && !mapBlock.getMapBlockType().isCultivable()) return "This block is not appropriate for farms!";
+        }
+        return null;
+    }
+
+    public void createBuilding(MapBlock mapBlock, BuildingType buildingType) {
         Building building;
         if (buildingType.specificConstant == null) building = new Building(mapBlock, buildingType, currentKingdom);
         else if (buildingType.specificConstant instanceof DefensiveStructureType) building = new DefensiveStructure(mapBlock, buildingType, currentKingdom);
@@ -112,7 +97,33 @@ public class GameController {
         currentKingdom.setResourceAmount(buildingType.getRESOURCES(),-buildingType.getRESOURCE_NUMBER());
         mapBlock.setBuildings(building);
         currentKingdom.addBuilding(building);
-        //TODO Farm should be check for being cultivable
+        currentKingdom.setNormalUnitInPosition(buildingType.getWorkerNeeded(), mapBlock, buildingType.getNumberOfWorker());
+    }
+
+    public String dropBuilding(HashMap<String, String> options) {
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        try {BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));}
+        catch (Exception ignored) {return "There is no such a building!";}
+        if (BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_")).specificConstant instanceof SiegeType)
+            return "There is no such a building!";
+        String result = positionValidate(options.get("x"),options.get("y"));
+        if (result != null) return result;
+        MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        if (!currentKingdom.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition())) return "This block is out of range!";
+        if (!mapBlock.getMapBlockType().isBuildable()) return "You can not build your building here. Please choose another location!";
+        if (mapBlock.getBuildings() != null || mapBlock.getSiege() != null) return "This block already has filled with another building!";
+        BuildingType buildingType = BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));
+        if (buildingType.equals(BuildingType.HEAD_QUARTER)) return "You can not buy this building!";
+        if (buildingType.getGOLD() > currentKingdom.getBalance()) return "You do not have enough gold to buy this building.";
+        if (buildingType.getRESOURCES() != null && buildingType.getRESOURCE_NUMBER() > currentKingdom.getResourceAmount(buildingType.getRESOURCES()))
+            return "You do not have enough " + buildingType.getRESOURCES().name().toLowerCase() + " to buy this building.";
+        createBuilding(mapBlock, buildingType);
+        //check for this condition
+        if (currentKingdom.checkForAvailableNormalUnit(buildingType.getWorkerNeeded()) < buildingType.getNumberOfWorker())
+            return "There are not enough available worker to put in this building!";
+        result = checkSpecificBuilding(mapBlock, buildingType);
+        if (result != null) return result;
         return buildingType.name().toLowerCase().replaceAll("_"," ") + " added successfully to kingdom.";
     }
 
@@ -133,6 +144,8 @@ public class GameController {
             if (counter > gameMap.getMapHeight() && counter > gameMap.getMapWidth()) return null;
         }
     }
+
+    //TODO UNIT MENU
     public String dropSiege(HashMap<String, String> options) {
         for (String key : options.keySet())
             if (options.get(key) == null) return "Please input necessary options!";
@@ -162,7 +175,7 @@ public class GameController {
             if (mapBlock.getSiege() != null) return "This building already has field with another building!";
         }
         if (currentKingdom.getBalance() < buildingType.getGOLD()) return "You do not have enough gold to buy this building.";
-        if (currentKingdom.getEngineer() < siegeType.getEngineerNeeded()) return "There is not enough engineer to build this siege!";
+        if (currentKingdom.getEngineer() < buildingType.getNumberOfWorker()) return "There is not enough engineer to build this siege!";
         if (findTheNearestFreeBlock(mapBlock.getxPosition(), mapBlock.getyPosition()) == null)
             return "There is no available block on map to put siege tent!";
         currentKingdom.setBalance((double) -buildingType.getGOLD());

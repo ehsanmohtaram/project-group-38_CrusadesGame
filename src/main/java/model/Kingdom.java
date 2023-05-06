@@ -4,6 +4,8 @@ import model.building.Building;
 import model.building.BuildingType;
 import model.building.Stock;
 import model.unit.Unit;
+import model.unit.UnitState;
+import model.unit.UnitType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -262,5 +264,22 @@ public class Kingdom{
         return (xResult + 4) * (yResult + 4) + (xResult + 4) * (xResult + 4) >= xPosition * xPosition + yPosition * yPosition;
     }
 
+    public int checkForAvailableNormalUnit(UnitType unitType) {
+        int counter = 0;
+        for (Unit unit : units)
+            if (unit.getUnitType().equals(unitType) && unit.getUnitState().equals(UnitState.NOT_WORKING)) counter++;
+        return counter;
+    }
 
+    public void setNormalUnitInPosition(UnitType unitType, MapBlock mapBlock, int numberOfWorker) {
+        int counter = 0;
+        for (Unit unit : units) {
+            if (counter == numberOfWorker) return;
+            if (unit.getUnitType().equals(unitType) && unit.getUnitState().equals(UnitState.NOT_WORKING)) {
+                unit.setLocationBlock(mapBlock);
+                unit.setUnitState(UnitState.WORKING);
+                counter++;
+            }
+        }
+    }
 }

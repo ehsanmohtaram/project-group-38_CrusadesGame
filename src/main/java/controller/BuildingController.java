@@ -45,7 +45,7 @@ public class BuildingController {
     }
 
     public String repairBuilding() {
-        //TODO ENGEENEAR
+        if (currentKingdom.checkForAvailableNormalUnit(UnitType.ENGINEER) == 0) return "There is no available workers";
         BuildingType buildingType = selectedBuilding.getBuildingType();
         if (buildingType.getRESOURCE_NUMBER() > currentKingdom.getResourceAmount(buildingType.getRESOURCES()))
             return "You do not have enough " + buildingType.getRESOURCES().name().toLowerCase() + " to buy this building.";
@@ -58,7 +58,7 @@ public class BuildingController {
             for (int j = -2; j <= 2; j++)
                 for (Unit unit : gameMap.getMapBlockByLocation(xPosition + i, yPosition + j).getUnits())
                     if (!unit.getOwner().equals(currentKingdom))
-                        return "This block is near to your building block and it should be free of soldier enemies while building is being repaid.";
+                        return "Blocks that neat the building should be free of enemies troop!";
         if (selectedBuilding.getHp().equals(buildingType.getHP_IN_FIRST())) return "Building hp is full.";
         selectedBuilding.damage(selectedBuilding.getHp() - selectedBuilding.getBuildingType().getHP_IN_FIRST());
         return "Building repaired successfully!";

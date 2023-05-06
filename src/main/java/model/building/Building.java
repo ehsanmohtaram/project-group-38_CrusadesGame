@@ -6,16 +6,14 @@ import model.MapBlock;
 public class Building {
     protected Integer hp;
     private MapBlock position;
-    private BuildingType buildingType;
-    private Kingdom owner;
+    private final BuildingType buildingType;
+    private final Kingdom owner;
     public Building(MapBlock position, BuildingType buildingType, Kingdom owner) {
         this.position = position;
         this.buildingType = buildingType;
         this.hp = buildingType.getHP_IN_FIRST();
         this.owner = owner;
     }
-
-    //TODO category var may be needed
 
     public Enum<?> getSpecificConstant() {
         return buildingType.specificConstant;
