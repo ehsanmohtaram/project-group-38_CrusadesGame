@@ -13,7 +13,7 @@ public class GameController {
     public static Map gameMap;
     public static Building selectedBuilding;
     private final GameMenu gameMenu;
-    private final User currentUser;
+    private User currentUser;
     private Unit selectedUnit;
     private Kingdom currentKingdom;
     private int XofMap;
@@ -27,7 +27,6 @@ public class GameController {
     }
 
     public void run() {
-        ShopAndTradeController shopAndTradeController = new ShopAndTradeController();
         System.out.println("Welcome to game menu:))");
         while (true) {
             switch (gameMenu.run()) {
@@ -36,10 +35,12 @@ public class GameController {
                     mapController.run();
                     break;
                 case "trade":
-                    shopAndTradeController.runTrade();
+                    ShopAndTradeController tradeController = new ShopAndTradeController();
+                    tradeController.runTrade();
                     break;
                 case "shop":
-                    shopAndTradeController.runShop();
+                    ShopAndTradeController shopController = new ShopAndTradeController();
+                    shopController.runShop();
                     break;
                 case "building":
                     BuildingController buildingController = new BuildingController();
@@ -48,9 +49,21 @@ public class GameController {
                 case "unit":
                     UnitController unitController = new UnitController(gameMap, currentKingdom, selectedUnit);
                     break;
+                case "next turn":
+                    Turn turn = new Turn(); turn.runNextTurn();
+                    break;
                 case "back": return;
             }
         }
+    }
+
+    public String nextTurn(){
+        int nextPerson = gameMap.getPlayers().indexOf(currentKingdom);
+        Controller.currentUser = gameMap.getPlayers().get((nextPerson + 1) % gameMap.getPlayers().size()).getOwner();
+        currentUser = Controller.currentUser;
+        selectedUnit = null; selectedBuilding = null;
+        currentKingdom = gameMap.getKingdomByOwner(currentUser);
+        return "next turn";
     }
 
     public String positionValidate(String xPosition, String yPosition) {
@@ -75,6 +88,8 @@ public class GameController {
         result = positionValidate(options.get("x"),options.get("y"));
         if (result != null) return result;
         MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        if (!currentKingdom.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition()))
+            return "This block is out of range of your kingdom!";
         if (!mapBlock.getMapBlockType().isBuildable())
             return "You can not build your building here. Please choose another location!";
         if (mapBlock.getBuildings() != null || mapBlock.getSiege() != null)
@@ -196,10 +211,6 @@ public class GameController {
         firstMapBlock.setSiege(null);
         secondMapBlock.getSiege().setPosition(secondMapBlock);
         return "Your siege move successfully!";
-    }
-
-    public String nextTurn(){
-        return null;
     }
 
     public String showMap(HashMap<String, String> options){

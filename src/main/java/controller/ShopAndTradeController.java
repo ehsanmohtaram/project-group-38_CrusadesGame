@@ -127,7 +127,7 @@ public class ShopAndTradeController {
         return output.toString();
     }
 
-    public String buyFromShop(HashMap<String, String> options) {
+    /*public String buyFromShop(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         Kingdom kingdom = gameMap.getKingdomByOwner(currentUser);
@@ -191,5 +191,5 @@ public class ShopAndTradeController {
                 return "There are no imported resources or food";
             }
         }
-    }
+    }*/
 }

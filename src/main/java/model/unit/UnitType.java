@@ -4,10 +4,10 @@ import model.Weapons;
 
 public enum UnitType {
     ARCHER(20, 5, 4, 5, 7,0, Weapons.BOW, null),
-    CROSSBOWMEN(30, 5, 2, 3, 7,0, Weapons.CROSSBOW, Weapons.LEATHER_ARMOR),
+    CROSSBOWMEN(30, 5, 2, 3, 7,0, Weapons.CROSSBOW, Weapons.LEATHER_ARMOUR),
     SPEAR_MAN(10, 10, 3, 1, 5,0,Weapons.SPEAR,null),
     PIKE_MAN(40, 10, 2, 2, 10, 0, Weapons.SPEAR, Weapons.METAL_ARMOUR),
-    MACE_MAN(30,15,3, 1, 13,0,Weapons.MACE, Weapons.LEATHER_ARMOR),
+    MACE_MAN(30,15,3, 1, 13,0,Weapons.MACE, Weapons.LEATHER_ARMOUR),
     SWORDSMEN(10, 20, 1,1,8,0, Weapons.SWORDS, Weapons.METAL_ARMOUR),
     KNIGHT(40, 20, 5,2,15,0, Weapons.SWORDS, Weapons.METAL_ARMOUR),
     TUNNELER(10, 10, 4 , 1 ,5, -1, null, null),
@@ -29,7 +29,6 @@ public enum UnitType {
     private final Integer IS_ARAB;
     private final Weapons WEAPON_NEEDED;
     private final Weapons Armour_Needed;
-
 
     UnitType(Integer HP_IN_START, Integer ATTACK_RATE, Integer VELOCITY, Integer ATTACK_RANGE, Integer PRICE, Integer IS_ARAB, Weapons WEAPON_NEEDED, Weapons armourNeeded) {
         this.HP_IN_START = HP_IN_START;

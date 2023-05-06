@@ -22,12 +22,12 @@ public class ShopMenu {
             if (commandParser.validate(input, "back", null) != null) return;
             if (commandParser.validate(input, "show current menu", null) != null)
                 System.out.println("Shop menu");
-            else if (commandParser.validate(input, "show price list", null) != null)
+            /*else if (commandParser.validate(input, "show price list", null) != null)
                 System.out.println(shopAndTradeController.showPriceList());
             else if ((optionPass = commandParser.validate(input, "buy" , "i|itemName/a|itemAmount")) != null)
                 System.out.println(shopAndTradeController.buyFromShop(optionPass));
             else if ((optionPass = commandParser.validate(input, "sell" , "i|itemName/a|itemAmount")) != null)
-                System.out.println(shopAndTradeController.sellFromShop(optionPass));
+                System.out.println(shopAndTradeController.sellFromShop(optionPass));*/
             else System.out.println("Invalid Command");
         }
     }

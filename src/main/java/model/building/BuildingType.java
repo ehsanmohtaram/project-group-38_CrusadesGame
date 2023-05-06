@@ -32,8 +32,14 @@ public enum BuildingType {
     FOOD_STOCKPILE(0, ResourceType.WOOD, 5, 300, StockType.FOOD_STOCKPILE),
     ARMOURY(0, ResourceType.WOOD,5,300, StockType.ARMOURY),
     //Producer
-    FLETCHER(100, ResourceType.WOOD,20,300, GeneralBuildingType.FLETCHER);
-
+    ARMOURER(100, ResourceType.WOOD, 20, 350, ProducerType.ARMOURER),
+    BLACKSMITH(100, ResourceType.WOOD, 20, 350, ProducerType.BLACKSMITH),
+    FLETCHER(100, ResourceType.WOOD, 20, 350, ProducerType.FLETCHER),
+    POLE_TURNER(100, ResourceType.WOOD, 10, 300, ProducerType.POLE_TURNER),
+    OIL_SMELTER(100, ResourceType.WOOD, 10, 300, ProducerType.OIL_SMELTER),
+    BAKERY(0, ResourceType.WOOD, 10, 250, ProducerType.BAKERY),
+    DAIRY_PRODUCTS(0, ResourceType.WOOD, 10, 250, ProducerType.DAIRY_PRODUCTS),
+    BREWERY(0, ResourceType.WOOD, 10, 250, ProducerType.BREWERY);
     private final Integer GOLD;
     private final ResourceType RESOURCES;
     private final Integer RESOURCE_NUMBER;

@@ -1,6 +1,8 @@
 package model;
 
 import model.building.Building;
+import model.building.BuildingType;
+import model.building.Stock;
 import model.unit.Unit;
 
 import java.util.ArrayList;
@@ -25,8 +27,9 @@ public class Kingdom{
     private ArrayList<Trade> mySuggestion = new ArrayList<>();
     private ArrayList<Trade> notification = new ArrayList<>();
     private ArrayList<Trade> historyTrade = new ArrayList<>();
-    private HashMap<Food ,Double> foods = new HashMap<>();
+    private HashMap<Food ,Integer> foods = new HashMap<>();
     private HashMap<ResourceType, Integer> resources = new HashMap<>();
+    private HashMap<Weapons, Integer> weapons = new HashMap<>();
     private ArrayList<Unit> units = new ArrayList<>();
     private ArrayList<Building> buildings = new ArrayList<>();
     public Kingdom(Flags flag, User owner) {
@@ -38,10 +41,9 @@ public class Kingdom{
         this.flag = flag;
         this.owner = owner;
         this.balance = 200.0;
-        for (ResourceType resourceType : ResourceType.values())
-            resources.put(resourceType, 100);
-        for (Food food : Food.values())
-            foods.put(food, 0.0);
+        for (ResourceType resourceType : ResourceType.values()) resources.put(resourceType, 100);
+        for (Food food : Food.values()) foods.put(food, 0);
+        for (Weapons weapon : Weapons.values()) weapons.put(weapon, 0);
     }
 
     public User getOwner() {
@@ -116,15 +118,40 @@ public class Kingdom{
         this.taxRate = taxRate;
     }
 
-    public HashMap<Food, Double> getFoods() {
+    public HashMap<Food, Integer> getFoods() {
         return foods;
     }
 
     public HashMap<ResourceType, Integer> getResources() {
         return resources;
     }
+
+    public HashMap<Weapons, Integer> getWeapons() {
+        return weapons;
+    }
+
     public void setResourceAmount(ResourceType resourceType, Integer amount) {
         resources.put(resourceType,resources.get(resourceType) + amount);
+        Stock stock = null;
+        for (Building building : buildings)
+            if (building.getBuildingType().equals(BuildingType.STOCKPILE)) {stock = (Stock) building; break;}
+        stock.addResourceToStock(resourceType, resources.get(resourceType));
+    }
+
+    public void setFoodsAmount(Food food, Integer amount) {
+        foods.put(food, foods.get(food) + amount);
+        Stock stock = null;
+        for (Building building : buildings)
+            if (building.getBuildingType().equals(BuildingType.FOOD_STOCKPILE)) {stock = (Stock) building; break;}
+        stock.addResourceToStock(food, foods.get(food));
+    }
+
+    public void setWeaponsAmount(Weapons weapon, Integer amount) {
+        weapons.put(weapon, weapons.get(weapon) + amount);
+        Stock stock = null;
+        for (Building building : buildings)
+            if (building.getBuildingType().equals(BuildingType.ARMOURY)) {stock = (Stock) building; break;}
+        stock.addResourceToStock(weapon, weapons.get(weapon));
     }
 
     public Integer getFoodRate() {
@@ -194,7 +221,7 @@ public class Kingdom{
         this.popularity += amount;
     }
 
-    public void addFood(Food toAdd , double amount){
+    public void setFoodAmount(Food toAdd , Integer amount){
         foods.put(toAdd , amount);
     }
 
@@ -210,13 +237,29 @@ public class Kingdom{
         return resources.get(resourceType);
     }
 
-    public boolean checkOutOfRange(int xPosition , int yPosition){
-        if(buildings.size() > 60)
-            kingdomRange = 10;
-        if(Math.abs(yPosition - headquarter.getPosition().getyPosition()) >= kingdomRange
-                || Math.abs(xPosition - headquarter.getPosition().getxPosition()) >= kingdomRange)
-            return true;
-        return false;
+    public Integer getWeaponAmount(Weapons weapon) {
+        return weapons.get(weapon);
+    }
+
+    public Integer getFoodAmount(Food food) {
+        return foods.get(food);
+    }
+
+    public Building getBuildingFormKingdom(BuildingType buildingType) {
+        for (Building building : buildings) if (building.getBuildingType().equals(buildingType)) return building;
+        return null;
+    }
+
+    public boolean checkOutOfRange(int xPosition , int yPosition) {
+        int xResult = 0, yResult = 0, max = 0;
+        for (Building building : buildings) {
+            xResult = building.getPosition().getxPosition() - headquarter.getPosition().getxPosition();
+            yResult = building.getPosition().getyPosition() - headquarter.getPosition().getyPosition();
+            if (xResult * xResult + yResult * yResult > max) max = xResult * xResult + yResult * yResult;
+        }
+        xPosition = xPosition - headquarter.getPosition().getxPosition();
+        yPosition = yPosition - headquarter.getPosition().getyPosition();
+        return (xResult + 4) * (yResult + 4) + (xResult + 4) * (xResult + 4) >= xPosition * xPosition + yPosition * yPosition;
     }
 
 

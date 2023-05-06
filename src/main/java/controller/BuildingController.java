@@ -5,16 +5,16 @@ import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitType;
 import view.BuildingMenu;
-
-import javax.swing.*;
 import java.util.HashMap;
 import java.util.Objects;
 
 public class BuildingController {
     private final BuildingMenu buildingMenu;
-    private Building selectedBuilding;
+    private final Building selectedBuilding;
     private final Map gameMap;
     private final Kingdom currentKingdom;
+
+
     public BuildingController() {
         buildingMenu = new BuildingMenu(this);
         selectedBuilding = GameController.selectedBuilding;
@@ -32,6 +32,7 @@ public class BuildingController {
         else if (selectedBuilding.getSpecificConstant() instanceof CampType) return buildingMenu.campBuildingRnu();
         else if (selectedBuilding.getSpecificConstant() instanceof GeneralBuildingType) return buildingMenu.generalBuildingRun();
         else if (selectedBuilding.getSpecificConstant() instanceof StockType) return buildingMenu.stockBuildingRun();
+        else if (selectedBuilding.getSpecificConstant() instanceof ProducerType) return buildingMenu.produceBuildingRun();
         else return null;
     }
 
@@ -75,15 +76,11 @@ public class BuildingController {
         if (!Objects.equals(campType.getIsArab(), unitType.getIS_ARAB())) return "You can not build this type of unit here!";
         int count = Integer.parseInt(options.get("c"));
         if (unitType.getPRICE() * count > currentKingdom.getBalance()) return "You do not have enough balance to buy this unit!";
-        //TODO BUILDING WEAPON AND STOCK ...
         if (unitType.getWEAPON_NEEDED() != null)
-            if (currentKingdom.getResourceAmount(unitType.getWEAPON_NEEDED().getResourceType()) < unitType.getWEAPON_NEEDED().getResourceAmount() * count)
-                return "You do not have enough resources for units equipment!";
+            if (currentKingdom.getWeaponAmount(unitType.getWEAPON_NEEDED()) < count) return "You do not have enough resources for units equipment!";
         if (unitType.getArmour_Needed() != null)
-            if (currentKingdom.getResourceAmount(unitType.getArmour_Needed().getResourceType()) < unitType.getArmour_Needed().getResourceAmount() * count)
-                return "You do not have enough resources for units equipment!";
-        Building building = selectedBuilding;
-        Camp camp = (Camp) building;
+            if (currentKingdom.getWeaponAmount(unitType.getArmour_Needed()) < count) return "You do not have enough resources for units equipment!";
+        Camp camp = (Camp) selectedBuilding;
         if (campType.getCapacity() < camp.getCapacity()) return "Your camp is full. Please make a new camp!";
         if (currentKingdom.getNoneEmployed() < count) return "You do not have enough population to make new units!";
         Unit unit = new Unit(unitType, selectedBuilding.getPosition(), currentKingdom);
@@ -92,35 +89,53 @@ public class BuildingController {
         camp.setCapacity(count);
         currentKingdom.setBalance((double) -unitType.getPRICE() * count );
         currentKingdom.setNoneEmployed(-count);
-        if (unitType.getWEAPON_NEEDED() != null)
-            currentKingdom.setResourceAmount(unitType.getWEAPON_NEEDED().getResourceType(), -unitType.getWEAPON_NEEDED().getResourceAmount() * count);
-        if (unitType.getArmour_Needed() != null)
-            currentKingdom.setResourceAmount(unitType.getArmour_Needed().getResourceType(), -unitType.getArmour_Needed().getResourceAmount() * count);
+        if (unitType.getWEAPON_NEEDED() != null) currentKingdom.setWeaponsAmount(unitType.getWEAPON_NEEDED(), -count);
+        if (unitType.getArmour_Needed() != null) currentKingdom.setWeaponsAmount(unitType.getArmour_Needed(), -count);
         return count + " " + unitType.name().toLowerCase().replaceAll("_"," ") + " has been made!";
     }
 
-    public String produceResource(HashMap<String, String> options) {
-        ResourceType resourceType;
-        Weapons weapons;
-        int counter = 0;
-        try {resourceType = ResourceType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));}
-        catch (Exception ignored) {counter++;}
-        try {weapons = Weapons.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));}
-        catch (Exception ignored) {counter++;}
-        if (counter == 0) return "Invalid type. This building did not produce this type of resource!";
-        ProducerType producerType = (ProducerType) selectedBuilding.getBuildingType().specificConstant;
-        //if (Objects.equals(producerType.getTypeOfResource(), weapons.))
-            //weapons =
-        //if (Objects.equals(producerType.getTypeOfResource(), resourceType))
+    public String setMode(HashMap<String, String> options) {
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        String result;
+        try {ProduceMode.valueOf(options.get("m").toUpperCase().replaceAll(" ", "_"));}
+        catch (Exception ignored) {return "There is no such mode to change to it!";}
+        ProduceMode produceMode = ProduceMode.valueOf(options.get("m").toUpperCase().replaceAll(" ", "_"));
+        Producer producer = (Producer) selectedBuilding;
+        result = checkProduceMode();
+        if (result != null) return result;
+        producer.setMode(produceMode);
+        return "Produce mode has been changed successfully!";
+    }
+
+    public String checkProduceMode() {
+        Producer producer = (Producer) selectedBuilding;
+        ProducerType producerType = (ProducerType) producer.getSpecificConstant();
+        Enum<?> check0, check1;
+        check0 = producerType.getTypeOfResource0();
+        check1 = producerType.getTypeOfResource1();
+        if (!producer.getMode().equals(ProduceMode.SECOND)) {
+            if (check0 instanceof Weapons && currentKingdom.getBuildingFormKingdom(BuildingType.ARMOURY) == null)
+                return "You should build armoury first!";
+            else if (check0 instanceof Food && currentKingdom.getBuildingFormKingdom(BuildingType.FOOD_STOCKPILE) == null)
+                return "You should build food stock first!";
+        }
+        if (producer.getMode().equals(ProduceMode.SECOND) && check1 == null)
+            return "There is only one product exist in this building!";
+        if (!producer.getMode().equals(ProduceMode.FIRST) && check1 != null)
+            if (currentKingdom.getBuildingFormKingdom(BuildingType.ARMOURY) == null)
+                return "You should build armoury first!";
         return null;
     }
+
 
     public String showResources() {
         Stock stock = (Stock) selectedBuilding;
         StringBuilder stringBuilder = new StringBuilder();
-        for (Enum<?> showResources : stock.getResourceValues().keySet())
-            stringBuilder.append(showResources.name().toLowerCase().replaceAll("_"," ")).append(" : ")
+        for (Enum<?> showResources : stock.getResourceValues().keySet()) {
+            stringBuilder.append(showResources.name().toLowerCase().replaceAll("_", " ")).append(" : ")
                     .append(stock.getResourceValues().get(showResources)).append("\n");
-        return stringBuilder.toString();
+        }
+        return stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
     }
 }
