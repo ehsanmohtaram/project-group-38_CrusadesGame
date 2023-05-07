@@ -237,6 +237,8 @@ public class Map implements Cloneable {
             getWaysLengthByEast(mark,  xOfDestination, yOfDestination, 0, xPosition, yPosition, answer, true);
         else
             getWaysLengthByEast(mark, xPosition, yPosition, 0, xOfDestination, yOfDestination, answer, false);
+        if((limit == null && answer.get() == (mapWidth * mapHeight)) || answer.get() == limit)
+            return null;
         return answer.get();
     }
 

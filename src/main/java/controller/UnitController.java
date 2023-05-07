@@ -39,25 +39,21 @@ public class UnitController {
 
     //TODO move unit
 
-    /*
+
     public String moveUnit(HashMap<String, String > options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        int x = Integer.parseInt(options.get("x"));
-        int y = Integer.parseInt(options.get("y"));
-        if (x <= gameMap.getMapWidth() && y <= gameMap.getMapHeight()) {
-            if (!(gameMap.getMapBlockByLocation(x, y).getMapBlockType().name().equals("WATER")) ||
-                    !(gameMap.getMapBlockByLocation(x, y).getMapBlockType().name().equals("MOUNTAIN")) || (gameMap.getMapBlockByLocation(x, y).getBuildings() != null)) {
-                if (currentUnit.getXPosition() - x + currentUnit.getYPosition() - y <= currentUnit.getUnitType().getVELOCITY()) {
-                } else
-                    return "The speed of the soldier is not enough";
-            } else
-                return "The soldier can go to that location";
-        }
-        else
-            return "your location out of bounds";
-        return null;
-    }*/
+        MapBlock destination = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        if(destination == null)
+            return "invalid location";
+        Integer moveLength;
+        if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
+                destination.getxPosition(), destination.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
+            return "they are too slow to reach such destination";
+        for (Unit unit : currentUnit)
+            unit.moveTo(destination, moveLength);
+        return "moved successfully";
+    }
 
     public String setSituation(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";

@@ -10,15 +10,16 @@ public class Unit {
     private UnitState unitState;
     private Kingdom owner;
     private Unit forAttack;
-    private boolean isMoving;
+    private Integer movesLeft;
     public Unit(UnitType unitType, MapBlock locationBlock , Kingdom owner) {
         this.unitType = unitType;
         this.locationBlock = locationBlock;
         this.owner = owner;
         hp = unitType.getHP_IN_START();
         locationBlock.addUnitHere(this);
+        owner.addUnit(this);
         unitState = UnitState.NOT_ACTIVE;
-        isMoving = false;
+        movesLeft = unitType.getVELOCITY();
     }
 
     public Integer getHp() {
@@ -53,6 +54,10 @@ public class Unit {
         return forAttack;
     }
 
+    public Integer getMovesLeft() {
+        return movesLeft;
+    }
+
     public void setLocationBlock(MapBlock locationBlock) {
         this.locationBlock = locationBlock;
     }
@@ -65,14 +70,17 @@ public class Unit {
         this.unitState = unitState;
     }
 
-    public boolean isMoving() {
-        return isMoving;
+    public boolean increaseMoves(int amount){
+        if(amount > movesLeft)
+            return false;
+        movesLeft -= amount;
+        return true;
     }
 
-    public void moveTo(MapBlock destination){
+    public void moveTo(MapBlock destination, int length){
+        increaseMoves(length);
         locationBlock.removeUnitFromHere(this);
         destination.addUnitHere(this);
-        //toDo the function is not complete
     }
 
     public void fight(Unit enemy){
