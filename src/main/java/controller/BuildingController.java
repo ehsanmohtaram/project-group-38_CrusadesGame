@@ -86,7 +86,7 @@ public class BuildingController {
         if (currentKingdom.getNoneEmployed() < count) return "You do not have enough population to make new units!";
         Unit unit = new Unit(unitType, selectedBuilding.getPosition(), currentKingdom);
         for (int i = 0; i < count ;i++) {camp.setUnits(unit); selectedBuilding.getPosition().setUnits(unit);}
-//        currentKingdom.addUnit(unit);
+        currentKingdom.addUnit(unit);
         if (unitType.getIS_ARAB().equals(-1)) unit.setUnitState(UnitState.NOT_WORKING);
         else unit.setUnitState(UnitState.STANDING);
         camp.setCapacity(count);

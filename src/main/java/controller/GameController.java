@@ -210,7 +210,7 @@ public class GameController {
         UnitType unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));
         selectedUnit.clear();
         selectedUnit.addAll(mapBlock.getUnitByUnitType(unitType));
-        return mapBlock.getUnitByUnitType(unitType).size() + " " + unitType.name().toLowerCase().replaceAll("_"," ") + " selected successfully!";
+        return "unit";
     }
     //TODO move unit
     /*public String moveUnit(HashMap<String, String > options) {
