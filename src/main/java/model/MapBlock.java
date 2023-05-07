@@ -132,10 +132,9 @@ public class MapBlock {
     }
 
     public String getLatestDetails(){
-        for (Unit moving: units) {
-            if(moving.isMoving())
-                return "S";
-        }
+        if(units.size() != 0)
+            return "S";
+
         if(buildings != null) {
             if (buildings.getBuildingType().equals(BuildingType.HEAD_QUARTER))
                 return "H";

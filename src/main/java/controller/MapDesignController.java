@@ -114,6 +114,7 @@ public class MapDesignController {
                 trueDirection = direction;
 
         gameMap.changeAccess(xPosition , yPosition , trueDirection, false );
+        gameMap.getMapBlockByLocation(xPosition, yPosition).setMapBlockType(MapBlockType.ROCK);
         return "successfully dropped";
     }
     public String dropTree(HashMap<String , String> options) {
@@ -204,6 +205,13 @@ public class MapDesignController {
             return checkingResult;
         if(options.get("t") == null || options.get("f") == null)
             return "you must specify details like type and flag";
+        int count;
+        if(options.get("c") == null)
+            count = 0;
+        else if (!options.get("c").matches("\\d+"))
+            return "please fill count option correctly";
+        else
+            count = Integer.parseInt(options.get("c"));
         if(options.get("t").equals("") || options.get("f").equals(""))
             return "Illegal value. Please fill the options";
         UnitType unitType;
@@ -224,10 +232,11 @@ public class MapDesignController {
             return "no such kingdom has been added to map";
         if(unitOwner.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition()))
             return "drop units near their kingdom";
-        Unit shouldBeAdd = new Unit(unitType, mapBlock, unitOwner);
-        shouldBeAdd.setUnitState(UnitState.STANDING);
+        for (int i = 0; i < count; i++) {
+            Unit shouldBeAdd = new Unit(unitType, mapBlock, unitOwner);
+            shouldBeAdd.setUnitState(UnitState.STANDING);
+        }
         return "unit added successfully";
-
     }
 
     public String dropBuilding(HashMap<String , String> options){
