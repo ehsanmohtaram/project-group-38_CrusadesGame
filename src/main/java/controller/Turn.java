@@ -22,7 +22,7 @@ public class Turn {
         executeMines();
     }
 
-    public void executeMines() {
+    private void executeMines() {
         MineType mineType;
         for (Building building : currentKingdom.getBuildings())
             if (building instanceof Mine) {
@@ -31,29 +31,29 @@ public class Turn {
             }
     }
 
-    public void executeProducerBuilding() {
+    private void executeProducerBuilding() {
         for (Building building : currentKingdom.getBuildings())
             if (building instanceof Producer && !((Producer) building).getMode().equals(ProduceMode.NON_ACTIVE))
                 checkProduce((Producer) building);
     }
 
-    public void produceResource(ResourceType resourceType, Integer amount) {
+    private void produceResource(ResourceType resourceType, Integer amount) {
         currentKingdom.setResourceAmount(resourceType, amount);
         currentKingdom.setResourceAmount(resourceType.getBaseSource(), -amount);
     }
 
-    public void produceWeapon(Weapons weapons, Integer amount) {
+    private void produceWeapon(Weapons weapons, Integer amount) {
         currentKingdom.setWeaponsAmount(weapons, amount);
         currentKingdom.setResourceAmount(weapons.getResourceType(), -amount);
     }
 
-    public void produceFood(Food food, Integer amount) {
+    private void produceFood(Food food, Integer amount) {
         //TODO CAPACITY CHECK FOR STOCK AND KARGAR
         currentKingdom.setFoodAmount(food, amount);
         currentKingdom.setResourceAmount(food.getResourceType(), -amount);
     }
 
-    public void checkProduce(Producer producer) {
+    private void checkProduce(Producer producer) {
         ProducerType producerType = (ProducerType) producer.getSpecificConstant();
         Enum<?> check0, check1;
         Integer amount = 1;

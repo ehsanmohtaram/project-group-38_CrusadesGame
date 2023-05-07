@@ -29,11 +29,6 @@ public class GameMenu {
                 return "shop";
             } else if ((options = (commandParser.validate(input, "drop building", "x|xPosition/y|yPosition/t|type"))) != null)
                 System.out.println(gameController.dropBuilding(options));
-            else if ((options = (commandParser.validate(input, "drop siege", "x|xPosition/y|yPosition/t|type"))) != null)
-                System.out.println(gameController.dropSiege(options));
-//            else if ((options = (commandParser.validate(input, "move structures", "x1/x2/y1/y2"))) != null)
-//                System.out.println(gameController.moveSiege(options));
-            //TODO move building
             else if ((options = commandParser.validate(input, "select building", "x|xPosition/y|yPosition")) != null) {
                 result = gameController.selectBuilding(options);
                 if (!result.equals("building")) System.out.println(result);
