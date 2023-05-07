@@ -25,6 +25,7 @@ public class GameController {
         this.gameMenu = new GameMenu(this);
         currentUser = Controller.currentUser;
         currentKingdom = gameMap.getKingdomByOwner(currentUser);
+        selectedUnit = new ArrayList<>();
     }
 
     public void run() {
@@ -209,7 +210,7 @@ public class GameController {
         UnitType unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));
         selectedUnit.clear();
         selectedUnit.addAll(mapBlock.getUnitByUnitType(unitType));
-        return mapBlock.getUnitByUnitType(unitType) + " " + unitType.name().toLowerCase().replaceAll("_"," ") + "selected successfully!";
+        return mapBlock.getUnitByUnitType(unitType).size() + " " + unitType.name().toLowerCase().replaceAll("_"," ") + " selected successfully!";
     }
     //TODO move unit
     /*public String moveUnit(HashMap<String, String > options) {

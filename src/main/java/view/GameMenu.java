@@ -33,7 +33,7 @@ public class GameMenu {
                 result = gameController.selectBuilding(options);
                 if (!result.equals("building")) System.out.println(result);
                 else return "building";
-            } else if ((options = commandParser.validate(input, "select unit", "x|positionX/y|positionY/t|type/n|number")) != null) {
+            } else if ((options = commandParser.validate(input, "select unit", "x|positionX/y|positionY/t|type")) != null) {
                 result = gameController.selectUnit(options);
                 System.out.println(result);
                 if(result.equals("unit selected")) return "unit";

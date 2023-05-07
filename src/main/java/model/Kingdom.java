@@ -35,7 +35,7 @@ public class Kingdom{
     private ArrayList<Unit> units = new ArrayList<>();
     private ArrayList<Building> buildings = new ArrayList<>();
     public Kingdom(Flags flag, User owner) {
-        population = noneEmployed = 5;
+        population = noneEmployed = 20;
         engineer = 0;
         popularity = 0;
         foodRate = -2;
@@ -45,7 +45,8 @@ public class Kingdom{
         this.balance = 200.0;
         for (ResourceType resourceType : ResourceType.values()) resources.put(resourceType, 100);
         for (Food food : Food.values()) foods.put(food, 0);
-        for (Weapons weapon : Weapons.values()) weapons.put(weapon, 0);
+        //TODO after dibug it should be put 0
+        for (Weapons weapon : Weapons.values()) weapons.put(weapon, 100);
     }
 
     public User getOwner() {
