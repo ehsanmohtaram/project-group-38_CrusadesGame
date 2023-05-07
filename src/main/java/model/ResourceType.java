@@ -6,6 +6,7 @@ public enum ResourceType {
     IRON(5, null, 0),
     WHEAT(1, null, 0),
     OIL(2, null, 0),
+    RIG(2, null, 0),
     COW(4, null, 0),
     BARLEY(1, null, 0),
     FLOUR(4, ResourceType.WHEAT, 10),

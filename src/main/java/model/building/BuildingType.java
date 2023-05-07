@@ -41,7 +41,12 @@ public enum BuildingType {
     BAKERY(0, ResourceType.WOOD, 10, 250, UnitType.WORKER,1,ProducerType.BAKERY),
     DAIRY_PRODUCTS(0, ResourceType.WOOD, 10, 250, UnitType.WORKER,1,ProducerType.DAIRY_PRODUCTS),
     BREWERY(0, ResourceType.WOOD, 10, 250, UnitType.WORKER,1,ProducerType.BREWERY),
-    MILL(0, ResourceType.WOOD, 20, 300, UnitType.WORKER, 3, ProducerType.MILL);
+    MILL(0, ResourceType.WOOD, 20, 300, UnitType.WORKER, 3, ProducerType.MILL),
+    //Mine
+    QUARRY(0, ResourceType.WOOD, 20, 300, UnitType.WORKER, 3, MineType.QUARRY),
+    IRON_MINE(0, ResourceType.WOOD, 20, 300, UnitType.WORKER, 2, MineType.IRON_MINE),
+    WOOD_CUTTER(0, ResourceType.WOOD, 3, 100, UnitType.WORKER, 1, MineType.WOOD_CUTTER),
+    PITCH_RIG(0 , ResourceType.WOOD, 20, 150, UnitType.WORKER, 1, MineType.PITCH_RIG);
     private final Integer GOLD;
     private final ResourceType RESOURCES;
     private final Integer RESOURCE_NUMBER;

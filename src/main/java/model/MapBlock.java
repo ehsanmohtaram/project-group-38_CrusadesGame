@@ -4,6 +4,7 @@ import model.building.Building;
 import model.building.BuildingType;
 import model.building.DefensiveStructure;
 import model.unit.Unit;
+import model.unit.UnitType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ public class MapBlock {
 
     private Building buildings;
     private Building siege;
+    private HashMap<UnitType, Integer> unitsFrequency;
     private ArrayList<Unit> units;
     private ResourceType resource;
     private int resourceAmount;
@@ -28,8 +30,10 @@ public class MapBlock {
         this.siege = null;
         resourceAmount = 0;
         units = new ArrayList<>();
+        unitsFrequency = new HashMap<>();
         numberOfTrees = new HashMap<>();
         for (Tree tree: Tree.values()) numberOfTrees.put(tree , 0);
+        for (UnitType unitType : UnitType.values()) unitsFrequency.put(unitType, 0);
     }
 
     public ArrayList<Unit> getUnits() {
@@ -144,6 +148,13 @@ public class MapBlock {
             if(numberOfTrees.get(tree) != 0)
                 return "T";
         return " ";
+    }
+
+    public ArrayList<Unit> getUnitByUnitType(UnitType unitType) {
+        ArrayList<Unit> selectedUnit = new ArrayList<>();
+        for (Unit unit : units)
+            if(unit.getUnitType().equals(unitType)) selectedUnit.add(unit);
+        return selectedUnit;
     }
 
 }

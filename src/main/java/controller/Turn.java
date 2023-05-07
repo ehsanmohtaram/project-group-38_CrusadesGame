@@ -1,9 +1,6 @@
 package controller;
 import model.*;
-import model.building.Building;
-import model.building.ProduceMode;
-import model.building.Producer;
-import model.building.ProducerType;
+import model.building.*;
 
 public class Turn {
 
@@ -22,6 +19,16 @@ public class Turn {
 
     public void runNextTurn() {
         executeProducerBuilding();
+        executeMines();
+    }
+
+    public void executeMines() {
+        MineType mineType;
+        for (Building building : currentKingdom.getBuildings())
+            if (building instanceof Mine) {
+                mineType = (MineType) building.getSpecificConstant();
+                currentKingdom.setResourceAmount(mineType.getResourceType(), mineType.getProduceRate());
+            }
     }
 
     public void executeProducerBuilding() {

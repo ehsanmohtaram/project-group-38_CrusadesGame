@@ -3,6 +3,7 @@ package controller;
 import model.*;
 import model.building.*;
 import model.unit.Unit;
+import model.unit.UnitState;
 import model.unit.UnitType;
 import view.BuildingMenu;
 import java.util.HashMap;
@@ -19,8 +20,7 @@ public class BuildingController {
         buildingMenu = new BuildingMenu(this);
         selectedBuilding = GameController.selectedBuilding;
         gameMap = GameController.gameMap;
-        User currentUser = Controller.currentUser;
-        currentKingdom = gameMap.getKingdomByOwner(currentUser);
+        currentKingdom = gameMap.getKingdomByOwner(Controller.currentUser);
     }
 
     public void run() {
@@ -77,15 +77,17 @@ public class BuildingController {
         int count = Integer.parseInt(options.get("c"));
         if (unitType.getPRICE() * count > currentKingdom.getBalance()) return "You do not have enough balance to buy this unit!";
         if (unitType.getWEAPON_NEEDED() != null)
-            if (currentKingdom.getWeaponAmount(unitType.getWEAPON_NEEDED()) < count) return "You do not have enough resources for units equipment!";
+            if (currentKingdom.getWeaponAmount(unitType.getWEAPON_NEEDED()) < count) return "You do not have enough weapon!";
         if (unitType.getArmour_Needed() != null)
-            if (currentKingdom.getWeaponAmount(unitType.getArmour_Needed()) < count) return "You do not have enough resources for units equipment!";
+            if (currentKingdom.getWeaponAmount(unitType.getArmour_Needed()) < count) return "You do not have enough weapon!";
         Camp camp = (Camp) selectedBuilding;
         if (campType.getCapacity() < camp.getCapacity()) return "Your camp is full. Please make a new camp!";
         if (currentKingdom.getNoneEmployed() < count) return "You do not have enough population to make new units!";
         Unit unit = new Unit(unitType, selectedBuilding.getPosition(), currentKingdom);
         for (int i = 0; i < count ;i++) {camp.setUnits(unit); selectedBuilding.getPosition().setUnits(unit);}
         currentKingdom.addUnit(unit);
+        if (unitType.getIS_ARAB().equals(-1)) unit.setUnitState(UnitState.NOT_WORKING);
+        else unit.setUnitState(UnitState.STANDING);
         camp.setCapacity(count);
         currentKingdom.setBalance((double) -unitType.getPRICE() * count );
         currentKingdom.setNoneEmployed(-count);

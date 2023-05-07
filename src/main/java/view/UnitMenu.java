@@ -8,8 +8,8 @@ import controller.UnitController;
 import java.util.HashMap;
 
 public class UnitMenu {
-    private UnitController unitController;
-    private CommandParser commandParser;
+    private final UnitController unitController;
+    private final CommandParser commandParser;
 
     public UnitMenu(UnitController unitController) {
         this.unitController = unitController;
@@ -21,14 +21,14 @@ public class UnitMenu {
         String input;
         while (true) {
             input = CommandParser.getScanner().nextLine();
-            if ((options = commandParser.validate(input, "move unit to", "x|positionX/y|positionY")) != null)
-                System.out.println(unitController.moveUnit(options));
-            else if((options = commandParser.validate(input, "set", "x|positionX/y|positionY/t|type/s|situation")) != null)
+            if (commandParser.validate(input, "back", null) != null) return;
+            if((options = commandParser.validate(input, "set", "s|situation")) != null)
                 System.out.println(unitController.setSituation(options));
-            else if ((options = commandParser.validate(input, "attack", "x|positionX/y|positionY/t|type")) != null)
-                System.out.println(unitController.attackOnUnit(options));
-            else
-                System.out.println("Invalid command");
+            //else if ((options = commandParser.validate(input, "move unit to", "x|positionX/y|positionY")) != null)
+                //System.out.println(unitController.moveUnit(options));
+            //else if ((options = commandParser.validate(input, "attack", "x|positionX/y|positionY/t|type")) != null)
+                //System.out.println(unitController.attackOnUnit(options));
+            else System.out.println("Invalid command!");
         }
     }
 }

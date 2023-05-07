@@ -3,18 +3,19 @@ package controller;
 import model.*;
 import model.building.*;
 import model.unit.Unit;
-import model.unit.UnitState;
 import model.unit.UnitType;
 import view.*;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
 public class GameController {
     public static Map gameMap;
     public static Building selectedBuilding;
+    public static ArrayList<Unit> selectedUnit;
     private final GameMenu gameMenu;
     private User currentUser;
-    private Unit selectedUnit;
     private Kingdom currentKingdom;
     private int XofMap;
     private int YofMap;
@@ -47,7 +48,8 @@ public class GameController {
                     buildingController.run();
                     break;
                 case "unit":
-                    UnitController unitController = new UnitController(gameMap, currentKingdom, selectedUnit);
+                    UnitController unitController = new UnitController();
+                    unitController.run();
                     break;
                 case "next turn":
                     Turn turn = new Turn(); turn.runNextTurn();
@@ -82,6 +84,12 @@ public class GameController {
             producerType = (ProducerType) buildingType.specificConstant;
             if (producerType.getFarm() && !mapBlock.getMapBlockType().isCultivable()) return "This block is not appropriate for farms!";
         }
+        MineType mineType;
+        if (buildingType.specificConstant instanceof MineType) {
+            mineType = (MineType) buildingType.specificConstant;
+            if (!mineType.getMapBlockType().equals(mapBlock.getMapBlockType()))
+                return "You should build this building on its resources!";
+        }
         return null;
     }
 
@@ -92,6 +100,7 @@ public class GameController {
         else if (buildingType.specificConstant instanceof CampType) building = new Camp(mapBlock, buildingType, currentKingdom);
         else if (buildingType.specificConstant instanceof StockType) building = new Stock(mapBlock, buildingType, currentKingdom);
         else if(buildingType.specificConstant instanceof ProducerType) building = new Producer(mapBlock, buildingType, currentKingdom);
+        else if (buildingType.specificConstant instanceof MineType) building = new Mine(mapBlock, buildingType, currentKingdom);
         else building = new GeneralBuilding(mapBlock, buildingType, currentKingdom);
         currentKingdom.setBalance((double) -buildingType.getGOLD());
         currentKingdom.setResourceAmount(buildingType.getRESOURCES(),-buildingType.getRESOURCE_NUMBER());
@@ -111,9 +120,9 @@ public class GameController {
         if (result != null) return result;
         MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
         if (!currentKingdom.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition())) return "This block is out of range!";
-        if (!mapBlock.getMapBlockType().isBuildable()) return "You can not build your building here. Please choose another location!";
-        if (mapBlock.getBuildings() != null || mapBlock.getSiege() != null) return "This block already has filled with another building!";
         BuildingType buildingType = BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));
+        if (!mapBlock.getMapBlockType().isBuildable() && !buildingType.equals(BuildingType.IRON_MINE)) return "You can not build your building here. Please choose another location!";
+        if (mapBlock.getBuildings() != null || mapBlock.getSiege() != null) return "This block already has filled with another building!";
         if (buildingType.equals(BuildingType.HEAD_QUARTER)) return "You can not buy this building!";
         if (buildingType.getGOLD() > currentKingdom.getBalance()) return "You do not have enough gold to buy this building.";
         if (buildingType.getRESOURCES() != null && buildingType.getRESOURCE_NUMBER() > currentKingdom.getResourceAmount(buildingType.getRESOURCES()))
@@ -240,31 +249,31 @@ public class GameController {
         return gameMap.getPartOfMap(xPosition, yPosition);
     }
 
+    public String checkUnitValidation(HashMap<String, String> options) {
+        UnitType unitType;
+        try {unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));}
+        catch (Exception ignored) {return "There is no such unit exist!";}
+        String result;
+        result = positionValidate(options.get("x"),options.get("y"));
+        if (result != null) return result;
+        MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        if (mapBlock.getUnitByUnitType(unitType).size() == 0) return "There is no such unit found here!";
+        return null;
+    }
+
     public String selectUnit(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        int x = Integer.parseInt(options.get("x"));
-        int y = Integer.parseInt(options.get("y"));
-        if (x <= gameMap.getMapWidth() && y <= gameMap.getMapHeight()) {
-            UnitType unitType;
-            if ((unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll("\\s*",""))) != null){
-                for (Unit unit : gameMap.getMapBlockByLocation(x, y).getUnits()) {
-                    if (unit.getUnitType().equals(unitType)) {
-                        if (unit.getOwner().equals(currentUser)) {
-                            selectedUnit = unit;
-                            return "unit selected";
-                        }
-                    }
-                }
-                return "You do not have such a soldier in this block";
-            } else
-                return "type entered not valid";
-        }
-        else
-            return "your location out of bounds";
+        String result = checkUnitValidation(options);
+        if (result != null) return result;
+        MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        UnitType unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));
+        selectedUnit.clear();
+        selectedUnit.addAll(mapBlock.getUnitByUnitType(unitType));
+        return mapBlock.getUnitByUnitType(unitType) + " " + unitType.name().toLowerCase().replaceAll("_"," ") + "selected successfully!";
     }
-
-    public String moveUnit(HashMap<String, String > options) {
+    //TODO move unit
+    /*public String moveUnit(HashMap<String, String > options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         int x = Integer.parseInt(options.get("x"));
@@ -273,7 +282,6 @@ public class GameController {
             if (!(gameMap.getMapBlockByLocation(x, y).getMapBlockType().name().equals("WATER")) ||
             !(gameMap.getMapBlockByLocation(x, y).getMapBlockType().name().equals("MOUNTAIN")) || (gameMap.getMapBlockByLocation(x, y).getBuildings() != null)) {
                 if (selectedUnit.getXPosition() - x + selectedUnit.getYPosition() - y <= selectedUnit.getUnitType().getVELOCITY()) {
-                    //TODO
                 } else
                     return "The speed of the soldier is not enough";
             } else
@@ -282,32 +290,10 @@ public class GameController {
         else
             return "your location out of bounds";
         return null;
-    }
+    }*/
 
-    public String setSituation(HashMap<String, String> options) {
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        int x = Integer.parseInt(options.get("x"));
-        int y = Integer.parseInt(options.get("y"));
-        if (x <= gameMap.getMapWidth() && y <= gameMap.getMapHeight()) {
-            UnitType unitType;
-            if ((unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll("\\s*",""))) != null){
-                for (Unit unit : gameMap.getMapBlockByLocation(x, y).getUnits()) {
-                    if (unit.getUnitType().equals(unitType)) {
-                        if (unit.getOwner().equals(currentUser)) {
-                            UnitState unitState = UnitState.valueOf(options.get("s").toUpperCase());
-                            unit.setUnitState(unitState);
-                            return "The state is set correctly";
-                        }
-                    }
-                }
-                return "You do not have such a soldier in this block";
-            } else
-                return "type entered not valid";
-        }
-        else
-            return "your location out of bounds";
-    }
+    //TODO attack unit
+    /*
 
     public String attackOnUnit(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
@@ -332,8 +318,8 @@ public class GameController {
         else
             return "your location out of bounds";
 
-    } //TODO این سه تا دستور یونیت شباهت خیلی زیادی دارن. میشه یه تابع برا اروراش زد
-
+    }
+     */
     public String setTaxRate(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
@@ -364,17 +350,17 @@ public class GameController {
     }
 
     public String showFoodList() {
-        String output = "food list:";
+        StringBuilder output = new StringBuilder("food list:");
         for (Food food : currentKingdom.getFoods().keySet()) {
-            output += "\n" + food.name().toLowerCase() + ": " + currentKingdom.getFoods().get(food);
+            output.append("\n").append(food.name().toLowerCase()).append(": ").append(currentKingdom.getFoods().get(food));
         }
-        return output;
+        return output.toString();
     }
 
     public String setFoodRate(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        if (options.get("n").matches("(\\-)?\\d+")) {
+        if (options.get("n").matches("-?\\d+")) {
             int rateNumber = Integer.parseInt(options.get("n"));
             if (rateNumber <= 2 && rateNumber >= -2) {
                 currentKingdom.setFoodRate(rateNumber);
@@ -392,7 +378,7 @@ public class GameController {
     public String setFearRate(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        if (options.get("n").matches("(\\-)?\\d+")) {
+        if (options.get("n").matches("-?\\d+")) {
             int rateNumber = Integer.parseInt(options.get("n"));
             if (rateNumber <= 5 && rateNumber >= -5) {
                 currentKingdom.setFearRate(rateNumber);
@@ -468,58 +454,38 @@ public class GameController {
         kingdom.setPopulation(kingdom.getPopulation() + kingdom.getPopularity());
     }
 
-    public Integer getPopularityByTaxRate(int taxRate) {
-        if (taxRate == -3)
-            return 7;
-        else if (taxRate == -2)
-            return 5;
-        else if (taxRate == -1)
-            return 3;
-        else if (taxRate == 0)
-            return 1;
-        else if (taxRate == 1)
-            return -2;
-        else if (taxRate == 2)
-            return -4;
-        else if (taxRate == 3)
-            return -6;
-        else if (taxRate == 4)
-            return -8;
-        else if (taxRate == 5)
-            return -12;
-        else if (taxRate == 6)
-            return -16;
-        else if (taxRate == 7)
-            return -20;
-        else
-            return -24;
+    public int getPopularityByTaxRate(int taxRate) {
+        switch(taxRate) {
+            case -3 : return 7;
+            case -2 : return 5;
+            case -1 : return 3;
+            case 0  : return 1;
+            case 1  : return -2;
+            case 2  : return -4;
+            case 3  : return -6;
+            case 4  : return -8;
+            case 5  : return -12;
+            case 6  : return -16;
+            case 7  : return -20;
+            default: return -24;
+        }
     }
 
     public Double getCostByTaxRate(int taxRate) {
-        if (taxRate == -3)
-            return 1.0;
-        else if (taxRate == -2)
-            return 0.8;
-        else if (taxRate == -1)
-            return 0.6;
-        else if (taxRate == 0)
-            return 0.0;
-        else if (taxRate == 1)
-            return -0.6;
-        else if (taxRate == 2)
-            return -0.8;
-        else if (taxRate == 3)
-            return -1.0;
-        else if (taxRate == 4)
-            return -1.2;
-        else if (taxRate == 5)
-            return -1.4;
-        else if (taxRate == 6)
-            return -1.6;
-        else if (taxRate == 7)
-            return -1.8;
-        else
-            return -2.0;
+        switch (taxRate) {
+            case -3 : return 1.0;
+            case -2 : return 0.8;
+            case -1 : return 0.6;
+            case 0  : return 0.0;
+            case 1  : return -0.6;
+            case 2  : return -0.8;
+            case 3  : return -1.0;
+            case 4  : return -1.2;
+            case 5  : return -1.4;
+            case 6  : return -1.6;
+            case 7  : return -1.8;
+            default: return -2.0;
+        }
     }
 
 
