@@ -4,16 +4,17 @@ import model.Weapons;
 
 public enum UnitType {
     ARCHER(20, 5, 4, 5, 7,0, Weapons.BOW, null),
-    CROSSBOWMEN(30, 5, 2, 3, 7,0, Weapons.CROSSBOW, Weapons.LEATHER_ARMOR),
+    CROSSBOWMEN(30, 5, 2, 3, 7,0, Weapons.CROSSBOW, Weapons.LEATHER_ARMOUR),
     SPEAR_MAN(10, 10, 3, 1, 5,0,Weapons.SPEAR,null),
     PIKE_MAN(40, 10, 2, 2, 10, 0, Weapons.SPEAR, Weapons.METAL_ARMOUR),
-    MACE_MAN(30,15,3, 1, 13,0,Weapons.MACE, Weapons.LEATHER_ARMOR),
+    MACE_MAN(30,15,3, 1, 13,0,Weapons.MACE, Weapons.LEATHER_ARMOUR),
     SWORDSMEN(10, 20, 1,1,8,0, Weapons.SWORDS, Weapons.METAL_ARMOUR),
     KNIGHT(40, 20, 5,2,15,0, Weapons.SWORDS, Weapons.METAL_ARMOUR),
     TUNNELER(10, 10, 4 , 1 ,5, -1, null, null),
     LADDER_MAN(10, 0, 4,1,4, -1,Weapons.LADDER,null),
-    ENGINEER(10 , 0 , 3, 1,4, -1, null, null),
-    BLACK_MONK(30, 10, 2, 1 ,8, -1, Weapons.MACE, null),
+    ENGINEER(10 , 0 , 3, 0,4, -1, null, null),
+    WORKER(10 , 0 ,3 , 0, 4, -1 , null, null),
+    BLACK_MONK(30, 10, 2, 1 ,8, 0, Weapons.MACE, null),
     ARCHER_BOW(20, 5, 4, 5 ,7, 1, null ,null),
     SLAVES(5, 3, 4, 1 ,5, 1, null ,null),
     SLINGERS(10, 5, 4, 3 ,5, 1, null ,null),
@@ -29,7 +30,6 @@ public enum UnitType {
     private final Integer IS_ARAB;
     private final Weapons WEAPON_NEEDED;
     private final Weapons Armour_Needed;
-
 
     UnitType(Integer HP_IN_START, Integer ATTACK_RATE, Integer VELOCITY, Integer ATTACK_RANGE, Integer PRICE, Integer IS_ARAB, Weapons WEAPON_NEEDED, Weapons armourNeeded) {
         this.HP_IN_START = HP_IN_START;

@@ -5,24 +5,19 @@ import model.*;
 import java.util.*;
 
 public class Stock extends Building{
-    private HashMap<Enum<?>, Integer> resourceValues;
+    private HashMap<Enum<?>, Integer> resourceValues = new HashMap<>();
     public Stock(MapBlock position, BuildingType buildingType, Kingdom owner) {
         super(position, buildingType, owner);
-        resourceValues = new HashMap<>();
-        initializeHashMapData();
-    }
-
-    public void initializeHashMapData() {
-        if (getSpecificConstant().equals(BuildingType.ARMOURY))
+        if (buildingType.specificConstant.name().equals(BuildingType.ARMOURY.name()))
             for (Weapons weapons : Weapons.values()) resourceValues.put(weapons, 0);
-        if (getSpecificConstant().equals(BuildingType.FOOD_STOCKPILE))
+        if (buildingType.specificConstant.name().equals(BuildingType.FOOD_STOCKPILE.name()))
             for (Food food : Food.values()) resourceValues.put(food, 0);
-        if (getSpecificConstant().equals(BuildingType.STOCKPILE))
-            for (ResourceType resourceType : ResourceType.values()) resourceValues.put(resourceType, 0);
+        if (buildingType.specificConstant.name().equals(BuildingType.STOCKPILE.name()))
+            for (ResourceType resourceType : ResourceType.values()) resourceValues.put(resourceType, 100);
     }
 
-    private void addResourceToStock(Enum<?> resourceType, Integer value) {
-        resourceValues.put(resourceType, resourceValues.get(resourceType) + value);
+    public void addResourceToStock(Enum<?> resourceType, Integer value) {
+        resourceValues.put(resourceType, value);
     }
 
     public HashMap<Enum<?>, Integer> getResourceValues() {

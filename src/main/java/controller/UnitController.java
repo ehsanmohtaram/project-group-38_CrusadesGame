@@ -2,24 +2,26 @@ package controller;
 
 import model.Kingdom;
 import model.Map;
+import model.MapBlock;
 import model.User;
 import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
 import view.UnitMenu;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class UnitController {
     private final Map gameMap;
     private final Kingdom currentKingdom;
     private final UnitMenu unitMenu;
-    private final Unit currentUnit;
+    private final ArrayList<Unit> currentUnit = new ArrayList<>();
 
-    public UnitController(Map gameMap, Kingdom currentKingdom, Unit currentUnit) {
-        this.gameMap = gameMap;
-        this.currentKingdom = currentKingdom;
-        this.currentUnit = currentUnit;
+    public UnitController() {
+        this.gameMap = GameController.gameMap;
+        this.currentKingdom = gameMap.getKingdomByOwner(Controller.currentUser);
+        currentUnit.addAll(GameController.selectedUnit);
         this.unitMenu = new UnitMenu(this);
     }
 
@@ -27,7 +29,9 @@ public class UnitController {
         unitMenu.run();
     }
 
+    //TODO move unit
 
+    /*
     public String moveUnit(HashMap<String, String > options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
@@ -37,7 +41,6 @@ public class UnitController {
             if (!(gameMap.getMapBlockByLocation(x, y).getMapBlockType().name().equals("WATER")) ||
                     !(gameMap.getMapBlockByLocation(x, y).getMapBlockType().name().equals("MOUNTAIN")) || (gameMap.getMapBlockByLocation(x, y).getBuildings() != null)) {
                 if (currentUnit.getXPosition() - x + currentUnit.getYPosition() - y <= currentUnit.getUnitType().getVELOCITY()) {
-                    //TODO
                 } else
                     return "The speed of the soldier is not enough";
             } else
@@ -46,33 +49,25 @@ public class UnitController {
         else
             return "your location out of bounds";
         return null;
-    }
+    }*/
 
     public String setSituation(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        int x = Integer.parseInt(options.get("x"));
-        int y = Integer.parseInt(options.get("y"));
-        if (x <= gameMap.getMapWidth() && y <= gameMap.getMapHeight()) {
-            UnitType unitType;
-            if ((unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll("\\s*",""))) != null){
-                for (Unit unit : gameMap.getMapBlockByLocation(x, y).getUnits()) {
-                    if (unit.getUnitType().equals(unitType)) {
-                        if (unit.getOwner().equals(currentKingdom)) {
-                            UnitState unitState = UnitState.valueOf(options.get("s").toUpperCase());
-                            unit.setUnitState(unitState);
-                            return "The state is set correctly";
-                        }
-                    }
-                }
-                return "You do not have such a soldier in this block";
-            } else
-                return "type entered not valid";
-        }
-        else
-            return "your location out of bounds";
+        UnitState unitState;
+        try {unitState = UnitState.valueOf(options.get("s").toUpperCase().replaceAll(" ","_"));}
+        catch (Exception ignored) {return "No such state has been found!";}
+        MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        UnitType unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));
+        currentUnit.clear();
+        currentUnit.addAll(mapBlock.getUnitByUnitType(unitType));
+        for (Unit unit : currentUnit) unit.setUnitState(unitState);
+        return "Unit states change successfully!";
     }
 
+    //TODO attack unit
+
+    /*
     public String attackOnUnit(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
@@ -96,6 +91,8 @@ public class UnitController {
         else
             return "your location out of bounds";
 
-    } //TODO این سه تا دستور یونیت شباهت خیلی زیادی دارن. میشه یه تابع برا اروراش زد
+    }
+
+     */
 
 }

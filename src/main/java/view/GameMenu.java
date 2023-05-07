@@ -42,15 +42,11 @@ public class GameMenu {
                 result = gameController.selectUnit(options);
                 System.out.println(result);
                 if(result.equals("unit selected")) return "unit";
-            }
-            else if (commandParser.validate(input, "next turn", null) != null){
-                System.out.println(gameController.nextTurn());
             }else if ((options = commandParser.validate(input,"show map","x|positionX/y|positionY")) != null) {
                 result = gameController.showMap(options);
                 System.out.println(result);
                 if(result.matches("map:\\sin[\\S\\s]+"))return "map";
-            }
-            else if ((options = commandParser.validate(input, "tax rate", "r|rateNumber")) != null)
+            }else if ((options = commandParser.validate(input, "tax rate", "r|rateNumber")) != null)
                 System.out.println(gameController.setTaxRate(options));
             else if (commandParser.validate(input, "tax rate show", null) != null)
                 System.out.println(gameController.showTaxRate());
@@ -66,6 +62,8 @@ public class GameMenu {
                 System.out.println(gameController.showFoodRate());
             else if ((options = commandParser.validate(input, "fear rate", "r|rateNumber")) != null)
                 System.out.println(gameController.setFearRate(options));
+            else if (commandParser.validate(input, "next turn", null) != null)
+                return gameController.nextTurn();
             else System.out.println("invalid command");
         }
     }

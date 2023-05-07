@@ -83,8 +83,8 @@ public class BuildingMenu {
         while (true) {
             command = CommandParser.getScanner().nextLine();
             if (commandParser.validate(command, "back", null) != null) return "back";
-            else if ((optionPass = commandParser.validate(command, "produce resource","t|type/c|count")) != null)
-                System.out.println(buildingController.produceResource(optionPass));
+            else if ((optionPass = commandParser.validate(command, "set mode","m|mode")) != null)
+                System.out.println(buildingController.setMode(optionPass));
             else System.out.println("Invalid command");
         }
     }

@@ -53,6 +53,10 @@ public class Unit {
         return forAttack;
     }
 
+    public void setLocationBlock(MapBlock locationBlock) {
+        this.locationBlock = locationBlock;
+    }
+
     public void setForAttack(Unit forAttack) {
         this.forAttack = forAttack;
     }
