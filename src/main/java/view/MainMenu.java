@@ -30,7 +30,7 @@ public class MainMenu {
             } else if ((options = commandParser.validate(input,"new map","x|width/y|height/n|name")) != null) {
                 result = controller.createNewMap(options);
                 System.out.println(result);
-                if(result.equals("successful")) return "selectMap";
+                if(result.equals("Map was created successfully!")) return "selectMap";
             } else if (commandParser.validate(input,"default map",null) != null) {
                 System.out.println(controller.showDefaultMaps());
                 System.out.println("Please select one of default maps : (after selection you can still modify the map)");

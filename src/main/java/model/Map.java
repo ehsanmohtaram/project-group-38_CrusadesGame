@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Map implements Cloneable {
     public static ArrayList<Map> Maps = new ArrayList<>();
@@ -157,6 +158,24 @@ public class Map implements Cloneable {
         }
     }
 
+    public boolean checkAccess(int xPosition , int yPosition , Direction direction){
+        switch (direction){
+            case WEST:
+                if(xPosition != 0)
+                    return accessToRight[xPosition - 1][yPosition];
+                break;
+            case EAST:
+                return accessToRight[xPosition][yPosition];
+            case NORTH:
+                if(yPosition != 0)
+                    return accessToDown[xPosition][yPosition - 1];
+                break;
+            case SOUTH:
+                return accessToDown[xPosition][yPosition];
+        }
+        return false;
+    }
+
     public String getPartOfMap (int xPosition , int yPosition){
         String result = "map: in " + xPosition + "," + yPosition + '\n' + "    ";
         String resetColor = "\033[0m";
@@ -201,6 +220,59 @@ public class Map implements Cloneable {
             }
         }
         return output;
+    }
+
+    public Integer getShortestWayLength(int xPosition, int yPosition, int xOfDestination, int yOfDestination, Integer limit){
+        boolean[][]mark = new boolean[mapWidth][mapHeight];
+        AtomicInteger answer;
+        if(limit == null)
+            answer = new AtomicInteger(mapWidth * mapHeight);
+        else
+            answer = new AtomicInteger(limit);
+        if(xPosition < xOfDestination && yPosition < yOfDestination)
+            getWaysLengthByEast(mark, xPosition, yPosition, 0, xOfDestination, yOfDestination, answer, true);
+        else if (xPosition > xOfDestination && yPosition < yOfDestination)
+            getWaysLengthByEast(mark, xOfDestination, yOfDestination, 0, xPosition, yPosition, answer, false);
+        else if (xPosition >= xOfDestination && yPosition >= yOfDestination)
+            getWaysLengthByEast(mark,  xOfDestination, yOfDestination, 0, xPosition, yPosition, answer, true);
+        else
+            getWaysLengthByEast(mark, xPosition, yPosition, 0, xOfDestination, yOfDestination, answer, false);
+        return answer.get();
+    }
+
+    private void getWaysLengthByEast(boolean[][]mark, int xPosition, int yPosition , int length , int xOfDestination, int yOfDestination , AtomicInteger minimum, boolean southPriority){
+        if(length >= minimum.get())
+            return;
+        if(getMapBlockByLocation(xPosition , yPosition) == null)
+            return;
+        if(xPosition == xOfDestination && yPosition == yOfDestination) {
+            minimum.set(length);
+            return;
+        }
+        if(mark[xPosition][yPosition] == true)
+            return;
+        mark[xPosition][yPosition] = true;
+        if(checkAccess(xPosition, yPosition, Direction.EAST))
+            getWaysLengthByEast(mark, xPosition + 1, yPosition , length + 1 , xOfDestination, yOfDestination, minimum, true);
+        if(southPriority){
+            if (checkAccess(xPosition, yPosition, Direction.SOUTH))
+                getWaysLengthByEast(mark, xPosition, yPosition + 1, length + 1, xOfDestination, yOfDestination, minimum, true);
+            if (checkAccess(xPosition, yPosition, Direction.WEST))
+                getWaysLengthByEast(mark, xPosition - 1, yPosition, length + 1, xOfDestination, yOfDestination, minimum, true);
+        }
+        if(checkAccess(xPosition, yPosition, Direction.NORTH))
+            getWaysLengthByEast(mark, xPosition, yPosition - 1 , length + 1 , xOfDestination, yOfDestination, minimum, true);
+        if (!southPriority) {
+            if (checkAccess(xPosition, yPosition, Direction.SOUTH))
+                getWaysLengthByEast(mark, xPosition, yPosition + 1, length + 1, xOfDestination, yOfDestination, minimum, true);
+            if (checkAccess(xPosition, yPosition, Direction.WEST))
+                getWaysLengthByEast(mark, xPosition - 1, yPosition, length + 1, xOfDestination, yOfDestination, minimum, true);
+        }
+
+        if(mark[xPosition][yPosition] == true) {
+            mark[xPosition][yPosition] = false;
+        }
+
     }
 
 }
