@@ -12,12 +12,12 @@ public class TradeMenu {
         this.shopAndTradeController = shopAndTradeController;
         commandParser = new CommandParser();
     }
-    public void run() {
+    public String run() {
         HashMap<String, String> optionPass;
         String input;
         while (true) {
             input = CommandParser.getScanner().nextLine();
-            if (commandParser.validate(input, "back", null) != null) return;
+            if (commandParser.validate(input, "back", null) != null) return "back";
             if (commandParser.validate(input, "show current menu", null) != null)
                 System.out.println("Trade menu");
             else if ((optionPass = commandParser.validate(input, "trade", "t|resourceType/a|resourceAmount/p|price/m|massage/u|username")) != null)

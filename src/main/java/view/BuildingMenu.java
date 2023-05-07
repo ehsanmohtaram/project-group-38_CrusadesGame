@@ -88,4 +88,8 @@ public class BuildingMenu {
             else System.out.println("Invalid command");
         }
     }
+
+    public void shop() {
+
+    }
 }

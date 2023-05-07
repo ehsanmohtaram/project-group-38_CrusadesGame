@@ -3,6 +3,7 @@ package controller;
 import model.*;
 import model.building.*;
 import model.unit.Unit;
+import model.unit.UnitState;
 import model.unit.UnitType;
 import view.*;
 
@@ -94,6 +95,24 @@ public class GameController {
         return null;
     }
 
+    public void changeNonWorkingUnitPosition(UnitType unitType, MapBlock mapBlock, int number) {
+        Camp camp;
+        int counter = 0;
+        for (Unit unit : currentKingdom.getUnits()) {
+            if (counter == number) return;
+            if (unit.getUnitType().equals(unitType) && unit.getUnitState().equals(UnitState.NOT_WORKING)) {
+                if (unit.getLocationBlock().getBuildings() instanceof Camp) {
+                    camp = (Camp) unit.getLocationBlock().getBuildings();
+                    camp.setCapacity(-1);
+                }
+                mapBlock.setUnits(unit);
+                unit.getLocationBlock().getUnits().remove(unit);
+                unit.setLocationBlock(mapBlock);
+                counter++;
+            }
+        }
+    }
+
     public void createBuilding(MapBlock mapBlock, BuildingType buildingType) {
         Building building;
         if (buildingType.specificConstant == null) building = new Building(mapBlock, buildingType, currentKingdom);
@@ -102,12 +121,13 @@ public class GameController {
         else if (buildingType.specificConstant instanceof StockType) building = new Stock(mapBlock, buildingType, currentKingdom);
         else if(buildingType.specificConstant instanceof ProducerType) building = new Producer(mapBlock, buildingType, currentKingdom);
         else if (buildingType.specificConstant instanceof MineType) building = new Mine(mapBlock, buildingType, currentKingdom);
-        else building = new GeneralBuilding(mapBlock, buildingType, currentKingdom);
+        else building = new Building(mapBlock, buildingType, currentKingdom);
         currentKingdom.setBalance((double) -buildingType.getGOLD());
         currentKingdom.setResourceAmount(buildingType.getRESOURCES(),-buildingType.getRESOURCE_NUMBER());
         mapBlock.setBuildings(building);
         currentKingdom.addBuilding(building);
         currentKingdom.setNormalUnitInPosition(buildingType.getWorkerNeeded(), mapBlock, buildingType.getNumberOfWorker());
+        changeNonWorkingUnitPosition(buildingType.getWorkerNeeded(), mapBlock, buildingType.getNumberOfWorker());
     }
 
     public String dropBuilding(HashMap<String, String> options) {
@@ -212,26 +232,6 @@ public class GameController {
         selectedUnit.addAll(mapBlock.getUnitByUnitType(unitType));
         return "unit";
     }
-    //TODO move unit
-    /*public String moveUnit(HashMap<String, String > options) {
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        int x = Integer.parseInt(options.get("x"));
-        int y = Integer.parseInt(options.get("y"));
-        if (x <= gameMap.getMapWidth() && y <= gameMap.getMapHeight()) {
-            if (!(gameMap.getMapBlockByLocation(x, y).getMapBlockType().name().equals("WATER")) ||
-            !(gameMap.getMapBlockByLocation(x, y).getMapBlockType().name().equals("MOUNTAIN")) || (gameMap.getMapBlockByLocation(x, y).getBuildings() != null)) {
-                if (selectedUnit.getXPosition() - x + selectedUnit.getYPosition() - y <= selectedUnit.getUnitType().getVELOCITY()) {
-                } else
-                    return "The speed of the soldier is not enough";
-            } else
-                return "The soldier can go to that location";
-        }
-        else
-            return "your location out of bounds";
-        return null;
-    }*/
-
     //TODO attack unit
     /*
 

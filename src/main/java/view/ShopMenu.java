@@ -14,14 +14,15 @@ public class ShopMenu {
         this.shopAndTradeController = shopAndTradeController;
 
     }
-    public void run () {
+
+    public String run () {
         HashMap<String, String> optionPass;
         String input;
         while (true) {
             input = CommandParser.getScanner().nextLine();
-            if (commandParser.validate(input, "back", null) != null) return;
-            if (commandParser.validate(input, "show current menu", null) != null)
-                System.out.println("Shop menu");
+            if (commandParser.validate(input, "back", null) != null) return "back";
+            if (commandParser.validate(input, "show price list", null) != null)
+                System.out.println(shopAndTradeController.showPriceList());
             /*else if (commandParser.validate(input, "show price list", null) != null)
                 System.out.println(shopAndTradeController.showPriceList());
             else if ((optionPass = commandParser.validate(input, "buy" , "i|itemName/a|itemAmount")) != null)

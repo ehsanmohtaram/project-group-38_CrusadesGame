@@ -1,10 +1,10 @@
 package model.building;
 
 public enum CampType {
-    BARRACK(20, 0),
+    BARRACK(30, 0),
     SIEGE_TENT(5, -1),
-    ENGINEER_GUILD(10 ,-1),
-    MERCENARY_POST(20, 1);
+    ENGINEER_GUILD(20 ,-1),
+    MERCENARY_POST(40, 1);
     private final Integer capacity;
     private final Integer isArab;
 

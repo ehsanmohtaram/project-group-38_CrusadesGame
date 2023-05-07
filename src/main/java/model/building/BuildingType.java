@@ -46,7 +46,9 @@ public enum BuildingType {
     QUARRY(0, ResourceType.WOOD, 20, 300, UnitType.WORKER, 3, MineType.QUARRY),
     IRON_MINE(0, ResourceType.WOOD, 20, 300, UnitType.WORKER, 2, MineType.IRON_MINE),
     WOOD_CUTTER(0, ResourceType.WOOD, 3, 100, UnitType.WORKER, 1, MineType.WOOD_CUTTER),
-    PITCH_RIG(0 , ResourceType.WOOD, 20, 150, UnitType.WORKER, 1, MineType.PITCH_RIG);
+    PITCH_RIG(0 , ResourceType.WOOD, 20, 150, UnitType.WORKER, 1, MineType.PITCH_RIG),
+    //Other
+    SHOP(0, ResourceType.WOOD, 5, 300, UnitType.WORKER, 1, null);
     private final Integer GOLD;
     private final ResourceType RESOURCES;
     private final Integer RESOURCE_NUMBER;

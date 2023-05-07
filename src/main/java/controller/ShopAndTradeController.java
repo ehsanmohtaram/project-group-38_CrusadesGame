@@ -28,8 +28,8 @@ public class ShopAndTradeController {
         tradeMenu.run();
     }
 
-    public void runShop() {
-        shopMenu.run();
+    public String runShop() {
+        return shopMenu.run();
     }
 
     public String newRequest(HashMap<String, String> options) {

@@ -6,6 +6,8 @@ import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
 import view.BuildingMenu;
+import view.ShopMenu;
+
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -33,6 +35,7 @@ public class BuildingController {
         else if (selectedBuilding.getSpecificConstant() instanceof GeneralBuildingType) return buildingMenu.generalBuildingRun();
         else if (selectedBuilding.getSpecificConstant() instanceof StockType) return buildingMenu.stockBuildingRun();
         else if (selectedBuilding.getSpecificConstant() instanceof ProducerType) return buildingMenu.produceBuildingRun();
+        else if (selectedBuilding.getBuildingType().equals(BuildingType.SHOP)) return new ShopAndTradeController().runShop();
         else return null;
     }
 
@@ -63,6 +66,22 @@ public class BuildingController {
         selectedBuilding.damage(selectedBuilding.getHp() - selectedBuilding.getBuildingType().getHP_IN_FIRST());
         return "Building repaired successfully!";
     }
+    public void createUnitAdditional(UnitType unitType, int count) {
+        Camp camp = (Camp) selectedBuilding;
+        Unit unit;
+        for (int i = 0; i < count ;i++) {
+            unit = new Unit(unitType, selectedBuilding.getPosition(), currentKingdom);
+            camp.setUnits(unit);
+            currentKingdom.addUnit(unit);
+            if (unitType.getIS_ARAB().equals(-1)) unit.setUnitState(UnitState.NOT_WORKING);
+            else unit.setUnitState(UnitState.STANDING);
+        }
+        camp.setCapacity(count);
+        currentKingdom.setBalance((double) -unitType.getPRICE() * count );
+        currentKingdom.setNoneEmployed(-count);
+        if (unitType.getWEAPON_NEEDED() != null) currentKingdom.setWeaponsAmount(unitType.getWEAPON_NEEDED(), -count);
+        if (unitType.getArmour_Needed() != null) currentKingdom.setWeaponsAmount(unitType.getArmour_Needed(), -count);
+    }
 
     public String createUnit(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
@@ -82,18 +101,9 @@ public class BuildingController {
         if (unitType.getArmour_Needed() != null)
             if (currentKingdom.getWeaponAmount(unitType.getArmour_Needed()) < count) return "You do not have enough weapon!";
         Camp camp = (Camp) selectedBuilding;
-        if (campType.getCapacity() < camp.getCapacity()) return "Your camp is full. Please make a new camp!";
+        if (campType.getCapacity() < camp.getCapacity() + count) return "Your camp is full. Please make a new camp!";
         if (currentKingdom.getNoneEmployed() < count) return "You do not have enough population to make new units!";
-        Unit unit = new Unit(unitType, selectedBuilding.getPosition(), currentKingdom);
-        for (int i = 0; i < count ;i++) {camp.setUnits(unit); selectedBuilding.getPosition().setUnits(unit);}
-        currentKingdom.addUnit(unit);
-        if (unitType.getIS_ARAB().equals(-1)) unit.setUnitState(UnitState.NOT_WORKING);
-        else unit.setUnitState(UnitState.STANDING);
-        camp.setCapacity(count);
-        currentKingdom.setBalance((double) -unitType.getPRICE() * count );
-        currentKingdom.setNoneEmployed(-count);
-        if (unitType.getWEAPON_NEEDED() != null) currentKingdom.setWeaponsAmount(unitType.getWEAPON_NEEDED(), -count);
-        if (unitType.getArmour_Needed() != null) currentKingdom.setWeaponsAmount(unitType.getArmour_Needed(), -count);
+        createUnitAdditional(unitType, count);
         return count + " " + unitType.name().toLowerCase().replaceAll("_"," ") + " has been made!";
     }
 
