@@ -230,7 +230,7 @@ public class MapDesignController {
                 unitOwner = existing;
         if(unitOwner == null)
             return "no such kingdom has been added to map";
-        if(unitOwner.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition()))
+        if(!unitOwner.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition()))
             return "drop units near their kingdom";
         for (int i = 0; i < count; i++) {
             Unit shouldBeAdd = new Unit(unitType, mapBlock, unitOwner);

@@ -52,8 +52,8 @@ public class UnitMenu {
             if (commandParser.validate(input, "back", null) != null) return;
             if((options = commandParser.validate(input, "set", "s|situation")) != null)
                 System.out.println(unitController.setSituation(options));
-                //else if ((options = commandParser.validate(input, "move unit to", "x|positionX/y|positionY")) != null)
-                //System.out.println(unitController.moveUnit(options));
+                else if ((options = commandParser.validate(input, "move unit to", "x|positionX/y|positionY")) != null)
+                System.out.println(unitController.moveUnit(options));
                 //else if ((options = commandParser.validate(input, "attack", "x|positionX/y|positionY/t|type")) != null)
                 //System.out.println(unitController.attackOnUnit(options));
             else System.out.println("Invalid command!");

@@ -50,6 +50,16 @@ public class UnitController {
         if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
                 destination.getxPosition(), destination.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
             return "they are too slow to reach such destination";
+        if(destination.getBuildings() instanceof DefensiveStructure){
+            DefensiveStructure defensiveDestination = (DefensiveStructure) destination.getBuildings();
+            DefensiveStructureType type = (DefensiveStructureType) destination.getBuildings().getSpecificConstant();
+            if(defensiveDestination.getCapacity() + currentUnit.size() > type.getUnitsCapacity())
+                return "the defensive structure is full. you can not add unit there";
+            for (Unit unit : currentUnit) {
+                unit.setHigherElevation(defensiveDestination);
+            }
+        }
+
         for (Unit unit : currentUnit)
             unit.moveTo(destination, moveLength);
         return "moved successfully";
@@ -138,32 +148,30 @@ public class UnitController {
     }
 
     //TODO attack unit
-    /*
+
     public String attackOnUnit(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        int x = Integer.parseInt(options.get("x"));
-        int y = Integer.parseInt(options.get("y"));
-        if (x <= gameMap.getMapWidth() && y <= gameMap.getMapHeight()) {
-            UnitType unitType;
-            if ((unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll("\\s*",""))) != null){
-                for (Unit unit : gameMap.getMapBlockByLocation(x, y).getUnits()) {
-                    if (unit.getUnitType().equals(unitType)) {
-                        if (!(unit.getOwner().equals(currentKingdom))) {
-                            currentUnit.setForAttack(unit);
-                            return "attacked";
-                        }
-                    }
-                }
-                return "do not exist such a soldier in this block";
-            } else
-                return "type entered not valid";
+        MapBlock target = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        if(target == null)
+            return "invalid location";
+        if(target.getUnits().size() == 0 || target.getBuildings() == null)
+            return "no enemy detected there";
+
+        if(target.isUnitsShouldBeAttackedFirst(currentUnit.get(0))){
+            for (Unit unit : currentUnit)
+                for (Unit targetUnit : target.getUnits())
+                    unit.fight(targetUnit);
+        }else {
+            for (Unit unit : currentUnit) {
+                unit.destroyBuilding(target.getBuildings());
+            }
         }
-        else
-            return "your location out of bounds";
+
+        return "moved successfully";
 
     }
 
-     */
+
 
 }

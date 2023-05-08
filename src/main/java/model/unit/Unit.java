@@ -2,6 +2,9 @@ package model.unit;
 
 import model.Kingdom;
 import model.MapBlock;
+import model.building.Building;
+import model.building.DefensiveStructure;
+import model.building.DefensiveStructureType;
 
 public class Unit {
     private Integer hp;
@@ -11,6 +14,7 @@ public class Unit {
     private Kingdom owner;
     private Unit forAttack;
     private Integer movesLeft;
+    private DefensiveStructure higherElevation;
     public Unit(UnitType unitType, MapBlock locationBlock , Kingdom owner) {
         this.unitType = unitType;
         this.locationBlock = locationBlock;
@@ -58,6 +62,14 @@ public class Unit {
         return movesLeft;
     }
 
+    public DefensiveStructure getHigherElevation() {
+        return higherElevation;
+    }
+
+    public void setHigherElevation(DefensiveStructure higherElevation) {
+        this.higherElevation = higherElevation;
+    }
+
     public void setLocationBlock(MapBlock locationBlock) {
         this.locationBlock = locationBlock;
     }
@@ -68,6 +80,24 @@ public class Unit {
 
     public void setUnitState(UnitState unitState) {
         this.unitState = unitState;
+    }
+
+    public Integer getOptimizedAttackRange(){
+        if(higherElevation != null && unitType.getCAN_DO_AIR_ATTACK()) {
+            DefensiveStructureType type = (DefensiveStructureType) higherElevation.getSpecificConstant();
+            return unitType.getATTACK_RANGE() + type.getFurtherFireRange();
+        }
+        else
+            return unitType.getATTACK_RANGE();
+    }
+
+    public Integer getOptimizedDistanceFrom(int xPosition, int yPosition){
+        int normalDistance = Math.abs(locationBlock.getxPosition() - xPosition) + Math.abs(locationBlock.getyPosition() - yPosition);
+        if(higherElevation != null){
+            DefensiveStructureType type = (DefensiveStructureType) higherElevation.getSpecificConstant();
+            return normalDistance + type.getFurtherFireRange();
+        }
+        return normalDistance;
     }
 
     public boolean increaseMoves(int amount){
@@ -84,6 +114,14 @@ public class Unit {
     }
 
     public void fight(Unit enemy){
+
     }
+    public void destroyBuilding(Building target){
+
+    }
+//
+//    public boolean canFightWith(Unit enemy){
+//        if(getOptimizedAttackRange() < enemy.ge)
+//    }
 
 }
