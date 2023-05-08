@@ -14,7 +14,6 @@ public class BuildingMenu {
     }
 
     public void mainBuildingClassRun() {
-        HashMap<String, String> optionPass;
         String command, result;
         System.out.println(buildingController.buildingName());
         result = buildingController.redirect();
@@ -28,8 +27,7 @@ public class BuildingMenu {
     }
 
     public String defensiveBuildingRnu() {
-        HashMap<String, String> optionPass;
-        String command, result;
+        String command;
         System.out.println(buildingController.buildingHp());
         while (true) {
             command = CommandParser.getScanner().nextLine();
@@ -43,7 +41,7 @@ public class BuildingMenu {
 
     public String campBuildingRnu() {
         HashMap<String, String> optionPass;
-        String command, result;
+        String command;
         while (true) {
             command = CommandParser.getScanner().nextLine();
             if (commandParser.validate(command, "back", null) != null) return "back";
@@ -56,8 +54,7 @@ public class BuildingMenu {
     }
 
     public String generalBuildingRun() {
-        HashMap<String, String> optionPass;
-        String command, result;
+        String command;
         while (true) {
             command = CommandParser.getScanner().nextLine();
             if (commandParser.validate(command, "back", null) != null) return "back";
@@ -66,8 +63,7 @@ public class BuildingMenu {
     }
 
     public String stockBuildingRun() {
-        HashMap<String, String> optionPass;
-        String command, result;
+        String command;
         while (true) {
             command = CommandParser.getScanner().nextLine();
             if (commandParser.validate(command, "back", null) != null) return "back";
@@ -79,7 +75,7 @@ public class BuildingMenu {
 
     public String produceBuildingRun() {
         HashMap<String, String> optionPass;
-        String command, result;
+        String command;
         while (true) {
             command = CommandParser.getScanner().nextLine();
             if (commandParser.validate(command, "back", null) != null) return "back";
@@ -89,7 +85,34 @@ public class BuildingMenu {
         }
     }
 
-    public void shop() {
+    public String runShop() {
+        HashMap<String, String> optionPass;
+        String command, result;
+        while (true) {
+            command = CommandParser.getScanner().nextLine();
+            if (commandParser.validate(command, "back", null) != null) return "back";
+            if (commandParser.validate(command, "show price list", null) != null)
+                System.out.println(buildingController.showPriceList());
+            else if ((optionPass = commandParser.validate(command, "buy" ,"i|itemName/a|itemAmount")) != null) {
+                    result =  buildingController.buyFromShop(optionPass);
+                    if (!result.equals("done")) {System.out.println(result); continue;}
+                    System.out.println("Please verify your purchase : ");
+                    command = CommandParser.getScanner().nextLine();
+                    if (commandParser.validate(command, "purchase verification", null) != null)
+                        System.out.println(buildingController.verified(optionPass, 1, 1.0));
+                    else System.out.println("Purchase did not complete successfully! Please try again.");
+            }
+            else if ((optionPass = commandParser.validate(command, "sell" , "i|itemName/a|itemAmount")) != null) {
+                    result = buildingController.sellFromShop(optionPass);
+                    if (!result.equals("done")) {System.out.println(result); continue;}
+                    System.out.println("Please verify your sell : ");
+                    command = CommandParser.getScanner().nextLine();
+                    if (commandParser.validate(command, "sell verification", null) != null)
+                        System.out.println(buildingController.verified(optionPass, -1, 0.8));
+                    else System.out.println("Sell items did not complete successfully! Please try again.");
+            }
+            else System.out.println("Invalid Command");
+        }
 
     }
 }

@@ -6,8 +6,8 @@ import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
 import view.BuildingMenu;
-import view.ShopMenu;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -35,7 +35,7 @@ public class BuildingController {
         else if (selectedBuilding.getSpecificConstant() instanceof GeneralBuildingType) return buildingMenu.generalBuildingRun();
         else if (selectedBuilding.getSpecificConstant() instanceof StockType) return buildingMenu.stockBuildingRun();
         else if (selectedBuilding.getSpecificConstant() instanceof ProducerType) return buildingMenu.produceBuildingRun();
-        else if (selectedBuilding.getBuildingType().equals(BuildingType.SHOP)) return new ShopAndTradeController().runShop();
+        else if (selectedBuilding.getBuildingType().equals(BuildingType.SHOP)) return buildingMenu.runShop();
         else return null;
     }
 
@@ -150,5 +150,120 @@ public class BuildingController {
                     .append(stock.getResourceValues().get(showResources)).append("\n");
         }
         return stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
+    }
+
+    private String showFood() {
+        StringBuilder output = new StringBuilder("\nFood:");
+        DecimalFormat decimalFormat = new DecimalFormat("0.0");
+        for (Food value : Food.values()) {
+            output.append("\nname: ").append(value.name().toLowerCase())
+                    .append("   \t\t  buyPrice: ").append(decimalFormat.format(value.getPrice()))
+                    .append("   sellPrice: ").append(decimalFormat.format(value.getPrice() * (0.8)))
+                    .append("   amount: ").append(currentKingdom.getFoodAmount(value));
+        }
+        return output.toString();
+    }
+
+    private String showResource() {
+        StringBuilder output = new StringBuilder("Resource Types:");
+        DecimalFormat decimalFormat = new DecimalFormat("0.0");
+        for (ResourceType value : ResourceType.values()) {
+            output.append("\nname: ").append(value.name().toLowerCase());
+            if(value.name().equalsIgnoreCase("leather"))
+                output.append("  \t\t  buyPrice: ").append(decimalFormat.format(value.getPrice()));
+            else output.append("   \t\t  buyPrice: ").append(decimalFormat.format(value.getPrice()));
+            output.append("   sellPrice: ").append(decimalFormat.format(value.getPrice() * (0.8)))
+                    .append("   amount: ").append(currentKingdom.getResourceAmount(value));
+        }
+        return output.toString();
+    }
+
+    private String showWeapon() {
+        StringBuilder output = new StringBuilder("\nWeapons:");
+        DecimalFormat decimalFormat = new DecimalFormat("0.0");
+        for (Weapons value : Weapons.values()) {
+            output.append("\nname: ").append(value.name().toLowerCase());
+            if(value.name().equalsIgnoreCase("leather_armour"))
+                output.append("  buyPrice: ").append(decimalFormat.format(value.getCost()));
+            else if (value.name().contains("_")) output.append("\t  buyPrice: ").append(decimalFormat.format(value.getCost()));
+            else if (value.name().equalsIgnoreCase("crossbow"))
+                output.append("\t\t  buyPrice: ").append(decimalFormat.format(value.getCost()));
+            else output.append("   \t\t  buyPrice: ").append(decimalFormat.format(value.getCost()));
+            output.append("  sellPrice: ").append(decimalFormat.format(value.getCost() * (0.8)))
+                    .append("  amount: ").append(currentKingdom.getWeaponAmount(value));
+        }
+        return output.toString();
+
+    }
+
+    public String showPriceList() {
+        return showResource() + showFood() + showWeapon();
+    }
+
+    public String checkType(String type) {
+        try {ResourceType.valueOf(type.toUpperCase().replaceAll(" ","_")); return "resource";}
+        catch (Exception ignored) {}
+        try {Weapons.valueOf(type.toUpperCase().replaceAll(" ","_")); return "weapon";}
+        catch (Exception ignored) {}
+        try {Food.valueOf(type.toUpperCase().replaceAll(" ","_")); return "food";}
+        catch (Exception ignored) {}
+        return null;
+    }
+
+    public String buyFromShop(HashMap<String, String> options) {
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        if (!options.get("a").matches("-?\\d+")) return "Please input digit as amount value!";
+        int amount = Integer.parseInt(options.get("a"));
+        if (amount < 0) return "Invalid bounds!";
+        String result = checkType(options.get("i"));
+        ResourceType resourceType; Weapons weapons; Food food;
+        switch (result) {
+            case "food" : food = Food.valueOf(options.get("i").toUpperCase().replaceAll(" ","_"));
+                            if (food.getPrice() * amount < currentKingdom.getBalance()) return "You do not have enough balance!";
+                            if (currentKingdom.getBuildingFormKingdom(BuildingType.FOOD_STOCKPILE) == null)
+                                return "You do not have any stock to put food in it!"; break;
+            case "weapon" : weapons = Weapons.valueOf(options.get("i").toUpperCase().replaceAll(" ","_"));
+                            if (weapons.getCost() * amount < currentKingdom.getBalance()) return "You do not have enough balance!";
+                            if (currentKingdom.getBuildingFormKingdom(BuildingType.ARMOURY) == null)
+                                return "You do not have any stock to put weapon in it!"; break;
+            case "resource" : resourceType = ResourceType.valueOf(options.get("i").toUpperCase().replaceAll(" ","_"));
+                            if (resourceType.getPrice() * amount > currentKingdom.getBalance()) return "You do not have enough balance!";break;
+            default: return "Item not found in the shop!";
+        }
+        return "done";
+    }
+    public String sellFromShop(HashMap<String, String> options) {
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        int amount = Integer.parseInt(options.get("a"));
+        if (amount < 0) return "Invalid bounds!";
+        String result = checkType(options.get("i"));
+        ResourceType resourceType; Weapons weapons; Food food;
+        switch (result) {
+            case "food" : food = Food.valueOf(options.get("i").toUpperCase().replaceAll(" ","_"));
+                if (currentKingdom.getFoodAmount(food) < amount) return "You do not have enough foods!";
+            case "weapon" : weapons = Weapons.valueOf(options.get("i").toUpperCase().replaceAll(" ","_"));
+                if (currentKingdom.getWeaponAmount(weapons) < amount) return "You do not have enough weapon!"; break;
+            case "resource" : resourceType = ResourceType.valueOf(options.get("i").toUpperCase().replaceAll(" ","_"));
+                if (currentKingdom.getResourceAmount(resourceType) < amount) return "You do not have enough resource!"; break;
+            default: return "Item not found in the shop!";
+        }
+        return "done";
+    }
+
+    public String verified(HashMap<String, String> options, Integer sign, double rate) {
+        int amount = Integer.parseInt(options.get("a"));
+        String result = checkType(options.get("i"));
+        ResourceType resourceType; Weapons weapons; Food food;
+        switch (result) {
+            case "food" : food = Food.valueOf(options.get("i").toUpperCase().replaceAll(" ","_"));
+                currentKingdom.setFoodsAmount(food,sign * amount); currentKingdom.setBalance((double) -sign * food.getPrice() * amount * rate); break;
+            case "weapon" : weapons = Weapons.valueOf(options.get("i").toUpperCase().replaceAll(" ","_"));
+                currentKingdom.setWeaponsAmount(weapons,sign * amount); currentKingdom.setBalance((double) -sign * weapons.getCost() * amount * rate); break;
+            case "resource" : resourceType = ResourceType.valueOf(options.get("i").toUpperCase().replaceAll(" ","_"));
+                currentKingdom.setResourceAmount(resourceType,sign * amount); currentKingdom.setBalance((double) -sign * resourceType.getPrice() * amount * rate);
+        }
+        return "Purchase done successfully";
     }
 }

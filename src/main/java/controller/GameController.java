@@ -38,12 +38,8 @@ public class GameController {
                     mapController.run();
                     break;
                 case "trade":
-                    ShopAndTradeController tradeController = new ShopAndTradeController();
+                    TradeController tradeController = new TradeController();
                     tradeController.runTrade();
-                    break;
-                case "shop":
-                    ShopAndTradeController shopController = new ShopAndTradeController();
-                    shopController.runShop();
                     break;
                 case "building":
                     BuildingController buildingController = new BuildingController();
