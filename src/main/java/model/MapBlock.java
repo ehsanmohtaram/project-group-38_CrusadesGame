@@ -13,7 +13,6 @@ public class MapBlock {
 
     private Building buildings;
     private Building siege;
-    private HashMap<UnitType, Integer> unitsFrequency;
     private ArrayList<Unit> units;
     private ResourceType resource;
     private int resourceAmount;
@@ -30,10 +29,8 @@ public class MapBlock {
         this.siege = null;
         resourceAmount = 0;
         units = new ArrayList<>();
-        unitsFrequency = new HashMap<>();
         numberOfTrees = new HashMap<>();
         for (Tree tree: Tree.values()) numberOfTrees.put(tree , 0);
-        for (UnitType unitType : UnitType.values()) unitsFrequency.put(unitType, 0);
     }
 
     public ArrayList<Unit> getUnits() {
@@ -68,11 +65,15 @@ public class MapBlock {
         this.mapBlockType = mapBlockType;
         if(mapBlockType.equals(MapBlockType.IRON)) {
             resource = ResourceType.IRON;
-            resourceAmount = 30;
+            resourceAmount = 60;
         }
-        if(mapBlockType.equals(MapBlockType.SLATE)){
+        if(mapBlockType.equals(MapBlockType.ROCK)){
             resource = ResourceType.ROCK;
             resourceAmount = 100;
+        }
+        if(mapBlockType.equals(MapBlockType.PLAIN)){
+            resource = ResourceType.RIG;
+            resourceAmount = 60;
         }
     }
 
@@ -112,15 +113,12 @@ public class MapBlock {
         return units.get(units.size() - 1);
     }
 
-    public void processNextTurn(){
-    }
-
     public boolean addTree(Tree tree){
         if(!mapBlockType.isCultivable())
             return false;
-        numberOfTrees.put(tree , numberOfTrees.get(tree) + 1);
+        numberOfTrees.put(tree , numberOfTrees.get(tree) + 10);
         resource = ResourceType.WOOD;
-        resourceAmount += (numberOfTrees.get(tree) * 5);
+        resourceAmount += (numberOfTrees.get(tree) * 20);
         return true;
     }
 
@@ -132,16 +130,11 @@ public class MapBlock {
     }
 
     public String getLatestDetails(){
-        if(units.size() != 0)
-            return "S";
-
+        if(units.size() != 0) return "S";
         if(buildings != null) {
-            if (buildings.getBuildingType().equals(BuildingType.HEAD_QUARTER))
-                return "H";
-            else if (buildings instanceof DefensiveStructure)
-                return "W";
-            else
-                return "B";
+            if (buildings.getBuildingType().equals(BuildingType.HEAD_QUARTER)) return "H";
+            else if (buildings instanceof DefensiveStructure) return "W";
+            else return "B";
         }
         for (Tree tree: numberOfTrees.keySet())
             if(numberOfTrees.get(tree) != 0)
@@ -159,9 +152,7 @@ public class MapBlock {
     public boolean isUnitsShouldBeAttackedFirst(Unit attacker){
         if(units.size() == 0)
             return false;
-        if(units.get(0).getOptimizedDistanceFrom(attacker.getXPosition(), attacker.getYPosition()) > attacker.getOptimizedAttackRange())
-            return false;
-        return true;
+        return units.get(0).getOptimizedDistanceFrom(attacker.getXPosition(), attacker.getYPosition()) <= attacker.getOptimizedAttackRange();
     }
 
 }

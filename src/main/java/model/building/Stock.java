@@ -23,4 +23,10 @@ public class Stock extends Building{
     public HashMap<Enum<?>, Integer> getResourceValues() {
         return resourceValues;
     }
+
+    public Integer getAmountByName(Enum<?> resource) {
+        return resourceValues.get(resource);
+    }
+
+
 }

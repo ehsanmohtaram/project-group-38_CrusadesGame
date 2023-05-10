@@ -95,7 +95,8 @@ public class BuildingController {
         if (!Objects.equals(campType.getIsArab(), unitType.getIS_ARAB())) return "You can not build this type of unit here!";
         int count = Integer.parseInt(options.get("c"));
         if (unitType.getPRICE() * count > currentKingdom.getBalance()) return "You do not have enough balance to buy this unit!";
-        if (currentKingdom.getBuildingFormKingdom(BuildingType.ARMOURY) == null) return "Please build armoury before creating units!";
+        if (currentKingdom.getBuildingFormKingdom(BuildingType.ARMOURY) == null && selectedBuilding.getBuildingType().equals(BuildingType.BARRACK))
+            return "Please build armoury before creating units!";
         if (unitType.getWEAPON_NEEDED() != null)
             if (currentKingdom.getWeaponAmount(unitType.getWEAPON_NEEDED()) < count) return "You do not have enough weapon!";
         if (unitType.getArmour_Needed() != null)

@@ -3,6 +3,7 @@ package model;
 import model.building.Building;
 import model.building.BuildingType;
 import model.building.Stock;
+import model.building.StockType;
 import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
@@ -45,8 +46,7 @@ public class Kingdom{
         this.balance = 200.0;
         for (ResourceType resourceType : ResourceType.values()) resources.put(resourceType, 100);
         for (Food food : Food.values()) foods.put(food, 0);
-        //TODO after dibug it should be put 0
-        for (Weapons weapon : Weapons.values()) weapons.put(weapon, 100);
+        for (Weapons weapon : Weapons.values()) weapons.put(weapon, 0);
     }
 
     public User getOwner() {
@@ -133,28 +133,48 @@ public class Kingdom{
         return weapons;
     }
 
+    public Integer getNumberOfStock(BuildingType stockType) {
+        int counter = 0;
+        for (Building building : buildings) if (building.getBuildingType().equals(stockType)) counter++;
+        return counter;
+    }
+
+    public void setStockCapacity(StockType stockType, int currentResourceAmount, Enum<?> resources) {
+        Stock stock;
+        int fullStock = currentResourceAmount / stockType.getCAPACITY();
+        int notFullStock = currentResourceAmount % stockType.getCAPACITY();
+        int fullCheck = 0;
+        for (Building building : buildings) {
+            if (fullCheck == fullStock) break;
+            if (building.getBuildingType().equals(BuildingType.valueOf(stockType.name()))) {
+                stock = (Stock) building;
+                stock.addResourceToStock(resources, stockType.getCAPACITY());
+                fullCheck++;
+            }
+        }
+        for (Building building : buildings) {
+            if (building.getBuildingType().equals(BuildingType.valueOf(stockType.name()))) {
+                stock = (Stock) building;
+                if (!stock.getAmountByName(resources).equals(stockType.getCAPACITY())) {
+                    stock.addResourceToStock(resources, notFullStock);break;
+                }
+            }
+        }
+    }
+
     public void setResourceAmount(ResourceType resourceType, Integer amount) {
         resources.put(resourceType,resources.get(resourceType) + amount);
-        Stock stock = null;
-        for (Building building : buildings)
-            if (building.getBuildingType().equals(BuildingType.STOCKPILE)) {stock = (Stock) building; break;}
-        stock.addResourceToStock(resourceType, resources.get(resourceType));
+        setStockCapacity(StockType.STOCKPILE, resources.get(resourceType), resourceType);
     }
 
     public void setFoodsAmount(Food food, Integer amount) {
         foods.put(food, foods.get(food) + amount);
-        Stock stock = null;
-        for (Building building : buildings)
-            if (building.getBuildingType().equals(BuildingType.FOOD_STOCKPILE)) {stock = (Stock) building; break;}
-        stock.addResourceToStock(food, foods.get(food));
+        setStockCapacity(StockType.FOOD_STOCKPILE, foods.get(food), food);
     }
 
     public void setWeaponsAmount(Weapons weapon, Integer amount) {
         weapons.put(weapon, weapons.get(weapon) + amount);
-        Stock stock = null;
-        for (Building building : buildings)
-            if (building.getBuildingType().equals(BuildingType.ARMOURY)) {stock = (Stock) building; break;}
-        stock.addResourceToStock(weapon, weapons.get(weapon));
+        setStockCapacity(StockType.ARMOURY, weapons.get(weapon), weapon);
     }
 
     public Integer getFoodRate() {
@@ -222,10 +242,6 @@ public class Kingdom{
 
     public void ChangePopularity(Integer amount) {
         this.popularity += amount;
-    }
-
-    public void setFoodAmount(Food toAdd , Integer amount){
-        foods.put(toAdd , amount);
     }
 
     public void addUnit(Unit toAdd){

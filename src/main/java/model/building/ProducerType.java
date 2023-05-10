@@ -6,7 +6,7 @@ import model.Weapons;
 
 public enum ProducerType {
     ARMOURER(Weapons.METAL_ARMOUR, null, 8, false),
-    BLACKSMITH(Weapons.PIKE, Weapons.SWORDS, 2, false),
+    BLACKSMITH(Weapons.PIKE, Weapons.SWORDS, 3, false),
     FLETCHER(Weapons.BOW, Weapons.CROSSBOW, 6, false),
     POLE_TURNER(Weapons.SPEAR, null, 4, false),
     OIL_SMELTER(ResourceType.OIL, null, 14, false),

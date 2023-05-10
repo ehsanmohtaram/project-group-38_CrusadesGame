@@ -47,7 +47,6 @@ public class MapDesignController {
             return "no such type available for lands";
         String checkingResult;
         if(options.get("x") == null && options.get("y") == null) {
-            ArrayList<Integer> bounds = new ArrayList<>();
             if((checkingResult = checkLocationValidation(options.get("x1") , options.get("y1"))) != null )
                 return checkingResult;
             if((checkingResult = checkLocationValidation(options.get("x2") , options.get("y2"))) != null )
@@ -201,19 +200,13 @@ public class MapDesignController {
 
     public String dropUnit(HashMap<String , String> options){
         String checkingResult;
-        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
-            return checkingResult;
-        if(options.get("t") == null || options.get("f") == null)
-            return "you must specify details like type and flag";
+        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null ) return checkingResult;
+        if(options.get("t") == null || options.get("f") == null) return "you must specify details like type and flag";
         int count;
-        if(options.get("c") == null)
-            count = 0;
-        else if (!options.get("c").matches("\\d+"))
-            return "please fill count option correctly";
-        else
-            count = Integer.parseInt(options.get("c"));
-        if(options.get("t").equals("") || options.get("f").equals(""))
-            return "Illegal value. Please fill the options";
+        if(options.get("c") == null) count = 0;
+        else if (!options.get("c").matches("\\d+")) return "please fill count option correctly";
+        else count = Integer.parseInt(options.get("c"));
+        if(options.get("t").equals("") || options.get("f").equals("")) return "Illegal value. Please fill the options";
         UnitType unitType;
         try {unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));}
         catch (Exception ignored) {return "There is no such a building!";}
@@ -225,59 +218,60 @@ public class MapDesignController {
         try {kingdomFlag = Flags.valueOf(options.get("f").toUpperCase());}
         catch (IllegalArgumentException illegalArgumentException)
         {return "Your flag color did not exist in default colors!";}
-        for (Kingdom existing: gameMap.getPlayers())
-            if(existing.getFlag() == kingdomFlag)
-                unitOwner = existing;
-        if(unitOwner == null)
-            return "no such kingdom has been added to map";
-        if(!unitOwner.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition()))
-            return "drop units near their kingdom";
+        for (Kingdom existing: gameMap.getPlayers()) if(existing.getFlag() == kingdomFlag) unitOwner = existing;
+        if(unitOwner == null) return "no such kingdom has been added to map";
+        if(!unitOwner.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition())) return "drop units near their kingdom";
         for (int i = 0; i < count; i++) {
             Unit shouldBeAdd = new Unit(unitType, mapBlock, unitOwner);
             shouldBeAdd.setUnitState(UnitState.STANDING);
         }
         return "unit added successfully";
     }
+    public void createBuilding(MapBlock mapBlock, BuildingType buildingType, Kingdom currentKingdom) {
+        Building building;
+        if (buildingType.specificConstant == null) building = new Building(mapBlock, buildingType, currentKingdom);
+        else if (buildingType.specificConstant instanceof DefensiveStructureType) building = new DefensiveStructure(mapBlock, buildingType, currentKingdom);
+        else if (buildingType.specificConstant instanceof CampType) building = new Camp(mapBlock, buildingType, currentKingdom);
+        else if (buildingType.specificConstant instanceof StockType) building = new Stock(mapBlock, buildingType, currentKingdom);
+        else if(buildingType.specificConstant instanceof ProducerType) building = new Producer(mapBlock, buildingType, currentKingdom);
+        else if (buildingType.specificConstant instanceof MineType) building = new Mine(mapBlock, buildingType, currentKingdom);
+        else building = new Building(mapBlock, buildingType, currentKingdom);
+        mapBlock.setBuildings(building);
+        currentKingdom.addBuilding(building);
+        Unit unit;
+        if (!buildingType.getNumberOfWorker().equals(0)) {
+            for (int i = 0; i < buildingType.getNumberOfWorker(); i++) {
+                unit = new Unit(buildingType.getWorkerNeeded(), mapBlock, currentKingdom);
+                unit.setUnitState(UnitState.WORKING);
+                currentKingdom.addUnit(unit);
+                mapBlock.addUnitHere(unit);
+            }
+        }
+    }
 
     public String dropBuilding(HashMap<String , String> options){
         String checkingResult;
-        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
-            return checkingResult;
-        for (String key : options.keySet())
-            if (options.get(key) == null) return "Please input necessary options!";
+        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null ) return checkingResult;
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         try {BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));}
         catch (Exception ignored) {return "There is no such a building!";}
         if (BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_")).specificConstant instanceof SiegeType)
             return "There is no such a building!";
         MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
-        if (!mapBlock.getMapBlockType().isBuildable())
-            return "You can not build your building here. Please choose another location!";
-        if (mapBlock.getBuildings() != null || mapBlock.getSiege() != null)
-            return "This block already has filled with another building. Please choose another location!";
+        if (!mapBlock.getMapBlockType().isBuildable()) return "You can not build your building here. Please choose another location!";
+        if (mapBlock.getBuildings() != null || mapBlock.getSiege() != null) return "This block already has filled with another building.";
         Flags kingdomFlag;
         Kingdom buildingOwner = null;
         try {kingdomFlag = Flags.valueOf(options.get("f").toUpperCase());}
         catch (IllegalArgumentException illegalArgumentException)
         {return "Your flag color did not exist in default colors!";}
-        for (Kingdom existing: gameMap.getPlayers())
-            if(existing.getFlag() == kingdomFlag)
-                buildingOwner = existing;
-        if(buildingOwner == null)
-            return "no such kingdom has been added to map";
-        if(buildingOwner.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition()))
-            return "drop buildings near their kingdom";
+        for (Kingdom existing: gameMap.getPlayers()) if(existing.getFlag() == kingdomFlag) buildingOwner = existing;
+        if(buildingOwner == null) return "no such kingdom has been added to map";
+        if(buildingOwner.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition())) return "drop buildings near their kingdom";
         BuildingType buildingType = BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));
         if (buildingType.equals(BuildingType.HEAD_QUARTER)) return "You have already dropped headquarter!";
-        Building building;
-        if (buildingType.specificConstant == null) building = new Building(mapBlock, buildingType, buildingOwner);
-        else if (buildingType.specificConstant instanceof DefensiveStructureType) building = new DefensiveStructure(mapBlock, buildingType, buildingOwner);
-        else if (buildingType.specificConstant instanceof CampType) building = new Camp(mapBlock, buildingType, buildingOwner);
-        else if (buildingType.specificConstant instanceof StockType) building = new Stock(mapBlock, buildingType, buildingOwner);
-        else building = new GeneralBuilding(mapBlock, buildingType, buildingOwner);
-        mapBlock.setBuildings(building);
-        buildingOwner.addBuilding(building);
-        //TODO Farm should be check for being cultivable
+        createBuilding(mapBlock, buildingType, buildingOwner);
         return buildingType.name().toLowerCase().replaceAll("_"," ") + " added to " + kingdomFlag.name() + " kingdom.";
     }
 

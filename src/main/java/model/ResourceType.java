@@ -10,7 +10,6 @@ public enum ResourceType {
     COW(4, null, 0),
     BARLEY(1, null, 0),
     FLOUR(4, ResourceType.WHEAT, 10),
-    LEATHER(3, ResourceType.COW, 1),
     HOP(5, ResourceType.BARLEY, 20);
     private final int price;
     private final ResourceType baseSource;

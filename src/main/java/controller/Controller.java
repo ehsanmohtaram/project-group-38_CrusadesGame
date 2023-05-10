@@ -9,9 +9,7 @@ import java.util.regex.Matcher;
 
 public class Controller {
     private final MainMenu mainMenu;
-    private DesignMapMenu designMapMenu;
     public static User currentUser = null;
-    public static boolean stayLoggedIn = false;
     private Map gameMap;
 
     public Controller() {
@@ -26,7 +24,6 @@ public class Controller {
         while (true) {
             switch (mainMenu.run()) {
                 case "selectMap":
-//                  currentUser.addToMyMap();
                     MapDesignController mapDesignController = new MapDesignController(gameMap);
                     mapDesignController.run();
                     break;
@@ -105,15 +102,6 @@ public class Controller {
         return "start";
     }
 
-    public String showMap() {
-        return null;
-    }
-    public String moveMap() {
-        return null;
-    }
-    public String showMapDetails(Matcher matcher) {
-        return null;
-    }
     public String showPopularityFactors() {
         return null;
     }
@@ -138,59 +126,13 @@ public class Controller {
     public String fearRate(Matcher matcher) {
         return null;
     }
-    public String dropBuilding(Matcher matcher) {
-        //TODO multiple command ....
-        return null;
-    }
-    public String selectBuilding(Matcher matcher) {
-        return null;
-    }
-    public String createUnit(Matcher matcher) {
-        return null;
-    }
-    public String repair() {
-        return null;
-    }
-    public String selectUnit(Matcher matcher) {
-        return null;
-    }
-    public String moveUnit(Matcher matcher) {
-        return null;
-    }
-    public String patrolUnit(Matcher matcher) {
-        return null;
-    }
-    public String setUnit(Matcher matcher) {
-        return null;
-    }
-    public String attack(Matcher matcher) {
-        return null;
-    }
     public String pourOil(Matcher matcher) {
         return null;
     }
     public String digTunnel(Matcher matcher) {
         return null;
     }
-    public String build(Matcher matcher) {
-        return null;
-    }
     public String disbandUnit() {
-        return null;
-    }
-    public String setTexture(Matcher matcher) {
-        return null;
-    }
-    public String clear(Matcher matcher) {
-        return null;
-    }
-    public String dropRock(Matcher matcher) {
-        return null;
-    }
-    public String dropTree(Matcher matcher) {
-        return null;
-    }
-    public String dropUnit(Matcher matcher) {
         return null;
     }
 

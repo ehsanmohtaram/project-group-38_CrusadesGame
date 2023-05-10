@@ -8,7 +8,7 @@ public enum Weapons {
     MACE(ResourceType.IRON,1, 18),
     SWORDS(ResourceType.IRON,1, 20),
     LADDER(ResourceType.WOOD, 1, 14),
-    LEATHER_ARMOUR(ResourceType.LEATHER, 1, 15),
+    LEATHER_ARMOUR(ResourceType.COW, 1, 15),
     METAL_ARMOUR(ResourceType.IRON,1, 18);
 
     private final ResourceType resourceType;

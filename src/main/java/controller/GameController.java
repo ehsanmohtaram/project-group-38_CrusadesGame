@@ -104,6 +104,7 @@ public class GameController {
                 mapBlock.setUnits(unit);
                 unit.getLocationBlock().getUnits().remove(unit);
                 unit.setLocationBlock(mapBlock);
+                unit.setUnitState(UnitState.WORKING);
                 counter++;
             }
         }
@@ -145,9 +146,9 @@ public class GameController {
         if (buildingType.getGOLD() > currentKingdom.getBalance()) return "You do not have enough gold to buy this building.";
         if (buildingType.getRESOURCES() != null && buildingType.getRESOURCE_NUMBER() > currentKingdom.getResourceAmount(buildingType.getRESOURCES()))
             return "You do not have enough " + buildingType.getRESOURCES().name().toLowerCase() + " to buy this building.";
-        createBuilding(mapBlock, buildingType);
         if (currentKingdom.checkForAvailableNormalUnit(buildingType.getWorkerNeeded()) < buildingType.getNumberOfWorker())
             return "There are not enough available worker to put in this building!";
+        createBuilding(mapBlock, buildingType);
         result = checkSpecificBuilding(mapBlock, buildingType);
         if (result != null) return result;
         return buildingType.name().toLowerCase().replaceAll("_"," ") + " added successfully to kingdom.";
@@ -228,34 +229,7 @@ public class GameController {
         selectedUnit.addAll(mapBlock.getUnitByUnitType(unitType));
         return "unit";
     }
-    //TODO attack unit
-    /*
 
-    public String attackOnUnit(HashMap<String, String> options) {
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        int x = Integer.parseInt(options.get("x"));
-        int y = Integer.parseInt(options.get("y"));
-        if (x <= gameMap.getMapWidth() && y <= gameMap.getMapHeight()) {
-            UnitType unitType;
-            if ((unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll("\\s*",""))) != null){
-                for (Unit unit : gameMap.getMapBlockByLocation(x, y).getUnits()) {
-                    if (unit.getUnitType().equals(unitType)) {
-                        if (!(unit.getOwner().equals(currentUser))) {
-                            selectedUnit.setForAttack(unit);
-                            return "attacked";
-                        }
-                    }
-                }
-                return "do not exist such a soldier in this block";
-            } else
-                return "type entered not valid";
-        }
-        else
-            return "your location out of bounds";
-
-    }
-     */
     public String setTaxRate(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
