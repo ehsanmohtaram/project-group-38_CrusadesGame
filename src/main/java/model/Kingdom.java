@@ -7,7 +7,6 @@ import model.building.StockType;
 import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,16 +15,12 @@ public class Kingdom{
     private final Flags flag;
     private Integer population;
     private Integer noneEmployed;
-    private Integer engineer;
     private Integer fearRate;
-    private Integer maxFearRate;
     private Integer popularity;
     private Double balance;
     private Integer foodRate;
     private Integer taxRate;
-    private Integer efficiency;
     private Building headquarter;
-    private Integer kingdomRange;
     private ArrayList<Trade> myRequests = new ArrayList<>();
     private ArrayList<Trade> mySuggestion = new ArrayList<>();
     private ArrayList<Trade> notification = new ArrayList<>();
@@ -36,17 +31,17 @@ public class Kingdom{
     private ArrayList<Unit> units = new ArrayList<>();
     private ArrayList<Building> buildings = new ArrayList<>();
     public Kingdom(Flags flag, User owner) {
-        population = noneEmployed = 20;
-        engineer = 0;
-        popularity = 0;
+        population = noneEmployed = 10;
+        popularity = 10;
         foodRate = -2;
-        kingdomRange = 5;
+        fearRate = 0;
+        taxRate = 0;
         this.flag = flag;
         this.owner = owner;
         this.balance = 200.0;
         for (ResourceType resourceType : ResourceType.values()) resources.put(resourceType, 100);
-        for (Food food : Food.values()) foods.put(food, 0);
         for (Weapons weapon : Weapons.values()) weapons.put(weapon, 0);
+        for (Food food : Food.values()) foods.put(food, 0);
     }
 
     public User getOwner() {
@@ -73,28 +68,12 @@ public class Kingdom{
         this.fearRate = fearRate;
     }
 
-    public void setEfficiency(Integer efficiency) {
-        this.efficiency = efficiency;
-    }
-
-    public Integer getMaxFearRate() {
-        return maxFearRate;
-    }
-
-    public void setMaxFearRate(Integer maxFearRate) {
-        this.maxFearRate = maxFearRate;
-    }
-
-    public Integer getEfficiency() {
-        return efficiency;
-    }
-
     public ArrayList<Unit> getUnits() {
         return units;
     }
 
     public void setPopulation(Integer population) {
-        this.population = population;
+        this.population += population;
     }
 
     public Integer getNoneEmployed() {
@@ -107,6 +86,10 @@ public class Kingdom{
 
     public Integer getFearRate() {
         return fearRate;
+    }
+
+    public void setPopularity(Integer popularity) {
+        this.popularity += popularity;
     }
 
     public Integer getPopularity() {
@@ -127,10 +110,6 @@ public class Kingdom{
 
     public HashMap<ResourceType, Integer> getResources() {
         return resources;
-    }
-
-    public HashMap<Weapons, Integer> getWeapons() {
-        return weapons;
     }
 
     public Integer getNumberOfStock(BuildingType stockType) {
@@ -185,10 +164,6 @@ public class Kingdom{
         return flag;
     }
 
-    public Building getHeadquarter() {
-        return headquarter;
-    }
-
     public ArrayList<Building> getBuildings() {
         return buildings;
     }
@@ -224,22 +199,6 @@ public class Kingdom{
         this.foodRate = foodRate;
     }
 
-    public Integer getEngineer() {
-        return engineer;
-    }
-
-    public void setPopularity(Integer popularity) {
-        this.popularity = popularity;
-    }
-
-    public void setEngineer(Integer engineer) {
-        this.engineer = engineer;
-    }
-
-    public void ChangeFearRate(Integer amount) {
-        this.fearRate += amount;
-    }
-
     public void ChangePopularity(Integer amount) {
         this.popularity += amount;
     }
@@ -262,6 +221,12 @@ public class Kingdom{
 
     public Integer getFoodAmount(Food food) {
         return foods.get(food);
+    }
+
+    public Integer getMaxPopulation() {
+        int counter = 10;
+        for (Building building : buildings) if (building.getBuildingType().equals(BuildingType.HOUSE)) counter += 8;
+        return counter;
     }
 
     public Building getBuildingFormKingdom(BuildingType buildingType) {

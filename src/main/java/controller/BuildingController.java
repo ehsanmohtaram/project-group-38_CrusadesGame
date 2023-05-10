@@ -146,10 +146,9 @@ public class BuildingController {
     public String showResources() {
         Stock stock = (Stock) selectedBuilding;
         StringBuilder stringBuilder = new StringBuilder();
-        for (Enum<?> showResources : stock.getResourceValues().keySet()) {
-            stringBuilder.append(showResources.name().toLowerCase().replaceAll("_", " ")).append(" : ")
-                    .append(stock.getResourceValues().get(showResources)).append("\n");
-        }
+        for (Enum<?> showResources : stock.getResourceValues().keySet())
+            stringBuilder.append(showResources.name().toLowerCase().replaceAll("_", " ")).append(" : ").
+                    append(stock.getResourceValues().get(showResources)).append("\n");
         return stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
     }
 
@@ -160,7 +159,8 @@ public class BuildingController {
             output.append("\nname: ").append(value.name().toLowerCase())
                     .append("   \t\t  buyPrice: ").append(decimalFormat.format(value.getPrice()))
                     .append("   sellPrice: ").append(decimalFormat.format(value.getPrice() * (0.8)))
-                    .append("   amount: ").append(currentKingdom.getFoodAmount(value));
+                    .append("   amount: ").
+                    append(currentKingdom.getFoodAmount(value));
         }
         return output.toString();
     }
@@ -223,13 +223,22 @@ public class BuildingController {
             case "food" : food = Food.valueOf(options.get("i").toUpperCase().replaceAll(" ","_"));
                             if (food.getPrice() * amount < currentKingdom.getBalance()) return "You do not have enough balance!";
                             if (currentKingdom.getBuildingFormKingdom(BuildingType.FOOD_STOCKPILE) == null)
-                                return "You do not have any stock to put food in it!"; break;
+                                return "You do not have any stock to put food in it!";
+                            if (currentKingdom.getNumberOfStock(BuildingType.FOOD_STOCKPILE) * StockType.FOOD_STOCKPILE.getCAPACITY() <
+                                    currentKingdom.getFoodAmount(food) + amount) return "You do not have enough space for this food!";
+                            break;
             case "weapon" : weapons = Weapons.valueOf(options.get("i").toUpperCase().replaceAll(" ","_"));
                             if (weapons.getCost() * amount < currentKingdom.getBalance()) return "You do not have enough balance!";
                             if (currentKingdom.getBuildingFormKingdom(BuildingType.ARMOURY) == null)
-                                return "You do not have any stock to put weapon in it!"; break;
+                                return "You do not have any stock to put weapon in it!";
+                            if (currentKingdom.getNumberOfStock(BuildingType.ARMOURY) * StockType.ARMOURY.getCAPACITY() <
+                                currentKingdom.getWeaponAmount(weapons) + amount) return "You do not have enough space for this weapon!";
+                            break;
             case "resource" : resourceType = ResourceType.valueOf(options.get("i").toUpperCase().replaceAll(" ","_"));
-                            if (resourceType.getPrice() * amount > currentKingdom.getBalance()) return "You do not have enough balance!";break;
+                            if (resourceType.getPrice() * amount > currentKingdom.getBalance()) return "You do not have enough balance!";
+                            if (currentKingdom.getNumberOfStock(BuildingType.STOCKPILE) * StockType.STOCKPILE.getCAPACITY() <
+                                    currentKingdom.getResourceAmount(resourceType) + amount) return "You do not have enough space for this resource!";
+                            break;
             default: return "Item not found in the shop!";
         }
         return "done";

@@ -48,7 +48,8 @@ public enum BuildingType {
     WOOD_CUTTER(0, ResourceType.WOOD, 3, 100, UnitType.WORKER, 1, MineType.WOOD_CUTTER),
     PITCH_RIG(0 , ResourceType.WOOD, 20, 150, UnitType.WORKER, 1, MineType.PITCH_RIG),
     //Other
-    SHOP(0, ResourceType.WOOD, 5, 300, UnitType.WORKER, 1, null);
+    SHOP(0, ResourceType.WOOD, 5, 300, UnitType.WORKER, 1, null),
+    HOUSE(0, ResourceType.WOOD, 6, 200, UnitType.WORKER, 0, null);
     private final Integer GOLD;
     private final ResourceType RESOURCES;
     private final Integer RESOURCE_NUMBER;

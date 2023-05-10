@@ -7,23 +7,81 @@ public class Turn {
 
     private final Map gameMap;
     private final Kingdom currentKingdom;
-    private final User currentUser;
     private final Kingdom lastKingdom;
 
     public Turn() {
         gameMap = GameController.gameMap;
-        currentUser = Controller.currentUser;
+        User currentUser = Controller.currentUser;
         currentKingdom = gameMap.getKingdomByOwner(currentUser);
         int result = ((gameMap.getPlayers().indexOf(currentKingdom) - 1) + gameMap.getPlayers().size()) % gameMap.getPlayers().size();
         lastKingdom = gameMap.getPlayers().get(result);
     }
 
+
     public void runNextTurn() {
         executeProducerBuilding();
         executeMines();
+        getTax();
+        giveFood();
+        growPopulation();
     }
 
-    private void executeMines() {
+    public void growPopulation() {
+        currentKingdom.setPopularity(-currentKingdom.getFearRate() * (gameMap.getPlayers().size() - 1));
+        int foodCounter = 0;
+        for (Food food : currentKingdom.getFoods().keySet()) foodCounter += currentKingdom.getFoods().get(food);
+        int addPeople = currentKingdom.getMaxPopulation() - currentKingdom.getPopulation();
+        int growthAmount = addPeople - (int)((((double) addPeople + (double) currentKingdom.getPopulation()) / (double) foodCounter) * (double) addPeople);
+        if (addPeople >= 0 && growthAmount >= 0) currentKingdom.setPopulation(growthAmount);
+    }
+
+    public void getTax() {
+        double getTax;
+        if (currentKingdom.getTaxRate() <= 0) {
+            getTax = currentKingdom.getTaxRate() * 0.2 - 0.4;
+            currentKingdom.setPopularity(-currentKingdom.getTaxRate() * 2 + 1);
+        }
+        else {
+            getTax = currentKingdom.getTaxRate() * 0.2 + 0.4;
+            currentKingdom.setPopularity(-currentKingdom.getTaxRate() * 2);
+        }
+        currentKingdom.setBalance(getTax * currentKingdom.getPopulation() * (gameMap.getPlayers().size() - 1));
+    }
+
+    public void giveFood() {
+        if (currentKingdom.getFoodRate().equals(-2)){currentKingdom.setPopularity((gameMap.getPlayers().size() - 1) * -8); return;}
+        int foodCounter = 0, setFood, checkFoodAmount = 0, variety = 0;
+        int getFood = (int) (((double)(currentKingdom.getFoodRate() + 2) / 2) * (double)currentKingdom.getPopulation());
+        for (Food food : currentKingdom.getFoods().keySet()) foodCounter += currentKingdom.getFoods().get(food);
+        for (Food food : currentKingdom.getFoods().keySet()) {
+            if (currentKingdom.getFoods().get(food) > 0) variety++;
+            setFood = (int)(((double) currentKingdom.getFoods().get(food) / (double) foodCounter) * (double) getFood);
+            checkFoodAmount += setFood;
+            currentKingdom.setFoodsAmount(food, -setFood);
+        }
+        if (variety != 0) currentKingdom.setPopularity((gameMap.getPlayers().size() - 1) * 2);
+        currentKingdom.setPopularity((gameMap.getPlayers().size() - 1) * currentKingdom.getFoodRate() * 4);
+        checkFoodAmount = getFood - checkFoodAmount;
+        if (checkFoodAmount == 0) return;
+        while (true) {
+            for (Food food : currentKingdom.getFoods().keySet()) {
+                if (currentKingdom.getFoods().get(food) > 0) {
+                    currentKingdom.setFoodsAmount(food, -1); checkFoodAmount--;
+                    if (checkFoodAmount == 0) return;
+                }
+            }
+        }
+
+    }
+
+    public Integer setProduceRate(Integer produceRate) {
+        double fearRate = (double) (currentKingdom.getFearRate()) / 10;
+        produceRate += (int) ((double) produceRate * fearRate);
+        produceRate *= (gameMap.getPlayers().size() - 1);
+        return produceRate;
+    }
+
+    public void executeMines() {
         MineType mineType;
         Mine mine;
         for (Building building : currentKingdom.getBuildings())
@@ -33,9 +91,9 @@ public class Turn {
                 MapBlock mapBlock;
                 if (mine.getMineMode().equals(ProduceMode.NON_ACTIVE)) continue;
                 if ((mapBlock = checkNearBlocksForResource(building.getPosition(), mineType.getResourceType())) == null) continue;
-                if (!checkMineProduce(mineType.getResourceType(), mapBlock, mineType.getProduceRate())) continue;
-                currentKingdom.setResourceAmount(mineType.getResourceType(), mineType.getProduceRate());
-                mapBlock.setResources(mineType.getResourceType(), mapBlock.getResourceAmount() - mineType.getProduceRate());
+                if (!checkMineProduce(mineType.getResourceType(), mapBlock, setProduceRate(mineType.getProduceRate()))) continue;
+                currentKingdom.setResourceAmount(mineType.getResourceType(), setProduceRate(mineType.getProduceRate()));
+                mapBlock.setResources(mineType.getResourceType(), mapBlock.getResourceAmount() - setProduceRate(mineType.getProduceRate()));
             }
     }
 
@@ -76,29 +134,29 @@ public class Turn {
     }
 
 
-    private void executeProducerBuilding() {
+    public void executeProducerBuilding() {
         for (Building building : currentKingdom.getBuildings())
             if (building instanceof Producer && !((Producer) building).getMode().equals(ProduceMode.NON_ACTIVE))
                 checkProduce((Producer) building);
     }
 
-    private void produceResource(ResourceType resourceType, Integer amount) {
+    public void produceResource(ResourceType resourceType, Integer amount) {
         currentKingdom.setResourceAmount(resourceType, amount);
         if(resourceType.getBaseSource() != null)
             currentKingdom.setResourceAmount(resourceType.getBaseSource(), -amount);
     }
 
-    private void produceWeapon(Weapons weapons, Integer amount) {
+    public void produceWeapon(Weapons weapons, Integer amount) {
         currentKingdom.setWeaponsAmount(weapons, amount);
         currentKingdom.setResourceAmount(weapons.getResourceType(), -amount);
     }
 
-    private void produceFood(Food food, Integer amount) {
+    public void produceFood(Food food, Integer amount) {
         currentKingdom.setFoodsAmount(food, amount);
         currentKingdom.setResourceAmount(food.getResourceType(), -amount);
     }
 
-    private void checkProduce(Producer producer) {
+    public void checkProduce(Producer producer) {
         ProducerType producerType = (ProducerType) producer.getSpecificConstant();
         Enum<?> check0, check1;
         Integer amount = 1;
@@ -106,16 +164,16 @@ public class Turn {
         check1 = producerType.getTypeOfResource1();
         if (check0 != null && check1 != null && !producer.getMode().equals(ProduceMode.FIRST) && !producer.getMode().equals(ProduceMode.SECOND))
             amount = 2;
-        if (checkCapacity(check0, producerType.getProduceRate() / amount)) {
+        if (checkCapacity(check0, setProduceRate(producerType.getProduceRate()) / amount)) {
             if (!producer.getMode().equals(ProduceMode.SECOND)) {
-                if (check0 instanceof Weapons) produceWeapon((Weapons) check0, producerType.getProduceRate() / amount);
-                else if (check0 instanceof Food) produceFood((Food) check0, producerType.getProduceRate() / amount);
-                else if (check0 != null) produceResource((ResourceType) check0, producerType.getProduceRate() / amount);
+                if (check0 instanceof Weapons) produceWeapon((Weapons) check0, setProduceRate(producerType.getProduceRate()) / amount);
+                else if (check0 instanceof Food) produceFood((Food) check0, setProduceRate(producerType.getProduceRate()) / amount);
+                else if (check0 != null) produceResource((ResourceType) check0, setProduceRate(producerType.getProduceRate()) / amount);
             }
         }
-        if (checkCapacity(check1, producerType.getProduceRate() / amount)) {
+        if (checkCapacity(check1, setProduceRate(producerType.getProduceRate()) / amount)) {
             if (!producer.getMode().equals(ProduceMode.FIRST) && check1 != null)
-                produceWeapon((Weapons) check1, producerType.getProduceRate() / amount);
+                produceWeapon((Weapons) check1, setProduceRate(producerType.getProduceRate()) / amount);
         }
     }
 

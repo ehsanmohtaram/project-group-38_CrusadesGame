@@ -102,34 +102,10 @@ public class Controller {
         return "start";
     }
 
-    public String showPopularityFactors() {
+    public String pourOil() {
         return null;
     }
-    public String showPopularity() {
-        return null;
-    }
-    public String showFoodList() {
-        return null;
-    }
-    public String foodRate(Matcher matcher) {
-        return null;
-    }
-    public String showFoodRate() {
-        return null;
-    }
-    public String taxRate(Matcher matcher) {
-        return null;
-    }
-    public String showTaxRate() {
-       return null;
-    }
-    public String fearRate(Matcher matcher) {
-        return null;
-    }
-    public String pourOil(Matcher matcher) {
-        return null;
-    }
-    public String digTunnel(Matcher matcher) {
+    public String digTunnel() {
         return null;
     }
     public String disbandUnit() {

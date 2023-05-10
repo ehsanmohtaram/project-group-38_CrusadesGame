@@ -230,39 +230,19 @@ public class GameController {
         return "unit";
     }
 
-    public String setTaxRate(HashMap<String, String> options) {
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        int taxRate = Integer.parseInt(options.get("r"));
-        if (taxRate >= -3 && taxRate <= 8) {
-            Double moneyForPay = 2 - (8 - taxRate) * 0.2;
-            if (currentKingdom.getPopulation() * moneyForPay <= currentKingdom.getBalance()) {
-                currentKingdom.setTaxRate(taxRate);
-                return "tax rate settled";
-                //در نکست ترن باید از حسابش به اندازه ای که دیگه هست کم بشه. اگه پول نداشت اونجا باید ریت رو بر روی صفر تنظیم کرد
-            } else
-                return "your balance is not enough";
-        } else
-            return "tax rate out of bounds";
-    }
-
-    public String showTaxRate() {
-        return "tax rate: " + currentKingdom.getTaxRate();
-    }
-
     public String showPopularityFactors() {
-        return "-food\n-tax rate\n-religion\n-fear rate";
-
+        return "Popularity factors:\nFood => " + showFoodRate() + "\nTax rate => " + showTaxRate() +
+                "\nReligion => " + showReligion() + "\nFear rate => " + showFearRate();
     }
 
     public String showPopularity() {
-        return "your popularity : " + currentKingdom.getPopularity();
+        return "Popularity rate : " + currentKingdom.getPopularity();
     }
 
     public String showFoodList() {
-        StringBuilder output = new StringBuilder("food list:");
+        StringBuilder output = new StringBuilder("Food list: ");
         for (Food food : currentKingdom.getFoods().keySet()) {
-            output.append("\n").append(food.name().toLowerCase()).append(": ").append(currentKingdom.getFoods().get(food));
+            output.append("\n").append(food.name().toLowerCase()).append(" : ").append(currentKingdom.getFoods().get(food));
         }
         return output.toString();
     }
@@ -270,96 +250,74 @@ public class GameController {
     public String setFoodRate(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        if (options.get("n").matches("-?\\d+")) {
-            int rateNumber = Integer.parseInt(options.get("n"));
-            if (rateNumber <= 2 && rateNumber >= -2) {
-                currentKingdom.setFoodRate(rateNumber);
-                return "food rate settled";
-            } else
-                return "rate number out of bounds";
-        } else
-            return "rate number is not valid";
+        if (!options.get("r").matches("-?\\d+"))  return "Please input digit as rate!";
+        int rateNumber = Integer.parseInt(options.get("r"));
+        if (rateNumber > 2 || rateNumber < -2) return "Invalid bound!";
+        currentKingdom.setFoodRate(rateNumber);
+        int getFood = (int) (((double)(currentKingdom.getFoodRate() + 2) / 2) * (double)currentKingdom.getPopulation());
+        int foodCounter = 0;
+        for (Food food : currentKingdom.getFoods().keySet()) foodCounter += currentKingdom.getFoods().get(food);
+        if (foodCounter - getFood < 0) {
+            currentKingdom.setFoodRate(-2);
+            return "Food rate set to -2 automatically";
+        }
+        else {
+            currentKingdom.setTaxRate(getFood);
+            return "Food rate settled successfully!";
+        }
     }
 
     public String showFoodRate() {
-        return "food rate: " + currentKingdom.getFoodRate();
+        return "Food rate : " + currentKingdom.getFoodRate();
+    }
+
+    public String showReligion() {
+        int counter = 0;
+        BuildingType buildingType;
+        for (Building building : currentKingdom.getBuildings()) {
+            buildingType = building.getBuildingType();
+            if (buildingType.equals(BuildingType.CATHEDRAL) || buildingType.equals(BuildingType.CHURCH))
+                counter++;
+        }
+        return "Religious building : " + counter;
+    }
+
+    public String setTaxRate(HashMap<String, String> options) {
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        if (!options.get("r").matches("-?\\d+"))  return "Please input digit as rate!";
+        int taxRate = Integer.parseInt(options.get("r"));
+        if (taxRate > 8 || taxRate < -3) return "Invalid bound!";
+        double getTax;
+        if (currentKingdom.getTaxRate() < 0) getTax = currentKingdom.getTaxRate() * 0.2 - 0.4;
+        else getTax = currentKingdom.getTaxRate() * 0.2 + 0.4;
+        if (currentKingdom.getBalance() + getTax * currentKingdom.getPopulation() < 0) {
+            currentKingdom.setTaxRate(0);
+            return "Tax rate set to 0 automatically";
+        }
+        else {
+            currentKingdom.setTaxRate(taxRate);
+            return "Tax rate settled successfully!";
+        }
+    }
+
+    public String showTaxRate() {
+        return "Tax rate : " + currentKingdom.getTaxRate();
     }
 
     public String setFearRate(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        if (options.get("n").matches("-?\\d+")) {
-            int rateNumber = Integer.parseInt(options.get("n"));
-            if (rateNumber <= 5 && rateNumber >= -5) {
-                currentKingdom.setFearRate(rateNumber);
-                return "fear rate settled";
-            } else return "rate number out of bounds";
-        } else return "rate number is not valid";
+        for (String key : options.keySet())
+            if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        if (!options.get("r").matches("-?\\d+")) return "please in ut digit as your rate!";
+        int rateNumber = Integer.parseInt(options.get("r"));
+        if (rateNumber > 5 || rateNumber < -5) return "Invalid bounds!";
+        currentKingdom.setFearRate(rateNumber);
+        return "fear rate settled successfully!";
     }
 
-    public void updateTaxRateByKingdom(Kingdom kingdom) {
-        Double cost = getCostByTaxRate(kingdom.getTaxRate()) * kingdom.getPopulation();
-        if ((kingdom.getTaxRate() < 0) && (cost >= kingdom.getBalance())) {
-            kingdom.setTaxRate(0);
-            System.out.println("your tax rate set to zero");
-        }else {
-            kingdom.setBalance(kingdom.getBalance() - cost);
-            kingdom.setPopularity(kingdom.getPopularity() + getPopularityByTaxRate(kingdom.getTaxRate()));
-        }
-    }
-
-    public void updateFearRateByKingdom(Kingdom kingdom) {
-        int x = kingdom.getHeadquarter().getPosition().getxPosition();
-        int y = kingdom.getHeadquarter().getPosition().getyPosition();
-        for (MapBlock[] mapBlocks : gameMap.getSurroundingArea(x, y, 1)) {
-            for (MapBlock block: mapBlocks) {
-                if (block.getBuildings().getBuildingType().equals(BuildingType.BALLISTA))
-                    if (kingdom.getMaxFearRate() > 0)
-                         kingdom.setMaxFearRate(kingdom.getMaxFearRate() - 1);
-            }
-        }
-        if (kingdom.getFearRate() > kingdom.getMaxFearRate())
-            kingdom.setFearRate(kingdom.getMaxFearRate());
-        kingdom.setEfficiency(100 - 10 * kingdom.getFearRate());
-        kingdom.setPopularity(kingdom.getPopularity() - 2 * (kingdom.getFearRate()));
-    }
-
-    /*public void updateFoodRate(Kingdom kingdom) {
-        int balanceFood = 0;
-        int diversity = 0;
-        double reduceFood = (1 + (0.5 * kingdom.getFoodRate())) * kingdom.getPopulation();
-        for (Double foodValue : kingdom.getFoods().values()) {
-            if (foodValue > 0)
-                diversity++;
-            balanceFood += foodValue;
-        }
-        if (balanceFood < reduceFood)
-            kingdom.setFoodRate(-2);
-        if (kingdom.getFoodRate() != -2) {
-            kingdom.setPopularity(kingdom.getPopularity() + diversity + (4 * kingdom.getFoodRate()));
-            for (Double foodValue : kingdom.getFoods().values()) {
-                if (foodValue < reduceFood) {
-                    reduceFood -= foodValue;
-                    foodValue = 0.0;
-                    continue;
-                }
-                foodValue -= reduceFood;
-                break;
-            }
-        }
-    }*/
-
-    public void updateReligionByKingdom(Kingdom kingdom) {
-        for (Building building : kingdom.getBuildings()) {
-            if (building.getBuildingType().name().equals("CHURCH"))
-                kingdom.setPopularity(kingdom.getPopularity() + 3);
-            else if (building.getBuildingType().name().equals("CATHEDRAL"))
-                kingdom.setPopularity(kingdom.getPopularity() + 5);
-        }
-    }
-
-    public void updatePopulation(Kingdom kingdom) {
-        kingdom.setPopulation(kingdom.getPopulation() + kingdom.getPopularity());
+    public String showFearRate() {
+        return "Fear rate : " + currentKingdom.getFearRate();
     }
 
     public int getPopularityByTaxRate(int taxRate) {
