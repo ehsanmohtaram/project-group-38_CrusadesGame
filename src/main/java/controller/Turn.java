@@ -1,7 +1,10 @@
 package controller;
 import model.*;
 import model.building.*;
+import model.unit.Unit;
 import model.unit.UnitType;
+
+import java.util.Objects;
 
 public class Turn {
 
@@ -21,6 +24,7 @@ public class Turn {
     public void runNextTurn() {
         executeProducerBuilding();
         executeMines();
+        move();
         getTax();
         giveFood();
         growPopulation();
@@ -226,6 +230,15 @@ public class Turn {
         if (resource instanceof ResourceType) return checkResourceCapacity((ResourceType) resource, produceRate);
         else if (resource instanceof Food) return checkFoodCapacity((Food) resource, produceRate);
         else return checkWeaponCapacity((Weapons) resource, produceRate);
+    }
+
+    public void move() {
+        for (Building building : currentKingdom.getRemainingBuildingMove())
+            building.getPosition().setSiege(building);
+        currentKingdom.getRemainingBuildingMove().clear();
+        for (Unit unit : currentKingdom.getRemainingUnitMove())
+            unit.getLocationBlock().addUnitHere(unit);
+        currentKingdom.getRemainingUnitMove().clear();
     }
 
     public static void calculateResources(){

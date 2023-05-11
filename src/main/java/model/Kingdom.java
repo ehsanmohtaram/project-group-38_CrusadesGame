@@ -30,6 +30,8 @@ public class Kingdom{
     private HashMap<Weapons, Integer> weapons = new HashMap<>();
     private ArrayList<Unit> units = new ArrayList<>();
     private ArrayList<Building> buildings = new ArrayList<>();
+    private ArrayList<Unit> remainingUnitMove = new ArrayList<>();
+    private ArrayList<Building> remainingBuildingMove = new ArrayList<>();
     public Kingdom(Flags flag, User owner) {
         population = noneEmployed = 10;
         popularity = 10;
@@ -112,6 +114,22 @@ public class Kingdom{
         int counter = 0;
         for (Building building : buildings) if (building.getBuildingType().equals(stockType)) counter++;
         return counter;
+    }
+
+    public ArrayList<Unit> getRemainingUnitMove() {
+        return remainingUnitMove;
+    }
+
+    public ArrayList<Building> getRemainingBuildingMove() {
+        return remainingBuildingMove;
+    }
+
+    public void setRemainingUnitMove(Unit unit) {
+        remainingUnitMove.add(unit);
+    }
+
+    public void setRemainingBuildingMove(Building building) {
+        remainingBuildingMove.add(building);
     }
 
     public void setStockCapacity(StockType stockType, int currentResourceAmount, Enum<?> resources) {

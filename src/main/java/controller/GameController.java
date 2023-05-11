@@ -174,28 +174,6 @@ public class GameController {
         return "building";
     }
 
-    public String moveSiege(HashMap<String , String> options) {
-        for (String key : options.keySet())
-            if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        String firstResult, secondResult;
-        firstResult = positionValidate(options.get("x"),options.get("y"));
-        if (firstResult != null) return firstResult;
-        MapBlock firstMapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
-        secondResult = positionValidate(options.get("x"),options.get("y"));
-        if (secondResult != null) return secondResult;
-        MapBlock secondMapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
-        if (firstMapBlock.getSiege() == null ) return "There is no siege to be moved in this block!";
-        if (firstMapBlock.getSiege() != null && firstMapBlock.getBuildings() != null) return "This siege is not movable!";
-        if (secondMapBlock.getMapBlockType() != null || secondMapBlock.getSiege() != null)
-            return "The block you choose to move to is already filled!";
-        if (!secondMapBlock.getMapBlockType().isBuildable()) return "You can not put your siege here!";
-        secondMapBlock.setSiege(firstMapBlock.getSiege());
-        firstMapBlock.setSiege(null);
-        secondMapBlock.getSiege().setPosition(secondMapBlock);
-        return "Your siege move successfully!";
-    }
-
     public String showMap(HashMap<String, String> options){
         for (String key: options.keySet())
             if(options.get(key) == null)

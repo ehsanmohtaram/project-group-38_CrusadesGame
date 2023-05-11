@@ -110,7 +110,7 @@ public class Unit {
     public void moveTo(MapBlock destination, int length){
         increaseMoves(length);
         locationBlock.removeUnitFromHere(this);
-        destination.addUnitHere(this);
+        this.setLocationBlock(destination);
     }
 
     public void fight(Unit enemy){

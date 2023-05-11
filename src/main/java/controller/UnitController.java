@@ -49,7 +49,7 @@ public class UnitController {
         Integer moveLength;
         if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
                 destination.getxPosition(), destination.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
-            return "they are too slow to reach such destination";
+            return "They are too slow to reach such destination";
         if(destination.getBuildings() instanceof DefensiveStructure){
             DefensiveStructure defensiveDestination = (DefensiveStructure) destination.getBuildings();
             DefensiveStructureType type = (DefensiveStructureType) destination.getBuildings().getSpecificConstant();
@@ -60,8 +60,10 @@ public class UnitController {
             }
         }
 
-        for (Unit unit : currentUnit)
+        for (Unit unit : currentUnit) {
             unit.moveTo(destination, moveLength);
+            currentKingdom.addUnit(unit);
+        }
         return "moved successfully";
     }
 

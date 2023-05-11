@@ -53,15 +53,6 @@ public class BuildingMenu {
         }
     }
 
-    public String generalBuildingRun() {
-        String command;
-        while (true) {
-            command = CommandParser.getScanner().nextLine();
-            if (commandParser.validate(command, "back", null) != null) return "back";
-            else System.out.println("Invalid command");
-        }
-    }
-
     public String stockBuildingRun() {
         String command;
         while (true) {
@@ -69,6 +60,18 @@ public class BuildingMenu {
             if (commandParser.validate(command, "back", null) != null) return "back";
             if (commandParser.validate(command, "show stock content", null) != null)
                 System.out.println(buildingController.showResources());
+            else System.out.println("Invalid command");
+        }
+    }
+
+    public String siegeRun() {
+        HashMap<String, String> optionPass;
+        String command;
+        while (true) {
+            command = CommandParser.getScanner().nextLine();
+            if (commandParser.validate(command, "back", null) != null) return "back";
+            if ((optionPass = commandParser.validate(command, "move siege", "x|xPosition/y|yPosition")) != null)
+                System.out.println(buildingController.moveSiege(optionPass));
             else System.out.println("Invalid command");
         }
     }

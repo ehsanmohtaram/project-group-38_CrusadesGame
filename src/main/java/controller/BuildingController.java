@@ -32,9 +32,9 @@ public class BuildingController {
     public String redirect() {
         if (selectedBuilding.getSpecificConstant() instanceof DefensiveStructureType) return buildingMenu.defensiveBuildingRnu();
         else if (selectedBuilding.getSpecificConstant() instanceof CampType) return buildingMenu.campBuildingRnu();
-        else if (selectedBuilding.getSpecificConstant() instanceof GeneralBuildingType) return buildingMenu.generalBuildingRun();
         else if (selectedBuilding.getSpecificConstant() instanceof StockType) return buildingMenu.stockBuildingRun();
         else if (selectedBuilding.getSpecificConstant() instanceof ProducerType) return buildingMenu.produceBuildingRun();
+        else if (selectedBuilding.getSpecificConstant() instanceof SiegeType) return buildingMenu.siegeRun();
         else if (selectedBuilding.getBuildingType().equals(BuildingType.SHOP)) return buildingMenu.runShop();
         else return null;
     }
@@ -275,5 +275,45 @@ public class BuildingController {
                 currentKingdom.setResourceAmount(resourceType,sign * amount); currentKingdom.setBalance((double) -sign * resourceType.getPrice() * amount * rate);
         }
         return "Purchase done successfully";
+    }
+
+    public String positionValidate(String xPosition, String yPosition) {
+        if(!xPosition.matches("-?\\d+") && !yPosition.matches("-?\\d+"))
+            return "Please input digit as your input values!";
+        if (Integer.parseInt(xPosition) > gameMap.getMapWidth() ||
+                Integer.parseInt(yPosition) > gameMap.getMapWidth() ||
+                Integer.parseInt(xPosition) < 0 ||
+                Integer.parseInt(yPosition) < 0) return "Invalid bounds!";
+        return null;
+    }
+
+    public String moveSiege(HashMap<String , String> options) {
+        if (!(selectedBuilding instanceof Siege)) return "Invalid command";
+        SiegeType siegeType = (SiegeType) selectedBuilding.getSpecificConstant();
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        String position = positionValidate(options.get("x"), options.get("y"));
+        if (position != null) return position;
+        MapBlock goingPosition = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        if (!siegeType.getPortable()) return "This siege is not movable!";
+        if (!goingPosition.getMapBlockType().isAccessible()) return "You can not go to this block!";
+        if (goingPosition.getBuildings() != null || goingPosition.getSiege() != null) return "This block is already filled with another building!";
+        if (gameMap.getShortestWayLength(selectedBuilding.getPosition().getxPosition(), selectedBuilding.getPosition().getyPosition()
+                ,goingPosition.getxPosition(), goingPosition.getyPosition(), siegeType.getMoveRange()) == null)
+            return "This siege is too slow to reach such destination!";
+        int counter = 0;
+        for (Unit unit : selectedBuilding.getPosition().getUnits()) {
+            if (selectedBuilding.getBuildingType().getNumberOfWorker() == counter) break;
+            if (unit.getUnitType().equals(UnitType.ENGINEER)) {
+                unit.setLocationBlock(goingPosition);
+                selectedBuilding.getPosition().removeUnitFromHere(unit);
+                currentKingdom.setRemainingUnitMove(unit);
+                counter++;
+            }
+        }
+        selectedBuilding.getPosition().setSiege(null);
+        selectedBuilding.setPosition(goingPosition);
+        currentKingdom.setRemainingBuildingMove(selectedBuilding);
+        return "Your siege moved successfully!";
     }
 }

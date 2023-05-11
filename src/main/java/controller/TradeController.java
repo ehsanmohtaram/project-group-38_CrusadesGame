@@ -4,7 +4,6 @@ import model.*;
 import model.building.BuildingType;
 import model.building.StockType;
 import view.TradeMenu;
-
 import java.util.HashMap;
 
 public class TradeController {
@@ -29,34 +28,32 @@ public class TradeController {
     }
 
     public String newRequest(HashMap<String, String> options) {
+        ResourceType resourceType;
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet())
-            if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         User userReceiver;
-        try {
-            ResourceType.valueOf(options.get("t").toUpperCase());
-        } catch (Exception IllegalArgumentException) {
-            return "This resource type does not exist";
-        }
+        try {resourceType = ResourceType.valueOf(options.get("t").toUpperCase());}
+        catch (Exception ignored) {return "This resource type does not exist";}
+        if (!options.get("p").matches("-?\\d+") || !options.get("a").matches("-?\\d+"))
+            return "Please input digit as your values!";
         if ((userReceiver = User.getUserByUsername(options.get("u"))) != null) {
             int resourceAmount = Integer.parseInt(options.get("a"));
             int price = Integer.parseInt(options.get("p"));
+            if (price < 0 || resourceAmount < 0) return "Invalid bounds!";
+            if (gameMap.getKingdomByOwner(currentUser).getNumberOfStock(BuildingType.STOCKPILE) * StockType.STOCKPILE.getCAPACITY() <
+                    gameMap.getKingdomByOwner(currentUser).getResourceAmount(resourceType) + resourceAmount)
+                return "You do not have enough space for this amount of resource!";
             if (gameMap.getKingdomByOwner(currentUser).getBalance() >= price) {
-//                if (gameMap.getKingdomByOwner(currentUser).getNumberOfStock(BuildingType.STOCKPILE) * StockType.STOCKPILE.getCAPACITY() >
-//                        gameMap.getKingdomByOwner(currentUser).getResourceAmount(resourceType) + amount) {
-                    String massageRequest = options.get("m");
-                    Trade trade = new Trade(ResourceType.valueOf(options.get("t").toUpperCase()), resourceAmount, price, currentUser, userReceiver, massageRequest, Trade.countId);
-                    Trade.countId++;
-                    Trade.getTrades().add(trade);
-                    gameMap.getKingdomByOwner(currentUser).addRequest(trade);
-                    gameMap.getKingdomByOwner(currentUser).getHistoryTrade().add(trade);
-                    gameMap.getKingdomByOwner(userReceiver).addSuggestion(trade);
-                    gameMap.getKingdomByOwner(userReceiver).addNotification(trade);
-                    return "The request was successfully registered";
-//                } else
-//                    return "You do not have enough space for this resource!";
-            } else
-                return "your balance not enough";
+                String massageRequest = options.get("m");
+                Trade trade = new Trade(resourceType, resourceAmount, price, currentUser, userReceiver, massageRequest, Trade.countId);
+                Trade.countId++;
+                Trade.getTrades().add(trade);
+                gameMap.getKingdomByOwner(currentUser).addRequest(trade);
+                gameMap.getKingdomByOwner(currentUser).getHistoryTrade().add(trade);
+                gameMap.getKingdomByOwner(userReceiver).addSuggestion(trade);
+                gameMap.getKingdomByOwner(userReceiver).addNotification(trade);
+                return "The request was successfully registered";
+            } else return "your balance not enough";
         } else
             return "Username with this ID was not found";
     }
@@ -70,14 +67,14 @@ public class TradeController {
                     .append(trade.getUserSender().getUserName()).append(" id : ").append(trade.getId())
                     .append(" massage : ").append(trade.getMassageRequest());
         }
-//        gameMap.getKingdomByOwner(currentUser).getNotification().clear();
         return output.toString();
     }
 
     public String tradeAccept(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet())
-            if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        if (!options.get("i").matches("-?\\d+")) return "Please input digit as your values!";
+        if (Integer.parseInt(options.get("i")) < 0) return "Invalid bounds";
         for (Trade trade : gameMap.getKingdomByOwner(currentUser).getMySuggestion()) {
             if (trade.getId() == Integer.parseInt(options.get("i"))) {
                 Kingdom receiverkingdom = gameMap.getKingdomByOwner(currentUser);
@@ -91,7 +88,6 @@ public class TradeController {
                     senderKingdom.setBalance(senderKingdom.getBalance() - trade.getPrice());
                     trade.setMassageAccept(options.get("m"));
                     senderKingdom.getNotification().add(trade);
-
                     return "The trade was successful";
                 } else
                     return "The resource balance is not enough";
