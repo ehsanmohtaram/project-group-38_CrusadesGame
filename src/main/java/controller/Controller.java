@@ -5,17 +5,17 @@ import model.Map;
 import model.User;
 import view.*;
 import java.util.*;
-import java.util.regex.Matcher;
 
 public class Controller {
     private final MainMenu mainMenu;
     public static User currentUser = null;
+    public static User loggedInUser = null;
     private Map gameMap;
 
     public Controller() {
         this.mainMenu = new MainMenu(this);
         Database.setArrayOfUsers();
-        for (User user : User.users) if (user.getLoggedIn()) currentUser = user;
+        for (User user : User.users) if (user.getLoggedIn()) currentUser = loggedInUser = user;
     }
 
     public void run() {

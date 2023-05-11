@@ -90,7 +90,7 @@ public class LoginController {
         result = Randomize.randomCaptcha();
         if (result.equals("finished")) return "Security field failed! Please try again.";
         if (options.get("s") != null) User.getUserByUsername(options.get("u")).setLoggedIn(true);
-        Controller.currentUser = User.getUserByUsername(options.get("u"));
+        Controller.currentUser = Controller.loggedInUser = User.getUserByUsername(options.get("u"));
         return "login";
     }
 

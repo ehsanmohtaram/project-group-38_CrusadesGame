@@ -18,7 +18,10 @@ public class GameMenu {
         String input, result;
         while (true) {
             input = CommandParser.getScanner().nextLine();
-            if (commandParser.validate(input, "back", null) != null) return "back";
+            if (commandParser.validate(input, "back", null) != null) {
+                if(gameController.backToMainMenu()) return "back";
+                else return "Invalid command";
+            }
             if (commandParser.validate(input, "show current menu", null) != null)
                 System.out.println("Game menu");
             else if (commandParser.validate(input, "trade menu", null) != null) {
@@ -37,11 +40,10 @@ public class GameMenu {
                 result = gameController.selectUnit(options);
                 if (!result.equals("unit")) System.out.println(result);
                 else return "unit";
-
             }else if ((options = commandParser.validate(input,"show map","x|positionX/y|positionY")) != null) {
                 result = gameController.showMap(options);
                 System.out.println(result);
-                if(result.matches("map:\\sin[\\S\\s]+"))return "map";
+                if(result.matches("map:\\sin[\\S\\s]+")) return "map";
             }else if ((options = commandParser.validate(input, "tax rate", "r|rateNumber")) != null)
                 System.out.println(gameController.setTaxRate(options));
             else if (commandParser.validate(input, "tax rate show", null) != null)

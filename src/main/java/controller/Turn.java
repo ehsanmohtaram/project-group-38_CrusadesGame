@@ -39,6 +39,7 @@ public class Turn {
         double getTax;
         if (currentKingdom.getTaxRate() <= 0) {
             getTax = currentKingdom.getTaxRate() * 0.2 - 0.4;
+            if (currentKingdom.getTaxRate() == 0) getTax = 0;
             currentKingdom.setPopularity(-currentKingdom.getTaxRate() * 2 + 1);
         }
         else {

@@ -6,7 +6,6 @@ import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
 import view.*;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -64,6 +63,11 @@ public class GameController {
         selectedUnit = null; selectedBuilding = null;
         currentKingdom = gameMap.getKingdomByOwner(currentUser);
         return "next turn";
+    }
+
+    public boolean backToMainMenu() {
+        if (currentUser.equals(Controller.loggedInUser)) return true;
+        else return false;
     }
 
     public String positionValidate(String xPosition, String yPosition) {
@@ -319,40 +323,5 @@ public class GameController {
     public String showFearRate() {
         return "Fear rate : " + currentKingdom.getFearRate();
     }
-
-    public int getPopularityByTaxRate(int taxRate) {
-        switch(taxRate) {
-            case -3 : return 7;
-            case -2 : return 5;
-            case -1 : return 3;
-            case 0  : return 1;
-            case 1  : return -2;
-            case 2  : return -4;
-            case 3  : return -6;
-            case 4  : return -8;
-            case 5  : return -12;
-            case 6  : return -16;
-            case 7  : return -20;
-            default: return -24;
-        }
-    }
-
-    public Double getCostByTaxRate(int taxRate) {
-        switch (taxRate) {
-            case -3 : return 1.0;
-            case -2 : return 0.8;
-            case -1 : return 0.6;
-            case 0  : return 0.0;
-            case 1  : return -0.6;
-            case 2  : return -0.8;
-            case 3  : return -1.0;
-            case 4  : return -1.2;
-            case 5  : return -1.4;
-            case 6  : return -1.6;
-            case 7  : return -1.8;
-            default: return -2.0;
-        }
-    }
-
 
 }
