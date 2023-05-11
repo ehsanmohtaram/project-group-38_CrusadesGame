@@ -66,8 +66,7 @@ public class GameController {
     }
 
     public boolean backToMainMenu() {
-        if (currentUser.equals(Controller.loggedInUser)) return true;
-        else return false;
+        return currentUser.equals(Controller.loggedInUser);
     }
 
     public String positionValidate(String xPosition, String yPosition) {
@@ -126,6 +125,7 @@ public class GameController {
         currentKingdom.setBalance((double) -buildingType.getGOLD());
         currentKingdom.setResourceAmount(buildingType.getRESOURCES(),-buildingType.getRESOURCE_NUMBER());
         mapBlock.setBuildings(building);
+        for (Direction direction : Direction.values()) gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), direction ,false);
         currentKingdom.addBuilding(building);
         currentKingdom.setNormalUnitInPosition(buildingType.getWorkerNeeded(), mapBlock, buildingType.getNumberOfWorker());
         changeNonWorkingUnitPosition(buildingType.getWorkerNeeded(), mapBlock, buildingType.getNumberOfWorker());

@@ -108,10 +108,6 @@ public class Kingdom{
         return foods;
     }
 
-    public HashMap<ResourceType, Integer> getResources() {
-        return resources;
-    }
-
     public Integer getNumberOfStock(BuildingType stockType) {
         int counter = 0;
         for (Building building : buildings) if (building.getBuildingType().equals(stockType)) counter++;

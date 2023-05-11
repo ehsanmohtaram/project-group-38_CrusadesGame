@@ -137,9 +137,6 @@ public class Map implements Cloneable {
     }
 
     public void changeAccess(int xPosition , int yPosition , Direction direction, boolean isAccessible){
-//        Random random = new Random();
-//        if(direction == 'r')
-//            direction = directions.get(random.nextInt()%4);
         switch (direction){
             case WEST:
                 if(xPosition != 0)
