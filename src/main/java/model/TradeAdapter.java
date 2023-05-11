@@ -13,7 +13,7 @@ public class TradeAdapter implements JsonSerializer<Trade>, JsonDeserializer<Tra
         jsonObject.addProperty("userReceiver", trade.getUserReceiver().getUserName());
         jsonObject.addProperty("price", trade.getPrice());
         jsonObject.addProperty("id", trade.getId());
-        jsonObject.addProperty("massage", trade.getMassage());
+        jsonObject.addProperty("massage", trade.getMassageRequest());
         return jsonObject;
     }
 

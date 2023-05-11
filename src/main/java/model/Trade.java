@@ -13,16 +13,17 @@ public class Trade {
     private User userReceiver;
     private Integer price;
     private Integer id;
-    private String massage;
+    private String massageRequest;
+    private String massageAccept = null;
     public static Integer countId = 1;
 
-    public Trade(ResourceType resourceType, Integer resourceAmount, Integer price, User userSender, User userReceiver, String massage , Integer id) {
+    public Trade(ResourceType resourceType, Integer resourceAmount, Integer price, User userSender, User userReceiver, String massageRequest , Integer id) {
         this.resourceType = resourceType;
         this.resourceAmount = resourceAmount;
         this.userSender = userSender;
         this.userReceiver = userReceiver;
         this.price = price;
-        this.massage = massage;
+        this.massageRequest = massageRequest;
         this.id = id;
     }
 
@@ -54,9 +55,15 @@ public class Trade {
         return id;
     }
 
-    public String getMassage() {
-        return massage;
+    public String getMassageRequest() {
+        return massageRequest;
     }
 
+    public String getMassageAccept() {
+        return massageAccept;
+    }
 
+    public void setMassageAccept(String massageAccept) {
+        this.massageAccept = massageAccept;
+    }
 }
