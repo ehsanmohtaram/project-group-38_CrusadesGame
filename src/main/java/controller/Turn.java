@@ -157,6 +157,7 @@ public class Turn {
                 }
             }
         }
+
     }
 
     public boolean checkMineProduce(ResourceType resourceType, MapBlock mapBlock, Integer produceRate) {
