@@ -117,7 +117,7 @@ public class Unit {
 
     public Integer getOptimizedDistanceFrom(int xPosition, int yPosition, boolean considerHigherElevations){
         int normalDistance = Math.abs(locationBlock.getxPosition() - xPosition) + Math.abs(locationBlock.getyPosition() - yPosition);
-        if(higherElevation != null){
+        if(higherElevation != null && considerHigherElevations){
             DefensiveStructureType type = (DefensiveStructureType) higherElevation.getSpecificConstant();
             return normalDistance + type.getFurtherFireRange();
         }
@@ -140,6 +140,7 @@ public class Unit {
         locationBlock.removeUnitFromHere(this);
         destination.addUnitHere(this);
         locationBlock.removeUnitFromHere(this);
+        this.locationBlock = destination;
     }
     private boolean checkEnemyCanAttack(Unit enemy){
         return false;
@@ -150,7 +151,21 @@ public class Unit {
         enemy.decreaseHp(getOptimizedDamage());
     }
 
-    public boolean bilateralFight(Unit enemy){
+    public void bilateralFight(Unit enemy, boolean considerDistances){
+        if(considerDistances){
+            if(enemy.getOptimizedDistanceFrom(getXPosition(), getYPosition(), true) <= getOptimizedAttackRange()){
+                enemy.decreaseHp(getOptimizedDamage());
+            }
+            if(getOptimizedDistanceFrom(enemy.getXPosition(), enemy.getYPosition(), true) <= enemy.getOptimizedAttackRange()){
+                decreaseHp(enemy.getOptimizedDamage());
+            }
+        }else{
+            enemy.decreaseHp(getOptimizedDamage());
+            decreaseHp(enemy.getOptimizedDamage());
+        }
+    }
+
+    public boolean bilateralFightTillEnd(Unit enemy){
         int strikes = enemy.getHp() / getOptimizedDamage() + 1;
         int enemyStrikes = hp / enemy.getOptimizedDamage() + 1;
         if(strikes > enemyStrikes){
@@ -164,6 +179,7 @@ public class Unit {
         }
 
     }
+
     public void destroyBuilding(Building target, ArrayList<Unit> archers){
         if(!target.getBuildingType().equals(BuildingType.HEAD_QUARTER)){
             target.decreaseHP(getOptimizedDamage());

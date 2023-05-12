@@ -4,13 +4,14 @@ import model.unit.Unit;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Map implements Cloneable {
     public static ArrayList<Map> Maps = new ArrayList<>();
     public static ArrayList<Map> DEFAULT_MAPS = new ArrayList<>(3);
     private ArrayList<Kingdom> players = new ArrayList<>();
+    private ArrayList<Kingdom> deadPlayers = new ArrayList<>();
+    private boolean endGame;
     private String mapName;
     private MapBlock[][] map;
     private Boolean[][] accessToRight;
@@ -19,6 +20,7 @@ public class Map implements Cloneable {
     private int mapWidth;
     private int mapHeight;
     public Map(Integer mapWidth, Integer mapHeight, String mapName) {
+        endGame = false;
         this.mapName = mapName;
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
@@ -42,6 +44,18 @@ public class Map implements Cloneable {
         Maps.add(this);
 //        for (MapBlock[] mapBlockHeight : map)
 //            for (MapBlock mapBlockWith : mapBlockHeight) mapBlockWith = new MapBlock();
+    }
+
+    public boolean isEndGame() {
+        return endGame;
+    }
+
+    public void setEndGame(boolean endGame) {
+        this.endGame = endGame;
+    }
+
+    public MapBlock[][] getMap() {
+        return map;
     }
 
     public static void createDefaultMaps(){
@@ -106,6 +120,14 @@ public class Map implements Cloneable {
 
     public ArrayList<Kingdom> getPlayers() {
         return players;
+    }
+
+    public ArrayList<Kingdom> getDeadPlayers() {
+        return deadPlayers;
+    }
+
+    public void setDeadPlayers(Kingdom deeds) {
+        deadPlayers.add(deeds);
     }
 
     public MapBlock getMapBlockByLocation(int xPosition , int yPosition){
@@ -226,15 +248,18 @@ public class Map implements Cloneable {
         return output;
     }
 
-    public ArrayList<Unit> getArcherEnemiesInSurroundingArea(int xPosition, int yPosition, Kingdom attacker){
+    public ArrayList<Unit> getEnemiesInSurroundingArea(int xPosition, int yPosition, Kingdom attacker, boolean justArchers){
         ArrayList<Unit> archersOfEnemy = new ArrayList<>();
         for (MapBlock[] mapBlocks : getSurroundingArea(xPosition, yPosition, 5))
             for (MapBlock mapBlock : mapBlocks)
                 for (Unit unit : mapBlock.getUnits())
-                    if(!unit.getOwner().equals(attacker) && unit.getUnitType().getCAN_DO_AIR_ATTACK()
-                            && map[xPosition][yPosition].getUnits().get(0).getOptimizedDistanceFrom(mapBlock.getxPosition(),
-                            mapBlock.getyPosition(), true) < unit.getOptimizedAttackRange())
+                    if(!unit.getOwner().equals(attacker) &&
+                            map[xPosition][yPosition].getUnits().get(0).getOptimizedDistanceFrom(mapBlock.getxPosition(),
+                            mapBlock.getyPosition(), true) < unit.getOptimizedAttackRange()) {
                         archersOfEnemy.add(unit);
+                        if(justArchers && !unit.getUnitType().getCAN_DO_AIR_ATTACK())
+                            archersOfEnemy.remove(unit);
+                    }
 
         return archersOfEnemy;
     }

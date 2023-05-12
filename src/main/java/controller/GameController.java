@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
+
 public class GameController {
     public static Map gameMap;
     public static Building selectedBuilding;
@@ -48,6 +49,7 @@ public class GameController {
                     unitController.run();
                     break;
                 case "next turn":
+                    if (gameMap.getPlayers().size() == 1) {gameMap.setEndGame(true); System.out.println(getListOfPlayers()); return;}
                     Turn turn = new Turn(); turn.runNextTurn();
                     break;
                 case "back": return;
@@ -56,12 +58,46 @@ public class GameController {
     }
 
     public String nextTurn(){
+        checkForHeadQuarters();
         int nextPerson = gameMap.getPlayers().indexOf(currentKingdom);
         Controller.currentUser = gameMap.getPlayers().get((nextPerson + 1) % gameMap.getPlayers().size()).getOwner();
         currentUser = Controller.currentUser;
         selectedUnit = null; selectedBuilding = null;
         currentKingdom = gameMap.getKingdomByOwner(currentUser);
         return "next turn";
+    }
+
+    public String getListOfPlayers () {
+        StringBuilder stringBuilder = new StringBuilder();
+        int counter = 0;
+        stringBuilder.append(counter).append(". ").append(gameMap.getPlayers().get(0).getOwner().getUserName())
+                .append(" flag: ").append(gameMap.getPlayers().get(0).getFlag().toString().toLowerCase()).
+                append(" score: ").append(gameMap.getDeadPlayers().size() * 500);
+        counter++;
+        for (Kingdom kingdom : gameMap.getDeadPlayers()) {
+            counter++;
+            stringBuilder.append("\n").append(counter).append(". ").append(kingdom.getOwner().getUserName())
+                    .append(" flag: ").append(kingdom.getFlag().toString().toLowerCase()).
+                    append(" score: ").append((gameMap.getDeadPlayers().size() - counter) * 500);
+        }
+        return stringBuilder.toString();
+    }
+
+    public void checkForHeadQuarters() {
+        while (true) {
+            int counter = 0;
+            First:
+            for (Kingdom kingdom : gameMap.getPlayers()) {
+                for (Building building : kingdom.getBuildings()) {
+                    if (building.getBuildingType().equals(BuildingType.HEAD_QUARTER)){counter++; continue;}
+                    gameMap.setDeadPlayers(kingdom);
+                    kingdom.getOwner().setScore(500 * gameMap.getDeadPlayers().size());
+                    gameMap.getPlayers().remove(kingdom);
+                    break First;
+                }
+            }
+            if (counter == gameMap.getPlayers().size()) break;
+        }
     }
 
     public boolean backToMainMenu() {

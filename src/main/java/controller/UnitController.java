@@ -168,15 +168,15 @@ public class UnitController {
         else if(target.getUnits().get(0).getOptimizedDistanceFrom(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),false) >
                 currentUnit.get(0).getOptimizedAttackRange())
             return "out of attack range. first move your units";
-        ArrayList<Unit> archers = gameMap.getArcherEnemiesInSurroundingArea(target.getxPosition(), target.getyPosition()
-                , currentKingdom);
+        ArrayList<Unit> archers = gameMap.getEnemiesInSurroundingArea(target.getxPosition(), target.getyPosition()
+                , currentKingdom, true);
 
 
         if(target.isUnitsShouldBeAttackedFirst(currentUnit.get(0))){
             outer:
             for (Unit unit : currentUnit)
                 for (Unit targetUnit : target.getUnits())
-                    if(!unit.bilateralFight(targetUnit))
+                    if(!unit.bilateralFightTillEnd(targetUnit))
                         continue outer;
             if(currentUnit.size() > 0)
                 for (Unit unit : currentUnit)
@@ -199,6 +199,8 @@ public class UnitController {
             return "invalid location";
         if(origin.getBuildings() != null || destination.getBuildings() != null )
             return "patrol is available just for free locations not in buildings";
+        if(currentUnit.get(0).getUnitType().equals(UnitType.TUNNELER))
+            return "no patrol option available for tunnelers. you should use them correctly";
         Integer moveLength;
         if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
                 origin.getxPosition(), origin.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
@@ -214,6 +216,51 @@ public class UnitController {
             unit.setPatrolDestination(destination);
         }
         return "they will patrol between until you change their state or move them";
-
     }
+
+    public String digTunnel(HashMap<String, String> options){
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        MapBlock target = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        if(target == null)
+            return "invalid location";
+        Building toDestroy;
+        if((toDestroy = target.getBuildings()) == null)
+            return "there is no building there to dig tunnel under it";
+        if(toDestroy.getOwner().equals(currentUnit.get(0).getOwner()))
+            return "Are you crazy??? you can not destroy your own building with tunnelers";
+        Integer moveLength;
+        if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
+                target.getxPosition(), target.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
+            return "They are too slow to reach such destination";
+        for (Unit unit : currentUnit)
+            unit.moveTo(target, moveLength);
+
+        for (Unit defender : gameMap.getEnemiesInSurroundingArea(target.getxPosition(), target.getyPosition()
+                , currentKingdom, false))
+            for (Unit attacker : currentUnit)
+                defender.bilateralFight(attacker, true);
+        if(checkRemainingUnits())
+            toDestroy.decreaseHP(toDestroy.getHp());
+        return "they are sent to do their work";
+    }
+
+    public String disband(){
+        Camp camp;
+        if((camp = currentKingdom.getCampsToDisbandUnit(currentUnit)) == null)
+            return "no empty or remaining camp to store your units.";
+        for (Unit unit : currentUnit) {
+            unit.setUnitState(UnitState.NOT_ACTIVE);
+            unit.moveTo(camp.getPosition(), 0);
+        }
+        return "they go back to their camp";
+    }
+
+    public boolean checkRemainingUnits(){
+        if(currentUnit.size() == 0)
+            return false;
+        return true;
+    }
+
+
 }
