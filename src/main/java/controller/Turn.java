@@ -31,6 +31,7 @@ public class Turn {
         giveFood();
         getTax();
         move();
+        removeUnitsAndBuildingWith0Hp();
     }
 
     public void growPopulation() {
@@ -157,7 +158,6 @@ public class Turn {
                 }
             }
         }
-
     }
 
     public boolean checkMineProduce(ResourceType resourceType, MapBlock mapBlock, Integer produceRate) {
@@ -323,20 +323,66 @@ public class Turn {
         currentKingdom.getRemainingUnitMove().clear();
     }
 
-    public static void calculateResources(){
-
+    public void removeUnitsAndBuildingWith0Hp() {
+        for (MapBlock[] mapBlock : gameMap.getMap()) {
+            for (MapBlock checkBlock : mapBlock) {
+                removeDestroyedUnits(checkBlock);
+                removeDeadUnits(checkBlock);
+                removeSiegeUnits(checkBlock);
+            }
+        }
     }
 
-    public static void removeDeadUnits(){
-
+    public void removeDestroyedUnits(MapBlock checkBlock) {
+        Kingdom owner;
+        if (checkBlock.getBuildings() != null) {
+            owner = checkBlock.getBuildings().getOwner();
+            if (checkBlock.getBuildings().getHp() <= 0) {
+                if (checkBlock.getBuildings() instanceof Stock) {
+                    for (Enum<?> resource : ((Stock)checkBlock.getBuildings()).getResourceValues().keySet()) {
+                        if (resource instanceof Food)
+                            owner.setFoodsAmount((Food) resource, -((Stock)checkBlock.getBuildings()).getResourceValues().get(resource));
+                        else if (resource instanceof Weapons)
+                            owner.setWeaponsAmount((Weapons) resource, -((Stock)checkBlock.getBuildings()).getResourceValues().get(resource));
+                        else owner.setResourceAmount((ResourceType) resource, -((Stock)checkBlock.getBuildings()).getResourceValues().get(resource));
+                    }
+                }
+                checkBlock.getBuildings().getOwner().getBuildings().remove(checkBlock.getBuildings());
+                checkBlock.setBuildings(null);
+            }
+        }
     }
 
-    public static void removeDestroyedBuildings(){
-
+    public void removeDeadUnits(MapBlock checkBlock) {
+        if (checkBlock.getUnits().size() != 0) {
+            for (Unit unit : checkBlock.getUnits()) {
+                if (unit.getHp() <= 0) {
+                    unit.getOwner().getUnits().remove(unit);
+                    checkBlock.removeUnitFromHere(unit);
+                }
+            }
+        }
     }
 
-    public static void checkWinOrLose(){
-
+    public void removeSiegeUnits(MapBlock checkBlock) {
+        Building building;
+        int counter = 0;
+        if (checkBlock.getSiege() != null) {
+            building = checkBlock.getSiege();
+            if (checkBlock.getSiege().getHp() <= 0) {
+                while (building.getBuildingType().getNumberOfWorker() != counter || building.getPosition().getUnits().size() != 0) {
+                    for (Unit findUnit : checkBlock.getUnits())
+                        if (findUnit.getUnitType().equals(UnitType.ENGINEER)) {
+                            building.getPosition().removeUnitFromHere(findUnit);
+                            findUnit.getOwner().setNoneEmployed(1);
+                            break;
+                        }
+                    counter++;
+                }
+                checkBlock.getSiege().getOwner().getBuildings().remove(checkBlock.getBuildings());
+                checkBlock.setSiege(null);
+            }
+        }
     }
 
 }
