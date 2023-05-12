@@ -43,6 +43,10 @@ public class Map implements Cloneable {
 //            for (MapBlock mapBlockWith : mapBlockHeight) mapBlockWith = new MapBlock();
     }
 
+    public MapBlock[][] getMap() {
+        return map;
+    }
+
     public static void createDefaultMaps(){
         Map defaultMap1 = new Map(60 , 50 , "jungle");
         Map defaultMap2 = new Map(60 , 60 , "graveyard");

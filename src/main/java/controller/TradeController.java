@@ -8,8 +8,8 @@ import java.util.HashMap;
 
 public class TradeController {
     private final TradeMenu tradeMenu;
-    private final Map gameMap;
-    private final User currentUser;
+    private  Map gameMap;
+    private User currentUser;
 
     public TradeController() {
         this.tradeMenu = new TradeMenu(this);
@@ -25,6 +25,14 @@ public class TradeController {
         System.out.println(output);
         System.out.println(showNotification());
         tradeMenu.run();
+    }
+
+    public void setGameMap(Map gameMap) {
+        this.gameMap = gameMap;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
     }
 
     public String newRequest(HashMap<String, String> options) {
@@ -62,10 +70,10 @@ public class TradeController {
         StringBuilder output = new StringBuilder("your suggestions :");
         for (Trade trade : gameMap.getKingdomByOwner(currentUser).getMySuggestion()) {
             output.append("\nResource type : ").append(trade.getResourceType().name())
-                    .append(" resource amount : ").append(trade.getResourceAmount())
-                    .append(" price : ").append(trade.getPrice()).append(" from : ")
-                    .append(trade.getUserSender().getUserName()).append(" id : ").append(trade.getId())
-                    .append(" massage : ").append(trade.getMassageRequest());
+                    .append("\nresource amount : ").append(trade.getResourceAmount())
+                    .append("\nprice : ").append(trade.getPrice()).append("\nfrom : ")
+                    .append(trade.getUserSender().getUserName()).append("\nid : ").append(trade.getId())
+                    .append("\nmassage : ").append(trade.getMassageRequest());
         }
         return output.toString();
     }
@@ -80,20 +88,18 @@ public class TradeController {
                 Kingdom receiverkingdom = gameMap.getKingdomByOwner(currentUser);
                 if (receiverkingdom.getResourceAmount(trade.getResourceType()) >= trade.getResourceAmount()) {
                     receiverkingdom.setResourceAmount(trade.getResourceType(), -1 * trade.getResourceAmount());
-                    receiverkingdom.setBalance(receiverkingdom.getBalance() + trade.getPrice());
+                    receiverkingdom.setBalance((double) trade.getPrice());
                     receiverkingdom.getHistoryTrade().add(trade);
                     receiverkingdom.getMySuggestion().remove(trade);
                     Kingdom senderKingdom = gameMap.getKingdomByOwner(trade.getUserSender());
                     senderKingdom.setResourceAmount(trade.getResourceType(), trade.getResourceAmount());
-                    senderKingdom.setBalance(senderKingdom.getBalance() - trade.getPrice());
+                    senderKingdom.setBalance((double) -trade.getPrice());
                     trade.setMassageAccept(options.get("m"));
                     senderKingdom.getNotification().add(trade);
                     return "The trade was successful";
-                } else
-                    return "The resource balance is not enough";
+                } else return "The resource balance is not enough";
             }
-        }
-        return "This ID was not found for you";
+        } return "This ID was not found for you";
     }
 
     public String showTradeHistory() {
@@ -103,14 +109,14 @@ public class TradeController {
                     .append("\nresource amount : ").append(trade.getResourceAmount())
                     .append("\nprice : ").append(trade.getPrice()).append("\nid: ")
                     .append(trade.getId()).append("\nmassage : ").append(trade.getMassageRequest());
-            if (trade.getUserSender().equals(currentUser)) output.append("\n...Requested... ");
-            else output.append(" ...Accepted... ");
+            if (trade.getUserSender().equals(currentUser)) output.append("\n...Requested...");
+            else output.append(" ...Accepted...");
         }
         return output.toString();
     }
 
     public String showNotification() {
-        StringBuilder output = new StringBuilder("your new notification : ");
+        StringBuilder output = new StringBuilder("your new notification :");
         for (Trade trade : gameMap.getKingdomByOwner(currentUser).getNotification()) {
             if (trade.getUserSender().equals(currentUser)) {
                 output.append("\nyour request accepted by--> ").append(trade.getUserReceiver().getUserName()).

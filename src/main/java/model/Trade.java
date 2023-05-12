@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class Trade {
@@ -64,4 +65,13 @@ public class Trade {
     public void setMassageAccept(String massageAccept) {
         this.massageAccept = massageAccept;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Trade trade = (Trade) o;
+        return resourceType == trade.resourceType && Objects.equals(resourceAmount, trade.resourceAmount) && Objects.equals(price, trade.price) && Objects.equals(id, trade.id) && Objects.equals(massageRequest, trade.massageRequest) && Objects.equals(massageAccept, trade.massageAccept);
+    }
+
 }
