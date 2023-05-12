@@ -8,7 +8,7 @@ public enum ProducerType {
     ARMOURER(Weapons.METAL_ARMOUR, null, 4, false),
     BLACKSMITH(Weapons.PIKE, Weapons.SWORDS, 2, false),
     FLETCHER(Weapons.BOW, Weapons.CROSSBOW, 6, false),
-    POLE_TURNER(Weapons.SPEAR, null, 4, false),
+    POLE_TURNER(Weapons.SPEAR, Weapons.MACE, 4, false),
     OIL_SMELTER(ResourceType.OIL, null, 8, false),
     BAKERY(Food.BREAD, null, 8, false),
     DAIRY_PRODUCTS(Food.CHEESE, Weapons.LEATHER_ARMOUR, 8, false),

@@ -106,7 +106,7 @@ public class Turn {
         Camp camp;
         CampType campType;
         for (Building building : currentKingdom.getBuildings())
-            if (building instanceof Camp) {
+            if (building.getSpecificConstant().equals(CampType.STABLE)) {
                 campType = (CampType) building.getSpecificConstant();
                 camp = (Camp) building;
                 if (camp.getCapacity().equals(campType.getCapacity())) continue;

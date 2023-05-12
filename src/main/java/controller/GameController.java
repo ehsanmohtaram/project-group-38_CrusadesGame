@@ -3,7 +3,6 @@ package controller;
 import model.*;
 import model.building.*;
 import model.unit.Unit;
-import model.unit.UnitState;
 import model.unit.UnitType;
 import view.*;
 import java.util.ArrayList;
@@ -83,9 +82,9 @@ public class GameController {
         int x = currentBlock.getxPosition();
         int y = currentBlock.getyPosition();
         MapBlock mapBlock;
-        for (int i = -1; i < 1; i++) {
+        for (int i = -1; i <= 1; i++) {
             if ( i + x  > gameMap.getMapWidth() || i + x < 0) continue;
-            for (int j = -1; j < 1; j++) {
+            for (int j = -1; j <= 1; j++) {
                 if ( j + y  > gameMap.getMapHeight() || j + y < 0) continue;
                 mapBlock = gameMap.getMapBlockByLocation(x + i, y + j);
                 if (mapBlock.getBuildings() != null && mapBlock.getBuildings().getBuildingType().equals(stock)) return true;
@@ -108,7 +107,7 @@ public class GameController {
         }
         if (buildingType.specificConstant instanceof StockType) {
             if(currentKingdom.getNumberOfStock(buildingType) > 0)
-                if (!checkForNearStock(mapBlock, buildingType)) return "You should build stock next to each other!";
+                if (!checkForNearStock(mapBlock, buildingType)) return "You should build your stocks next to each other!";
         }
         return null;
     }
@@ -123,7 +122,7 @@ public class GameController {
         else if (buildingType.specificConstant instanceof MineType) building = new Mine(mapBlock, buildingType, currentKingdom);
         else building = new Building(mapBlock, buildingType, currentKingdom);
         currentKingdom.setBalance((double) -buildingType.getGOLD());
-        currentKingdom.setResourceAmount(buildingType.getRESOURCES(),-buildingType.getRESOURCE_NUMBER());
+        if (buildingType.getRESOURCES() != null) currentKingdom.setResourceAmount(buildingType.getRESOURCES(),-buildingType.getRESOURCE_NUMBER());
         mapBlock.setBuildings(building);
         for (Direction direction : Direction.values()) gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), direction ,false);
         currentKingdom.addBuilding(building);
@@ -151,9 +150,9 @@ public class GameController {
             return "You do not have enough " + buildingType.getRESOURCES().name().toLowerCase() + " to buy this building.";
         if (currentKingdom.checkForAvailableNormalUnit(buildingType.getWorkerNeeded()) < buildingType.getNumberOfWorker())
             return "There are not enough available worker to put in this building!";
-        createBuilding(mapBlock, buildingType);
         result = checkSpecificBuilding(mapBlock, buildingType);
         if (result != null) return result;
+        createBuilding(mapBlock, buildingType);
         return buildingType.name().toLowerCase().replaceAll("_"," ") + " added successfully to kingdom.";
     }
 
