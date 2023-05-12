@@ -88,20 +88,18 @@ public class TradeController {
                 Kingdom receiverkingdom = gameMap.getKingdomByOwner(currentUser);
                 if (receiverkingdom.getResourceAmount(trade.getResourceType()) >= trade.getResourceAmount()) {
                     receiverkingdom.setResourceAmount(trade.getResourceType(), -1 * trade.getResourceAmount());
-                    receiverkingdom.setBalance(receiverkingdom.getBalance() + trade.getPrice());
+                    receiverkingdom.setBalance((double) trade.getPrice());
                     receiverkingdom.getHistoryTrade().add(trade);
                     receiverkingdom.getMySuggestion().remove(trade);
                     Kingdom senderKingdom = gameMap.getKingdomByOwner(trade.getUserSender());
                     senderKingdom.setResourceAmount(trade.getResourceType(), trade.getResourceAmount());
-                    senderKingdom.setBalance(senderKingdom.getBalance() - trade.getPrice());
+                    senderKingdom.setBalance((double) -trade.getPrice());
                     trade.setMassageAccept(options.get("m"));
                     senderKingdom.getNotification().add(trade);
                     return "The trade was successful";
-                } else
-                    return "The resource balance is not enough";
+                } else return "The resource balance is not enough";
             }
-        }
-        return "This ID was not found for you";
+        } return "This ID was not found for you";
     }
 
     public String showTradeHistory() {

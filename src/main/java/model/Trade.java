@@ -74,8 +74,4 @@ public class Trade {
         return resourceType == trade.resourceType && Objects.equals(resourceAmount, trade.resourceAmount) && Objects.equals(price, trade.price) && Objects.equals(id, trade.id) && Objects.equals(massageRequest, trade.massageRequest) && Objects.equals(massageAccept, trade.massageAccept);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(resourceType, resourceAmount, price, id, massageRequest, massageAccept);
-    }
 }
