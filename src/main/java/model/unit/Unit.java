@@ -16,7 +16,7 @@ public class Unit {
     private MapBlock locationBlock;
     private MapBlock PatrolDestination;
     private UnitState unitState;
-    private Kingdom owner;
+    private final Kingdom owner;
     private Unit forAttack;
     private Integer movesLeft;
     private DefensiveStructure higherElevation;

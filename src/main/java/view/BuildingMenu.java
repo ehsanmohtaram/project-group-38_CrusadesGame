@@ -42,6 +42,7 @@ public class BuildingMenu {
     public String campBuildingRnu() {
         HashMap<String, String> optionPass;
         String command;
+        System.out.println(buildingController.buildingHp());
         while (true) {
             command = CommandParser.getScanner().nextLine();
             if (commandParser.validate(command, "back", null) != null) return "back";

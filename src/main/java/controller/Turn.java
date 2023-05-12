@@ -4,8 +4,6 @@ import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitType;
 
-import java.util.Objects;
-
 public class Turn {
 
     private final Map gameMap;
@@ -22,16 +20,20 @@ public class Turn {
 
 
     public void runNextTurn() {
-        executeProducerBuilding();
-        executeMines();
-        move();
-        getTax();
+        if (currentKingdom.getPopularity() > -5) {
+            executeProducerBuilding();
+            executeMines();
+            growPopulation();
+            innCheck();
+            produceHorse();
+        }
+        setReligiousBuildingPopularity();
         giveFood();
-        growPopulation();
+        getTax();
+        move();
     }
 
     public void growPopulation() {
-        currentKingdom.setPopularity(-currentKingdom.getFearRate() * (gameMap.getPlayers().size() - 1));
         int foodCounter = 0;
         for (Food food : currentKingdom.getFoods().keySet()) foodCounter += currentKingdom.getFoods().get(food);
         int addPeople = currentKingdom.getMaxPopulation() - currentKingdom.getPopulation();
@@ -78,6 +80,41 @@ public class Turn {
         }
 
     }
+
+    public void innCheck() {
+        for (Building building : currentKingdom.getBuildings())
+            if (building.getBuildingType().equals(BuildingType.INN)) {
+                currentKingdom.setPopularity(2 * (gameMap.getPlayers().size() - 1));
+                if (currentKingdom.getResourceAmount(ResourceType.HOP) - (gameMap.getPlayers().size() - 1) * 5 < 0)
+                    currentKingdom.setResourceAmount(ResourceType.HOP.getBaseSource(), -currentKingdom.getResourceAmount(ResourceType.HOP));
+                else
+                    currentKingdom.setResourceAmount(ResourceType.HOP.getBaseSource(), -(gameMap.getPlayers().size() - 1) * 5);
+            }
+    }
+
+    public void setReligiousBuildingPopularity() {
+        currentKingdom.setPopularity(-currentKingdom.getFearRate() * (gameMap.getPlayers().size() - 1));
+        int popularity = 0;
+        for (Building building : currentKingdom.getBuildings())
+            if (building.getBuildingType().equals(BuildingType.CATHEDRAL) || building.getBuildingType().equals(BuildingType.CHURCH))
+                popularity += 2;
+        popularity += popularity * (gameMap.getPlayers().size() -1);
+        currentKingdom.setPopularity(popularity);
+    }
+
+    public void produceHorse() {
+        Camp camp;
+        CampType campType;
+        for (Building building : currentKingdom.getBuildings())
+            if (building.getSpecificConstant().equals(CampType.STABLE)) {
+                campType = (CampType) building.getSpecificConstant();
+                camp = (Camp) building;
+                if (camp.getCapacity().equals(campType.getCapacity())) continue;
+                camp.setCapacity(1);
+                currentKingdom.setBalance((double) -20);
+            }
+    }
+
 
     public Integer setProduceRate(Integer produceRate) {
         double fearRate = (double) (currentKingdom.getFearRate()) / 10;
@@ -137,7 +174,6 @@ public class Turn {
         ((Mine) currentBlock.getBuildings()).setMineMode(ProduceMode.NON_ACTIVE);
         return null;
     }
-
 
     public void executeProducerBuilding() {
         for (Building building : currentKingdom.getBuildings())
