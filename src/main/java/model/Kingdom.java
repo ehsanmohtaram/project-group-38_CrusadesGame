@@ -30,6 +30,7 @@ public class Kingdom{
     private ArrayList<Building> buildings = new ArrayList<>();
     private ArrayList<Unit> remainingUnitMove = new ArrayList<>();
     private ArrayList<Building> remainingBuildingMove = new ArrayList<>();
+    private HashMap<Building, Integer> moveOfCows = new HashMap<>();
     public Kingdom(Flags flag, User owner) {
         population = noneEmployed = 10;
         popularity = 10;
@@ -40,7 +41,7 @@ public class Kingdom{
         this.owner = owner;
         this.balance = 10000.0;
         attackRate = 1;
-        for (ResourceType resourceType : ResourceType.values()) resources.put(resourceType, 100);
+        for (ResourceType resourceType : ResourceType.values()) resources.put(resourceType, 50);
         for (Weapons weapon : Weapons.values()) weapons.put(weapon, 0);
         for (Food food : Food.values()) foods.put(food, 0);
     }
@@ -99,6 +100,14 @@ public class Kingdom{
 
     public Integer getTaxRate() {
         return taxRate;
+    }
+
+    public Integer getMoveOfCows(Building mine) {
+        return moveOfCows.get(mine);
+    }
+
+    public void setMoveOfCows(Building mine, Integer moves) {
+        moveOfCows.put(mine, moves);
     }
 
     public Integer getAttackRate() {

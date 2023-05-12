@@ -16,7 +16,7 @@ public class UnitController {
     private final Map gameMap;
     private final Kingdom currentKingdom;
     private final UnitMenu unitMenu;
-    private ArrayList<Unit> currentUnit;
+    public static ArrayList<Unit> currentUnit;
 
     public UnitController() {
         this.gameMap = GameController.gameMap;
@@ -59,8 +59,10 @@ public class UnitController {
 
         for (Unit unit : currentUnit) {
             unit.moveTo(destination, moveLength);
-            currentKingdom.addUnit(unit);
+            if (unit.getUnitState().equals(UnitState.PATROLLING))
+                unit.setUnitState(UnitState.DEFENSIVE);
         }
+
         return "moved successfully";
     }
 
@@ -166,22 +168,52 @@ public class UnitController {
         else if(target.getUnits().get(0).getOptimizedDistanceFrom(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),false) >
                 currentUnit.get(0).getOptimizedAttackRange())
             return "out of attack range. first move your units";
+        ArrayList<Unit> archers = gameMap.getArcherEnemiesInSurroundingArea(target.getxPosition(), target.getyPosition()
+                , currentKingdom);
 
 
         if(target.isUnitsShouldBeAttackedFirst(currentUnit.get(0))){
+            outer:
             for (Unit unit : currentUnit)
                 for (Unit targetUnit : target.getUnits())
-                    unit.fight(targetUnit);
+                    if(!unit.bilateralFight(targetUnit))
+                        continue outer;
+            if(currentUnit.size() > 0)
+                for (Unit unit : currentUnit)
+                    unit.destroyBuilding(target.getBuildings(), archers);
+
         }else {
             for (Unit unit : currentUnit) {
-                unit.destroyBuilding(target.getBuildings());
+                unit.destroyBuilding(target.getBuildings(), archers);
             }
         }
-
         return "battle done!";
-
     }
 
+    public String patrolUnit(HashMap<String, String> options){
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        MapBlock origin = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x1")),Integer.parseInt(options.get("y1")));
+        MapBlock destination = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x2")),Integer.parseInt(options.get("y2")));
+        if(origin == null || destination == null)
+            return "invalid location";
+        if(origin.getBuildings() != null || destination.getBuildings() != null )
+            return "patrol is available just for free locations not in buildings";
+        Integer moveLength;
+        if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
+                origin.getxPosition(), origin.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
+            return "They are too slow to reach such destination";
+        Integer lengthBetween;
+        if((lengthBetween = gameMap.getShortestWayLength(origin.getxPosition(), origin.getyPosition(),
+                destination.getxPosition(), destination.getyPosition(), currentUnit.get(0).getUnitType().getVELOCITY())) == null)
+            return "They are too slow to move between such origin & destination";
 
+        for (Unit unit : currentUnit) {
+            unit.moveTo(origin, moveLength);
+            unit.setUnitState(UnitState.PATROLLING);
+            unit.setPatrolDestination(destination);
+        }
+        return "they will patrol between until you change their state or move them";
 
+    }
 }

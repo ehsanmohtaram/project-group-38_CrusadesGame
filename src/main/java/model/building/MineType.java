@@ -4,7 +4,8 @@ import model.MapBlockType;
 import model.ResourceType;
 
 public enum MineType {
-    QUARRY(ResourceType.ROCK, MapBlockType.ROCK, 12),
+    QUARRY(ResourceType.ROCK, MapBlockType.SLATE, 0),
+    OX_TETHER(ResourceType.ROCK, null, 12),
     IRON_MINE(ResourceType.IRON, MapBlockType.IRON, 8),
     WOOD_CUTTER(ResourceType.WOOD, MapBlockType.GRASSLAND, 14),
     PITCH_RIG(ResourceType.RIG, MapBlockType.PLAIN, 6);

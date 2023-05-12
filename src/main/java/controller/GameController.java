@@ -102,8 +102,10 @@ public class GameController {
         MineType mineType;
         if (buildingType.specificConstant instanceof MineType) {
             mineType = (MineType) buildingType.specificConstant;
-            if (!mineType.getMapBlockType().equals(mapBlock.getMapBlockType()))
+            if (mineType.getMapBlockType() != null && !mineType.getMapBlockType().equals(mapBlock.getMapBlockType()))
                 return "You should build this building on its resources!";
+            if (mineType.equals(MineType.OX_TETHER) && currentKingdom.getResourceAmount(ResourceType.COW) == 0)
+                return "You do not have enough cow!";
         }
         if (buildingType.specificConstant instanceof StockType) {
             if(currentKingdom.getNumberOfStock(buildingType) > 0)
@@ -124,6 +126,10 @@ public class GameController {
         currentKingdom.setBalance((double) -buildingType.getGOLD());
         if (buildingType.getRESOURCES() != null) currentKingdom.setResourceAmount(buildingType.getRESOURCES(),-buildingType.getRESOURCE_NUMBER());
         mapBlock.setBuildings(building);
+        if (buildingType.equals(BuildingType.OX_TETHER)) {
+            currentKingdom.setMoveOfCows(building, -1);
+            currentKingdom.setResourceAmount(ResourceType.COW, -1);
+        }
         for (Direction direction : Direction.values()) gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), direction ,false);
         currentKingdom.addBuilding(building);
         currentKingdom.changeNonWorkingUnitPosition(buildingType.getWorkerNeeded(), mapBlock, buildingType.getNumberOfWorker());
@@ -141,7 +147,9 @@ public class GameController {
         MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
         if (!currentKingdom.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition())) return "This block is out of range!";
         BuildingType buildingType = BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));
-        if (!mapBlock.getMapBlockType().isBuildable() && !buildingType.equals(BuildingType.IRON_MINE))
+        if (!mapBlock.getMapBlockType().isBuildable() && !(buildingType.specificConstant instanceof MineType))
+            return "You can not build your building here. Please choose another location!";
+        if (buildingType.equals(BuildingType.OX_TETHER) && !mapBlock.getMapBlockType().isBuildable())
             return "You can not build your building here. Please choose another location!";
         if (mapBlock.getBuildings() != null || mapBlock.getSiege() != null) return "This block already has filled with another building!";
         if (buildingType.equals(BuildingType.HEAD_QUARTER) || buildingType.specificConstant instanceof SiegeType) return "You can not buy this building!";

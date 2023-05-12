@@ -22,11 +22,11 @@ public class Turn {
     public void runNextTurn() {
         if (currentKingdom.getPopularity() > -5) {
             executeProducerBuilding();
-            executeMines();
             growPopulation();
             innCheck();
             produceHorse();
         }
+        executeMines();
         setReligiousBuildingPopularity();
         giveFood();
         getTax();
@@ -126,17 +126,38 @@ public class Turn {
     public void executeMines() {
         MineType mineType;
         Mine mine;
-        for (Building building : currentKingdom.getBuildings())
+        int produceRate;
+        for (Building building : currentKingdom.getBuildings()) {
             if (building instanceof Mine) {
                 mineType = (MineType) building.getSpecificConstant();
                 mine = (Mine) building;
                 MapBlock mapBlock;
+                System.out.println(mine.getMineMode());
                 if (mine.getMineMode().equals(ProduceMode.NON_ACTIVE)) continue;
-                if ((mapBlock = checkNearBlocksForResource(building.getPosition(), mineType.getResourceType())) == null) continue;
-                if (!checkMineProduce(mineType.getResourceType(), mapBlock, setProduceRate(mineType.getProduceRate()))) continue;
-                currentKingdom.setResourceAmount(mineType.getResourceType(), setProduceRate(mineType.getProduceRate()));
-                mapBlock.setResources(mineType.getResourceType(), mapBlock.getResourceAmount() - setProduceRate(mineType.getProduceRate()));
+                produceRate = setProduceRate(mineType.getProduceRate());
+                if (mine.getSpecificConstant().equals(MineType.QUARRY))
+                    produceRate = setProduceRate(MineType.OX_TETHER.getProduceRate());
+                if (!mine.getSpecificConstant().equals(MineType.OX_TETHER)) {
+                    if (mineType.equals(MineType.QUARRY) && currentKingdom.getBuildingFormKingdom(BuildingType.OX_TETHER) == null)
+                        continue;
+                    if ((mapBlock = checkNearBlocksForResource(building.getPosition(), mineType.getResourceType())) == null)
+                        continue;
+                    if (!checkMineProduce(mineType.getResourceType(), mapBlock, produceRate)) continue;
+                    if (mineType.equals(MineType.QUARRY)) {
+                        if (findNearestOX(building.getPosition()) != null) {
+                            if (calculateCowsMoving((Mine) findNearestOX(building.getPosition()).getBuildings(), (Mine) building)) {
+                                mapBlock.setResources(mineType.getResourceType(), mapBlock.getResourceAmount() - produceRate);
+                                currentKingdom.setResourceAmount(mineType.getResourceType(), produceRate);
+                            }
+                        }
+                    } else {
+                        mapBlock.setResources(mineType.getResourceType(), mapBlock.getResourceAmount() - produceRate);
+                        currentKingdom.setResourceAmount(mineType.getResourceType(), produceRate);
+                    }
+                }
             }
+        }
+
     }
 
     public boolean checkMineProduce(ResourceType resourceType, MapBlock mapBlock, Integer produceRate) {
@@ -154,8 +175,8 @@ public class Turn {
             return false;
         }
         return true;
-
     }
+
     public MapBlock checkNearBlocksForResource(MapBlock currentBlock, ResourceType resourceType) {
         int x  = currentBlock.getxPosition(), y = currentBlock.getyPosition();
         MapBlock mapBlock;
@@ -266,6 +287,31 @@ public class Turn {
         if (resource instanceof ResourceType) return checkResourceCapacity((ResourceType) resource, produceRate);
         else if (resource instanceof Food) return checkFoodCapacity((Food) resource, produceRate);
         else return checkWeaponCapacity((Weapons) resource, produceRate);
+    }
+
+    public MapBlock findNearestOX(MapBlock mapBlock) {
+        int min = gameMap.getMapWidth() * gameMap.getMapWidth() + gameMap.getMapHeight() * gameMap.getMapHeight();
+        MapBlock minDistanceToOx = null;
+        for (Building building : currentKingdom.getBuildings())
+            if (building.getBuildingType().equals(BuildingType.OX_TETHER))
+                if (min > (mapBlock.getxPosition() - building.getPosition().getxPosition()) * (mapBlock.getxPosition() - building.getPosition().getxPosition()) +
+                        (mapBlock.getyPosition() - building.getPosition().getyPosition()) * (mapBlock.getyPosition() - building.getPosition().getyPosition())) {
+                    min = (mapBlock.getxPosition() - building.getPosition().getxPosition()) * (mapBlock.getxPosition() - building.getPosition().getxPosition()) +
+                            (mapBlock.getyPosition() - building.getPosition().getyPosition()) * (mapBlock.getyPosition() - building.getPosition().getyPosition());
+                    minDistanceToOx = building.getPosition();
+                }
+        return minDistanceToOx;
+    }
+
+    public boolean calculateCowsMoving(Mine oxPosition, Mine query) {
+        int distance;
+        int x1 = oxPosition.getPosition().getxPosition();
+        int x2 = query.getPosition().getxPosition();
+        int y1 = oxPosition.getPosition().getyPosition();
+        int y2 = query.getPosition().getyPosition();
+        distance = (int) Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+        if (currentKingdom.getMoveOfCows(oxPosition) <= 0) {currentKingdom.setMoveOfCows(oxPosition, distance); return true;}
+        else {currentKingdom.setMoveOfCows(oxPosition, currentKingdom.getMoveOfCows(oxPosition) - 2); return false;}
     }
 
     public void move() {

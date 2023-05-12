@@ -1,5 +1,7 @@
 package model;
 
+import model.unit.Unit;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -67,6 +69,11 @@ public class Map implements Cloneable {
                 defaultMap1.map[i][j].setMapBlockType(MapBlockType.SLATE);
             }
             defaultMap1.map[i][30].setMapBlockType(MapBlockType.IRON);
+        }
+        for (int i = 33; i < 34; i++) {
+            for (int j = 33; j < 34; j++) {
+                defaultMap1.map[i][j].setMapBlockType(MapBlockType.SLATE);
+            }
         }
         for (MapBlock[] mapBlockHeight : defaultMap1.map)
             for (MapBlock mapBlockWith : mapBlockHeight) mapBlockWith.addTree(Tree.OLIVE);
@@ -217,6 +224,19 @@ public class Map implements Cloneable {
             }
         }
         return output;
+    }
+
+    public ArrayList<Unit> getArcherEnemiesInSurroundingArea(int xPosition, int yPosition, Kingdom attacker){
+        ArrayList<Unit> archersOfEnemy = new ArrayList<>();
+        for (MapBlock[] mapBlocks : getSurroundingArea(xPosition, yPosition, 5))
+            for (MapBlock mapBlock : mapBlocks)
+                for (Unit unit : mapBlock.getUnits())
+                    if(!unit.getOwner().equals(attacker) && unit.getUnitType().getCAN_DO_AIR_ATTACK()
+                            && map[xPosition][yPosition].getUnits().get(0).getOptimizedDistanceFrom(mapBlock.getxPosition(),
+                            mapBlock.getyPosition(), true) < unit.getOptimizedAttackRange())
+                        archersOfEnemy.add(unit);
+
+        return archersOfEnemy;
     }
 
     public Integer getShortestWayLength(int xPosition, int yPosition, int xOfDestination, int yOfDestination, Integer limit){

@@ -67,7 +67,7 @@ public class MapBlock {
             resource = ResourceType.IRON;
             resourceAmount = 60;
         }
-        if(mapBlockType.equals(MapBlockType.ROCK)){
+        if(mapBlockType.equals(MapBlockType.SLATE)){
             resource = ResourceType.ROCK;
             resourceAmount = 100;
         }
