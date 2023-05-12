@@ -117,6 +117,10 @@ public class User {
         return score;
     }
 
+    public void setScore(Integer score) {
+        this.score += score;
+    }
+
     public ArrayList<Map> getMyMap() {
         return myMap;
     }

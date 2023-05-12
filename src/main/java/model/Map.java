@@ -11,6 +11,8 @@ public class Map implements Cloneable {
     public static ArrayList<Map> Maps = new ArrayList<>();
     public static ArrayList<Map> DEFAULT_MAPS = new ArrayList<>(3);
     private ArrayList<Kingdom> players = new ArrayList<>();
+    private ArrayList<Kingdom> deadPlayers = new ArrayList<>();
+    private boolean endGame;
     private String mapName;
     private MapBlock[][] map;
     private Boolean[][] accessToRight;
@@ -19,6 +21,7 @@ public class Map implements Cloneable {
     private int mapWidth;
     private int mapHeight;
     public Map(Integer mapWidth, Integer mapHeight, String mapName) {
+        endGame = false;
         this.mapName = mapName;
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
@@ -42,6 +45,14 @@ public class Map implements Cloneable {
         Maps.add(this);
 //        for (MapBlock[] mapBlockHeight : map)
 //            for (MapBlock mapBlockWith : mapBlockHeight) mapBlockWith = new MapBlock();
+    }
+
+    public boolean isEndGame() {
+        return endGame;
+    }
+
+    public void setEndGame(boolean endGame) {
+        this.endGame = endGame;
     }
 
     public MapBlock[][] getMap() {
@@ -110,6 +121,14 @@ public class Map implements Cloneable {
 
     public ArrayList<Kingdom> getPlayers() {
         return players;
+    }
+
+    public ArrayList<Kingdom> getDeadPlayers() {
+        return deadPlayers;
+    }
+
+    public void setDeadPlayers(Kingdom deeds) {
+        deadPlayers.add(deeds);
     }
 
     public MapBlock getMapBlockByLocation(int xPosition , int yPosition){

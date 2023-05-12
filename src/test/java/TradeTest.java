@@ -6,8 +6,6 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.function.Executable;
-import view.TradeMenu;
-
 import java.util.HashMap;
 
 public class TradeTest {

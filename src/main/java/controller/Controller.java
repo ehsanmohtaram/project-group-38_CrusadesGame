@@ -1,6 +1,7 @@
 package controller;
 
 import model.Database;
+import model.Kingdom;
 import model.Map;
 import model.User;
 import view.*;
@@ -68,6 +69,7 @@ public class Controller {
         }
     }
 
+
     public String createNewMap(HashMap<String, String> options){
         if(options.get("x") == null || options.get("y") == null)
             return "you must choose width and height";
@@ -98,9 +100,11 @@ public class Controller {
     public String chooseNumber(String command) {
         if (!command.matches("-?\\d+")) return "Please input a digit as your value.";
         if (Integer.parseInt(command) > currentUser.getMyMap().size() || Integer.parseInt(command) < 1) return "Invalid bounds!";
+        if (currentUser.getMyMap().get(Integer.parseInt(command) - 1).isEndGame()) return "This game is already Finished!";
         gameMap = currentUser.getMyMap().get(Integer.parseInt(command) - 1);
         return "start";
     }
+
 
     public String pourOil() {
         return null;
