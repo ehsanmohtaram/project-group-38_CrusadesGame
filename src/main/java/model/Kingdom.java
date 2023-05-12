@@ -17,6 +17,7 @@ public class Kingdom{
     private Double balance;
     private Integer foodRate;
     private Integer taxRate;
+    private Integer attackRate;
     private Building headquarter;
     private ArrayList<Trade> myRequests = new ArrayList<>();
     private ArrayList<Trade> mySuggestion = new ArrayList<>();
@@ -38,6 +39,7 @@ public class Kingdom{
         this.flag = flag;
         this.owner = owner;
         this.balance = 1000.0;
+        attackRate = 1;
         for (ResourceType resourceType : ResourceType.values()) resources.put(resourceType, 100);
         for (Weapons weapon : Weapons.values()) weapons.put(weapon, 0);
         for (Food food : Food.values()) foods.put(food, 0);
@@ -97,6 +99,11 @@ public class Kingdom{
 
     public Integer getTaxRate() {
         return taxRate;
+    }
+
+    public Integer getAttackRate() {
+        //toDo update it relating to fear rate
+        return attackRate;
     }
 
     public void setTaxRate(Integer taxRate) {

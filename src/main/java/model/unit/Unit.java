@@ -82,6 +82,14 @@ public class Unit {
         this.unitState = unitState;
     }
 
+    public void increaseHp(int amount){
+        hp -= amount;
+        if(hp <= 0) {
+            locationBlock.getUnits().remove(this);
+            owner.getUnits().remove(this);
+        }
+    }
+
     public Integer getOptimizedAttackRange(){
         if(higherElevation != null && unitType.getCAN_DO_AIR_ATTACK()) {
             DefensiveStructureType type = (DefensiveStructureType) higherElevation.getSpecificConstant();
@@ -91,13 +99,17 @@ public class Unit {
             return unitType.getATTACK_RANGE();
     }
 
-    public Integer getOptimizedDistanceFrom(int xPosition, int yPosition){
+    public Integer getOptimizedDistanceFrom(int xPosition, int yPosition, boolean considerHigherElevations){
         int normalDistance = Math.abs(locationBlock.getxPosition() - xPosition) + Math.abs(locationBlock.getyPosition() - yPosition);
         if(higherElevation != null){
             DefensiveStructureType type = (DefensiveStructureType) higherElevation.getSpecificConstant();
             return normalDistance + type.getFurtherFireRange();
         }
         return normalDistance;
+    }
+
+    public Integer getOptimizedDamage(){
+        return unitType.getDAMAGE() * owner.getAttackRate();
     }
 
     public boolean increaseMoves(int amount){
@@ -110,10 +122,26 @@ public class Unit {
     public void moveTo(MapBlock destination, int length){
         increaseMoves(length);
         locationBlock.removeUnitFromHere(this);
-        this.setLocationBlock(destination);
+        destination.addUnitHere(this);
+        locationBlock.removeUnitFromHere(this);
+    }
+
+    private boolean checkEnemyCanAttack(Unit enemy){
+        return false;
+
     }
 
     public void fight(Unit enemy){
+
+        int strikes = enemy.getHp() / getOptimizedDamage() + 1;
+        int enemyStrikes = hp / enemy.getOptimizedDamage() + 1;
+        if(strikes > enemyStrikes){
+            increaseHp(enemyStrikes * enemy.getOptimizedDamage());
+            enemy.increaseHp(enemyStrikes * getOptimizedDamage());
+        }else{
+            increaseHp(strikes * enemy.getOptimizedDamage());
+            enemy.increaseHp(strikes * getOptimizedDamage());
+        }
 
     }
     public void destroyBuilding(Building target){

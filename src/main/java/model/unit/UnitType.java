@@ -23,7 +23,7 @@ public enum UnitType {
     ARABIAN_SWORDSMAN(40, 15, 5, 1 ,16, 1, null ,null, false),
     FIRE_THROWERS(20, 15, 5, 4 , 9,1, null ,null, true);
     private final Integer HP_IN_START;
-    private final Integer ATTACK_RATE;
+    private final Integer DAMAGE;
     private final Integer VELOCITY;
     private final Integer ATTACK_RANGE;
     private final Integer PRICE;
@@ -34,7 +34,7 @@ public enum UnitType {
 
     UnitType(Integer HP_IN_START, Integer ATTACK_RATE, Integer VELOCITY, Integer ATTACK_RANGE, Integer PRICE, Integer IS_ARAB, Weapons WEAPON_NEEDED, Weapons armourNeeded, Boolean canDoAirAttack) {
         this.HP_IN_START = HP_IN_START;
-        this.ATTACK_RATE = ATTACK_RATE;
+        this.DAMAGE = ATTACK_RATE;
         this.VELOCITY = VELOCITY;
         this.ATTACK_RANGE = ATTACK_RANGE;
         this.PRICE = PRICE;
@@ -48,8 +48,8 @@ public enum UnitType {
         return HP_IN_START;
     }
 
-    public Integer getATTACK_RATE() {
-        return ATTACK_RATE;
+    public Integer getDAMAGE() {
+        return DAMAGE;
     }
 
     public Integer getVELOCITY() {

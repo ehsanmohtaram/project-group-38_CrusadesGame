@@ -159,6 +159,16 @@ public class UnitController {
         if(target.getUnits().size() == 0 || target.getBuildings() == null)
             return "no enemy detected there";
 
+        if(currentUnit.get(0).getUnitType().getCAN_DO_AIR_ATTACK()) {
+            if (target.getUnits().get(0).getOptimizedDistanceFrom(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(), true) >
+                    currentUnit.get(0).getOptimizedAttackRange())
+                return "Arrows will not go that far";
+        }
+        else if(target.getUnits().get(0).getOptimizedDistanceFrom(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),false) >
+                currentUnit.get(0).getOptimizedAttackRange())
+            return "out of attack range. first move your units";
+
+
         if(target.isUnitsShouldBeAttackedFirst(currentUnit.get(0))){
             for (Unit unit : currentUnit)
                 for (Unit targetUnit : target.getUnits())
@@ -169,7 +179,7 @@ public class UnitController {
             }
         }
 
-        return "moved successfully";
+        return "battle done!";
 
     }
 

@@ -152,7 +152,9 @@ public class MapBlock {
     public boolean isUnitsShouldBeAttackedFirst(Unit attacker){
         if(units.size() == 0)
             return false;
-        return units.get(0).getOptimizedDistanceFrom(attacker.getXPosition(), attacker.getYPosition()) <= attacker.getOptimizedAttackRange();
+        if(units.get(0).getOptimizedDistanceFrom(attacker.getXPosition(), attacker.getYPosition(), true) > attacker.getOptimizedAttackRange())
+            return false;
+        return true;
     }
 
 }
