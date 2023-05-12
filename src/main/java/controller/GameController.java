@@ -79,6 +79,21 @@ public class GameController {
         return null;
     }
 
+    public boolean checkForNearStock(MapBlock currentBlock, BuildingType stock) {
+        int x = currentBlock.getxPosition();
+        int y = currentBlock.getyPosition();
+        MapBlock mapBlock;
+        for (int i = -1; i < 1; i++) {
+            if ( i + x  > gameMap.getMapWidth() || i + x < 0) continue;
+            for (int j = -1; j < 1; j++) {
+                if ( j + y  > gameMap.getMapHeight() || j + y < 0) continue;
+                mapBlock = gameMap.getMapBlockByLocation(x + i, y + j);
+                if (mapBlock.getBuildings() != null && mapBlock.getBuildings().getBuildingType().equals(stock)) return true;
+            }
+        }
+        return false;
+    }
+
     public String checkSpecificBuilding(MapBlock mapBlock, BuildingType buildingType) {
         ProducerType producerType;
         if (buildingType.specificConstant instanceof ProducerType) {
@@ -90,6 +105,10 @@ public class GameController {
             mineType = (MineType) buildingType.specificConstant;
             if (!mineType.getMapBlockType().equals(mapBlock.getMapBlockType()))
                 return "You should build this building on its resources!";
+        }
+        if (buildingType.specificConstant instanceof StockType) {
+            if(currentKingdom.getNumberOfStock(buildingType) > 0)
+                if (!checkForNearStock(mapBlock, buildingType)) return "You should build stock next to each other!";
         }
         return null;
     }

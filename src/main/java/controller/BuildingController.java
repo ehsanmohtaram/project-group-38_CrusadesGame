@@ -48,6 +48,8 @@ public class BuildingController {
     }
 
     public String repairBuilding() {
+        if (selectedBuilding.getBuildingType().equals(BuildingType.CATHEDRAL) ||
+            selectedBuilding.getBuildingType().equals(BuildingType.CHURCH)) return "Invalid command";
         if (currentKingdom.checkForAvailableNormalUnit(UnitType.ENGINEER) == 0) return "There is no available workers";
         BuildingType buildingType = selectedBuilding.getBuildingType();
         if (buildingType.getRESOURCE_NUMBER() > currentKingdom.getResourceAmount(buildingType.getRESOURCES()))
@@ -73,17 +75,81 @@ public class BuildingController {
             unit = new Unit(unitType, selectedBuilding.getPosition(), currentKingdom);
             camp.setUnits(unit);
             currentKingdom.addUnit(unit);
-            if (unitType.getIS_ARAB().equals(-1)) unit.setUnitState(UnitState.NOT_WORKING);
+            if (!unitType.getIS_ARAB().equals(0) && !unitType.getIS_ARAB().equals(1)) unit.setUnitState(UnitState.NOT_WORKING);
             else unit.setUnitState(UnitState.STANDING);
         }
         camp.setCapacity(count);
-        currentKingdom.setBalance((double) -unitType.getPRICE() * count );
-        currentKingdom.setNoneEmployed(-count);
+        if (unitType.getIS_ARAB().equals(1)) currentKingdom.setBalance((double) -unitType.getPRICE() * count );
+        if (!unitType.equals(UnitType.BLACK_MONK)) currentKingdom.setNoneEmployed(-count);
+        else deleteMonkFromMap(count);
+        if (unitType.equals(UnitType.KNIGHT)) deleteHorseFromMap(count);
         if (unitType.getWEAPON_NEEDED() != null) currentKingdom.setWeaponsAmount(unitType.getWEAPON_NEEDED(), -count);
         if (unitType.getArmour_Needed() != null) currentKingdom.setWeaponsAmount(unitType.getArmour_Needed(), -count);
     }
 
+    public void deleteMonkFromMap(int count) {
+        int marker = count;
+        int monkCounter;
+        for (Building building : currentKingdom.getBuildings()) {
+            if (building.getBuildingType().equals(BuildingType.CHURCH)) {
+                if (marker <= building.getPosition().getUnits().size()) monkCounter = count;
+                else monkCounter = building.getPosition().getUnits().size();
+                marker -= monkCounter;
+                int check = 0;
+                while (check != monkCounter) {
+                    currentKingdom.getUnits().remove(building.getPosition().getUnits().get(0));
+                    building.getPosition().getUnits().remove(0);
+                    ((Camp) building).setCapacity(-1);
+                    ((Camp) building).getUnits().remove(0);
+                    check++;
+                }
+            }
+            if (marker == 0) break;
+        }
+    }
+
+    public String checkCathedral(int count) {
+        int monkCounter = 0;
+        for (Building building : currentKingdom.getBuildings()) {
+            if (building.getBuildingType().equals(BuildingType.CHURCH))
+                monkCounter += building.getPosition().getUnits().size();
+        }
+        if (monkCounter < count) return "You do not have enough monk to make black monks!";
+        return "done";
+    }
+
+    public String checkForKnightHorse(int count) {
+        int horseCounter = 0;
+        for (Building building : currentKingdom.getBuildings())
+            if (building.getBuildingType().equals(BuildingType.STABLE))
+                horseCounter += ((Camp) building).getCapacity();
+        if (horseCounter < count) return "You do not have enough horses to make knight!";
+        return "done";
+    }
+
+    public void deleteHorseFromMap(int count) {
+        int marker = count;
+        int horseCounter;
+        Camp camp;
+        for (Building building : currentKingdom.getBuildings()) {
+            if (building.getBuildingType().equals(BuildingType.STABLE)) {
+                camp = (Camp) building;
+                if (marker <= camp.getCapacity()) horseCounter = count;
+                else horseCounter = camp.getCapacity();
+                marker -= horseCounter;
+                int check = 0;
+                while (check != horseCounter) {
+                    camp.setCapacity(-1);
+                    check++;
+                }
+            }
+            if (marker == 0) break;
+        }
+    }
+
     public String createUnit(HashMap<String, String> options) {
+        String result;
+        if (selectedBuilding.getBuildingType().equals(BuildingType.STABLE)) return "Invalid command";
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         try {UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));}
@@ -94,16 +160,25 @@ public class BuildingController {
         CampType campType = (CampType) selectedBuilding.getBuildingType().specificConstant;
         if (!Objects.equals(campType.getIsArab(), unitType.getIS_ARAB())) return "You can not build this type of unit here!";
         int count = Integer.parseInt(options.get("c"));
-        if (unitType.getPRICE() * count > currentKingdom.getBalance()) return "You do not have enough balance to buy this unit!";
+        if (unitType.getIS_ARAB().equals(1) && unitType.getPRICE() * count > currentKingdom.getBalance())
+            return "You do not have enough balance to buy this unit!";
         if (currentKingdom.getBuildingFormKingdom(BuildingType.ARMOURY) == null && selectedBuilding.getBuildingType().equals(BuildingType.BARRACK))
             return "Please build armoury before creating units!";
         if (unitType.getWEAPON_NEEDED() != null)
             if (currentKingdom.getWeaponAmount(unitType.getWEAPON_NEEDED()) < count) return "You do not have enough weapon!";
         if (unitType.getArmour_Needed() != null)
             if (currentKingdom.getWeaponAmount(unitType.getArmour_Needed()) < count) return "You do not have enough weapon!";
+        if (unitType.equals(UnitType.KNIGHT)) {
+            result = checkForKnightHorse(count);
+            if (!result.equals("done")) return result;
+        }
         Camp camp = (Camp) selectedBuilding;
         if (campType.getCapacity() < camp.getCapacity() + count) return "Your camp is full. Please make a new camp!";
-        if (currentKingdom.getNoneEmployed() < count) return "You do not have enough population to make new units!";
+        if (campType.equals(CampType.CATHEDRAL)) {
+            result = checkCathedral(count);
+            if (!result.equals("done")) return result;
+        }
+        else if (currentKingdom.getNoneEmployed() < count) return "You do not have enough population to make new units!";
         createUnitAdditional(unitType, count);
         return count + " " + unitType.name().toLowerCase().replaceAll("_"," ") + " has been made!";
     }
