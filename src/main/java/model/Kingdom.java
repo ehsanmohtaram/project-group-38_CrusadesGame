@@ -110,6 +110,28 @@ public class Kingdom{
         moveOfCows.put(mine, moves);
     }
 
+    public Camp getCampsToDisbandUnit(ArrayList<Unit> toDisband){
+        for (Building building : buildings) {
+            UnitType unitType = toDisband.get(0).getUnitType();
+            if(building instanceof Camp){
+                Camp camp = (Camp) building;
+                CampType campType = (CampType) building.getSpecificConstant();
+                if(campType.getCapacity() >= (camp.getCapacity() + toDisband.size())) {
+                    if (unitType.equals(UnitType.ENGINEER) && campType.equals(CampType.ENGINEER_GUILD))
+                        return camp;
+                    if (unitType.getIS_ARAB().equals(1) && campType.equals(CampType.MERCENARY_POST))
+                        return camp;
+                    if(unitType.getIS_ARAB().equals(0) && campType.equals(CampType.BARRACK))
+                        return camp;
+                    if(unitType.getIS_ARAB().equals(-2) && campType.equals(CampType.CHURCH) ||
+                            unitType.getIS_ARAB().equals(-3) && campType.equals(CampType.CATHEDRAL))
+                        return camp;
+                }
+            }
+        }
+        return null;
+    }
+
     public Integer getAttackRate() {
         //toDo update it relating to fear rate
         return attackRate;
