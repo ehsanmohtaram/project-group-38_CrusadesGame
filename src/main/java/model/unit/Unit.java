@@ -1,15 +1,20 @@
 package model.unit;
 
+import controller.UnitController;
 import model.Kingdom;
 import model.MapBlock;
 import model.building.Building;
+import model.building.BuildingType;
 import model.building.DefensiveStructure;
 import model.building.DefensiveStructureType;
+
+import java.util.ArrayList;
 
 public class Unit {
     private Integer hp;
     private UnitType unitType;
     private MapBlock locationBlock;
+    private MapBlock PatrolDestination;
     private UnitState unitState;
     private Kingdom owner;
     private Unit forAttack;
@@ -20,7 +25,7 @@ public class Unit {
         this.locationBlock = locationBlock;
         this.owner = owner;
         hp = unitType.getHP_IN_START();
-        locationBlock.addUnitHere(this);
+        locationBlock.setUnits(this);
         owner.addUnit(this);
         unitState = UnitState.NOT_ACTIVE;
         movesLeft = unitType.getVELOCITY();
@@ -82,11 +87,22 @@ public class Unit {
         this.unitState = unitState;
     }
 
-    public void increaseHp(int amount){
+    public MapBlock getPatrolDestination() {
+        return PatrolDestination;
+    }
+
+    public void setPatrolDestination(MapBlock patrolDestination) {
+        PatrolDestination = patrolDestination;
+    }
+
+    public void decreaseHp(int amount){
         hp -= amount;
         if(hp <= 0) {
             locationBlock.getUnits().remove(this);
             owner.getUnits().remove(this);
+            if(UnitController.currentUnit != null)
+                if(UnitController.currentUnit.contains(this))
+                    UnitController.currentUnit.remove(this);
         }
     }
 
@@ -112,7 +128,7 @@ public class Unit {
         return unitType.getDAMAGE() * owner.getAttackRate();
     }
 
-    public boolean increaseMoves(int amount){
+    public boolean decreaseMoves(int amount){
         if(amount > movesLeft)
             return false;
         movesLeft -= amount;
@@ -120,7 +136,7 @@ public class Unit {
     }
 
     public void moveTo(MapBlock destination, int length){
-        increaseMoves(length);
+        decreaseMoves(length);
         locationBlock.removeUnitFromHere(this);
         destination.addUnitHere(this);
         locationBlock.removeUnitFromHere(this);
@@ -131,22 +147,39 @@ public class Unit {
 
     }
 
-    public void fight(Unit enemy){
+    public void unilateralFight(Unit enemy){
+        enemy.decreaseHp(getOptimizedDamage());
+    }
 
+    public boolean bilateralFight(Unit enemy){
         int strikes = enemy.getHp() / getOptimizedDamage() + 1;
         int enemyStrikes = hp / enemy.getOptimizedDamage() + 1;
         if(strikes > enemyStrikes){
-            increaseHp(enemyStrikes * enemy.getOptimizedDamage());
-            enemy.increaseHp(enemyStrikes * getOptimizedDamage());
+            decreaseHp(enemyStrikes * enemy.getOptimizedDamage());
+            enemy.decreaseHp(enemyStrikes * getOptimizedDamage());
+            return false; //false as dead
         }else{
-            increaseHp(strikes * enemy.getOptimizedDamage());
-            enemy.increaseHp(strikes * getOptimizedDamage());
+            decreaseHp(strikes * enemy.getOptimizedDamage());
+            enemy.decreaseHp(strikes * getOptimizedDamage());
+            return true; //true as alive
         }
 
     }
-    public void destroyBuilding(Building target){
+    public void destroyBuilding(Building target, ArrayList<Unit> archers){
+        if(!target.getBuildingType().equals(BuildingType.HEAD_QUARTER)){
+            target.decreaseHP(getOptimizedDamage());
+        }else{
+            //toDo update the amount of head quarter damage
+            target.decreaseHP(getOptimizedDamage());
+            decreaseHp(5);
+        }
+        for (Unit archer : archers) {
+            archer.unilateralFight(this);
+        }
 
     }
+
+
 //
 //    public boolean canFightWith(Unit enemy){
 //        if(getOptimizedAttackRange() < enemy.ge)

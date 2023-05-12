@@ -113,7 +113,7 @@ public class MapDesignController {
                 trueDirection = direction;
 
         gameMap.changeAccess(xPosition , yPosition , trueDirection, false );
-        gameMap.getMapBlockByLocation(xPosition, yPosition).setMapBlockType(MapBlockType.ROCK);
+        gameMap.getMapBlockByLocation(xPosition, yPosition).setMapBlockType(MapBlockType.SLATE);
         return "successfully dropped";
     }
     public String dropTree(HashMap<String , String> options) {
@@ -203,7 +203,7 @@ public class MapDesignController {
         if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null ) return checkingResult;
         if(options.get("t") == null || options.get("f") == null) return "you must specify details like type and flag";
         int count;
-        if(options.get("c") == null) count = 0;
+        if(options.get("c") == null) count = 1;
         else if (!options.get("c").matches("\\d+")) return "please fill count option correctly";
         else count = Integer.parseInt(options.get("c"));
         if(options.get("t").equals("") || options.get("f").equals("")) return "Illegal value. Please fill the options";
