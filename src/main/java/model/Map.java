@@ -68,6 +68,11 @@ public class Map implements Cloneable {
             }
             defaultMap1.map[i][30].setMapBlockType(MapBlockType.IRON);
         }
+        for (int i = 33; i < 34; i++) {
+            for (int j = 33; j < 34; j++) {
+                defaultMap1.map[i][j].setMapBlockType(MapBlockType.SLATE);
+            }
+        }
         for (MapBlock[] mapBlockHeight : defaultMap1.map)
             for (MapBlock mapBlockWith : mapBlockHeight) mapBlockWith.addTree(Tree.OLIVE);
 

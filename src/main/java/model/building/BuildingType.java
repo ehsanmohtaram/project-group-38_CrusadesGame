@@ -53,6 +53,7 @@ public enum BuildingType {
     IRON_MINE(0, ResourceType.WOOD, 20, 300, UnitType.WORKER, 2, MineType.IRON_MINE),
     WOOD_CUTTER(0, ResourceType.WOOD, 3, 100, UnitType.WORKER, 1, MineType.WOOD_CUTTER),
     PITCH_RIG(0 , ResourceType.WOOD, 20, 150, UnitType.WORKER, 1, MineType.PITCH_RIG),
+    OX_TETHER(0, ResourceType.WOOD, 5, 200, UnitType.WORKER, 1, MineType.OX_TETHER),
     //Other
     SHOP(0, ResourceType.WOOD, 5, 300, UnitType.WORKER, 1, null),
     HOUSE(0, ResourceType.WOOD, 6, 200, UnitType.WORKER, 0, null);
