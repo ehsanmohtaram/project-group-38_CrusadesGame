@@ -1,5 +1,7 @@
 package model;
 
+import model.unit.Unit;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -217,6 +219,19 @@ public class Map implements Cloneable {
             }
         }
         return output;
+    }
+
+    public ArrayList<Unit> getArcherEnemiesInSurroundingArea(int xPosition, int yPosition, Kingdom attacker){
+        ArrayList<Unit> archersOfEnemy = new ArrayList<>();
+        for (MapBlock[] mapBlocks : getSurroundingArea(xPosition, yPosition, 5))
+            for (MapBlock mapBlock : mapBlocks)
+                for (Unit unit : mapBlock.getUnits())
+                    if(!unit.getOwner().equals(attacker) && unit.getUnitType().getCAN_DO_AIR_ATTACK()
+                            && map[xPosition][yPosition].getUnits().get(0).getOptimizedDistanceFrom(mapBlock.getxPosition(),
+                            mapBlock.getyPosition(), true) < unit.getOptimizedAttackRange())
+                        archersOfEnemy.add(unit);
+
+        return archersOfEnemy;
     }
 
     public Integer getShortestWayLength(int xPosition, int yPosition, int xOfDestination, int yOfDestination, Integer limit){
