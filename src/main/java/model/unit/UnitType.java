@@ -20,7 +20,7 @@ public enum UnitType {
     SLAVES(5, 3, 4, 1 ,5, 1, null ,null, false),
     SLINGERS(10, 5, 4, 3 ,5, 1, null ,null, true),
     ASSASSINS(30, 10, 3, 1 ,9, 1, null ,null, false),
-    HORSE_ARCHERS(30, 10, 5, 9 , 12, 1, null ,null, true),
+    HORSE_ARCHERS(30, 10, 5, 5 , 12, 1, null ,null, true),
     ARABIAN_SWORDSMAN(40, 15, 5, 1 ,16, 1, null ,null, false),
     FIRE_THROWERS(20, 15, 5, 4 , 9,1, null ,null, true);
     private final Integer HP_IN_START;

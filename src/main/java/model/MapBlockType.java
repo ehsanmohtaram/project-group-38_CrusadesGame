@@ -4,8 +4,8 @@ package model;
 public enum MapBlockType {
     EARTH(true , true , true, "\u001B[48;5;137m"),
     GRAVEL(true , true , true, "\u001B[48;5;137m"),
-    SLATE(true , false , false, "\u001B[48;5;102m"),
-    ROCK(false , false , false, "\u001B[48;5;241m"),
+    SLATE(false , false , false, "\u001B[48;5;102m"),
+    ROCK(true, false , false, "\u001B[48;5;241m"),
     IRON(true , false , false, "\u001B[48;5;189m"),
     GRASSLAND(true , true , true, "\u001B[48;5;107m"),
     MEADOW(true , true , true, "\u001B[48;5;70m"),
