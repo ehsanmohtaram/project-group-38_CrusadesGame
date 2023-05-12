@@ -98,7 +98,7 @@ public class Map implements Cloneable {
 
     public Kingdom getKingdomByOwner(User owner){
         for (Kingdom find: players) {
-            if(find.getOwner().equals(owner))
+            if(find.getOwner().getUserName().equals(owner.getUserName()))
                 return find;
         }
         return null;
