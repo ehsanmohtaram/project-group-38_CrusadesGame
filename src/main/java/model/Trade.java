@@ -66,6 +66,10 @@ public class Trade {
         this.massageAccept = massageAccept;
     }
 
+    public void setResourceAmount(Integer resourceAmount) {
+        this.resourceAmount = resourceAmount;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

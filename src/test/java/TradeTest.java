@@ -49,40 +49,30 @@ public class TradeTest {
     }
 
 
-
     @Test
-    public void newRequestAccept() {
-        beforeAll();
-        Stock stock = new Stock(null, BuildingType.STOCKPILE, sendderKingdom);
-        sendderKingdom.addBuilding(stock);
-        String result = tradeController.newRequest(getHashMapForRequest());
-        Assertions.assertEquals(result, "The request was successfully registered");
+    public void newRequestNotNull() {
+        Assertions.assertThrows(Exception.class,new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                tradeController.newRequest(getHashMapForRequest());
+            }
+        });
     }
 
     @Test
-    public void newRequestNotEnoughSpace() {
-        beforeAll();
-        String result = tradeController.newRequest(getHashMapForRequest());
-        Assertions.assertEquals(result, "You do not have enough space for this amount of resource!");
+    public void newRequestNullOptions() {
+        HashMap<String, String > options = new HashMap<>();
+        options.put("u", "");
+        String result = tradeController.newRequest(options);
+        Assertions.assertEquals(result, "Illegal value. Please fill the options!");
     }
     @Test
-    public void newRequestInvalidBound() {
-        beforeAll();
-        HashMap<String, String> options = getHashMapForRequest();
-        options.replace("p", "-10");
+    public void newRequestUserNotFound() {
+        HashMap<String, String > options = getHashMapForRequest();
+        options.replace("u" , "u1");
         String result = tradeController.newRequest(options);
-        Assertions.assertEquals(result, "Invalid bounds!");
+        Assertions.assertEquals(result, "Username with this ID was not found");
     }
-    //////
-    @Test
-    public void newRequestNotEnoughMoney() {
-        beforeAll();
-        HashMap<String, String> options = getHashMapForRequest();
-        options.replace("p", "99999999");
-        String result = tradeController.newRequest(options);
-        Assertions.assertEquals(result, "You do not have enough space for this amount of resource!");
-    }
-    /////
     @Test
     public void newRequestNotTrueFormatForNumber() {
         beforeAll();
@@ -93,21 +83,50 @@ public class TradeTest {
     }
 
     @Test
-    public void newRequestUserNotFound() {
-        HashMap<String, String > options = getHashMapForRequest();
-        options.replace("u" , "u1");
+    public void newRequestInvalidBound() {
+        beforeAll();
+        HashMap<String, String> options = getHashMapForRequest();
+        options.replace("p", "-10");
         String result = tradeController.newRequest(options);
-        Assertions.assertEquals(result, "Username with this ID was not found");
+        Assertions.assertEquals(result, "Invalid bounds!");
+    }
+
+    @Test
+    public void newRequestNotEnoughSpace() {
+        beforeAll();
+        String result = tradeController.newRequest(getHashMapForRequest());
+        Assertions.assertEquals(result, "You do not have enough space for this amount of resource!");
+    }
+
+    @Test
+    public void newRequestNotEnoughMoney() {
+        beforeAll();
+        Stock stock = new Stock(null, BuildingType.STOCKPILE, sendderKingdom);
+        sendderKingdom.addBuilding(stock);
+        HashMap<String, String> options = getHashMapForRequest();
+        options.replace("p", "99999999");
+        String result = tradeController.newRequest(options);
+        Assertions.assertEquals(result, "your balance not enough");
+    }
+
+    @Test
+    public void newRequestAccept() {
+        beforeAll();
+        Stock stock = new Stock(null, BuildingType.STOCKPILE, sendderKingdom);
+        sendderKingdom.addBuilding(stock);
+        String result = tradeController.newRequest(getHashMapForRequest());
+        Assertions.assertEquals(result, "The request was successfully registered");
     }
 
 
 
     @Test
-    public void acceptSuccesful() {
+    public void acceptNotEnoughResourceAmount() {
         beforeAll();
         sendderKingdom.addSuggestion(difaultTrade);
+        difaultTrade.setResourceAmount(10000);
         String result = tradeController.tradeAccept(getHashMapForAccept());
-        Assertions.assertEquals(result, "The trade was successful");
+        Assertions.assertEquals(result, "The resource balance is not enough");
     }
 
     @Test
@@ -117,14 +136,16 @@ public class TradeTest {
         Assertions.assertEquals(result, "This ID was not found for you");
     }
 
+    @Test
+    public void acceptSuccesful() {
+        beforeAll();
+        sendderKingdom.addSuggestion(difaultTrade);
+        String result = tradeController.tradeAccept(getHashMapForAccept());
+        Assertions.assertEquals(result, "The trade was successful");
+    }
 
-//    @Test void acceptNotEnoughResourceAmount() {
-//        beforeAll();
-////        HashMap<String, String> options = getHashMapForAccept();
-////        options.replace("")
-//        String result = tradeController.tradeAccept(getHashMapForAccept());
-//        Assertions.assertEquals(result, "The resource balance is not enough");
-//    }
+
+
 
 
 

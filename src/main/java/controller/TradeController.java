@@ -4,11 +4,12 @@ import model.*;
 import model.building.BuildingType;
 import model.building.StockType;
 import view.TradeMenu;
+
 import java.util.HashMap;
 
 public class TradeController {
     private final TradeMenu tradeMenu;
-    private  Map gameMap;
+    private Map gameMap;
     private User currentUser;
 
     public TradeController() {
@@ -38,10 +39,14 @@ public class TradeController {
     public String newRequest(HashMap<String, String> options) {
         ResourceType resourceType;
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        for (String key : options.keySet())
+            if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         User userReceiver;
-        try {resourceType = ResourceType.valueOf(options.get("t").toUpperCase());}
-        catch (Exception ignored) {return "This resource type does not exist";}
+        try {
+            resourceType = ResourceType.valueOf(options.get("t").toUpperCase());
+        } catch (Exception ignored) {
+            return "This resource type does not exist";
+        }
         if (!options.get("p").matches("-?\\d+") || !options.get("a").matches("-?\\d+"))
             return "Please input digit as your values!";
         if ((userReceiver = User.getUserByUsername(options.get("u"))) != null) {
@@ -62,8 +67,7 @@ public class TradeController {
                 gameMap.getKingdomByOwner(userReceiver).addNotification(trade);
                 return "The request was successfully registered";
             } else return "your balance not enough";
-        } else
-            return "Username with this ID was not found";
+        } else return "Username with this ID was not found";
     }
 
     public String showTradeList() {
@@ -80,8 +84,9 @@ public class TradeController {
 
     public String tradeAccept(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        if (!options.get("i").matches("-?\\d+")) return "Please input digit as your values!";
+        for (String key : options.keySet())
+            if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        if (!(options.get("i").matches("-?\\d+"))) return "Please input digit as your values!";
         if (Integer.parseInt(options.get("i")) < 0) return "Invalid bounds";
         for (Trade trade : gameMap.getKingdomByOwner(currentUser).getMySuggestion()) {
             if (trade.getId() == Integer.parseInt(options.get("i"))) {
