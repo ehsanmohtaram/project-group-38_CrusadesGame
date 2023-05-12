@@ -100,8 +100,14 @@ public class MapController {
                     .append(" -> owner: ")
                     .append(detailsWanted.getBuildings().getOwner().getFlag().name()).append('\n') ;
         }
+        result.append("siege:\n");
+        if(detailsWanted.getSiege() != null){
+            result.append(detailsWanted.getSiege().getBuildingType().name().toLowerCase().replaceAll("_", " "))
+                    .append(" -> owner: ")
+                    .append(detailsWanted.getSiege().getOwner().getFlag().name()).append('\n') ;
+        }
         if(detailsWanted.getResources() != null){
-            result.append(detailsWanted.getResourceAmount()).append(" units of ").append(detailsWanted.getResources().name().toLowerCase());
+            result.append("resource:\n").append(detailsWanted.getResourceAmount()).append(" units of ").append(detailsWanted.getResources().name().toLowerCase());
         }
         return result.toString();
     }

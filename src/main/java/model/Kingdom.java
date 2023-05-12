@@ -1,9 +1,6 @@
 package model;
 
-import model.building.Building;
-import model.building.BuildingType;
-import model.building.Stock;
-import model.building.StockType;
+import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
@@ -40,7 +37,7 @@ public class Kingdom{
         taxRate = 0;
         this.flag = flag;
         this.owner = owner;
-        this.balance = 200.0;
+        this.balance = 1000.0;
         for (ResourceType resourceType : ResourceType.values()) resources.put(resourceType, 100);
         for (Weapons weapon : Weapons.values()) weapons.put(weapon, 0);
         for (Food food : Food.values()) foods.put(food, 0);
@@ -267,15 +264,24 @@ public class Kingdom{
         return counter;
     }
 
-    public void setNormalUnitInPosition(UnitType unitType, MapBlock mapBlock, int numberOfWorker) {
+    public void changeNonWorkingUnitPosition(UnitType unitType, MapBlock mapBlock, int number) {
+        Camp camp;
         int counter = 0;
         for (Unit unit : units) {
-            if (counter == numberOfWorker) return;
+            if (counter == number) return;
             if (unit.getUnitType().equals(unitType) && unit.getUnitState().equals(UnitState.NOT_WORKING)) {
+                if (unit.getLocationBlock().getBuildings() instanceof Camp) {
+                    camp = (Camp) unit.getLocationBlock().getBuildings();
+                    camp.getUnits().remove(unit);
+                    camp.setCapacity(-1);
+                }
+                mapBlock.setUnits(unit);
+                unit.getLocationBlock().getUnits().remove(unit);
                 unit.setLocationBlock(mapBlock);
                 unit.setUnitState(UnitState.WORKING);
                 counter++;
             }
         }
     }
+
 }

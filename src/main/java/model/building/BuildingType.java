@@ -23,6 +23,10 @@ public enum BuildingType {
     BALLISTA(50, null, 0, 100, UnitType.ENGINEER,2,SiegeType.BALLISTA),
     CATAPULT(150, null, 0, 300, UnitType.ENGINEER,2,SiegeType.CATAPULT),
     TREBUCHET(150, null, 0, 500, UnitType.ENGINEER,3,SiegeType.TREBUCHET),
+    SIEGE_TOWER(200, null, 0, 500, UnitType.ENGINEER, 4, SiegeType.SIEGE_TOWER),
+    BATTERING_RAM(180, null, 0, 500, UnitType.ENGINEER, 4, SiegeType.BATTERING_RAM),
+    MANTLET(6, null, 0, 100, UnitType.ENGINEER, 1, SiegeType.MANTLET),
+    FIRE_BALLISTA(150, null, 0, 400, UnitType.ENGINEER, 2, SiegeType.FIRE_BALLISTA),
     //Camp equipment
     BARRACK(0, ResourceType.ROCK,15,500,  UnitType.WORKER,0,CampType.BARRACK),
     SIEGE_TENT(0 ,null, 0, 100,  UnitType.WORKER,0,CampType.SIEGE_TENT),

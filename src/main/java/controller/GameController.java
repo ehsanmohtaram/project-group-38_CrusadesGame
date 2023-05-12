@@ -94,25 +94,6 @@ public class GameController {
         return null;
     }
 
-    public void changeNonWorkingUnitPosition(UnitType unitType, MapBlock mapBlock, int number) {
-        Camp camp;
-        int counter = 0;
-        for (Unit unit : currentKingdom.getUnits()) {
-            if (counter == number) return;
-            if (unit.getUnitType().equals(unitType) && unit.getUnitState().equals(UnitState.NOT_WORKING)) {
-                if (unit.getLocationBlock().getBuildings() instanceof Camp) {
-                    camp = (Camp) unit.getLocationBlock().getBuildings();
-                    camp.setCapacity(-1);
-                }
-                mapBlock.setUnits(unit);
-                unit.getLocationBlock().getUnits().remove(unit);
-                unit.setLocationBlock(mapBlock);
-                unit.setUnitState(UnitState.WORKING);
-                counter++;
-            }
-        }
-    }
-
     public void createBuilding(MapBlock mapBlock, BuildingType buildingType) {
         Building building;
         if (buildingType.specificConstant == null) building = new Building(mapBlock, buildingType, currentKingdom);
@@ -127,8 +108,7 @@ public class GameController {
         mapBlock.setBuildings(building);
         for (Direction direction : Direction.values()) gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), direction ,false);
         currentKingdom.addBuilding(building);
-        currentKingdom.setNormalUnitInPosition(buildingType.getWorkerNeeded(), mapBlock, buildingType.getNumberOfWorker());
-        changeNonWorkingUnitPosition(buildingType.getWorkerNeeded(), mapBlock, buildingType.getNumberOfWorker());
+        currentKingdom.changeNonWorkingUnitPosition(buildingType.getWorkerNeeded(), mapBlock, buildingType.getNumberOfWorker());
     }
 
     public String dropBuilding(HashMap<String, String> options) {
@@ -159,8 +139,7 @@ public class GameController {
     }
 
     public String selectBuilding(HashMap<String, String> options) {
-        for (String key : options.keySet())
-            if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         String result;
         result = positionValidate(options.get("x"),options.get("y"));
@@ -171,6 +150,21 @@ public class GameController {
                 .getBuildings().getOwner().getOwner().equals(currentUser))
             return "You can not access to this building cause you do not own it!";
         GameController.selectedBuilding = mapBlock.getBuildings();
+        return "building";
+    }
+
+    public String selectSiege(HashMap<String, String> options) {
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        String result;
+        result = positionValidate(options.get("x"),options.get("y"));
+        if (result != null) return result;
+        MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        if (mapBlock.getSiege() == null) return "There is no siege found in this position!";
+        if (!gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")))
+                .getSiege().getOwner().getOwner().equals(currentUser))
+            return "You can not access to this building cause you do not own it!";
+        GameController.selectedBuilding = mapBlock.getSiege();
         return "building";
     }
 

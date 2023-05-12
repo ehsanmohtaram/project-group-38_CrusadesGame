@@ -16,12 +16,12 @@ public class UnitController {
     private final Map gameMap;
     private final Kingdom currentKingdom;
     private final UnitMenu unitMenu;
-    private final ArrayList<Unit> currentUnit = new ArrayList<>();
+    private ArrayList<Unit> currentUnit;
 
     public UnitController() {
         this.gameMap = GameController.gameMap;
         this.currentKingdom = gameMap.getKingdomByOwner(Controller.currentUser);
-        currentUnit.addAll(GameController.selectedUnit);
+        currentUnit = new ArrayList<>(GameController.selectedUnit);
         this.unitMenu = new UnitMenu(this);
     }
 
@@ -36,9 +36,6 @@ public class UnitController {
         else if (unitType.equals(UnitType.WORKER)) unitMenu.runWorker();
         else unitMenu.runUnit();
     }
-
-    //TODO move unit
-
 
     public String moveUnit(HashMap<String, String > options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
@@ -113,11 +110,13 @@ public class UnitController {
         currentKingdom.addBuilding(tent);
         currentKingdom.addBuilding(siege);
         mapBlock.setSiege(siege);
-        nearestFreeBlock(mapBlock.getxPosition(), mapBlock.getyPosition()).setBuildings(tent);
-        for(int i = 0; i < buildingType.getNumberOfWorker() - 1; i++) {
+        MapBlock newMapBlock = nearestFreeBlock(mapBlock.getxPosition(), mapBlock.getyPosition());
+        newMapBlock.setBuildings(tent);
+        for(int i = 0; i < buildingType.getNumberOfWorker(); i++) {
+            currentUnit.get(0).setUnitState(UnitState.WORKING);
             mapBlock.addUnitHere(currentUnit.get(0));
-            currentUnit.get(0).setLocationBlock(mapBlock);
             currentUnit.get(0).getLocationBlock().getUnits().remove(currentUnit.get(0));
+            currentUnit.get(0).setLocationBlock(mapBlock);
             currentUnit.remove(0); GameController.selectedUnit.remove(0);
         }
     }

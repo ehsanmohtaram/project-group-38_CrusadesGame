@@ -36,6 +36,10 @@ public class GameMenu {
                 result = gameController.selectBuilding(options);
                 if (!result.equals("building")) System.out.println(result);
                 else return "building";
+            }  else if ((options = commandParser.validate(input, "select siege", "x|xPosition/y|yPosition")) != null) {
+                result = gameController.selectSiege(options);
+                if (!result.equals("building")) System.out.println(result);
+                else return "building";
             } else if ((options = commandParser.validate(input, "select unit", "x|positionX/y|positionY/t|type")) != null) {
                 result = gameController.selectUnit(options);
                 if (!result.equals("unit")) System.out.println(result);
