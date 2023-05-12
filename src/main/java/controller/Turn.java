@@ -22,16 +22,16 @@ public class Turn {
     public void runNextTurn() {
         if (currentKingdom.getPopularity() > -5) {
             executeProducerBuilding();
-            growPopulation();
+            executeMines();
             innCheck();
             produceHorse();
         }
-        executeMines();
         setReligiousBuildingPopularity();
         giveFood();
         getTax();
         move();
         removeUnitsAndBuildingWith0Hp();
+        growPopulation();
     }
 
     public void growPopulation() {
