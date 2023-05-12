@@ -118,7 +118,7 @@ public class TradeController {
     }
 
     public String showNotification() {
-        StringBuilder output = new StringBuilder("your new notification : ");
+        StringBuilder output = new StringBuilder("your new notification :");
         for (Trade trade : gameMap.getKingdomByOwner(currentUser).getNotification()) {
             if (trade.getUserSender().equals(currentUser)) {
                 output.append("\nyour request accepted by--> ").append(trade.getUserReceiver().getUserName()).

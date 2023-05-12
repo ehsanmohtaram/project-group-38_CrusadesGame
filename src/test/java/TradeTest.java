@@ -1,5 +1,8 @@
 import controller.TradeController;
 import model.*;
+import model.building.Building;
+import model.building.BuildingType;
+import model.building.Stock;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -35,48 +38,59 @@ public class TradeTest {
         Assertions.assertEquals(trade1, trade2);
     }
 
-//    @Test
-//    public void newRequestAccept() {
-//        HashMap<String, String > options = new HashMap<>();
-//        User user = new User("ehsan", "mohtaram", "ehsanmohtaram", "ehsanmohtaram2004@gmail.com",
-//                "null", 1, "hi");
-//        options.put("u", "ehsan");
-//        options.put("t", "wood");
-//        options.put("a", "10");
-//        options.put("p", "10");
-//        options.put("m", "hello");
-//        TradeController tradeController = new TradeController();
-//        String result = tradeController.newRequest(options);
-//        Assert.assertEquals(result, "The request was successfully registered");
-//    }
 
-
-    @Test
-    public void newRequestUserNotFound() {
-        HashMap<String, String > options = new HashMap<>();
-        options.put("u", "u1");
+    public HashMap<String, String> getHashMap() {
+        HashMap<String , String> options = new HashMap<>();
+        options.put("u", "ehsan");
         options.put("t", "wood");
         options.put("a", "10");
         options.put("p", "10");
         options.put("m", "hello");
-        TradeController tradeController = new TradeController();
+        return options;
+    }
+
+    @Test
+    public void newRequestAccept() {
+        beforeAll();
+        Stock stock = new Stock(null, BuildingType.STOCKPILE, kingdom);
+        kingdom.addBuilding(stock);
+        String result = tradeController.newRequest(getHashMap());
+        Assertions.assertEquals(result, "The request was successfully registered");
+    }
+
+    @Test
+    public void newRequestNotEnoughSpace() {
+        beforeAll();
+        String result = tradeController.newRequest(getHashMap());
+        Assertions.assertEquals(result, "You do not have enough space for this amount of resource!");
+    }
+////////
+    @Test
+    public void newRequestNotEnoughMoney() {
+        beforeAll();
+        HashMap<String, String> options = getHashMap();
+        options.replace("p", "10000");
+        String result = tradeController.newRequest(getHashMap());
+        Assertions.assertEquals(result, "You do not have enough space for this amount of resource!");
+    }
+
+    @Test
+    public void newRequestNotTrueFormatForNumber() {
+        beforeAll();
+        HashMap<String, String> options = getHashMap();
+        options.replace("p", "a");
+        String result = tradeController.newRequest(options);
+        Assertions.assertEquals(result, "Please input digit as your values!");
+    }
+///////
+
+    @Test
+    public void newRequestUserNotFound() {
+        HashMap<String, String > options =getHashMap();
+        options.replace("u" , "u1");
         String result = tradeController.newRequest(options);
         Assertions.assertEquals(result, "Username with this ID was not found");
     }
-
-//    @Test
-//    public void newRequestBalanceAmount() {
-//        HashMap<String, String > options = new HashMap<>();
-//        options.put("u", "ehsan");
-//        options.put("t", "wood");
-//        options.put("a", "10");
-//        options.put("p", "100");
-//        options.put("m", "hello");
-//        TradeController tradeController = new TradeController();
-//        String result = tradeController.newRequest(options);
-//        Assert.assertEquals(result, "your balance not enough");
-//    }
-
 
 
 
@@ -85,7 +99,6 @@ public class TradeTest {
         Assertions.assertThrows(Exception.class, new Executable() {
             @Override
             public void execute() throws Throwable {
-                TradeController tradeController = new TradeController();
                 tradeController.showTradeList();
             }
         });
@@ -112,7 +125,6 @@ public class TradeTest {
         Assertions.assertThrows(Exception.class, new Executable() {
             @Override
             public void execute() throws Throwable {
-                TradeController tradeController = new TradeController();
                 tradeController.showTradeHistory();
             }
         });
@@ -143,6 +155,39 @@ public class TradeTest {
                 "price : 10\n" +
                 "id: 1\n" +
                 "massage : salam ...Accepted...", result);
+    }
+
+
+
+    @Test
+    public void showNotificationError() throws Exception {
+        Assertions.assertThrows(Exception.class, new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                tradeController.showNotification();
+            }
+        });
+    }
+
+    @Test
+    public void showNotificationRequested() {
+        beforeAll();
+        kingdom.getNotification().add(difaultTrade);
+        difaultTrade.setMassageAccept("bye");
+        String result = tradeController.showNotification();
+        Assertions.assertEquals("your new notification :\n" +
+                "your request accepted by--> ali\n" +
+                "massage: bye", result);
+    }
+
+    @Test
+    public void showNotificationAccepted() {
+        beforeAll();
+        kingdom.getNotification().add(releventDifaultTrade);
+        String result = tradeController.showNotification();
+        Assertions.assertEquals("your new notification :\n" +
+                "new suggestion by--> ali\n" +
+                "massage: salam", result);
     }
 
 }
