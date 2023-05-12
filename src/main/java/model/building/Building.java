@@ -42,11 +42,4 @@ public class Building {
     public void setPosition(MapBlock position) {
         this.position = position;
     }
-    public void decreaseHP(int amount){
-        hp -= amount;
-        if(hp <= 0) {
-            position.setBuildings(null);
-            owner.getBuildings().remove(this);
-        }
-    }
 }

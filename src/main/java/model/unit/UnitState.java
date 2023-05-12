@@ -5,7 +5,6 @@ public enum UnitState {
     OFFENSIVE,
     DEFENSIVE,
     NOT_ACTIVE,
-    PATROLLING,
     WORKING,
     NOT_WORKING
 
