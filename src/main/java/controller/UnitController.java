@@ -148,7 +148,6 @@ public class UnitController {
         return buildingType.name().toLowerCase().replaceAll("_"," ") + " added successfully to your kingdom.";
     }
 
-    //TODO attack unit
 
     public String attackOnUnit(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";

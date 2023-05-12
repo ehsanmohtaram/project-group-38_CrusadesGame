@@ -4,8 +4,7 @@ import model.unit.UnitType;
 
 
 public enum BuildingType {
-    CATHEDRAL(0,null,0,1000, UnitType.WORKER,0,null),
-    CHURCH(0,null,0,1000, UnitType.WORKER,0,null),
+    INN(100, ResourceType.WOOD, 20, 300, UnitType.WORKER, 1, null),
     //Defensive structure
     HEAD_QUARTER(0,null,0,10000, UnitType.WORKER,0,DefensiveStructureType.HEAD_QUARTER),
     WALL(0,ResourceType.ROCK, 5,200, UnitType.WORKER,0 ,DefensiveStructureType.WALL),
@@ -32,6 +31,9 @@ public enum BuildingType {
     SIEGE_TENT(0 ,null, 0, 100,  UnitType.WORKER,0,CampType.SIEGE_TENT),
     ENGINEER_GUILD(100, ResourceType.WOOD, 10, 500,  UnitType.WORKER,0,CampType.ENGINEER_GUILD),
     MERCENARY_POST(0, ResourceType.WOOD, 10, 500,  UnitType.WORKER,0,CampType.MERCENARY_POST),
+    CATHEDRAL(1000,null,0,500, UnitType.WORKER,0, CampType.CATHEDRAL),
+    CHURCH(250,null,0,200, UnitType.WORKER,0, CampType.CHURCH),
+    STABLE(400, ResourceType.WOOD, 20, 300, UnitType.WORKER, 0, CampType.STABLE),
     //Stock
     STOCKPILE(0 , null, 0, 300, UnitType.WORKER,0,StockType.STOCKPILE),
     FOOD_STOCKPILE(0, ResourceType.WOOD, 5, 300, UnitType.WORKER,0,StockType.FOOD_STOCKPILE),
