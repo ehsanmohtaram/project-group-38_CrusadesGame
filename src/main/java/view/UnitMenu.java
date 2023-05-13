@@ -68,6 +68,10 @@ public class UnitMenu {
                 System.out.println(unitController.patrolUnit(options));
             else if ((options = commandParser.validate(input, "dig tunnel", "x|positionX/y|positionY")) != null)
                 System.out.println(unitController.digTunnel(options));
+            else if ((options = commandParser.validate(input, "dig trench", "x|positionX/y|positionY")) != null)
+                System.out.println(unitController.digTrench(options));
+            else if ((options = commandParser.validate(input, "fill trench", "x|positionX/y|positionY")) != null)
+                System.out.println(unitController.fillTrench(options));
             else if ((options = commandParser.validate(input, "disband", "x1/y1/x2/y2")) != null)
                 System.out.println(unitController.disband());
             else System.out.println("Invalid command!");

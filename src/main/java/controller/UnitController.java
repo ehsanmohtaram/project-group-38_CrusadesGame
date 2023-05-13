@@ -1,9 +1,6 @@
 package controller;
 
-import model.Direction;
-import model.Kingdom;
-import model.Map;
-import model.MapBlock;
+import model.*;
 import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitState;
@@ -258,6 +255,48 @@ public class UnitController {
         if(checkRemainingUnits())
             toDestroy.decreaseHP(toDestroy.getHp());
         return "they are sent to do their work";
+    }
+
+    public String digTrench(HashMap<String, String> options){
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        MapBlock target = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        if(target == null)
+            return "invalid location";
+        if(!target.getMapBlockType().canBeDug())
+            return "you can not dig in this types of land";
+        Integer moveLength = 0;
+        if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
+                target.getxPosition(), target.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
+            return "They are too slow to reach such destination";
+        for (Unit unit : currentUnit) {
+            unit.moveTo(target, moveLength);
+            if (unit.getUnitState().equals(UnitState.PATROLLING))
+                unit.setUnitState(UnitState.STANDING);
+        }
+        gameMap.changeType(target.getxPosition(), target.getyPosition(), target.getxPosition(), target.getyPosition(), MapBlockType.HOLE);
+        return "they are doing their work";
+    }
+
+    public String fillTrench(HashMap<String, String> options){
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        MapBlock target = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        if(target == null)
+            return "invalid location";
+        if(!target.getMapBlockType().equals(MapBlockType.HOLE))
+            return "there is no hole there";
+        Integer moveLength = 0;
+        if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
+                target.getxPosition(), target.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
+            return "They are too slow to reach such destination";
+        for (Unit unit : currentUnit) {
+            unit.moveTo(target, moveLength);
+            if (unit.getUnitState().equals(UnitState.PATROLLING))
+                unit.setUnitState(UnitState.STANDING);
+        }
+        gameMap.changeType(target.getxPosition(), target.getyPosition(), target.getxPosition(), target.getyPosition(), MapBlockType.EARTH);
+        return "they are doing their work";
     }
 
     public String pourOil(HashMap<String, String> options){

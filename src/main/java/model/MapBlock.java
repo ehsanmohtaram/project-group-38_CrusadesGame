@@ -3,6 +3,7 @@ package model;
 import model.building.Building;
 import model.building.BuildingType;
 import model.building.DefensiveStructure;
+import model.building.Trap;
 import model.unit.Unit;
 import model.unit.UnitType;
 
@@ -16,6 +17,7 @@ public class MapBlock {
     private ArrayList<Unit> units;
     private ResourceType resource;
     private int resourceAmount;
+    private Trap trap;
     private MapBlockType mapBlockType;
     private final Integer xPosition;
     private final Integer yPosition;
@@ -27,6 +29,7 @@ public class MapBlock {
         this.yPosition = yPosition;
         this.buildings = null;
         this.siege = null;
+        trap = null;
         resourceAmount = 0;
         units = new ArrayList<>();
         numberOfTrees = new HashMap<>();
