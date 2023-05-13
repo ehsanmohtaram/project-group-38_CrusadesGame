@@ -369,4 +369,13 @@ public class Map implements Cloneable {
 
     }
 
+    public ArrayList<MapBlock> getBlocksInFourDirection(MapBlock origin){
+        ArrayList<MapBlock> surrounding = new ArrayList<>();
+        surrounding.add(map[origin.getxPosition()][origin.getxPosition() + 1]);
+        surrounding.add(map[origin.getxPosition()][origin.getxPosition() - 1]);
+        surrounding.add(map[origin.getxPosition() + 1][origin.getxPosition()]);
+        surrounding.add(map[origin.getxPosition() - 1][origin.getxPosition()]);
+        return surrounding;
+    }
+
 }
