@@ -8,7 +8,6 @@ import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
 import view.UnitMenu;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -257,10 +256,7 @@ public class UnitController {
     }
 
     public boolean checkRemainingUnits(){
-        if(currentUnit.size() == 0)
-            return false;
-        return true;
+        return currentUnit.size() != 0;
     }
-
 
 }

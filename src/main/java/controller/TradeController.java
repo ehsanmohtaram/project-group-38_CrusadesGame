@@ -4,7 +4,6 @@ import model.*;
 import model.building.BuildingType;
 import model.building.StockType;
 import view.TradeMenu;
-
 import java.util.HashMap;
 
 public class TradeController {

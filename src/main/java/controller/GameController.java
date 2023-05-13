@@ -166,9 +166,56 @@ public class GameController {
             currentKingdom.setMoveOfCows(building, -1);
             currentKingdom.setResourceAmount(ResourceType.COW, -1);
         }
-        for (Direction direction : Direction.values()) gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), direction ,false);
+        if (buildingType.equals(BuildingType.BIG_STONE_GATEHOUSE) || buildingType.equals(BuildingType.SMALL_STONE_GATEHOUSE))
+            setGate(checkGate(mapBlock), mapBlock ,building);
+        else for (Direction direction : Direction.values()) gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), direction ,false);
         currentKingdom.addBuilding(building);
         currentKingdom.changeNonWorkingUnitPosition(buildingType.getWorkerNeeded(), mapBlock, buildingType.getNumberOfWorker());
+    }
+
+    public Integer checkGate(MapBlock mapBlock) {
+        if (mapBlock.getxPosition() + 1 > gameMap.getMapWidth() || mapBlock.getxPosition() - 1 < 0 ||
+            mapBlock.getyPosition() + 1 > gameMap.getMapHeight() || mapBlock.getyPosition() - 1 < 0) return null;
+        boolean checkNorth = gameMap.checkAccess(mapBlock.getxPosition(), mapBlock.getyPosition() + 1, Direction.NORTH);
+        boolean checkSouth = gameMap.checkAccess(mapBlock.getxPosition(), mapBlock.getyPosition() - 1, Direction.SOUTH);
+        boolean checkWest = gameMap.checkAccess(mapBlock.getxPosition() + 1, mapBlock.getyPosition(), Direction.WEST);
+        boolean checkEast = gameMap.checkAccess(mapBlock.getxPosition() - 1, mapBlock.getyPosition(), Direction.EAST);
+        if (checkEast && checkWest) return 1;
+        else if (checkNorth && checkSouth) return 0;
+        else return null;
+    }
+
+    public void setGate(Integer directions, MapBlock mapBlock, Building building) {
+        if (directions.equals(0)) {
+            currentKingdom.setGateDirection(building, Direction.NORTH);
+            gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), Direction.WEST, false);
+            gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), Direction.EAST, false);
+        }
+        else {
+            currentKingdom.setGateDirection(building, Direction.EAST);
+            gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), Direction.NORTH, false);
+            gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), Direction.SOUTH, false);
+        }
+    }
+
+    public MapBlock checkBridgePosition(MapBlock currentBlock) {
+        int x = currentBlock.getxPosition();
+        int y = currentBlock.getyPosition();
+        MapBlock mapBlock;
+        for (int i = -1; i <= 1; i++) {
+            if ( i + x  > gameMap.getMapWidth() || i + x < 0) continue;
+            for (int j = -1; j <= 1; j++) {
+                if (j == i || (j + i == 0)) continue;
+                if ( j + y  > gameMap.getMapHeight() || j + y < 0) continue;
+                mapBlock = gameMap.getMapBlockByLocation(x + i, y + j);
+                if (mapBlock.getBuildings().getBuildingType().equals(BuildingType.SMALL_STONE_GATEHOUSE) ||
+                        mapBlock.getBuildings().getBuildingType().equals(BuildingType.BIG_STONE_GATEHOUSE)) {
+                    if (currentKingdom.getGateDirection(mapBlock.getBuildings()).equals(Direction.NORTH) && (x == (x + i))) return mapBlock;
+                    if (currentKingdom.getGateDirection(mapBlock.getBuildings()).equals(Direction.EAST) && (y == (y + j))) return mapBlock;
+                }
+            }
+        }
+        return null;
     }
 
     public String dropBuilding(HashMap<String, String> options) {
@@ -190,6 +237,9 @@ public class GameController {
         if (mapBlock.getBuildings() != null || mapBlock.getSiege() != null) return "This block already has filled with another building!";
         if (buildingType.equals(BuildingType.HEAD_QUARTER) || buildingType.specificConstant instanceof SiegeType) return "You can not buy this building!";
         if (buildingType.getGOLD() > currentKingdom.getBalance()) return "You do not have enough gold to buy this building.";
+        if (buildingType.equals(BuildingType.BIG_STONE_GATEHOUSE) || buildingType.equals(BuildingType.SMALL_STONE_GATEHOUSE))
+            if (checkGate(mapBlock) == null) return "You can not build your gate here cause it do not have access to other blocks!";
+        if (buildingType.equals(BuildingType.DRAWBRIDGE)) if (checkBridgePosition(mapBlock) == null) return "You can not build your bridge here!";
         if (buildingType.getRESOURCES() != null && buildingType.getRESOURCE_NUMBER() > currentKingdom.getResourceAmount(buildingType.getRESOURCES()))
             return "You do not have enough " + buildingType.getRESOURCES().name().toLowerCase() + " to buy this building.";
         if (currentKingdom.checkForAvailableNormalUnit(buildingType.getWorkerNeeded()) < buildingType.getNumberOfWorker())

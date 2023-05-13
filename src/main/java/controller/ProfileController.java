@@ -4,7 +4,6 @@ import model.Randomize;
 import model.User;
 import org.apache.commons.codec.digest.DigestUtils;
 import view.ProfileMenu;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

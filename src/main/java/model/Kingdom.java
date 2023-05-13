@@ -17,7 +17,6 @@ public class Kingdom{
     private Double balance;
     private Integer foodRate;
     private Integer taxRate;
-    private Integer attackRate;
     private Building headquarter;
     private ArrayList<Trade> myRequests = new ArrayList<>();
     private ArrayList<Trade> mySuggestion = new ArrayList<>();
@@ -31,6 +30,7 @@ public class Kingdom{
     private ArrayList<Unit> remainingUnitMove = new ArrayList<>();
     private ArrayList<Building> remainingBuildingMove = new ArrayList<>();
     private HashMap<Building, Integer> moveOfCows = new HashMap<>();
+    private HashMap<Building, Direction> gateDirection = new HashMap<>();
     public Kingdom(Flags flag, User owner) {
         population = noneEmployed = 10;
         popularity = 10;
@@ -40,7 +40,6 @@ public class Kingdom{
         this.flag = flag;
         this.owner = owner;
         this.balance = 10000.0;
-        attackRate = 1;
         for (ResourceType resourceType : ResourceType.values()) resources.put(resourceType, 50);
         for (Weapons weapon : Weapons.values()) weapons.put(weapon, 0);
         for (Food food : Food.values()) foods.put(food, 0);
@@ -132,9 +131,17 @@ public class Kingdom{
         return null;
     }
 
+    public Direction getGateDirection(Building building) {
+        return gateDirection.get(building);
+    }
+
+    public void setGateDirection(Building building, Direction direction) {
+        gateDirection.put(building, direction);
+    }
+
     public Integer getAttackRate() {
-        //toDo update it relating to fear rate
-        return attackRate;
+        double fearRateSet = (double) fearRate / 10;
+        return (int) fearRateSet + 1;
     }
 
     public void setTaxRate(Integer taxRate) {
