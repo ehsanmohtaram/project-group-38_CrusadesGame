@@ -1,7 +1,6 @@
 package controller;
 
 import model.Database;
-import model.Kingdom;
 import model.Map;
 import model.User;
 import view.*;
@@ -103,18 +102,6 @@ public class Controller {
         if (currentUser.getMyMap().get(Integer.parseInt(command) - 1).isEndGame()) return "This game is already Finished!";
         gameMap = currentUser.getMyMap().get(Integer.parseInt(command) - 1);
         return "start";
-    }
-
-    public String pourOil() {
-        return null;
-    }
-
-    public String digTunnel() {
-        return null;
-    }
-
-    public String disbandUnit() {
-        return null;
     }
 
 }
