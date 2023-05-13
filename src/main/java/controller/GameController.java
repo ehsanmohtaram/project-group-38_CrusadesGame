@@ -168,6 +168,7 @@ public class GameController {
         }
         if (buildingType.equals(BuildingType.BIG_STONE_GATEHOUSE) || buildingType.equals(BuildingType.SMALL_STONE_GATEHOUSE))
             setGate(checkGate(mapBlock), mapBlock ,building);
+        if (buildingType.equals(BuildingType.DRAWBRIDGE)) gameMap.setGateFlag(building, currentKingdom.getFlag());
         else for (Direction direction : Direction.values()) gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), direction ,false);
         currentKingdom.addBuilding(building);
         currentKingdom.changeNonWorkingUnitPosition(buildingType.getWorkerNeeded(), mapBlock, buildingType.getNumberOfWorker());
@@ -187,15 +188,16 @@ public class GameController {
 
     public void setGate(Integer directions, MapBlock mapBlock, Building building) {
         if (directions.equals(0)) {
-            currentKingdom.setGateDirection(building, Direction.NORTH);
+            gameMap.setGateDirection(building, Direction.NORTH);
             gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), Direction.WEST, false);
             gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), Direction.EAST, false);
         }
         else {
-            currentKingdom.setGateDirection(building, Direction.EAST);
+            gameMap.setGateDirection(building, Direction.EAST);
             gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), Direction.NORTH, false);
             gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), Direction.SOUTH, false);
         }
+        gameMap.setGateFlag(building, currentKingdom.getFlag());
     }
 
     public MapBlock checkBridgePosition(MapBlock currentBlock) {
@@ -208,10 +210,14 @@ public class GameController {
                 if (j == i || (j + i == 0)) continue;
                 if ( j + y  > gameMap.getMapHeight() || j + y < 0) continue;
                 mapBlock = gameMap.getMapBlockByLocation(x + i, y + j);
-                if (mapBlock.getBuildings().getBuildingType().equals(BuildingType.SMALL_STONE_GATEHOUSE) ||
-                        mapBlock.getBuildings().getBuildingType().equals(BuildingType.BIG_STONE_GATEHOUSE)) {
-                    if (currentKingdom.getGateDirection(mapBlock.getBuildings()).equals(Direction.NORTH) && (x == (x + i))) return mapBlock;
-                    if (currentKingdom.getGateDirection(mapBlock.getBuildings()).equals(Direction.EAST) && (y == (y + j))) return mapBlock;
+                if (mapBlock.getBuildings() != null) {
+                    if (mapBlock.getBuildings().getBuildingType().equals(BuildingType.SMALL_STONE_GATEHOUSE) ||
+                            mapBlock.getBuildings().getBuildingType().equals(BuildingType.BIG_STONE_GATEHOUSE)) {
+                        if (gameMap.getGateDirection(mapBlock.getBuildings()).equals(Direction.NORTH) && (x == (x + i)))
+                            return mapBlock;
+                        if (gameMap.getGateDirection(mapBlock.getBuildings()).equals(Direction.EAST) && (y == (y + j)))
+                            return mapBlock;
+                    }
                 }
             }
         }
@@ -259,7 +265,9 @@ public class GameController {
         MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
         if (mapBlock.getBuildings() == null) return "There is no building found in this position!";
         if (!gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")))
-                .getBuildings().getOwner().getOwner().equals(currentUser))
+                .getBuildings().getOwner().getOwner().equals(currentUser) &&
+                !mapBlock.getBuildings().getBuildingType().equals(BuildingType.SMALL_STONE_GATEHOUSE) &&
+                !mapBlock.getBuildings().getBuildingType().equals(BuildingType.BIG_STONE_GATEHOUSE))
             return "You can not access to this building cause you do not own it!";
         GameController.selectedBuilding = mapBlock.getBuildings();
         return "building";

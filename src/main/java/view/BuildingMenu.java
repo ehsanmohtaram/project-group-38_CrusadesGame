@@ -28,12 +28,15 @@ public class BuildingMenu {
 
     public String defensiveBuildingRnu() {
         String command;
+        HashMap<String, String> optionPass;
         System.out.println(buildingController.buildingHp());
         while (true) {
             command = CommandParser.getScanner().nextLine();
             if (commandParser.validate(command, "back", null) != null) return "back";
             if (commandParser.validate(command, "repair", null) != null)
                 System.out.println(buildingController.repairBuilding());
+            if ((optionPass = commandParser.validate(command, "gate", "a|access")) != null)
+                System.out.println(buildingController.openAccess(optionPass));
             else System.out.println("Invalid command");
         }
 

@@ -1,8 +1,10 @@
 package model;
 
+import model.building.Building;
 import model.unit.Unit;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,6 +21,9 @@ public class Map implements Cloneable {
     private ArrayList<Character> directions = new ArrayList<Character>(List.of('w' , 'e' , 'n' , 's'));
     private int mapWidth;
     private int mapHeight;
+    private HashMap<Building, Direction> gateDirection = new HashMap<>();
+    private HashMap<Building, Flags> gateFlag = new HashMap<>();
+
     public Map(Integer mapWidth, Integer mapHeight, String mapName) {
         endGame = false;
         this.mapName = mapName;
@@ -93,6 +98,24 @@ public class Map implements Cloneable {
             for (MapBlock mapBlockWith : mapBlockHeight) mapBlockWith.addTree(Tree.OLIVE);
 
     }
+
+    public Direction getGateDirection(Building building) {
+        return gateDirection.get(building);
+    }
+
+    public void setGateDirection(Building building, Direction direction) {
+        gateDirection.put(building, direction);
+    }
+
+    public Flags getGateFlag(Building building) {
+        return gateFlag.get(building);
+    }
+
+    public void setGateFlag(Building building, Flags flags) {
+        gateFlag.put(building, flags);
+    }
+
+
 
     public String getMapName() {
         return mapName;
