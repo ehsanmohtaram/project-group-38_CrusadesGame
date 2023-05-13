@@ -30,7 +30,6 @@ public class Kingdom{
     private ArrayList<Unit> remainingUnitMove = new ArrayList<>();
     private ArrayList<Building> remainingBuildingMove = new ArrayList<>();
     private HashMap<Building, Integer> moveOfCows = new HashMap<>();
-    private HashMap<Building, Direction> gateDirection = new HashMap<>();
     public Kingdom(Flags flag, User owner) {
         population = noneEmployed = 10;
         popularity = 10;
@@ -129,14 +128,6 @@ public class Kingdom{
             }
         }
         return null;
-    }
-
-    public Direction getGateDirection(Building building) {
-        return gateDirection.get(building);
-    }
-
-    public void setGateDirection(Building building, Direction direction) {
-        gateDirection.put(building, direction);
     }
 
     public Integer getAttackRate() {
