@@ -1,5 +1,6 @@
 package controller;
 
+import model.Direction;
 import model.Kingdom;
 import model.Map;
 import model.MapBlock;
@@ -42,10 +43,15 @@ public class UnitController {
         MapBlock destination = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
         if(destination == null)
             return "invalid location";
-        Integer moveLength;
-        if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
+        Integer moveLength = 0;
+        if(!currentUnit.get(0).getUnitType().equals(UnitType.ASSASSINS))
+            if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
                 destination.getxPosition(), destination.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
-            return "They are too slow to reach such destination";
+                return "They are too slow to reach such destination";
+        else
+            if((moveLength = currentUnit.get(0).getOptimizedDistanceFrom(destination.getxPosition(), destination.getyPosition()
+                ,false)) > currentUnit.get(0).getMovesLeft())
+                return "Assassins can pass walls but still they have limits in one turn moves!";
         if(destination.getBuildings() instanceof DefensiveStructure){
             DefensiveStructure defensiveDestination = (DefensiveStructure) destination.getBuildings();
             DefensiveStructureType type = (DefensiveStructureType) destination.getBuildings().getSpecificConstant();
@@ -61,6 +67,14 @@ public class UnitController {
             if (unit.getUnitState().equals(UnitState.PATROLLING))
                 unit.setUnitState(UnitState.STANDING);
         }
+
+        if(currentUnit.get(0).getUnitType().equals(UnitType.LADDER_MAN))
+            for (Direction value : Direction.values())
+                if(!gameMap.checkAccess(destination.getxPosition(), destination.getyPosition(), value)) {
+                    gameMap.changeAccess(destination.getxPosition(), destination.getyPosition(), value, true);
+                    break;
+                }
+
 
         return "moved successfully";
     }
@@ -224,6 +238,8 @@ public class UnitController {
         if(target == null)
             return "invalid location";
         Building toDestroy;
+        if(!currentUnit.get(0).getUnitType().equals(UnitType.TUNNELER))
+            return "tunnelers just can dig tunnels";
         if((toDestroy = target.getBuildings()) == null)
             return "there is no building there to dig tunnel under it";
         if(toDestroy.getOwner().equals(currentUnit.get(0).getOwner()))
@@ -244,19 +260,56 @@ public class UnitController {
         return "they are sent to do their work";
     }
 
-    public String disband(){
-        Camp camp;
-        if((camp = currentKingdom.getCampsToDisbandUnit(currentUnit)) == null)
-            return "no empty or remaining camp to store your units.";
-        for (Unit unit : currentUnit) {
-            unit.setUnitState(UnitState.NOT_ACTIVE);
-            unit.moveTo(camp.getPosition(), 0);
+    public String pourOil(HashMap<String, String> options){
+        if(options.get("d") == null)
+            return "please enter necessary options";
+        if(!options.get("d").matches("[nswe]"))
+            return "no such direction";
+        int x = 0 , y = 0;
+        switch (options.get("d")){
+            case "n":
+                x = currentUnit.get(0).getXPosition();
+                y = currentUnit.get(0).getYPosition() - 1;
+                break;
+            case "s":
+                x = currentUnit.get(0).getXPosition();
+                y = currentUnit.get(0).getYPosition() + 1;
+                break;
+            case "w":
+                x = currentUnit.get(0).getXPosition() - 1;
+                y = currentUnit.get(0).getYPosition();
+                break;
+            case "e":
+                x = currentUnit.get(0).getXPosition() + 1;
+                y = currentUnit.get(0).getYPosition();
+                break;
         }
-        return "they go back to their camp";
+        MapBlock location = gameMap.getMapBlockByLocation(x , y);
+        for (Unit unit : location.getUnits()) {
+            for (Unit engineer : currentUnit) {
+                engineer.bilateralFight(unit, false);
+            }
+        }
+        ArrayList<Unit> archers = gameMap.getEnemiesInSurroundingArea(location.getxPosition(), location.getyPosition()
+                , currentKingdom, true, 5);
+        if(currentUnit.size() > 0)
+            for (Unit unit : currentUnit) {
+                unit.destroyBuilding(location.getBuildings(), archers);
+            }
+        return "they did their job!";
+    }
+
+    public String disband(){
+        currentKingdom.setNoneEmployed(currentUnit.size());
+        for (Unit unit : currentUnit) {
+            unit.removeUnit();
+        }
+        return "they go back to their origin!";
     }
 
     public boolean checkRemainingUnits(){
         return currentUnit.size() != 0;
     }
+
 
 }

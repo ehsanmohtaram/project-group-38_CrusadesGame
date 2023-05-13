@@ -1,6 +1,7 @@
 package model.unit;
 
 import controller.UnitController;
+import model.Direction;
 import model.Kingdom;
 import model.MapBlock;
 import model.building.Building;
@@ -9,6 +10,7 @@ import model.building.DefensiveStructure;
 import model.building.DefensiveStructureType;
 
 import java.util.ArrayList;
+import java.util.concurrent.locks.ReadWriteLock;
 
 public class Unit {
     public static ArrayList<Unit> AggressiveUnits = new ArrayList<>();
@@ -103,12 +105,16 @@ public class Unit {
     public void decreaseHp(int amount){
         hp -= amount;
         if(hp <= 0) {
-            locationBlock.getUnits().remove(this);
-            owner.getUnits().remove(this);
-            if(UnitController.currentUnit != null)
-                if(UnitController.currentUnit.contains(this))
-                    UnitController.currentUnit.remove(this);
+            removeUnit();
         }
+    }
+
+    public void removeUnit(){
+        locationBlock.getUnits().remove(this);
+        owner.getUnits().remove(this);
+        if(UnitController.currentUnit != null)
+            if(UnitController.currentUnit.contains(this))
+                UnitController.currentUnit.remove(this);
     }
 
     public Integer getOptimizedAttackRange(){
@@ -191,7 +197,7 @@ public class Unit {
         }else{
             //toDo update the amount of head quarter damage
             target.decreaseHP(getOptimizedDamage());
-            decreaseHp(5);
+            decreaseHp(20);
         }
         for (Unit archer : archers) {
             archer.unilateralFight(this);
@@ -206,6 +212,7 @@ public class Unit {
         }
         AggressiveUnits = new ArrayList<>();
     }
+
 
 
 //
