@@ -166,12 +166,41 @@ public class GameController {
             currentKingdom.setMoveOfCows(building, -1);
             currentKingdom.setResourceAmount(ResourceType.COW, -1);
         }
+        if (buildingType.equals(BuildingType.DRAWBRIDGE)) gameMap.setGateFlag(building, currentKingdom.getFlag());
         if (buildingType.equals(BuildingType.BIG_STONE_GATEHOUSE) || buildingType.equals(BuildingType.SMALL_STONE_GATEHOUSE))
             setGate(checkGate(mapBlock), mapBlock ,building);
-        if (buildingType.equals(BuildingType.DRAWBRIDGE)) gameMap.setGateFlag(building, currentKingdom.getFlag());
-        else for (Direction direction : Direction.values()) gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), direction ,false);
+        else if (!(building instanceof Camp) && !building.getBuildingType().equals(BuildingType.STAIRS))
+            for (Direction direction : Direction.values()) gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), direction ,false);
         currentKingdom.addBuilding(building);
         currentKingdom.changeNonWorkingUnitPosition(buildingType.getWorkerNeeded(), mapBlock, buildingType.getNumberOfWorker());
+    }
+
+    public boolean checkStairPosition(MapBlock currentBlock) {
+        int x = currentBlock.getxPosition();
+        int y = currentBlock.getyPosition();
+        int flag = 0;
+        MapBlock mapBlock;
+        for (int i = -1; i <= 1; i++) {
+            if ( i + x  > gameMap.getMapWidth() || i + x < 0) continue;
+            for (int j = -1; j <= 1; j++) {
+                if (j == i || (j + i == 0)) continue;
+                if (j + y > gameMap.getMapHeight() || j + y < 0) continue;
+                mapBlock = gameMap.getMapBlockByLocation(x + i, y + j);
+                if (mapBlock.getBuildings() != null) {
+                    if (mapBlock.getBuildings().getSpecificConstant() instanceof DefensiveStructureType) {
+                        if (i == 1)
+                            gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), Direction.WEST, true);
+                        else if (i == -1)
+                            gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), Direction.EAST, true);
+                        else if (j == 1)
+                            gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), Direction.SOUTH, true);
+                        else gameMap.changeAccess(mapBlock.getxPosition(), mapBlock.getyPosition(), Direction.NORTH, true);
+                        flag = 1;
+                    }
+                }
+            }
+        }
+        return flag != 0;
     }
 
     public Integer checkGate(MapBlock mapBlock) {
@@ -252,6 +281,7 @@ public class GameController {
             return "There are not enough available worker to put in this building!";
         result = checkSpecificBuilding(mapBlock, buildingType);
         if (result != null) return result;
+        if (buildingType.equals(BuildingType.STAIRS)) if (!checkStairPosition(mapBlock)) return "You can not put your stairs here!";
         createBuilding(mapBlock, buildingType);
         return buildingType.name().toLowerCase().replaceAll("_"," ") + " added successfully to kingdom.";
     }
