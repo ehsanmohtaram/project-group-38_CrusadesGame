@@ -11,6 +11,7 @@ import model.building.DefensiveStructureType;
 import java.util.ArrayList;
 
 public class Unit {
+    public static ArrayList<Unit> AggressiveUnits = new ArrayList<>();
     private Integer hp;
     private UnitType unitType;
     private MapBlock locationBlock;
@@ -84,6 +85,10 @@ public class Unit {
     }
 
     public void setUnitState(UnitState unitState) {
+        if(unitState.equals(UnitState.OFFENSIVE))
+            AggressiveUnits.add(this);
+        if(this.unitState.equals(UnitState.OFFENSIVE) && !unitState.equals(UnitState.OFFENSIVE))
+            AggressiveUnits.remove(this);
         this.unitState = unitState;
     }
 
@@ -125,7 +130,7 @@ public class Unit {
     }
 
     public Integer getOptimizedDamage(){
-        return unitType.getDAMAGE() * owner.getAttackRate();
+        return unitType.getDAMAGE() + owner.getAttackRate();
     }
 
     public boolean decreaseMoves(int amount){
@@ -191,7 +196,15 @@ public class Unit {
         for (Unit archer : archers) {
             archer.unilateralFight(this);
         }
+    }
 
+    public void resetAttributes(){
+        if(hp > 0){
+            movesLeft = unitType.getVELOCITY();
+            if(locationBlock.getBuildings() instanceof DefensiveStructure)
+                setHigherElevation((DefensiveStructure) locationBlock.getBuildings());
+        }
+        AggressiveUnits = new ArrayList<>();
     }
 
 

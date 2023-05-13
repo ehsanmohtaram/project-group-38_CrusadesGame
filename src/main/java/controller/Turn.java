@@ -2,6 +2,7 @@ package controller;
 import model.*;
 import model.building.*;
 import model.unit.Unit;
+import model.unit.UnitState;
 import model.unit.UnitType;
 
 public class Turn {
@@ -32,6 +33,7 @@ public class Turn {
         move();
         removeUnitsAndBuildingWith0Hp();
         growPopulation();
+        battleExecution();
     }
 
     public void growPopulation() {
@@ -383,6 +385,32 @@ public class Turn {
                 checkBlock.setSiege(null);
             }
         }
+    }
+
+    public void battleExecution(){
+        for (Unit aggressiveUnit : Unit.AggressiveUnits)
+            aggressiveUnitsFight(aggressiveUnit);
+
+        for (Kingdom player : gameMap.getPlayers()) {
+            for (Unit unit : player.getUnits()) {
+                if(unit.getUnitState().equals(UnitState.DEFENSIVE)) {
+                    Unit nearestEnemy = gameMap.getEnemiesInAttackRange(unit, true).get(0);
+                    if(nearestEnemy.getUnitState().equals(UnitState.OFFENSIVE))
+                        unit.bilateralFight(nearestEnemy, true);
+                    else
+                        unit.unilateralFight(nearestEnemy);
+                }
+            }
+        }
+    }
+
+    private void aggressiveUnitsFight(Unit unit){
+        for (Unit defender : gameMap.getEnemiesInAttackRange(unit, true)) {
+            unit.moveTo(defender.getLocationBlock(), 0);
+            if(!unit.bilateralFightTillEnd(defender))
+                return;
+        }
+        unit.setUnitState(UnitState.STANDING);
     }
 
 }

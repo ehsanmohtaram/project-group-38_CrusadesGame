@@ -59,7 +59,7 @@ public class UnitController {
         for (Unit unit : currentUnit) {
             unit.moveTo(destination, moveLength);
             if (unit.getUnitState().equals(UnitState.PATROLLING))
-                unit.setUnitState(UnitState.DEFENSIVE);
+                unit.setUnitState(UnitState.STANDING);
         }
 
         return "moved successfully";
@@ -168,7 +168,7 @@ public class UnitController {
                 currentUnit.get(0).getOptimizedAttackRange())
             return "out of attack range. first move your units";
         ArrayList<Unit> archers = gameMap.getEnemiesInSurroundingArea(target.getxPosition(), target.getyPosition()
-                , currentKingdom, true);
+                , currentKingdom, true, 5);
 
 
         if(target.isUnitsShouldBeAttackedFirst(currentUnit.get(0))){
@@ -236,7 +236,7 @@ public class UnitController {
             unit.moveTo(target, moveLength);
 
         for (Unit defender : gameMap.getEnemiesInSurroundingArea(target.getxPosition(), target.getyPosition()
-                , currentKingdom, false))
+                , currentKingdom, false, 5))
             for (Unit attacker : currentUnit)
                 defender.bilateralFight(attacker, true);
         if(checkRemainingUnits())

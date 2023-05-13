@@ -248,21 +248,48 @@ public class Map implements Cloneable {
         return output;
     }
 
-    public ArrayList<Unit> getEnemiesInSurroundingArea(int xPosition, int yPosition, Kingdom attacker, boolean justArchers){
-        ArrayList<Unit> archersOfEnemy = new ArrayList<>();
-        for (MapBlock[] mapBlocks : getSurroundingArea(xPosition, yPosition, 5))
+    public ArrayList<Unit> getEnemiesInSurroundingArea(int xPosition, int yPosition, Kingdom attacker, boolean justArchers, int range){
+        ArrayList<Unit> enemies = new ArrayList<>();
+        for (MapBlock[] mapBlocks : getSurroundingArea(xPosition, yPosition, range))
             for (MapBlock mapBlock : mapBlocks)
                 for (Unit unit : mapBlock.getUnits())
                     if(!unit.getOwner().equals(attacker) &&
                             map[xPosition][yPosition].getUnits().get(0).getOptimizedDistanceFrom(mapBlock.getxPosition(),
                             mapBlock.getyPosition(), true) < unit.getOptimizedAttackRange()) {
-                        archersOfEnemy.add(unit);
+                        enemies.add(unit);
                         if(justArchers && !unit.getUnitType().getCAN_DO_AIR_ATTACK())
-                            archersOfEnemy.remove(unit);
+                            enemies.remove(unit);
                     }
 
-        return archersOfEnemy;
+        return enemies;
     }
+
+    public ArrayList<Unit> getEnemiesInAttackRange(Unit attacker, boolean isNearestWanted){
+        ArrayList<Unit> enemies = new ArrayList<>();
+        ArrayList<Unit> nearestEnemies = null;
+        int nearestDistance = 100;
+        int anotherDistance;
+        for (MapBlock[] mapBlocks : getSurroundingArea(attacker.getXPosition(), attacker.getYPosition(), attacker.getMovesLeft() + attacker.getOptimizedAttackRange()))
+            outer:
+            for (MapBlock mapBlock : mapBlocks)
+                for (Unit unit : mapBlock.getUnits())
+                    if (!unit.getOwner().equals(attacker)) {
+                        if (isNearestWanted && (anotherDistance = getShortestWayLength(attacker.getXPosition(), attacker.getYPosition(), unit.getXPosition(), unit.getYPosition(), attacker.getMovesLeft())) < nearestDistance) {
+                            nearestDistance = anotherDistance;
+                            nearestEnemies = mapBlock.getUnits();
+                            enemies.addAll(nearestEnemies);
+                            continue outer;
+                        }
+                        enemies.add(unit);
+                    }
+
+        if(isNearestWanted) {
+            enemies.removeAll(nearestEnemies);
+            enemies.addAll(0 ,nearestEnemies);
+        }
+        return enemies;
+    }
+
 
     public Integer getShortestWayLength(int xPosition, int yPosition, int xOfDestination, int yOfDestination, Integer limit){
         boolean[][]mark = new boolean[mapWidth][mapHeight];
