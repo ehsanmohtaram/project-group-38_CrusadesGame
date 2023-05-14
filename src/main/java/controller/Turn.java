@@ -36,6 +36,7 @@ public class Turn {
         removeUnitsAndBuildingWith0Hp();
         growPopulation();
         battleExecution();
+        trapsReset();
     }
 
     public void growPopulation() {
@@ -451,7 +452,7 @@ public class Turn {
         unit.setUnitState(UnitState.STANDING);
     }
 
-    public void TrapsExecution(){
+    public void trapsReset(){
         for (Kingdom player : gameMap.getPlayers()) {
             for (Trap trap : player.getTraps()) {
                 if(trap.getTrapType().equals(TrapType.BITUMEN_TRENCH))
