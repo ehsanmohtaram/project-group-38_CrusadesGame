@@ -354,6 +354,28 @@ public class UnitController {
         return "they did their job!";
     }
 
+    public String fireTrench(HashMap<String, String> options){
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        String result;
+        result = positionValidate(options.get("x"),options.get("y"));
+        if (result != null) return result;
+        MapBlock target = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        if(target == null)
+            return "invalid location";
+        if(!target.getTrap().getTrapType().equals(TrapType.BITUMEN_TRENCH))
+            return "there is no trench there";
+        if(currentUnit.get(0).getUnitType().getCAN_DO_AIR_ATTACK())
+            return "selected units are not archer";
+        Integer moveLength = 0;
+        if (target.getOptimizedDistanceFrom(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(), true) >
+                currentUnit.get(0).getOptimizedAttackRange())
+            return "Arrows will not go that far";
+
+        target.getTrap().setActive(true);
+        return "fire will destroy anyone!";
+    }
+
     public String disband(){
         currentKingdom.setNoneEmployed(currentUnit.size());
         for (Unit unit : currentUnit) {
