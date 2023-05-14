@@ -320,10 +320,8 @@ public class UnitController {
     }
 
     public String pourOil(HashMap<String, String> options){
-        if(options.get("d") == null)
-            return "please enter necessary options";
-        if(!options.get("d").matches("[nswe]"))
-            return "no such direction";
+        if(options.get("d") == null) return "please enter necessary options";
+        if(!options.get("d").matches("[nswe]")) return "no such direction";
         int x = 0 , y = 0;
         switch (options.get("d")){
             case "n":
@@ -355,7 +353,7 @@ public class UnitController {
             for (Unit unit : currentUnit) {
                 unit.destroyBuilding(location.getBuildings(), archers);
             }
-        return "they did their job!";
+        return "Oil pour successfully!";
     }
 
     public String fireTrench(HashMap<String, String> options){
