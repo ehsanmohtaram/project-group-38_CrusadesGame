@@ -188,9 +188,6 @@ public class UnitController {
         else if(target.getOptimizedDistanceFrom(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),false) >
                 currentUnit.get(0).getOptimizedAttackRange())
             return "out of attack range. first move your units";
-        ArrayList<Unit> archers = gameMap.getEnemiesInSurroundingArea(target.getxPosition(), target.getyPosition()
-                , currentKingdom, true, 5);
-
 
         if(target.isUnitsShouldBeAttackedFirst(currentUnit.get(0))){
             outer:
@@ -198,16 +195,27 @@ public class UnitController {
                 for (Unit targetUnit : target.getUnits())
                     if(!unit.bilateralFightTillEnd(targetUnit))
                         continue outer;
-            if(currentUnit.size() > 0)
-                for (Unit unit : currentUnit)
-                    unit.destroyBuilding(target.getBuildings(), archers);
+            battleWithBuilding(target);
 
         }else {
-            for (Unit unit : currentUnit) {
-                unit.destroyBuilding(target.getBuildings(), archers);
-            }
+            battleWithBuilding(target);
         }
         return "battle done!";
+    }
+
+    private void battleWithBuilding(MapBlock target){
+        ArrayList<Unit> archers = gameMap.getEnemiesInSurroundingArea(target.getxPosition(), target.getyPosition()
+                , currentKingdom, true, 5);
+        if(currentUnit.size() > 0 && target.getBuildings() != null) {
+            Building building = target.getBuildings();
+            if (building.getBuildingType().equals(BuildingType.BIG_STONE_GATEHOUSE) ||
+                    building.getBuildingType().equals(BuildingType.SMALL_STONE_GATEHOUSE) ||
+                    building.getBuildingType().equals(BuildingType.DRAWBRIDGE))
+                gameMap.setGateFlag(building, currentKingdom.getFlag());
+            else
+                for (Unit unit : currentUnit)
+                    unit.destroyBuilding(target.getBuildings(), archers);
+        }
     }
 
     public String patrolUnit(HashMap<String, String> options){
@@ -255,6 +263,12 @@ public class UnitController {
             return "there is no building there to dig tunnel under it";
         if(toDestroy.getOwner().equals(currentUnit.get(0).getOwner()))
             return "Are you crazy??? you can not destroy your own building with tunnelers";
+        if(!(toDestroy instanceof DefensiveStructure))
+            return "you can not dig tunnel under non defensive structures";
+        DefensiveStructure defensiveStructure = (DefensiveStructure) toDestroy;
+        DefensiveStructureType type = (DefensiveStructureType)defensiveStructure.getSpecificConstant();
+        if(!type.getTunnelImmune())
+            return "you can not dig tunnel under specific towers";
         Integer moveLength;
         if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
                 target.getxPosition(), target.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
@@ -323,6 +337,8 @@ public class UnitController {
         if(options.get("d") == null) return "please enter necessary options";
         if(!options.get("d").matches("[nswe]")) return "no such direction";
         int x = 0 , y = 0;
+        if(currentKingdom.getResourceAmount(ResourceType.OIL) <= 0)
+            return "not enough oil in stock";
         switch (options.get("d")){
             case "n":
                 x = currentUnit.get(0).getXPosition();
@@ -347,6 +363,7 @@ public class UnitController {
                 engineer.bilateralFight(unit, false);
             }
         }
+        currentKingdom.setResourceAmount(ResourceType.OIL, -2);
         ArrayList<Unit> archers = gameMap.getEnemiesInSurroundingArea(location.getxPosition(), location.getyPosition()
                 , currentKingdom, true, 5);
         if(currentUnit.size() > 0)

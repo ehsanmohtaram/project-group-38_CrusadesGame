@@ -5,6 +5,8 @@ import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
 
+import java.util.ArrayList;
+
 public class Turn {
 
     private final Map gameMap;
@@ -394,7 +396,17 @@ public class Turn {
             aggressiveUnitsFight(aggressiveUnit);
         for (Kingdom player : gameMap.getPlayers()) {
             for (Unit unit : player.getUnits()) {
+                if(unit.getUnitType().equals(UnitType.WORKER))
+                    continue;
                 if(unit.getUnitState().equals(UnitState.DEFENSIVE)) {
+                    ArrayList<Unit> enemies = gameMap.getEnemiesInAttackRange(unit, true);
+                    if(enemies.size() == 0)
+                        continue;
+                    if(unit.getUnitType().equals(UnitType.ENGINEER) && player.getResourceAmount(ResourceType.OIL) > 0) {
+                        player.setResourceAmount(ResourceType.OIL, -2);
+                        for (Unit enemy : enemies.get(0).getLocationBlock().getUnits())
+                            unit.unilateralFight(enemy);
+                    }
                     Unit nearestEnemy = gameMap.getEnemiesInAttackRange(unit, true).get(0);
                     if(nearestEnemy.getUnitState().equals(UnitState.OFFENSIVE))
                         unit.bilateralFight(nearestEnemy, true);
@@ -404,6 +416,14 @@ public class Turn {
             }
         }
 
+        for (Kingdom player : gameMap.getPlayers())
+            for (Trap trap : player.getTraps())
+                if(trap.getTrapType().equals(TrapType.DOGS_CAGE))
+                    for (Unit unit : gameMap.getEnemiesInSurroundingArea(trap.getLocationBlock().getxPosition(), trap.getLocationBlock().getyPosition(),
+                            player, false, 5))
+                        unit.decreaseHp(trap.getTrapType().getDamage());
+
+
         for (Kingdom player : gameMap.getPlayers()) {
             for (Unit unit : player.getUnits()) {
                 unit.resetAttributes();
@@ -412,12 +432,30 @@ public class Turn {
     }
 
     private void aggressiveUnitsFight(Unit unit){
-        for (Unit defender : gameMap.getEnemiesInAttackRange(unit, true)) {
+        ArrayList<Unit> enemies = gameMap.getEnemiesInAttackRange(unit, true);
+        if(enemies.size() == 0)
+            return;
+        if(unit.getUnitType().equals(UnitType.ENGINEER) && unit.getOwner().getResourceAmount(ResourceType.OIL) > 0) {
+            unit.getOwner().setResourceAmount(ResourceType.OIL, -2);
+            for (Unit enemy : enemies.get(0).getLocationBlock().getUnits())
+                unit.bilateralFight(enemy, false);
+        }
+
+        for (Unit defender : enemies ) {
             unit.moveTo(defender.getLocationBlock(), 0);
             if(!unit.bilateralFightTillEnd(defender))
                 return;
         }
         unit.setUnitState(UnitState.STANDING);
+    }
+
+    public void TrapsExecution(){
+        for (Kingdom player : gameMap.getPlayers()) {
+            for (Trap trap : player.getTraps()) {
+                if(trap.getTrapType().equals(TrapType.BITUMEN_TRENCH))
+                    trap.setActive(false);
+            }
+        }
     }
 
 }

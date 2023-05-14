@@ -3,6 +3,8 @@ package model.building;
 import model.Kingdom;
 import model.MapBlock;
 
+import java.util.ArrayList;
+
 public class Trap {
     private Kingdom owner;
     private MapBlock locationBlock;
@@ -17,6 +19,7 @@ public class Trap {
         isActive = true;
         if(trapType.equals(TrapType.BITUMEN_TRENCH))
             isActive = false;
+        owner.addTrap(this);
     }
 
     public Kingdom getOwner() {

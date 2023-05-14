@@ -30,6 +30,7 @@ public class Kingdom{
     private ArrayList<Unit> remainingUnitMove = new ArrayList<>();
     private ArrayList<Building> remainingBuildingMove = new ArrayList<>();
     private HashMap<Building, Integer> moveOfCows = new HashMap<>();
+    private ArrayList<Trap> traps;
     public Kingdom(Flags flag, User owner) {
         population = noneEmployed = 10;
         popularity = 10;
@@ -70,6 +71,14 @@ public class Kingdom{
 
     public ArrayList<Unit> getUnits() {
         return units;
+    }
+
+    public void addTrap(Trap trap){
+        traps.add(trap);
+    }
+
+    public ArrayList<Trap> getTraps() {
+        return traps;
     }
 
     public void setPopulation(Integer population) {

@@ -165,10 +165,18 @@ public class Unit {
     }
 
     public void unilateralFight(Unit enemy){
+        if(hp <= 0)
+            return;
+        if(enemy.getOwner().equals(owner))
+            return;
         enemy.decreaseHp(getOptimizedDamage());
     }
 
     public void bilateralFight(Unit enemy, boolean considerDistances){
+        if(hp <= 0)
+            return;
+        if(enemy.getOwner().equals(owner))
+            return;
         if(considerDistances){
             if(enemy.getOptimizedDistanceFrom(getXPosition(), getYPosition(), true) <= getOptimizedAttackRange()){
                 enemy.decreaseHp(getOptimizedDamage());
@@ -183,6 +191,10 @@ public class Unit {
     }
 
     public boolean bilateralFightTillEnd(Unit enemy){
+        if(hp <= 0)
+            return false;
+        if(enemy.getOwner().equals(owner))
+            return true;
         int strikes = enemy.getHp() / getOptimizedDamage() + 1;
         int enemyStrikes = hp / enemy.getOptimizedDamage() + 1;
         if(strikes > enemyStrikes){
@@ -198,6 +210,13 @@ public class Unit {
     }
 
     public void destroyBuilding(Building target, ArrayList<Unit> archers){
+        if(target.getOwner().equals(owner))
+            return;
+        for (Unit archer : archers) {
+            archer.bilateralFight(this, true);
+        }
+        if(hp <= 0)
+            return;
         if(!target.getBuildingType().equals(BuildingType.HEAD_QUARTER)){
             target.decreaseHP(getOptimizedDamage());
         }else{
@@ -205,9 +224,7 @@ public class Unit {
             target.decreaseHP(getOptimizedDamage());
             decreaseHp(100);
         }
-        for (Unit archer : archers) {
-            archer.unilateralFight(this);
-        }
+
     }
 
     public void resetAttributes(){
