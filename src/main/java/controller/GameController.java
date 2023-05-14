@@ -471,7 +471,7 @@ public class GameController {
         if(!currentKingdom.checkOutOfRange(target.getxPosition(), target.getyPosition()))
             return "it is not legal to drop trap outside of kingdom";
         TrapType trapType;
-        try {trapType = TrapType.valueOf(options.get("t"));}
+        try {trapType = TrapType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));}
         catch (Exception exception) {return "no such type of trap in the game";}
         if(trapType.equals(TrapType.BITUMEN_TRENCH)) {
             if (currentKingdom.getResourceAmount(ResourceType.RIG) > 10)

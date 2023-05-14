@@ -65,7 +65,7 @@ public class GameMenu {
             else if ((options = commandParser.validate(input, "fear rate", "r|rateNumber")) != null)
                 System.out.println(gameController.setFearRate(options));
             else if ((options = commandParser.validate(input, "drop trap", "x|positionX/y|positionY/t|type")) != null)
-                System.out.println(gameController.setFearRate(options));
+                System.out.println(gameController.dropTrap(options));
             else if (commandParser.validate(input, "cheat 100", null) != null)
                 return "design map";
             else if (commandParser.validate(input, "next turn", null) != null)

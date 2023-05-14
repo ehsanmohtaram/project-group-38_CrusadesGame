@@ -128,7 +128,7 @@ public class MapDesignController {
                 trueDirection = direction;
 
         gameMap.changeAccess(xPosition , yPosition , trueDirection, false );
-        gameMap.getMapBlockByLocation(xPosition, yPosition).setMapBlockType(MapBlockType.SLATE);
+        gameMap.getMapBlockByLocation(xPosition, yPosition).setMapBlockType(MapBlockType.ROCK);
         return "successfully dropped";
     }
     public String dropTree(HashMap<String , String> options) {
@@ -224,7 +224,7 @@ public class MapDesignController {
         if(options.get("t").equals("") || options.get("f").equals("")) return "Illegal value. Please fill the options";
         UnitType unitType;
         try {unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));}
-        catch (Exception ignored) {return "There is no such a building!";}
+        catch (Exception ignored) {return "There is no such a unit!";}
         MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
         if (!mapBlock.getMapBlockType().isAccessible())
             return "You can not drop units on this types of lands. Please choose another location!";
