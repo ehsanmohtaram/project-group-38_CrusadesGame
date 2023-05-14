@@ -66,7 +66,7 @@ public class GameController {
         int nextPerson = gameMap.getPlayers().indexOf(currentKingdom);
         Controller.currentUser = gameMap.getPlayers().get((nextPerson + 1) % gameMap.getPlayers().size()).getOwner();
         currentUser = Controller.currentUser;
-        selectedUnit = null; selectedBuilding = null;
+        selectedUnit = new ArrayList<>(); selectedBuilding = null;
         currentKingdom = gameMap.getKingdomByOwner(currentUser);
         return "next turn";
     }

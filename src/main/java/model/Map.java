@@ -68,32 +68,22 @@ public class Map implements Cloneable {
         Map defaultMap2 = new Map(60 , 60 , "graveyard");
         DEFAULT_MAPS.add(defaultMap1);
         DEFAULT_MAPS.add(defaultMap2);
-        for (MapBlock[] mapBlockHeight : defaultMap1.map)
-            for (MapBlock mapBlockWith : mapBlockHeight) mapBlockWith.setMapBlockType(MapBlockType.GRASSLAND);
+        defaultMap1.changeType(0 , 0 , 59, 49, MapBlockType.GRASSLAND);
+        defaultMap1.changeType(0 , 0 , 0, 49, MapBlockType.SEA);
+        defaultMap1.changeType(1 , 0 , 1, 49, MapBlockType.BEACH);
+        defaultMap1.changeType(59 , 0 , 59, 49, MapBlockType.SEA);
+        defaultMap1.changeType(58 , 0 , 58, 49, MapBlockType.BEACH);
+        defaultMap1.changeType(25 , 5 , 26, 45, MapBlockType.SHALLOW_WATER);
+        defaultMap1.changeType(5 , 20 , 45, 21, MapBlockType.RIVER);
+        defaultMap1.changeType(20 , 10 , 20, 40, MapBlockType.SLATE);
+        defaultMap1.changeType(20 , 4 , 34, 11, MapBlockType.SLATE);
+        defaultMap1.changeType(20 , 30 , 35, 30, MapBlockType.IRON);
+        defaultMap1.changeType(33 , 33 , 35, 35, MapBlockType.SLATE);
 
-        for (MapBlock b: defaultMap1.map[0]) b.setMapBlockType(MapBlockType.SEA);
-        for (MapBlock b: defaultMap1.map[1]) b.setMapBlockType(MapBlockType.BEACH);
-        for (MapBlock b: defaultMap1.map[defaultMap1.mapWidth - 1]) b.setMapBlockType(MapBlockType.SEA);
-        for (MapBlock b: defaultMap1.map[defaultMap1.mapWidth - 2]) b.setMapBlockType(MapBlockType.BEACH);
-        for (int i = 5; i < 45; i++) {
-            defaultMap1.map[25][i].setMapBlockType(MapBlockType.SHALLOW_WATER);
-            for (int j = 20; j < 22; j++)
-                defaultMap1.map[i][j].setMapBlockType(MapBlockType.RIVER);
-        }
-        for (int j = 10; j < 40; j++)
-            defaultMap1.map[20][j].setMapBlockType(MapBlockType.SLATE);
-
-        for (int i = 20; i < 35; i++) {
-            for (int j = 4; j < 12; j++) {
-                defaultMap1.map[i][j].setMapBlockType(MapBlockType.SLATE);
-            }
-            defaultMap1.map[i][30].setMapBlockType(MapBlockType.IRON);
-        }
-        for (int i = 33; i < 34; i++) {
-            for (int j = 33; j < 34; j++) {
-                defaultMap1.map[i][j].setMapBlockType(MapBlockType.SLATE);
-            }
-        }
+        defaultMap2.changeType(0 , 0 , 59, 59 , MapBlockType.GRAVEL);
+        defaultMap2.changeType(10, 10 , 49 , 49 , MapBlockType.SLATE);
+        defaultMap2.changeType(20 , 20 , 39 , 39, MapBlockType.PLAIN);
+        defaultMap2.changeType(25, 25 , 30 , 30 , MapBlockType.IRON);
         for (MapBlock[] mapBlockHeight : defaultMap1.map)
             for (MapBlock mapBlockWith : mapBlockHeight) mapBlockWith.addTree(Tree.OLIVE);
 
@@ -253,9 +243,6 @@ public class Map implements Cloneable {
                 }
                 result += '\n';
             }
-//            for (int i = xPosition - 10; i <= (xPosition + 10); i++) {
-//                result += String.format("%2d,%2d" , i , j) + ' ';
-//            }
             result += '\n';
         }
         return result.substring(0, result.length() - 2);
@@ -330,7 +317,7 @@ public class Map implements Cloneable {
             getWaysLengthByEast(mark,  xOfDestination, yOfDestination, 0, xPosition, yPosition, answer, true);
         else
             getWaysLengthByEast(mark, xPosition, yPosition, 0, xOfDestination, yOfDestination, answer, false);
-        if((limit == null && answer.get() == (mapWidth * mapHeight + 1)) || answer.get() == (limit + 1))
+        if((limit == null && (answer.get() == (mapWidth * mapHeight + 1)) || answer.get() == (limit + 1)))
             return null;
         return answer.get();
     }
