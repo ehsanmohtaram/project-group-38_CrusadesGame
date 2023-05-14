@@ -295,15 +295,22 @@ public class Kingdom{
     }
 
     public boolean checkOutOfRange(int xPosition , int yPosition) {
-        int xResult = 0, yResult = 0, max = 0;
+        int xResult = 0, yResult = 0, max = 0, xOutput = 0, yOutput = 0;
         for (Building building : buildings) {
             xResult = building.getPosition().getxPosition() - headquarter.getPosition().getxPosition();
             yResult = building.getPosition().getyPosition() - headquarter.getPosition().getyPosition();
-            if (xResult * xResult + yResult * yResult > max) max = xResult * xResult + yResult * yResult;
+            if (xResult * xResult + yResult * yResult > max) {
+                max = xResult * xResult + yResult * yResult;
+                xOutput = xResult;
+                yOutput = yResult;
+            }
         }
+        System.out.println(max);
         xPosition = xPosition - headquarter.getPosition().getxPosition();
         yPosition = yPosition - headquarter.getPosition().getyPosition();
-        return (xResult + 4) * (yResult + 4) + (xResult + 4) * (xResult + 4) >= xPosition * xPosition + yPosition * yPosition;
+        System.out.println(xPosition * xPosition + yPosition * yPosition);
+        System.out.println((xOutput + 4) * (yOutput + 4) + (xOutput + 4) * (yOutput + 4));
+        return (xOutput + 4) * (yOutput + 4) + (xOutput + 4) * (yOutput + 4) >= xPosition * xPosition + yPosition * yPosition;
     }
 
     public int checkForAvailableNormalUnit(UnitType unitType) {

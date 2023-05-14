@@ -347,7 +347,7 @@ public class GameController {
         result = positionValidate(options.get("x"),options.get("y"));
         if (result != null) return result;
         MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
-        if (mapBlock.getUnitByUnitType(unitType).size() == 0) return "There is no such unit found here!";
+        if (mapBlock.getUnitByUnitType(unitType, currentKingdom).size() == 0) return "There is no such unit found here!";
         return null;
     }
 
@@ -359,7 +359,7 @@ public class GameController {
         MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
         UnitType unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));
         selectedUnit.clear();
-        selectedUnit.addAll(mapBlock.getUnitByUnitType(unitType));
+        selectedUnit.addAll(mapBlock.getUnitByUnitType(unitType, currentKingdom));
         return "unit";
     }
 

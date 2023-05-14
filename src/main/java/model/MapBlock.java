@@ -146,10 +146,10 @@ public class MapBlock {
         return " ";
     }
 
-    public ArrayList<Unit> getUnitByUnitType(UnitType unitType) {
+    public ArrayList<Unit> getUnitByUnitType(UnitType unitType, Kingdom owner) {
         ArrayList<Unit> selectedUnit = new ArrayList<>();
         for (Unit unit : units)
-            if(unit.getUnitType().equals(unitType)) selectedUnit.add(unit);
+            if(unit.getUnitType().equals(unitType) && unit.getOwner().equals(owner)) selectedUnit.add(unit);
         return selectedUnit;
     }
 
