@@ -117,10 +117,6 @@ public class MapBlock {
         units.remove(toRemove);
     }
 
-    public Unit getLastUnitArrived(){
-        return units.get(units.size() - 1);
-    }
-
     public boolean addTree(Tree tree){
         if(!mapBlockType.isCultivable())
             return false;
@@ -160,9 +156,7 @@ public class MapBlock {
     public boolean isUnitsShouldBeAttackedFirst(Unit attacker){
         if(units.size() == 0)
             return false;
-        if(units.get(0).getOptimizedDistanceFrom(attacker.getXPosition(), attacker.getYPosition(), true) > attacker.getOptimizedAttackRange())
-            return false;
-        return true;
+        return units.get(0).getOptimizedDistanceFrom(attacker.getXPosition(), attacker.getYPosition(), true) <= attacker.getOptimizedAttackRange();
     }
 
     public Integer getOptimizedDistanceFrom(int xPosition, int yPosition, boolean considerHigherElevations){

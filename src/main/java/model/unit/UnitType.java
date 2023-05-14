@@ -22,7 +22,15 @@ public enum UnitType {
     ASSASSINS(30, 10, 3, 1 ,9, 1, null ,null, false),
     HORSE_ARCHERS(30, 10, 5, 5 , 12, 1, null ,null, true),
     ARABIAN_SWORDSMAN(40, 12, 5, 1 ,16, 1, null ,null, false),
-    FIRE_THROWERS(20, 15, 5, 4 , 9,1, null ,null, true);
+    FIRE_THROWERS(20, 15, 5, 4 , 9,1, null ,null, true),
+    MANGONEL(100, 15, 0, 3, 0,-4, null, null, true),
+    BALLISTA(100, 20, 0, 5, 0, -4,null, null, true),
+    CATAPULT(300, 20, 3, 3 , 0,-4,null, null, true),
+    TREBUCHET(500, 20, 0, 4, 0,-4, null, null, true),
+    SIEGE_TOWER(500, 0, 2, 4, 0, -4, null, null, false),
+    BATTERING_RAM(500, 15, 2, 1, 0, -4,null, null,true),
+    MANTLET(30, 0, 5, 0, 0, -4, null, null, false),
+    FIRE_BALLISTA(400, 15, 3, 5, 0, -4,null, null, true);
     private final Integer HP_IN_START;
     private final Integer DAMAGE;
     private final Integer VELOCITY;

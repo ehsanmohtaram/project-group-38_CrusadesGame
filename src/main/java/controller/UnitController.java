@@ -121,12 +121,16 @@ public class UnitController {
     public void createSiege(BuildingType buildingType, MapBlock mapBlock) {
         currentKingdom.setBalance((double) -buildingType.getGOLD());
         Siege siege = new Siege(mapBlock ,buildingType, currentKingdom);
+        Unit unit = new Unit(UnitType.valueOf(buildingType.toString()), mapBlock, currentKingdom);
         Camp tent = new Camp(nearestFreeBlock(mapBlock.getxPosition(), mapBlock.getyPosition()), BuildingType.SIEGE_TENT, currentKingdom);
+        mapBlock.getUnits().set(0, unit);
         currentKingdom.addBuilding(tent);
         currentKingdom.addBuilding(siege);
         mapBlock.setSiege(siege);
         MapBlock newMapBlock = nearestFreeBlock(mapBlock.getxPosition(), mapBlock.getyPosition());
         newMapBlock.setBuildings(tent);
+        if (!((SiegeType)siege.getBuildingType().specificConstant).getPortable() && mapBlock.getBuildings() != null)
+            unit.setHigherElevation((DefensiveStructure) mapBlock.getBuildings());
         for(int i = 0; i < buildingType.getNumberOfWorker(); i++) {
             currentUnit.get(0).setUnitState(UnitState.WORKING);
             mapBlock.addUnitHere(currentUnit.get(0));

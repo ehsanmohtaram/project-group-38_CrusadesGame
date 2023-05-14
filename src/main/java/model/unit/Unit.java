@@ -26,9 +26,13 @@ public class Unit {
         this.locationBlock = locationBlock;
         this.owner = owner;
         hp = unitType.getHP_IN_START();
-        locationBlock.addUnitHere(this);
-        owner.addUnit(this);
-        unitState = UnitState.NOT_ACTIVE;
+        if (!unitType.getIS_ARAB().equals(-4)) {
+            locationBlock.addUnitHere(this);
+            owner.addUnit(this);
+            unitState = UnitState.NOT_ACTIVE;
+        }
+        else unitState = UnitState.OFFENSIVE;
+
         movesLeft = unitType.getVELOCITY();
     }
 

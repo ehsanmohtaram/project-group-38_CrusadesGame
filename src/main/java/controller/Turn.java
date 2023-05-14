@@ -320,8 +320,10 @@ public class Turn {
         for (Building building : currentKingdom.getRemainingBuildingMove())
             building.getPosition().setSiege(building);
         currentKingdom.getRemainingBuildingMove().clear();
-        for (Unit unit : currentKingdom.getRemainingUnitMove())
-            unit.getLocationBlock().addUnitHere(unit);
+        for (Unit unit : currentKingdom.getRemainingUnitMove()) {
+            if (unit.getUnitType().getIS_ARAB().equals(-4))
+                unit.getLocationBlock().getUnits().set(0, unit);
+        }
         currentKingdom.getRemainingUnitMove().clear();
     }
 
@@ -390,7 +392,6 @@ public class Turn {
     public void battleExecution(){
         for (Unit aggressiveUnit : Unit.AggressiveUnits)
             aggressiveUnitsFight(aggressiveUnit);
-
         for (Kingdom player : gameMap.getPlayers()) {
             for (Unit unit : player.getUnits()) {
                 if(unit.getUnitState().equals(UnitState.DEFENSIVE)) {
