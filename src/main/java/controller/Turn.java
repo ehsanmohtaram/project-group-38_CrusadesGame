@@ -11,14 +11,11 @@ public class Turn {
 
     private final Map gameMap;
     private final Kingdom currentKingdom;
-    private final Kingdom lastKingdom;
 
     public Turn() {
         gameMap = GameController.gameMap;
         User currentUser = Controller.currentUser;
         currentKingdom = gameMap.getKingdomByOwner(currentUser);
-        int result = ((gameMap.getPlayers().indexOf(currentKingdom) - 1) + gameMap.getPlayers().size()) % gameMap.getPlayers().size();
-        lastKingdom = gameMap.getPlayers().get(result);
     }
 
 
@@ -195,9 +192,9 @@ public class Turn {
                     return mapBlock;
             }
         }
-        currentKingdom.getUnits().removeAll(currentBlock.getUnitByUnitType(UnitType.WORKER));
-        currentBlock.getUnits().removeAll(currentBlock.getUnitByUnitType(UnitType.WORKER));
-        currentKingdom.setNoneEmployed(currentBlock.getUnitByUnitType(UnitType.WORKER).size());
+        currentKingdom.getUnits().removeAll(currentBlock.getUnitByUnitType(UnitType.WORKER, currentKingdom));
+        currentBlock.getUnits().removeAll(currentBlock.getUnitByUnitType(UnitType.WORKER, currentKingdom));
+        currentKingdom.setNoneEmployed(currentBlock.getUnitByUnitType(UnitType.WORKER, currentKingdom).size());
         ((Mine) currentBlock.getBuildings()).setMineMode(ProduceMode.NON_ACTIVE);
         return null;
     }

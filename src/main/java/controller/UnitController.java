@@ -88,7 +88,7 @@ public class UnitController {
         MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
         UnitType unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));
         currentUnit.clear();
-        currentUnit.addAll(mapBlock.getUnitByUnitType(unitType));
+        currentUnit.addAll(mapBlock.getUnitByUnitType(unitType, currentKingdom));
         for (Unit unit : currentUnit) unit.setUnitState(unitState);
         return "Unit states change successfully!";
     }
