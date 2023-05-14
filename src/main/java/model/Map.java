@@ -319,9 +319,9 @@ public class Map implements Cloneable {
         boolean[][]mark = new boolean[mapWidth][mapHeight];
         AtomicInteger answer;
         if(limit == null)
-            answer = new AtomicInteger(mapWidth * mapHeight);
+            answer = new AtomicInteger(mapWidth * mapHeight + 1);
         else
-            answer = new AtomicInteger(limit);
+            answer = new AtomicInteger(limit + 1);
         if(xPosition < xOfDestination && yPosition < yOfDestination)
             getWaysLengthByEast(mark, xPosition, yPosition, 0, xOfDestination, yOfDestination, answer, true);
         else if (xPosition > xOfDestination && yPosition < yOfDestination)
@@ -330,7 +330,7 @@ public class Map implements Cloneable {
             getWaysLengthByEast(mark,  xOfDestination, yOfDestination, 0, xPosition, yPosition, answer, true);
         else
             getWaysLengthByEast(mark, xPosition, yPosition, 0, xOfDestination, yOfDestination, answer, false);
-        if((limit == null && answer.get() == (mapWidth * mapHeight)) || answer.get() == limit)
+        if((limit == null && answer.get() == (mapWidth * mapHeight + 1)) || answer.get() == (limit + 1))
             return null;
         return answer.get();
     }

@@ -33,9 +33,10 @@ public class Turn {
         giveFood();
         getTax();
         move();
-        removeUnitsAndBuildingWith0Hp();
         growPopulation();
         battleExecution();
+        removeUnitsAndBuildingWith0Hp();
+        patrolExecution();
         trapsReset();
     }
 
@@ -448,6 +449,18 @@ public class Turn {
                 return;
         }
         unit.setUnitState(UnitState.STANDING);
+    }
+
+    private void patrolExecution(){
+        for (Kingdom player : gameMap.getPlayers()) {
+            for (Unit unit : player.getUnits()) {
+                if(unit.getUnitState().equals(UnitState.PATROLLING)) {
+                    MapBlock origin = unit.getLocationBlock();
+                    unit.moveTo(unit.getPatrolDestination(), 0);
+                    unit.setPatrolDestination(origin);
+                }
+            }
+        }
     }
 
     public void trapsReset(){

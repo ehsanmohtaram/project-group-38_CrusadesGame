@@ -93,6 +93,8 @@ public class Unit {
             AggressiveUnits.add(this);
         if(this.unitState.equals(UnitState.OFFENSIVE) && !unitState.equals(UnitState.OFFENSIVE))
             AggressiveUnits.remove(this);
+        if (this.unitState.equals(UnitState.PATROLLING) && !unitState.equals(UnitState.PATROLLING))
+            PatrolDestination = null;
         this.unitState = unitState;
     }
 
