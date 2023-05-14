@@ -301,7 +301,7 @@ public class UnitController {
                 target.getxPosition(), target.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
             return "They are too slow to reach such destination";
         for (Unit unit : currentUnit) {
-            unit.moveTo(target, moveLength);
+            unit.moveTo(currentUnit.get(0).getLocationBlock(), moveLength);
             if (unit.getUnitState().equals(UnitState.PATROLLING))
                 unit.setUnitState(UnitState.STANDING);
         }
@@ -325,7 +325,7 @@ public class UnitController {
                 target.getxPosition(), target.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
             return "They are too slow to reach such destination";
         for (Unit unit : currentUnit) {
-            unit.moveTo(target, moveLength);
+            unit.moveTo(currentUnit.get(0).getLocationBlock(), moveLength);
             if (unit.getUnitState().equals(UnitState.PATROLLING))
                 unit.setUnitState(UnitState.STANDING);
         }
