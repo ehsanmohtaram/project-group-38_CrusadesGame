@@ -403,6 +403,12 @@ public class Turn {
                 }
             }
         }
+
+        for (Kingdom player : gameMap.getPlayers()) {
+            for (Unit unit : player.getUnits()) {
+                unit.resetAttributes();
+            }
+        }
     }
 
     private void aggressiveUnitsFight(Unit unit){
