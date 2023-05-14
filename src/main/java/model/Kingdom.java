@@ -301,16 +301,13 @@ public class Kingdom{
             yResult = building.getPosition().getyPosition() - headquarter.getPosition().getyPosition();
             if (xResult * xResult + yResult * yResult > max) {
                 max = xResult * xResult + yResult * yResult;
-                xOutput = xResult;
-                yOutput = yResult;
+                xOutput = Math.abs(xResult);
+                yOutput = Math.abs(yResult);
             }
         }
-        System.out.println(max);
         xPosition = xPosition - headquarter.getPosition().getxPosition();
         yPosition = yPosition - headquarter.getPosition().getyPosition();
-        System.out.println(xPosition * xPosition + yPosition * yPosition);
-        System.out.println((xOutput + 4) * (yOutput + 4) + (xOutput + 4) * (yOutput + 4));
-        return (xOutput + 4) * (yOutput + 4) + (xOutput + 4) * (yOutput + 4) >= xPosition * xPosition + yPosition * yPosition;
+        return (xOutput + 3) * (yOutput + 3) + (xOutput + 3) * (yOutput + 3) >= xPosition * xPosition + yPosition * yPosition;
     }
 
     public int checkForAvailableNormalUnit(UnitType unitType) {
