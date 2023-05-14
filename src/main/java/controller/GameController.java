@@ -92,11 +92,22 @@ public class GameController {
                     if (building.getBuildingType().equals(BuildingType.HEAD_QUARTER)){counter++; continue;}
                     gameMap.setDeadPlayers(kingdom);
                     kingdom.getOwner().setScore(500 * gameMap.getDeadPlayers().size());
+                    clearMapBlockFromKingdom(kingdom);
                     gameMap.getPlayers().remove(kingdom);
                     break First;
                 }
             }
             if (counter == gameMap.getPlayers().size()) break;
+        }
+    }
+
+    public void clearMapBlockFromKingdom(Kingdom kingdom) {
+        for (MapBlock[] mapBlocks : gameMap.getMap()) {
+            for (MapBlock mapBlock : mapBlocks) {
+                mapBlock.getUnits().removeIf( unit -> unit.getOwner().equals(kingdom));
+                mapBlock.setSiege(null);
+                mapBlock.setBuildings(null);
+            }
         }
     }
 
@@ -456,16 +467,12 @@ public class GameController {
         if(!currentKingdom.checkOutOfRange(target.getxPosition(), target.getyPosition()))
             return "it is not legal to drop trap outside of kingdom";
         TrapType trapType;
-        try {
-            trapType = TrapType.valueOf(options.get("t"));
-        }catch (Exception exception) {
-            return "no such type of trap in the game";
-        }
+        try {trapType = TrapType.valueOf(options.get("t"));}
+        catch (Exception exception) {return "no such type of trap in the game";}
         if(trapType.equals(TrapType.BITUMEN_TRENCH)) {
             if (currentKingdom.getResourceAmount(ResourceType.RIG) > 10)
                 currentKingdom.setResourceAmount(ResourceType.RIG, -10);
-            else
-                return "not enough resource to drop bitumen trench";
+            else return "not enough resource to drop bitumen trench";
         }
         if(!trapType.equals(TrapType.DOGS_CAGE) && !target.getMapBlockType().equals(MapBlockType.HOLE))
             return "first dig hole to drop trenches";
@@ -475,5 +482,4 @@ public class GameController {
         target.setTrap(newTrap);
         return "trap added successfully";
     }
-
 }
