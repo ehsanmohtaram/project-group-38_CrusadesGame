@@ -330,14 +330,14 @@ public class Turn {
     public void removeUnitsAndBuildingWith0Hp() {
         for (MapBlock[] mapBlock : gameMap.getMap()) {
             for (MapBlock checkBlock : mapBlock) {
-                removeDestroyedUnits(checkBlock);
-                removeDeadUnits(checkBlock);
+                removeDestroyedBuilding(checkBlock);
                 removeSiegeUnits(checkBlock);
+                removeDeadUnits(checkBlock);
             }
         }
     }
 
-    public void removeDestroyedUnits(MapBlock checkBlock) {
+    public void removeDestroyedBuilding(MapBlock checkBlock) {
         Kingdom owner;
         if (checkBlock.getBuildings() != null) {
             owner = checkBlock.getBuildings().getOwner();
@@ -373,7 +373,7 @@ public class Turn {
         int counter = 0;
         if (checkBlock.getSiege() != null) {
             building = checkBlock.getSiege();
-            if (checkBlock.getSiege().getHp() <= 0) {
+            if (checkBlock.getUnits().get(0).getHp() <= 0) {
                 while (building.getBuildingType().getNumberOfWorker() != counter || building.getPosition().getUnits().size() != 0) {
                     for (Unit findUnit : checkBlock.getUnits())
                         if (findUnit.getUnitType().equals(UnitType.ENGINEER)) {
