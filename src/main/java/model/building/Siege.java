@@ -3,8 +3,6 @@ package model.building;
 import model.Kingdom;
 import model.MapBlock;
 import model.unit.Unit;
-import model.unit.UnitType;
-
 import java.util.ArrayList;
 
 public class Siege extends Building {

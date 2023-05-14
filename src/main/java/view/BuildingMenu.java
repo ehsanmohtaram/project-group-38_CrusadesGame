@@ -76,6 +76,8 @@ public class BuildingMenu {
             if (commandParser.validate(command, "back", null) != null) return "back";
             if ((optionPass = commandParser.validate(command, "move siege", "x|xPosition/y|yPosition")) != null)
                 System.out.println(buildingController.moveSiege(optionPass));
+            else if ((optionPass = commandParser.validate(command, "attack", "x|positionX/y|positionY")) != null)
+                System.out.println(buildingController.attackOnUnit(optionPass));
             else System.out.println("Invalid command");
         }
     }

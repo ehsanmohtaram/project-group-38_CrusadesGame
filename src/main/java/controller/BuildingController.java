@@ -155,39 +155,30 @@ public class BuildingController {
         String result;
         if (selectedBuilding.getBuildingType().equals(BuildingType.STABLE)) return "Invalid command";
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet())
-            if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        try {
-            UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));
-        } catch (Exception ignored) {
-            return "There is no such a unit found!";
-        }
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        try {UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));}
+        catch (Exception ignored) {return "There is no such a unit found!";}
         if (!options.get("c").matches("-?\\d+")) return "Please input a digit as count value!";
         if (Integer.parseInt(options.get("c")) < 0 || Integer.parseInt(options.get("c")) > 20) return "Invalid bounds!";
         UnitType unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));
         CampType campType = (CampType) selectedBuilding.getBuildingType().specificConstant;
-        if (!Objects.equals(campType.getIsArab(), unitType.getIS_ARAB()))
-            return "You can not build this type of unit here!";
+        if (!Objects.equals(campType.getIsArab(), unitType.getIS_ARAB())) return "You can not build this type of unit here!";
         int count = Integer.parseInt(options.get("c"));
         if (unitType.getIS_ARAB().equals(1) && unitType.getPRICE() * count > currentKingdom.getBalance())
             return "You do not have enough balance to buy this unit!";
         if (currentKingdom.getBuildingFormKingdom(BuildingType.ARMOURY) == null && selectedBuilding.getBuildingType().equals(BuildingType.BARRACK))
             return "Please build armoury before creating units!";
         if (unitType.getWEAPON_NEEDED() != null)
-            if (currentKingdom.getWeaponAmount(unitType.getWEAPON_NEEDED()) < count)
-                return "You do not have enough weapon!";
+            if (currentKingdom.getWeaponAmount(unitType.getWEAPON_NEEDED()) < count) return "You do not have enough weapon!";
         if (unitType.getArmour_Needed() != null)
-            if (currentKingdom.getWeaponAmount(unitType.getArmour_Needed()) < count)
-                return "You do not have enough weapon!";
+            if (currentKingdom.getWeaponAmount(unitType.getArmour_Needed()) < count) return "You do not have enough weapon!";
         if (unitType.equals(UnitType.KNIGHT)) {
-            result = checkForKnightHorse(count);
-            if (!result.equals("done")) return result;
+            result = checkForKnightHorse(count); if (!result.equals("done")) return result;
         }
         Camp camp = (Camp) selectedBuilding;
         if (campType.getCapacity() < camp.getCapacity() + count) return "Your camp is full. Please make a new camp!";
         if (campType.equals(CampType.CATHEDRAL)) {
-            result = checkCathedral(count);
-            if (!result.equals("done")) return result;
+            result = checkCathedral(count); if (!result.equals("done")) return result;
         } else if (currentKingdom.getNoneEmployed() < count)
             return "You do not have enough population to make new units!";
         createUnitAdditional(unitType, count);
@@ -445,6 +436,9 @@ public class BuildingController {
                     break;
                 }
         }
+        selectedBuilding.getPosition().getUnits().get(0).setLocationBlock(goingPosition);
+        currentKingdom.setRemainingUnitMove(selectedBuilding.getPosition().getUnits().get(0));
+        selectedBuilding.getPosition().setSiege(null);
         selectedBuilding.getPosition().setSiege(null);
         selectedBuilding.setPosition(goingPosition);
         currentKingdom.setRemainingBuildingMove(selectedBuilding);
@@ -514,4 +508,27 @@ public class BuildingController {
             }
         }
     }
+
+    public String attackOnUnit(HashMap<String, String> options) {
+        String result;
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        if (selectedBuilding.getBuildingType().equals(BuildingType.MANTLET)) return "You can not attack with siege!";
+        result = positionValidate(options.get("x"), options.get("y"));
+        Unit currentUnit = selectedBuilding.getPosition().getUnits().get(0);
+        if (result != null) return result;
+        MapBlock target = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        if(target == null) return "Invalid location";
+        if(target.getUnits().size() == 0 && target.getBuildings() == null) return "No enemy detected there!";
+        if (target.getOptimizedDistanceFrom(selectedBuilding.getPosition().getxPosition(),
+                selectedBuilding.getPosition().getyPosition(), false) > currentUnit.getOptimizedAttackRange())
+            return "Too far to attack!";
+        Building building = target.getBuildings();
+        if (target.getUnits().size() != 0 && !selectedBuilding.getBuildingType().equals(BuildingType.BATTERING_RAM))
+            for (Unit unit : target.getUnits()) currentUnit.unilateralFight(unit);
+        if (target.getBuildings() != null)
+            building.decreaseHP(currentUnit.getOptimizedDamage() * 10);
+        return "battle done!";
+    }
+
 }
