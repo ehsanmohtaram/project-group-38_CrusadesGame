@@ -344,6 +344,8 @@ public class Turn {
         if (checkBlock.getBuildings() != null) {
             owner = checkBlock.getBuildings().getOwner();
             if (checkBlock.getBuildings().getHp() <= 0) {
+                if (checkBlock.getBuildings().getBuildingType().equals(BuildingType.HEAD_QUARTER))
+                    checkBlock.getBuildings().getOwner().setHeadquarter(null);
                 if (checkBlock.getBuildings() instanceof Stock) {
                     for (Enum<?> resource : ((Stock)checkBlock.getBuildings()).getResourceValues().keySet()) {
                         if (resource instanceof Food)

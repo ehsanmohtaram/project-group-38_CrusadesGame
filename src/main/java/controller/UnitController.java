@@ -296,7 +296,7 @@ public class UnitController {
             return "invalid location";
         if(!target.getMapBlockType().canBeDug())
             return "you can not dig in this types of land";
-        Integer moveLength = 0;
+        Integer moveLength;
         if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
                 target.getxPosition(), target.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
             return "They are too slow to reach such destination";
@@ -320,7 +320,7 @@ public class UnitController {
             return "invalid location";
         if(!target.getMapBlockType().equals(MapBlockType.HOLE))
             return "there is no hole there";
-        Integer moveLength = 0;
+        Integer moveLength;
         if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
                 target.getxPosition(), target.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
             return "They are too slow to reach such destination";
