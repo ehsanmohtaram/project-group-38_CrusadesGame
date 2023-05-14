@@ -37,6 +37,9 @@ public class UnitController {
     public String moveUnit(HashMap<String, String > options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        String result;
+        result = positionValidate(options.get("x"),options.get("y"));
+        if (result != null) return result;
         MapBlock destination = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
         if(destination == null)
             return "invalid location";
@@ -164,18 +167,21 @@ public class UnitController {
     public String attackOnUnit(HashMap<String, String> options) {
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        String result;
+        result = positionValidate(options.get("x"),options.get("y"));
+        if (result != null) return result;
         MapBlock target = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
         if(target == null)
             return "invalid location";
-        if(target.getUnits().size() == 0 || target.getBuildings() == null)
+        if(target.getUnits().size() == 0 && target.getBuildings() == null)
             return "no enemy detected there";
 
         if(currentUnit.get(0).getUnitType().getCAN_DO_AIR_ATTACK()) {
-            if (target.getUnits().get(0).getOptimizedDistanceFrom(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(), true) >
+            if (target.getOptimizedDistanceFrom(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(), true) >
                     currentUnit.get(0).getOptimizedAttackRange())
                 return "Arrows will not go that far";
         }
-        else if(target.getUnits().get(0).getOptimizedDistanceFrom(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),false) >
+        else if(target.getOptimizedDistanceFrom(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),false) >
                 currentUnit.get(0).getOptimizedAttackRange())
             return "out of attack range. first move your units";
         ArrayList<Unit> archers = gameMap.getEnemiesInSurroundingArea(target.getxPosition(), target.getyPosition()
@@ -202,7 +208,11 @@ public class UnitController {
 
     public String patrolUnit(HashMap<String, String> options){
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";String result;
+        result = positionValidate(options.get("x1"),options.get("y1"));
+        if (result != null) return result;
+        result = positionValidate(options.get("x2"),options.get("y2"));
+        if (result != null) return result;
         MapBlock origin = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x1")),Integer.parseInt(options.get("y1")));
         MapBlock destination = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x2")),Integer.parseInt(options.get("y2")));
         if(origin == null || destination == null)
@@ -260,6 +270,9 @@ public class UnitController {
     public String digTrench(HashMap<String, String> options){
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        String result;
+        result = positionValidate(options.get("x"),options.get("y"));
+        if (result != null) return result;
         MapBlock target = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
         if(target == null)
             return "invalid location";
@@ -281,6 +294,9 @@ public class UnitController {
     public String fillTrench(HashMap<String, String> options){
         for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
         for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        String result;
+        result = positionValidate(options.get("x"),options.get("y"));
+        if (result != null) return result;
         MapBlock target = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
         if(target == null)
             return "invalid location";

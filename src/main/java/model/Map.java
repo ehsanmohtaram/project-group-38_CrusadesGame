@@ -277,7 +277,7 @@ public class Map implements Cloneable {
             for (MapBlock mapBlock : mapBlocks)
                 for (Unit unit : mapBlock.getUnits())
                     if(!unit.getOwner().equals(attacker) &&
-                            map[xPosition][yPosition].getUnits().get(0).getOptimizedDistanceFrom(mapBlock.getxPosition(),
+                            map[xPosition][yPosition].getOptimizedDistanceFrom(mapBlock.getxPosition(),
                             mapBlock.getyPosition(), true) < unit.getOptimizedAttackRange()) {
                         enemies.add(unit);
                         if(justArchers && !unit.getUnitType().getCAN_DO_AIR_ATTACK())

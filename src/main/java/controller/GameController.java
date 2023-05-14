@@ -446,4 +446,34 @@ public class GameController {
         return "Fear rate : " + currentKingdom.getFearRate();
     }
 
+    public String dropTrap(HashMap<String, String> options){
+        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+        String result;
+        result = positionValidate(options.get("x"),options.get("y"));
+        if (result != null) return result;
+        MapBlock target = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+        if(!currentKingdom.checkOutOfRange(target.getxPosition(), target.getyPosition()))
+            return "it is not legal to drop trap outside of kingdom";
+        TrapType trapType;
+        try {
+            trapType = TrapType.valueOf(options.get("t"));
+        }catch (Exception exception) {
+            return "no such type of trap in the game";
+        }
+        if(trapType.equals(TrapType.BITUMEN_TRENCH)) {
+            if (currentKingdom.getResourceAmount(ResourceType.RIG) > 10)
+                currentKingdom.setResourceAmount(ResourceType.RIG, -10);
+            else
+                return "not enough resource to drop bitumen trench";
+        }
+        if(!trapType.equals(TrapType.DOGS_CAGE) && !target.getMapBlockType().equals(MapBlockType.HOLE))
+            return "first dig hole to drop trenches";
+        if (trapType.getPrice() > currentKingdom.getBalance()) return "You do not have enough gold to buy this trap.";
+        currentKingdom.setBalance((double) -trapType.getPrice());
+        Trap newTrap = new Trap(currentKingdom, target, trapType);
+        target.setTrap(newTrap);
+        return "trap added successfully";
+    }
+
 }

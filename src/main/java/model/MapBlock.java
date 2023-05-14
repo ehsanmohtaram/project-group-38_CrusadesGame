@@ -1,9 +1,6 @@
 package model;
 
-import model.building.Building;
-import model.building.BuildingType;
-import model.building.DefensiveStructure;
-import model.building.Trap;
+import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitType;
 
@@ -100,6 +97,14 @@ public class MapBlock {
         this.siege = siege;
     }
 
+    public Trap getTrap() {
+        return trap;
+    }
+
+    public void setTrap(Trap trap) {
+        this.trap = trap;
+    }
+
     public HashMap<Tree, Integer> getNumberOfTrees() {
         return numberOfTrees;
     }
@@ -158,6 +163,15 @@ public class MapBlock {
         if(units.get(0).getOptimizedDistanceFrom(attacker.getXPosition(), attacker.getYPosition(), true) > attacker.getOptimizedAttackRange())
             return false;
         return true;
+    }
+
+    public Integer getOptimizedDistanceFrom(int xPosition, int yPosition, boolean considerHigherElevations){
+        int normalDistance = Math.abs(this.xPosition - xPosition) + Math.abs(this.yPosition - yPosition);
+        if(units.get(0).getHigherElevation() != null && considerHigherElevations){
+            DefensiveStructureType type = (DefensiveStructureType) units.get(0).getHigherElevation().getSpecificConstant();
+            return normalDistance + type.getFurtherFireRange();
+        }
+        return normalDistance;
     }
 
 }

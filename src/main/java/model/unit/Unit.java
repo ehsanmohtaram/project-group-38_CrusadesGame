@@ -4,10 +4,8 @@ import controller.UnitController;
 import model.Direction;
 import model.Kingdom;
 import model.MapBlock;
-import model.building.Building;
-import model.building.BuildingType;
-import model.building.DefensiveStructure;
-import model.building.DefensiveStructureType;
+import model.Trade;
+import model.building.*;
 
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -152,6 +150,10 @@ public class Unit {
         destination.addUnitHere(this);
         locationBlock.removeUnitFromHere(this);
         this.locationBlock = destination;
+        Trap trap = destination.getTrap();
+        if(trap != null)
+            if(trap.isActive())
+                decreaseHp(trap.getTrapType().getDamage());
     }
     private boolean checkEnemyCanAttack(Unit enemy){
         return false;
@@ -197,7 +199,7 @@ public class Unit {
         }else{
             //toDo update the amount of head quarter damage
             target.decreaseHP(getOptimizedDamage());
-            decreaseHp(20);
+            decreaseHp(100);
         }
         for (Unit archer : archers) {
             archer.unilateralFight(this);

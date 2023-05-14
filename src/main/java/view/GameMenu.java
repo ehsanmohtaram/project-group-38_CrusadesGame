@@ -64,6 +64,8 @@ public class GameMenu {
                 System.out.println(gameController.showFoodRate());
             else if ((options = commandParser.validate(input, "fear rate", "r|rateNumber")) != null)
                 System.out.println(gameController.setFearRate(options));
+            else if ((options = commandParser.validate(input, "drop trap", "x|positionX/y|positionY/t|type")) != null)
+                System.out.println(gameController.setFearRate(options));
             else if (commandParser.validate(input, "next turn", null) != null)
                 return gameController.nextTurn();
             else System.out.println("invalid command");
