@@ -74,13 +74,12 @@ public class GameController {
     public String getListOfPlayers () {
         StringBuilder stringBuilder = new StringBuilder();
         int counter = 0;
-        stringBuilder.append(counter).append(". ").append(gameMap.getPlayers().get(0).getOwner().getUserName())
+        stringBuilder.append((counter + 1)).append(". ").append(gameMap.getPlayers().get(0).getOwner().getUserName())
                 .append(" flag: ").append(gameMap.getPlayers().get(0).getFlag().toString().toLowerCase()).
                 append(" score: ").append(gameMap.getDeadPlayers().size() * 500);
-        counter++;
         for (Kingdom kingdom : gameMap.getDeadPlayers()) {
             counter++;
-            stringBuilder.append("\n").append(counter).append(". ").append(kingdom.getOwner().getUserName())
+            stringBuilder.append("\n").append((counter + 1)).append(". ").append(kingdom.getOwner().getUserName())
                     .append(" flag: ").append(kingdom.getFlag().toString().toLowerCase()).
                     append(" score: ").append((gameMap.getDeadPlayers().size() - counter) * 500);
         }
@@ -88,21 +87,14 @@ public class GameController {
     }
 
     public void checkForHeadQuarters() {
-        while (true) {
-            int counter = 0;
-            First:
-            for (Kingdom kingdom : gameMap.getPlayers()) {
-                for (Building building : kingdom.getBuildings()) {
-                    if (building.getBuildingType().equals(BuildingType.HEAD_QUARTER)){counter++; continue;}
-                    gameMap.setDeadPlayers(kingdom);
-                    kingdom.getOwner().setScore(500 * gameMap.getDeadPlayers().size());
-                    clearMapBlockFromKingdom(kingdom);
-                    gameMap.getPlayers().remove(kingdom);
-                    break First;
-                }
+        for (Kingdom kingdom : gameMap.getPlayers()) {
+            if (currentKingdom.getHeadquarter() == null) {
+                gameMap.setDeadPlayers(kingdom);
+                kingdom.getOwner().setScore(500 * gameMap.getDeadPlayers().size());
+                clearMapBlockFromKingdom(kingdom);
             }
-            if (counter == gameMap.getPlayers().size()) break;
         }
+        gameMap.getPlayers().removeIf(kingdom -> kingdom.getHeadquarter() == null);
     }
 
     public void clearMapBlockFromKingdom(Kingdom kingdom) {

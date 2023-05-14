@@ -30,7 +30,7 @@ public class Kingdom{
     private ArrayList<Unit> remainingUnitMove = new ArrayList<>();
     private ArrayList<Building> remainingBuildingMove = new ArrayList<>();
     private HashMap<Building, Integer> moveOfCows = new HashMap<>();
-    private ArrayList<Trap> traps;
+    private ArrayList<Trap> traps = new ArrayList<>();
     public Kingdom(Flags flag, User owner) {
         population = noneEmployed = 10;
         popularity = 10;
@@ -51,6 +51,10 @@ public class Kingdom{
 
     public void setHeadquarter(Building headquarter) {
         this.headquarter = headquarter;
+    }
+
+    public Building getHeadquarter() {
+        return headquarter;
     }
 
     public Integer getPopulation() {
