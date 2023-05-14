@@ -30,7 +30,7 @@ public class UnitMenu {
                 System.out.println(unitController.dropSiege(options));
             else if ((options = commandParser.validate(input, "pour oil", "x|xPosition/y|yPosition/d|direction")) != null)
                 System.out.println(unitController.pourOil(options));
-            else if ((options = commandParser.validate(input, "disband", "x1/y1/x2/y2")) != null)
+            else if (commandParser.validate(input, "disband unit", null) != null)
                 System.out.println(unitController.disband());
             else System.out.println("Invalid command!");
         }
@@ -72,7 +72,7 @@ public class UnitMenu {
                 System.out.println(unitController.digTrench(options));
             else if ((options = commandParser.validate(input, "fill trench", "x|positionX/y|positionY")) != null)
                 System.out.println(unitController.fillTrench(options));
-            else if ((options = commandParser.validate(input, "disband", "x1/y1/x2/y2")) != null)
+            else if (commandParser.validate(input, "disband unit", null) != null)
                 System.out.println(unitController.disband());
             else if ((options = commandParser.validate(input, "fire trench", "x|positionX/y|positionY")) != null)
                 System.out.println(unitController.fireTrench(options));
