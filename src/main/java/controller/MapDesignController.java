@@ -47,6 +47,8 @@ public class MapDesignController {
             return "no such type available for lands";
         String checkingResult;
         if(options.get("x") == null && options.get("y") == null) {
+            if(mapBlockType.equals(MapBlockType.BIG_POND) || mapBlockType.equals(MapBlockType.SMALL_POND))
+                return "ponds have static size";
             if((checkingResult = checkLocationValidation(options.get("x1") , options.get("y1"))) != null )
                 return checkingResult;
             if((checkingResult = checkLocationValidation(options.get("x2") , options.get("y2"))) != null )
@@ -66,7 +68,20 @@ public class MapDesignController {
             for (String key : options.keySet())
                 if (!key.equals("t") && options.get(key) != null)
                     return "choose two or four digits to specify area!";
-            gameMap.changeType(x, y , x , y , mapBlockType);
+            switch (mapBlockType){
+                case BIG_POND:
+                    if(gameMap.getMapBlockByLocation(x + 4 , y + 4)!= null)
+                        gameMap.changeType(x, y , x + 4 , y + 4 , mapBlockType);
+                    else
+                        return "choose correct position for big pond";
+                break;
+                case SMALL_POND:
+                    if(gameMap.getMapBlockByLocation(x + 2 , y + 2)!= null)
+                        gameMap.changeType(x, y , x + 2 , y + 2 , mapBlockType);
+                    else
+                        return "choose correct position for small pond";
+                default:gameMap.changeType(x, y , x , y , mapBlockType);
+            }
         }else
             return "you must choose at least two digits for bounds";
         return "type changed successfully";

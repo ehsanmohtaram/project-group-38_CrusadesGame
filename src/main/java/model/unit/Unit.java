@@ -220,7 +220,6 @@ public class Unit {
         if(!target.getBuildingType().equals(BuildingType.HEAD_QUARTER)){
             target.decreaseHP(getOptimizedDamage());
         }else{
-            //toDo update the amount of head quarter damage
             target.decreaseHP(getOptimizedDamage());
             decreaseHp(100);
         }

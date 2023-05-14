@@ -13,7 +13,7 @@ public enum MapBlockType {
     SEA(false , false , false, "\u001B[48;5;24m", false),
     BEACH(true , false , false, "\u001B[48;5;186m", false),
     SMALL_POND(false , false , false, "\u001B[48;5;37m", false),
-    BIG_POUND(false , false , false, "\u001B[48;5;37m", false),
+    BIG_POND(false , false , false, "\u001B[48;5;37m", false),
     RIVER(false , false , false,  "\u001B[48;5;31m", false),
     SHALLOW_WATER(true , false , false , "\u001B[48;5;30m", false),
     PLAIN(true , false , false,"\u001B[48;5;23m", false),

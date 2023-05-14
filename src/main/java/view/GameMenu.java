@@ -66,6 +66,8 @@ public class GameMenu {
                 System.out.println(gameController.setFearRate(options));
             else if ((options = commandParser.validate(input, "drop trap", "x|positionX/y|positionY/t|type")) != null)
                 System.out.println(gameController.setFearRate(options));
+            else if (commandParser.validate(input, "cheat 100", null) != null)
+                return "design map";
             else if (commandParser.validate(input, "next turn", null) != null)
                 return gameController.nextTurn();
             else System.out.println("invalid command");

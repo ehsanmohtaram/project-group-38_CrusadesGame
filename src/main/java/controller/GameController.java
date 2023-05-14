@@ -36,6 +36,10 @@ public class GameController {
                     MapController mapController = new MapController(gameMap, currentUser, XofMap, YofMap);
                     mapController.run();
                     break;
+                case "design map":
+                    MapDesignController mapDesignController = new MapDesignController(gameMap);
+                    mapDesignController.run();
+                    break;
                 case "trade":
                     TradeController tradeController = new TradeController();
                     tradeController.runTrade();
