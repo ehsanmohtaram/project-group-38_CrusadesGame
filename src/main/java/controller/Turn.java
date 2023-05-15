@@ -323,7 +323,9 @@ public class Turn {
         currentKingdom.getRemainingBuildingMove().clear();
         for (Unit unit : currentKingdom.getRemainingUnitMove()) {
             if (unit.getUnitType().getIS_ARAB().equals(-4))
-                unit.getLocationBlock().getUnits().set(0, unit);
+                if (unit.getLocationBlock().getUnits().size() == 0) unit.getLocationBlock().addUnitHere(unit);
+                else unit.getLocationBlock().getUnits().set(0, unit);
+
         }
         currentKingdom.getRemainingUnitMove().clear();
     }
@@ -343,8 +345,9 @@ public class Turn {
         if (checkBlock.getBuildings() != null) {
             owner = checkBlock.getBuildings().getOwner();
             if (checkBlock.getBuildings().getHp() <= 0) {
-                if (checkBlock.getBuildings().getBuildingType().equals(BuildingType.HEAD_QUARTER))
+                if (checkBlock.getBuildings().getBuildingType().equals(BuildingType.HEAD_QUARTER)) {
                     checkBlock.getBuildings().getOwner().setHeadquarter(null);
+                }
                 if (checkBlock.getBuildings() instanceof Stock) {
                     for (Enum<?> resource : ((Stock)checkBlock.getBuildings()).getResourceValues().keySet()) {
                         if (resource instanceof Food)
@@ -363,7 +366,7 @@ public class Turn {
     public void removeDeadUnits(MapBlock checkBlock) {
         if (checkBlock.getUnits().size() != 0) {
             for (Unit unit : checkBlock.getUnits()) {
-                if (unit.getHp() <= 0) {
+                if (unit.getHp() <= 0 && unit.getOwner().equals(currentKingdom)) {
                     unit.getOwner().getUnits().remove(unit);
                     checkBlock.removeUnitFromHere(unit);
                 }
@@ -379,7 +382,7 @@ public class Turn {
             if (checkBlock.getUnits().get(0).getHp() <= 0) {
                 while (building.getBuildingType().getNumberOfWorker() != counter || building.getPosition().getUnits().size() != 0) {
                     for (Unit findUnit : checkBlock.getUnits())
-                        if (findUnit.getUnitType().equals(UnitType.ENGINEER)) {
+                        if (findUnit.getUnitType().equals(UnitType.ENGINEER) && findUnit.getOwner().equals(building.getOwner())) {
                             building.getPosition().removeUnitFromHere(findUnit);
                             findUnit.getOwner().setNoneEmployed(1);
                             break;

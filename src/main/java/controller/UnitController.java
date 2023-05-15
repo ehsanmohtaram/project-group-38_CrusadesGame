@@ -123,7 +123,8 @@ public class UnitController {
         Siege siege = new Siege(mapBlock ,buildingType, currentKingdom);
         Unit unit = new Unit(UnitType.valueOf(buildingType.toString()), mapBlock, currentKingdom);
         Camp tent = new Camp(nearestFreeBlock(mapBlock.getxPosition(), mapBlock.getyPosition()), BuildingType.SIEGE_TENT, currentKingdom);
-        mapBlock.getUnits().set(0, unit);
+        if (mapBlock.getUnits().size() != 0 ) mapBlock.getUnits().set(0, unit);
+        else mapBlock.addUnitHere(unit);
         currentKingdom.addBuilding(tent);
         currentKingdom.addBuilding(siege);
         mapBlock.setSiege(siege);

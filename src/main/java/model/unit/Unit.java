@@ -108,9 +108,6 @@ public class Unit {
 
     public void decreaseHp(int amount){
         hp -= amount;
-        if(hp <= 0) {
-            removeUnit();
-        }
     }
 
     public void removeUnit(){

@@ -66,9 +66,9 @@ public class ProfileController {
     public List<User> calculateRank() {
         List<User> sortUser = new ArrayList<>(User.users);
         sortUser.sort((u1, u2) -> {
-            if (u1.getScore().compareTo(u2.getScore()) == 0)
+            if (u2.getScore().compareTo(u1.getScore()) == 0)
                 return u1.getUserName().compareTo(u2.getUserName());
-            return u1.getScore().compareTo(u2.getScore());
+            return u2.getScore().compareTo(u1.getScore());
         });
         return sortUser;
     }

@@ -161,9 +161,11 @@ public class MapBlock {
 
     public Integer getOptimizedDistanceFrom(int xPosition, int yPosition, boolean considerHigherElevations){
         int normalDistance = Math.abs(this.xPosition - xPosition) + Math.abs(this.yPosition - yPosition);
-        if(units.get(0).getHigherElevation() != null && considerHigherElevations){
-            DefensiveStructureType type = (DefensiveStructureType) units.get(0).getHigherElevation().getSpecificConstant();
-            return normalDistance + type.getFurtherFireRange();
+        if (units.size() > 0) {
+            if (units.get(0).getHigherElevation() != null && considerHigherElevations) {
+                DefensiveStructureType type = (DefensiveStructureType) units.get(0).getHigherElevation().getSpecificConstant();
+                return normalDistance + type.getFurtherFireRange();
+            }
         }
         return normalDistance;
     }

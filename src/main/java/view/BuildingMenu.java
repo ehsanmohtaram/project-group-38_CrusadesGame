@@ -35,7 +35,7 @@ public class BuildingMenu {
             if (commandParser.validate(command, "back", null) != null) return "back";
             if (commandParser.validate(command, "repair", null) != null)
                 System.out.println(buildingController.repairBuilding());
-            if ((optionPass = commandParser.validate(command, "gate", "a|access")) != null)
+            else if ((optionPass = commandParser.validate(command, "gate", "a|access")) != null)
                 System.out.println(buildingController.openAccess(optionPass));
             else System.out.println("Invalid command");
         }

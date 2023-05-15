@@ -295,7 +295,7 @@ public class Kingdom{
     }
 
     public boolean checkOutOfRange(int xPosition , int yPosition) {
-        int xResult = 0, yResult = 0, max = 0, xOutput = 0, yOutput = 0;
+        int xResult, yResult, max = 0, xOutput = 0, yOutput = 0;
         for (Building building : buildings) {
             xResult = building.getPosition().getxPosition() - headquarter.getPosition().getxPosition();
             yResult = building.getPosition().getyPosition() - headquarter.getPosition().getyPosition();

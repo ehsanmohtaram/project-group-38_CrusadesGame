@@ -426,9 +426,9 @@ public class BuildingController {
                 , goingPosition.getxPosition(), goingPosition.getyPosition(), siegeType.getMoveRange()) == null)
             return "This siege is too slow to reach such destination!";
         int counter = 0;
-        while (selectedBuilding.getBuildingType().getNumberOfWorker() != counter || selectedBuilding.getPosition().getUnits().size() != 0) {
+        while (selectedBuilding.getBuildingType().getNumberOfWorker() != counter && selectedBuilding.getPosition().getUnits().size() != 0) {
             for (Unit unit : selectedBuilding.getPosition().getUnits())
-                if (unit.getUnitType().equals(UnitType.ENGINEER) && unit.getUnitState().equals(UnitState.WORKING)) {
+                if (unit.getUnitType().equals(UnitType.ENGINEER) && unit.getUnitState().equals(UnitState.WORKING) && unit.getOwner().equals(currentKingdom)) {
                     unit.setLocationBlock(goingPosition);
                     currentKingdom.setRemainingUnitMove(unit);
                     selectedBuilding.getPosition().removeUnitFromHere(unit);

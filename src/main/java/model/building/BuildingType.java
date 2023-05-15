@@ -7,7 +7,7 @@ public enum BuildingType {
     INN(100, ResourceType.WOOD, 20, 300, UnitType.WORKER, 1, null),
     STAIRS(0, ResourceType.ROCK, 3, 10, UnitType.WORKER, 0, null),
     //Defensive structure
-    HEAD_QUARTER(0,null,0,10000, UnitType.WORKER,0,DefensiveStructureType.HEAD_QUARTER),
+    HEAD_QUARTER(0,null,0,4000, UnitType.WORKER,0,DefensiveStructureType.HEAD_QUARTER),
     WALL(0,ResourceType.ROCK, 5,200, UnitType.WORKER,0 ,DefensiveStructureType.WALL),
     BIG_WALL(0,ResourceType.ROCK, 10 ,400, UnitType.WORKER,0,DefensiveStructureType.BIG_WALL),
     SMALL_STONE_GATEHOUSE(0,null,0,1000, UnitType.WORKER,0,DefensiveStructureType.HEAD_QUARTER),

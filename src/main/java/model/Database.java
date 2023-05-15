@@ -42,6 +42,7 @@ public class Database {
                 new User(user.getUserName(), user.getNickName(), user.getPassword(), user.getEmail(),
                         user.getSlogan(), user.getSecurityQuestionNumber(), user.getAnswerToSecurityQuestion());
                 User.users.get(counter).setLoggedIn(user.getLoggedIn());
+                User.users.get(counter).setScore(user.getScore());
                 counter++;
             }
         }
