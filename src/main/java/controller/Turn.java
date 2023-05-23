@@ -365,11 +365,16 @@ public class Turn {
 
     public void removeDeadUnits(MapBlock checkBlock) {
         if (checkBlock.getUnits().size() != 0) {
+            ArrayList<Unit> units = new ArrayList<>();
             for (Unit unit : checkBlock.getUnits()) {
-                if (unit.getHp() <= 0 && unit.getOwner().equals(currentKingdom)) {
-                    unit.getOwner().getUnits().remove(unit);
-                    checkBlock.removeUnitFromHere(unit);
+                if (unit.getHp() <= 0 ) {
+                    units.add(unit);
+                    System.out.println(unit.getUnitType() +" -> " +unit.getOwner());
                 }
+            }
+            for (Unit unit : units) {
+                unit.getOwner().getUnits().remove(unit);
+                checkBlock.removeUnitFromHere(unit);
             }
         }
     }

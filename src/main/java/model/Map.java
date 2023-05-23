@@ -253,7 +253,8 @@ public class Map implements Cloneable {
         MapBlock[][] output = new MapBlock[2 * range + 1][2 * range + 1];
         for (int j = yPosition - range; j <= yPosition + range; j++) {
             for (int i = xPosition - range; i <= (xPosition + range); i++) {
-                output[i - (xPosition - range)][j - (yPosition - range)] = map[i][j];
+                if(i >=0 && j>= 0)
+                    output[i - (xPosition - range)][j - (yPosition - range)] = map[i][j];
             }
         }
         return output;
