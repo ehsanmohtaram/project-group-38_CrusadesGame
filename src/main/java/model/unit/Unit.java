@@ -151,7 +151,7 @@ public class Unit {
         decreaseMoves(length);
         locationBlock.removeUnitFromHere(this);
         destination.addUnitHere(this);
-        locationBlock.removeUnitFromHere(this);
+//        locationBlock.removeUnitFromHere(this);
         this.locationBlock = destination;
         Trap trap = destination.getTrap();
         if(trap != null)
