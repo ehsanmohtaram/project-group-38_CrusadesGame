@@ -357,6 +357,7 @@ public class Turn {
                         else owner.setResourceAmount((ResourceType) resource, -((Stock)checkBlock.getBuildings()).getResourceValues().get(resource));
                     }
                 }
+                for (Direction direction : Direction.values()) gameMap.changeAccess(checkBlock.getxPosition(), checkBlock.getyPosition(), direction ,true);
                 checkBlock.getBuildings().getOwner().getBuildings().remove(checkBlock.getBuildings());
                 checkBlock.setBuildings(null);
             }
