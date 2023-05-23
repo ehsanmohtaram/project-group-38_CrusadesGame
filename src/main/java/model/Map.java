@@ -262,30 +262,34 @@ public class Map implements Cloneable {
     public ArrayList<Unit> getEnemiesInSurroundingArea(int xPosition, int yPosition, Kingdom attacker, boolean justArchers, int range){
         ArrayList<Unit> enemies = new ArrayList<>();
         for (MapBlock[] mapBlocks : getSurroundingArea(xPosition, yPosition, range))
-            for (MapBlock mapBlock : mapBlocks)
-                for (Unit unit : mapBlock.getUnits())
-                    if(!unit.getOwner().equals(attacker) &&
-                            map[xPosition][yPosition].getOptimizedDistanceFrom(mapBlock.getxPosition(),
-                            mapBlock.getyPosition(), true) < unit.getOptimizedAttackRange()) {
-                        enemies.add(unit);
-                        if(justArchers && !unit.getUnitType().getCAN_DO_AIR_ATTACK())
-                            enemies.remove(unit);
-                    }
-
+            for (MapBlock mapBlock : mapBlocks) {
+                if (mapBlock == null)
+                    continue;
+                    for (Unit unit : mapBlock.getUnits())
+                        if (!unit.getOwner().equals(attacker) &&
+                                map[xPosition][yPosition].getOptimizedDistanceFrom(mapBlock.getxPosition(),
+                                        mapBlock.getyPosition(), true) < unit.getOptimizedAttackRange()) {
+                            enemies.add(unit);
+                            if (justArchers && !unit.getUnitType().getCAN_DO_AIR_ATTACK())
+                                enemies.remove(unit);
+                        }
+            }
         return enemies;
     }
 
     public ArrayList<Unit> getEnemiesInAttackRange(Unit attacker, boolean isNearestWanted){
         ArrayList<Unit> enemies = new ArrayList<>();
-        ArrayList<Unit> nearestEnemies = null;
+        ArrayList<Unit> nearestEnemies = new ArrayList<>();
         int nearestDistance = 100;
         int anotherDistance;
         for (MapBlock[] mapBlocks : getSurroundingArea(attacker.getXPosition(), attacker.getYPosition(), attacker.getMovesLeft() + attacker.getOptimizedAttackRange()))
             outer:
-            for (MapBlock mapBlock : mapBlocks)
+            for (MapBlock mapBlock : mapBlocks) {
+                if (mapBlock == null)
+                    continue;
                 for (Unit unit : mapBlock.getUnits())
-                    if (!unit.getOwner().equals(attacker)) {
-                        if (isNearestWanted && (anotherDistance = getShortestWayLength(attacker.getXPosition(), attacker.getYPosition(), unit.getXPosition(), unit.getYPosition(), attacker.getMovesLeft())) < nearestDistance) {
+                    if (!unit.getOwner().equals(attacker.getOwner())) {
+                        if (isNearestWanted && ((anotherDistance = getShortestWayLength(attacker.getXPosition(), attacker.getYPosition(), unit.getXPosition(), unit.getYPosition(), attacker.getMovesLeft())) < nearestDistance)) {
                             nearestDistance = anotherDistance;
                             nearestEnemies = mapBlock.getUnits();
                             enemies.addAll(nearestEnemies);
@@ -293,6 +297,7 @@ public class Map implements Cloneable {
                         }
                         enemies.add(unit);
                     }
+            }
 
         if(isNearestWanted) {
             enemies.removeAll(nearestEnemies);
