@@ -274,8 +274,11 @@ public class UnitController {
         if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
                 target.getxPosition(), target.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
             return "They are too slow to reach such destination";
-        for (Unit unit : currentUnit)
+        for (Unit unit : currentUnit) {
             unit.moveTo(target, moveLength);
+            if(unit.getUnitType().equals(UnitState.PATROLLING))
+                unit.setUnitState(UnitState.STANDING);
+        }
 
         for (Unit defender : gameMap.getEnemiesInSurroundingArea(target.getxPosition(), target.getyPosition()
                 , currentKingdom, false, 5))

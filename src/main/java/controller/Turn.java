@@ -369,7 +369,7 @@ public class Turn {
             for (Unit unit : checkBlock.getUnits()) {
                 if (unit.getHp() <= 0 ) {
                     units.add(unit);
-                    System.out.println(unit.getUnitType() +" -> " +unit.getOwner());
+                    System.out.println(unit.getUnitType() +" -> " +unit.getOwner().getFlag().name());
                 }
             }
             for (Unit unit : units) {
@@ -455,7 +455,7 @@ public class Turn {
             if(!unit.bilateralFightTillEnd(defender))
                 return;
         }
-        unit.setUnitState(UnitState.STANDING);
+//        unit.setUnitState(UnitState.STANDING);
     }
 
     private void patrolExecution(){

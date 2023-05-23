@@ -90,7 +90,8 @@ public class Unit {
 
     public void setUnitState(UnitState unitState) {
         if(unitState.equals(UnitState.OFFENSIVE))
-            AggressiveUnits.add(this);
+            if(!AggressiveUnits.contains(this))
+                AggressiveUnits.add(this);
         if(this.unitState.equals(UnitState.OFFENSIVE) && !unitState.equals(UnitState.OFFENSIVE))
             AggressiveUnits.remove(this);
         if (this.unitState.equals(UnitState.PATROLLING) && !unitState.equals(UnitState.PATROLLING))
@@ -228,10 +229,9 @@ public class Unit {
     public void resetAttributes(){
         if(hp > 0){
             movesLeft = unitType.getVELOCITY();
-            if(locationBlock.getBuildings() instanceof DefensiveStructure)
+            if(locationBlock.getBuildings() instanceof DefensiveStructure && locationBlock.getBuildings().getOwner().equals(owner))
                 setHigherElevation((DefensiveStructure) locationBlock.getBuildings());
         }
-        AggressiveUnits = new ArrayList<>();
     }
 
 
