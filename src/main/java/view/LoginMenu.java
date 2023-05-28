@@ -32,17 +32,16 @@ public class LoginMenu extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         LoginMenu.stage = stage;
         stage.setResizable(false);
-        new ProfileMenu().start(stage);
-//        Pane pane = new Pane();
-//        pane.setBackground(Background.fill(Color.CADETBLUE));
-//        loginInfo(pane);
-//        Scene scene = new Scene(pane, 1280, 720);
-//        stage.setScene(scene);
-//        stage.setTitle("Login Menu");
-//        stage.show();
+        Pane pane = new Pane();
+        pane.setBackground(Background.fill(Color.CADETBLUE));
+        loginInfo(pane);
+        Scene scene = new Scene(pane, 1280, 720);
+        stage.setScene(scene);
+        stage.setTitle("Login Menu");
+        stage.show();
     }
 
     public void loginInfo(Pane pane) {
@@ -71,6 +70,7 @@ public class LoginMenu extends Application {
                 "-fx-border-color: white; " +
                 "-fx-border-width: 1px; " +
                 "-fx-blend-mode: SRC_OVER;");
+        checkStayLogin.setBackground(Background.EMPTY);
         Label stayLogin = new Label("Stay Login");
         stayLogin.setFont(style.Font0(15));
         HBox.setMargin(stayLogin, new Insets(0, 55, 0 ,0));

@@ -81,7 +81,6 @@
             <version>5.9.2</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -97,6 +96,8 @@
             <artifactId>javafx-media</artifactId>
             <version>19.0.2.1</version>
         </dependency>
+
+
         <!-- https://mvnrepository.com/artifact/com.github.almasb/fxgl -->
         <dependency>
             <groupId>com.github.almasb</groupId>
