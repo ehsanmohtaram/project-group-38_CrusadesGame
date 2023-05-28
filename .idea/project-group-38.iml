@@ -35,5 +35,21 @@
     <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:mac-aarch64:19.0.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-media:19.0.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-media:mac-aarch64:19.0.2.1" level="project" />
+    <orderEntry type="library" name="Maven: com.github.almasb:fxgl:17.2" level="project" />
+    <orderEntry type="library" name="Maven: com.github.almasb:fxgl-core:17.2" level="project" />
+    <orderEntry type="library" name="Maven: com.gluonhq.attach:audio:4.0.13" level="project" />
+    <orderEntry type="library" name="Maven: com.github.almasb:fxgl-io:17.2" level="project" />
+    <orderEntry type="library" name="Maven: com.gluonhq.attach:storage:4.0.13" level="project" />
+    <orderEntry type="library" name="Maven: com.gluonhq.attach:util:4.0.13" level="project" />
+    <orderEntry type="library" name="Maven: com.github.almasb:fxgl-entity:17.2" level="project" />
+    <orderEntry type="library" name="Maven: com.github.almasb:fxgl-scene:17.2" level="project" />
+    <orderEntry type="library" name="Maven: com.github.almasb:fxgl-gameplay:17.2" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.12.1" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.12.1" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.12.1" level="project" />
+    <orderEntry type="library" name="Maven: com.gluonhq.attach:lifecycle:4.0.13" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:modular:1.6.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains:annotations:13.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.6.0" level="project" />
   </component>
 </module>
