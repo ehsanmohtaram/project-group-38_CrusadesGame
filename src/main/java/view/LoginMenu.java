@@ -33,16 +33,17 @@ public class LoginMenu extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws Exception {
         LoginMenu.stage = stage;
         stage.setResizable(false);
-        Pane pane = new Pane();
-        pane.setBackground(Background.fill(Color.CADETBLUE));
-        loginInfo(pane);
-        Scene scene = new Scene(pane, 1280, 720);
-        stage.setScene(scene);
-        stage.setTitle("Login Menu");
-        stage.show();
+        new ProfileMenu().start(stage);
+//        Pane pane = new Pane();
+//        pane.setBackground(Background.fill(Color.CADETBLUE));
+//        loginInfo(pane);
+//        Scene scene = new Scene(pane, 1280, 720);
+//        stage.setScene(scene);
+//        stage.setTitle("Login Menu");
+//        stage.show();
     }
 
     public void loginInfo(Pane pane) {
