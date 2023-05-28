@@ -28,9 +28,9 @@ public class Controller {
                     mapDesignController.run();
                     break;
                 case "profile":
-                    ProfileController profileController = new ProfileController();
-                    profileController.run();
-                    break;
+//                    ProfileController profileController = new ProfileController();
+//                    profileController.run();
+//                    break;
                 case "previous map":
                     GameController gameController = new GameController(gameMap);
                     gameController.run();

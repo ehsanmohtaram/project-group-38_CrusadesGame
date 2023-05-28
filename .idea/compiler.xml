@@ -15,7 +15,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="project-group-38" options="--add-exports java.datatransfer/java.awt=aaGame,project.group" />
+      <module name="project-group-38" options="" />
     </option>
   </component>
 </project>
