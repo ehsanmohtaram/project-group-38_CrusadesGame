@@ -17,15 +17,17 @@ public class Style {
     public void textFiled0 (TextField textField, String fillText, int width, int height) {
         textField.setBackground(Background.EMPTY);
         textField.setPromptText(fillText);
+        textField.setStyle("-fx-text-fill: white;");
         textField.setPadding(new Insets(0,30,0,30));
-        textField.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(30), BorderStroke.THIN)));
+        textField.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         textField.setMaxWidth(width);
         textField.setPrefHeight(height);
     }
     public void button0 (Button button, String fillText, int width, int height) {
-        button.setBackground(Background.fill(Color.WHITE));
         button.setPrefSize(width, height);
-        button.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(30), BorderStroke.THIN)));
+        button.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
+        button.setTextFill(Color.GRAY);
+        button.setBackground(Background.EMPTY);
         button.setText(fillText);
     }
 }
