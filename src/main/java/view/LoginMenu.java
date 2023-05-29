@@ -1,20 +1,22 @@
 package view;
 
-import controller.CommandParser;
-import controller.LoginController;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.BlendMode;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import model.Database;
+
+import java.util.Objects;
+import java.util.Random;
 
 public class LoginMenu extends Application {
 
@@ -36,7 +38,10 @@ public class LoginMenu extends Application {
         LoginMenu.stage = stage;
         stage.setResizable(false);
         Pane pane = new Pane();
-        pane.setBackground(Background.fill(Color.CADETBLUE));
+        BackgroundSize backgroundSize = new BackgroundSize(1280, 720, false, false, false, false);
+        Image image = new Image(Objects.requireNonNull(LoginMenu.class.getResource("/images/background/06.jpg")).toExternalForm());
+        BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+        pane.setBackground(new Background(backgroundImage));
         loginInfo(pane);
         Scene scene = new Scene(pane, 1280, 720);
         stage.setScene(scene);
@@ -48,9 +53,8 @@ public class LoginMenu extends Application {
         VBox vBox = new VBox();
         vBox.setSpacing(20);
         vBox.setAlignment(Pos.CENTER);
-        Label singIn = new Label("Sign in to the game");
-        VBox.setMargin(singIn, new Insets(0, 0, 20 ,0));
-        singIn.setFont(style.Font0(28));
+        Label singIn = new Label("SIGN IN");
+        singIn.setFont(style.Font0(25));
         singIn.setTextFill(Color.WHITE);
         TextField userName = new TextField();
         userName.setFont(style.Font0(20));
@@ -59,24 +63,19 @@ public class LoginMenu extends Application {
         style.textFiled0(userName,"Username" ,300, 60);
         style.textFiled0(password,"Password" ,300, 60);
         HBox hBox0 = new HBox();
-        hBox0.setSpacing(5);
+        hBox0.setSpacing(7);
         hBox0.setAlignment(Pos.CENTER);
-        CheckBox checkStayLogin = new CheckBox();
-        checkStayLogin.setOpacity(0.5);
-        checkStayLogin.setBorder(new Border(new BorderStroke(Color.WHITE.darker(), BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(1))));
-        //checkStayLogin.setBlendMode(BlendMode.LIGHTEN);
-        //checkStayLogin.setBackground(Background.fill(Color.GRAY));
-        checkStayLogin.setStyle(
-                "-fx-border-color: white; " +
-                "-fx-border-width: 1px; " +
-                "-fx-blend-mode: SRC_OVER;");
-        checkStayLogin.setBackground(Background.EMPTY);
+        Rectangle checkStayLogin = new Rectangle();
+        style.checkBox0(checkStayLogin);
         Label stayLogin = new Label("Stay Login");
+        stayLogin.setTextFill(Color.WHITE);
         stayLogin.setFont(style.Font0(15));
         HBox.setMargin(stayLogin, new Insets(0, 55, 0 ,0));
         Label forgotPassword = new Label("Forgot Password?");
+        forgotPassword.setTextFill(Color.WHITE);
         forgotPassword.setFont(style.Font0(15));
         hBox0.getChildren().addAll(checkStayLogin, stayLogin, forgotPassword);
+
         Button login = new Button();
         VBox.setMargin(login, new Insets(40, 0, 0 ,0));
         style.button0(login, "LOGIN", 300, 60);
@@ -85,15 +84,27 @@ public class LoginMenu extends Application {
         hBox1.setAlignment(Pos.CENTER);
         hBox1.setSpacing(10);
         Label newToGame = new Label("New to Game?");
+        newToGame.setTextFill(Color.WHITE);
         newToGame.setFont(style.Font0(15));
         Label signUpMenu = new Label("Create an account");
+        signUpMenu.setTextFill(Color.WHITE);
         signUpMenu.setFont(style.Font0(15));
         hBox1.getChildren().addAll(newToGame, signUpMenu);
         vBox.getChildren().addAll(singIn, userName, password, hBox0,login, hBox1);
-        vBox.setLayoutX(600);  vBox.setLayoutY(100);
-        vBox.setPrefSize(600, 600);
-        vBox.setBackground(Background.fill(Color.GRAY));
-        pane.getChildren().add(vBox);
+        vBox.setPrefSize(400, 500);
+        vBox.setLayoutX(800);  vBox.setLayoutY(110);
+        vBox.setStyle("-fx-background-radius: 10;");
+        vBox.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
+        vBox.setPadding(new Insets(20,20,20,20));
+        pane.getChildren().addAll(vBox);
+    }
+
+    public void makeCaptcha(VBox vBox) {
+        Rectangle rectangle = new Rectangle();
+        Random random = new Random();
+        rectangle.setFill(new ImagePattern(new Image(LoginMenu.class.getResource("/images/captcha/" + (random.nextInt(8999) + 1000) + ".png").toExternalForm())));
+        vBox.getChildren().add(rectangle);
+
     }
 
 
