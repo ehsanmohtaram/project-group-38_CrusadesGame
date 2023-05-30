@@ -34,10 +34,11 @@ public class LoginMenu extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws Exception {
         LoginMenu.stage = stage;
         stage.setResizable(false);
         Pane pane = new Pane();
+        new ProfileMenu().start(stage);
         BackgroundSize backgroundSize = new BackgroundSize(1280, 720, false, false, false, false);
         Image image = new Image(Objects.requireNonNull(LoginMenu.class.getResource("/images/background/06.jpg")).toExternalForm());
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
@@ -78,7 +79,7 @@ public class LoginMenu extends Application {
 
         Button login = new Button();
         VBox.setMargin(login, new Insets(40, 0, 0 ,0));
-        style.button0(login, "LOGIN", 300, 60);
+        style.button0(login, "LOGIN", 300, 60, 30);
         login.setFont(style.Font0(20));
         HBox hBox1 = new HBox();
         hBox1.setAlignment(Pos.CENTER);

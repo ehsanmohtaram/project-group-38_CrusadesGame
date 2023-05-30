@@ -1,5 +1,6 @@
 package view;
 
+import javafx.css.Size;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -25,12 +26,13 @@ public class Style {
         textField.setMaxWidth(width);
         textField.setPrefHeight(height);
     }
-    public void button0 (Button button, String fillText, int width, int height) {
+    public void button0 (Button button, String fillText, int width, int height,int fontSize) {
         button.setPrefSize(width, height);
         button.setStyle("-fx-text-fill: #484646;");
         button.setStyle("-fx-background-color: rgba(255,255,255,0.5); -fx-background-radius: 10;");
         button.setBackground(Background.EMPTY);
         button.setText(fillText);
+        button.setFont(this.Font0(fontSize));
         button.setOnMouseEntered(mouseEvent -> button.setStyle("-fx-background-color: rgba(185,182,182,0.5); -fx-background-radius: 10;"));
         button.setOnMouseExited(mouseEvent -> button.setStyle("-fx-background-color: rgba(255,255,255,0.5); -fx-background-radius: 10;"));
     }
