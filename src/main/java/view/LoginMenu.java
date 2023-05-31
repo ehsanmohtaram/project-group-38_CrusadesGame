@@ -27,7 +27,7 @@ public class LoginMenu extends Application {
 
     private final Style style;
     private final LoginMenuController loginMenuController;
-    private Stage stage;
+    public static Stage stage;
 
     public LoginMenu() {
         this.style = new Style();
@@ -41,7 +41,7 @@ public class LoginMenu extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws Exception {
         this.stage = stage;
         Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
         stage.setFullScreen(true);
@@ -51,11 +51,14 @@ public class LoginMenu extends Application {
         Image image = new Image(LoginMenu.class.getResource("/images/background/loginBack.jpg").toExternalForm());
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         pane.setBackground(new Background(backgroundImage));
-        loginInfo(pane);
+
+//        loginInfo(pane);
         Scene scene = new Scene(pane,primScreenBounds.getWidth(), primScreenBounds.getHeight());
         stage.setScene(scene);
         stage.setTitle("Login Menu");
         stage.show();
+        new ProfileMenu().start(stage);
+
     }
 
     public void loginInfo(Pane pane) {

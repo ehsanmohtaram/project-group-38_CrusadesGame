@@ -11,6 +11,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -20,10 +22,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class ProfileMenu extends Application {
 //    private final ProfileController profileController;
@@ -45,56 +49,55 @@ public class ProfileMenu extends Application {
         stage.setResizable(false);
         Pane pane = new Pane();
         this.mainPane = pane;
-        pane.setBackground(Background.fill(Color.YELLOW));
+        BackgroundSize backgroundSize = new BackgroundSize(1920, 1080, false, false, false, false);
+        Image image = new Image(Objects.requireNonNull(LoginMenu.class.getResource("/images/background/loginBack.jpg")).toExternalForm());
+        BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+        pane.setBackground(new Background(backgroundImage));
         profileView(pane);
-        Scene scene = new Scene(pane, 1280, 720);
-        stage.setScene(scene);
+        stage.getScene().setRoot(pane);
         stage.setTitle("Login Menu");
         stage.show();
     }
 
-    private void profileView(Pane pane) {
+    public void profileView(Pane pane) {
+        System.out.println("start");
         Pane profilePane = new Pane();
-        Label profile = new Label("Profile");
-        profile.setFont(style.Font0(40));
-        profile.setLayoutX(580);profile.setLayoutY(47);
-        profile.setTextFill(Color.BLACK);
-        profilePane.getChildren().add(profile);
+        profilePane.setPrefSize(550,700);
+        profilePane.setLayoutX(850);profilePane.setLayoutY(122);
+        profilePane.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         pane.getChildren().add(profilePane);
-        Circle circle = new Circle(640, 1000, 800);
-        circle.setFill(Color.LIGHTGOLDENRODYELLOW);
-        profilePane.getChildren().add(circle);
-        Circle avatar = new Circle(640, 200, 70);
+        Label profileLabel = new Label("Profile");
+        profileLabel.setFont(style.Font0(40));
+        profileLabel.setLayoutX(180);profileLabel.setLayoutY(10);
+        profileLabel.setTextFill(Color.BLACK);
+        profilePane.getChildren().add(profileLabel);
+        Circle avatar = new Circle(250, 150, 70);
         avatar.setFill(Color.WHITE);
         profilePane.getChildren().add(avatar);
-        Rectangle rectangle = new Rectangle(400, 270);
-        rectangle.setArcWidth(30);rectangle.setArcHeight(30);
-        rectangle.setX(455);rectangle.setY(320);
-        rectangle.setFill(Color.WHITE);
-        rectangle.setStyle("-fx-background-radius: 20");
-        profilePane.getChildren().add(rectangle);
-        createText("My Details",450, 310, 15, Color.GRAY, profilePane);
-        createText("Username:", 470, 350, 15, Color.GRAY, profilePane);
-        Text username = createText(name, 475, 380, 20, Color.BLACK, profilePane);
-        createText("Password:",470, 410, 15, Color.GRAY, profilePane);
-        createText("ehsan@1383",475, 440, 20, Color.BLACK, profilePane);
-        createText("Nick Name:",470, 470, 15, Color.GRAY, profilePane);
-        createText("ehsan khalaf",475, 500, 20, Color.BLACK, profilePane);
-        createText("Email Address:",470, 530, 15, Color.GRAY, profilePane);
-        createText("ehsanmohtaram@gmail.com",475, 560, 20, Color.BLACK, profilePane);
+        createText("Username:", 45, 260, 20, Color.BLACK, profilePane);
+        TextField username = createTextField(name, 75, 275, 45, 390, profilePane);
+        createText("Password:",45, 350, 20, Color.BLACK, profilePane);
+        TextField password = createTextField("ehsan@1383",75, 365, 45, 390, profilePane);
+        createText("Nick Name:",45, 440, 20, Color.BLACK, profilePane);
+        TextField nickName = createTextField("ehsan khalaf",75, 455, 45, 390, profilePane);
+        createText("Email Address:",45, 530, 20, Color.BLACK, profilePane);
+        TextField email = createTextField("ehsanmohtaram@gmail.com",75, 545, 45, 390, profilePane);
+//        username.setDisable(true);
+//        password.setDisable(true);
+//        nickName.setDisable(true);
+//        email.setDisable(true);
 
-
-
-
-        Button editName = createButton("edit",800, 330,20,50, 15, profilePane);
-        editName.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        ImageView editImageForName = createEdit(430, 283, profilePane);
+        editImageForName.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                System.out.println("lknasdkjn");
                 editName(username, profilePane);
             }
         });
-        Button scoreBord = createButton("ScoreBord", 560, 600, 80, 200, 30, profilePane);
+
+
+
+        Button scoreBord = createButton("ScoreBord", 170, 610, 60, 200, 30, profilePane);
         scoreBord.setTextFill(Color.BLACK);
         scoreBord.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -112,6 +115,18 @@ public class ProfileMenu extends Application {
         return text;
     }
 
+    public TextField createTextField(String containText, int x, int y, int height, int width, Pane pane) {
+        TextField textField = new TextField();
+        textField.setLayoutX(x);textField.setLayoutY(y);
+        style.textFiled0(textField, containText,width, height);
+        textField.setStyle("-fx-prompt-text-fill: black; -fx-text-fill: black");
+        textField.setFont(style.Font0(20));
+        pane.getChildren().add(textField);
+        textField.setDisable(true);
+        textField.setStyle("-fx-text-fill-disabled: #999999");
+    return textField;
+    }
+
     public Button createButton(String containText, int x, int y, int height, int width, int fontSize, Pane pane){
         Button button = new Button();
         button.setLayoutX(x);button.setLayoutY(y);
@@ -119,6 +134,14 @@ public class ProfileMenu extends Application {
         button.setFont(style.Font0(fontSize));
         pane.getChildren().add(button);
         return button;
+    }
+
+    public ImageView createEdit(int x, int y, Pane pane){
+        ImageView imageView = new ImageView(new Image(ProfileMenu.class.getResource("/images/buttons/edit.png").toExternalForm()));
+        imageView.setLayoutX(x);imageView.setLayoutY(y);
+        imageView.setFitHeight(25);imageView.setFitWidth(25);
+        pane.getChildren().add(imageView);
+        return imageView;
     }
 
     private void scoreBord(Pane profilePane) {
@@ -130,24 +153,25 @@ public class ProfileMenu extends Application {
         scoreBord.getChildren().add(rectangle);
     }
 
-    private void editName(Text username, Pane profilePane){
-        TextField editName = new TextField();
-        editName.setPromptText(username.getText());
-        editName.setFont(style.Font0(20));
-        editName.setBackground(Background.fill(Color.WHITE));
-        editName.setLayoutX(462);editName.setLayoutY(351.5);
-        profilePane.getChildren().add(editName);
+    private void editName(TextField username, Pane profilePane){
+        username.setDisable(false);
         profilePane.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                name = editName.getText();
+                name = username.getText();
+                username.setText("");
+                username.setPromptText("");
+                username.setDisable(true);
                 profileView(mainPane);
             }
         });
         profilePane.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                name = editName.getText();
+                name = username.getText();
+                username.setText("");
+                username.setPromptText("");
+                username.setDisable(true);
                 profileView(mainPane);
             }
         });

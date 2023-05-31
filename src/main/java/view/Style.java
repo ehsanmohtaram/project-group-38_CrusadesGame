@@ -27,6 +27,7 @@ public class Style {
         textField.setStyle("-fx-text-fill: rgba(86,73,57,1); -fx-prompt-text-fill: rgba(86,73,57,0.5);");
         textField.setBorder(new Border(new BorderStroke(Color.rgb(86,73,57,1), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         textField.setMaxWidth(width);
+        textField.setMinWidth(width);
         textField.setPrefHeight(height);
     }
     public void button0 (Button button, String fillText, int width, int height) {
