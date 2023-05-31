@@ -19,16 +19,19 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import model.Database;
+import view.controller.LoginMenuController;
 import java.io.File;
 import java.util.Random;
 
 public class LoginMenu extends Application {
 
     private final Style style;
+    private final LoginMenuController loginMenuController;
     private Stage stage;
 
     public LoginMenu() {
         this.style = new Style();
+        loginMenuController = new LoginMenuController();
     }
 
     public static void main(String[] args) {
@@ -93,7 +96,9 @@ public class LoginMenu extends Application {
         signUpMenu.setFont(style.Font0(20));
         hBox1.getChildren().addAll(newToGame, signUpMenu);
         vBox.getChildren().addAll(userName, passwordFiled, hBox0);
-        makeCaptcha(vBox);
+        Rectangle captchaImage = new Rectangle();
+        TextField captchaInput = new TextField();
+        makeCaptcha(vBox, captchaImage, captchaInput);
         vBox.getChildren().addAll(login, hBox1);
         vBox.setPrefSize(500, 700);
         vBox.setLayoutX(850);  vBox.setLayoutY(122);
@@ -101,9 +106,13 @@ public class LoginMenu extends Application {
         vBox.setPadding(new Insets(20,20,20,20));
         pane.getChildren().addAll(vBox);
         hyperLinkHandel(forgotPassword, signUpMenu);
+        login.setOnMouseClicked(mouseEvent -> {
+            loginMenuController.getInfoFromMenu((TextField) (passwordFiled.getChildren().get(0)), userName, captchaInput, captchaImage, checkStayLogin);
+            loginMenuController.checkLoginValidation();
+        });
     }
 
-    public void makeCaptcha(VBox vBox) {
+    public void makeCaptcha(VBox vBox, Rectangle rectangle, TextField textField) {
         HBox hBox0 = new HBox();
         hBox0.setSpacing(40);
         HBox hbox1 = new HBox();
@@ -112,7 +121,6 @@ public class LoginMenu extends Application {
         hbox1.setPrefSize(200, 60);
         hbox1.setBorder(new Border(new BorderStroke(Color.rgb(86,73,57,1), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         hBox0.setAlignment(Pos.CENTER);
-        Rectangle rectangle = new Rectangle();
         rectangle.setWidth(200);
         rectangle.setHeight(60);
         ImageView imageView = new ImageView(LoginMenu.class.getResource("/images/captcha/" + searchDirectory()).toExternalForm());
@@ -120,7 +128,6 @@ public class LoginMenu extends Application {
         rectangle.setOpacity(0.4);
         rectangle.setBlendMode(BlendMode.MULTIPLY);
         hbox1.getChildren().add(rectangle);
-        TextField textField = new TextField();
         textField.setFont(style.Font0(24));
         textField.setAlignment(Pos.CENTER);
         textField.setPadding(new Insets(0, 25, 0, 25));

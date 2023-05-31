@@ -115,7 +115,8 @@ public class ProfileMenu extends Application {
     public Button createButton(String containText, int x, int y, int height, int width, int fontSize, Pane pane){
         Button button = new Button();
         button.setLayoutX(x);button.setLayoutY(y);
-        style.button0(button, containText,width, height, fontSize);
+        style.button0(button, containText,width, height);
+        button.setFont(style.Font0(fontSize));
         pane.getChildren().add(button);
         return button;
     }
