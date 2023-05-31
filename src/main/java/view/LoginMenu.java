@@ -62,6 +62,7 @@ public class LoginMenu extends Application {
                 Controller.currentUser = Controller.loggedInUser = user;
                 new MainMenu().start(stage);
             }
+
         stage.setTitle("Login Menu");
         stage.show();
         Media media = new Media(LoginMenu.class.getResource("/musics/out.mp3").toExternalForm());
