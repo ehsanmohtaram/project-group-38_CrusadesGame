@@ -1,5 +1,6 @@
 package view;
 
+import controller.Controller;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,6 +20,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import model.Database;
+import model.User;
 import view.controller.LoginMenuController;
 import java.io.File;
 import java.util.Random;
@@ -27,7 +29,8 @@ public class LoginMenu extends Application {
 
     private final Style style;
     private final LoginMenuController loginMenuController;
-    public static Stage stage;
+    private Stage stage;
+    private static MediaPlayer startMedia;
 
     public LoginMenu() {
         this.style = new Style();
@@ -41,7 +44,7 @@ public class LoginMenu extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         this.stage = stage;
         Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
         stage.setFullScreen(true);
@@ -51,14 +54,20 @@ public class LoginMenu extends Application {
         Image image = new Image(LoginMenu.class.getResource("/images/background/loginBack.jpg").toExternalForm());
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         pane.setBackground(new Background(backgroundImage));
-
-//        loginInfo(pane);
+        loginInfo(pane);
         Scene scene = new Scene(pane,primScreenBounds.getWidth(), primScreenBounds.getHeight());
         stage.setScene(scene);
+        for (User user : User.users)
+            if (user.getLoggedIn()) {
+                Controller.currentUser = Controller.loggedInUser = user;
+                new MainMenu().start(stage);
+            }
         stage.setTitle("Login Menu");
         stage.show();
-        new ProfileMenu().start(stage);
-
+        Media media = new Media(LoginMenu.class.getResource("/musics/out.mp3").toExternalForm());
+        startMedia = new MediaPlayer(media);
+        startMedia.setCycleCount(-1);
+        startMedia.play();
     }
 
     public void loginInfo(Pane pane) {

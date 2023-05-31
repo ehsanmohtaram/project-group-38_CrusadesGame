@@ -68,7 +68,6 @@ public class LoginController {
         return "User has been added successfully!";
     }
     public String login(HashMap<String, String> options) {
-        String result;
         if (User.getUserByUsername(options.get("u")) == null) return "Username and password did not match!";
         if (User.getStatueOfDelayOfUser(options.get("u")).equals(true))
             return "You can not login for now. Please try in " +
@@ -79,7 +78,7 @@ public class LoginController {
         }
         if (!options.get("C").equals(options.get("c"))) return "Security field failed! Please try again.";
         if (options.get("s") != null) User.getUserByUsername(options.get("u")).setLoggedIn(true);
-        //Controller.currentUser = Controller.loggedInUser = User.getUserByUsername(options.get("u"));
+        Controller.currentUser = Controller.loggedInUser = User.getUserByUsername(options.get("u"));
         return "login";
     }
 

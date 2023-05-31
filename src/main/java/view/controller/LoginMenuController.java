@@ -66,7 +66,7 @@ public class LoginMenuController {
         });
     }
     public void popUpTransition(VBox popUp,int in, int out) {
-        ScaleTransition scaleTransition = new ScaleTransition(Duration.seconds(1));
+        ScaleTransition scaleTransition = new ScaleTransition(Duration.seconds(0.5));
         scaleTransition.setNode(popUp);
         scaleTransition.setFromX(in);
         scaleTransition.setToX(out);
@@ -90,7 +90,6 @@ public class LoginMenuController {
         if (opacity != 1) captchaImage.setOpacity(0);
         else captchaImage.setOpacity(1);
         stayLogin.setOpacity(opacity);
-
     }
 
 
