@@ -3,25 +3,29 @@ package view;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import model.Database;
-
-import java.util.Objects;
+import java.io.File;
 import java.util.Random;
 
 public class LoginMenu extends Application {
 
     private final Style style;
-    public static Stage stage;
+    private Stage stage;
 
     public LoginMenu() {
         this.style = new Style();
@@ -35,15 +39,17 @@ public class LoginMenu extends Application {
 
     @Override
     public void start(Stage stage) {
-        LoginMenu.stage = stage;
+        this.stage = stage;
+        Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+        stage.setFullScreen(true);
         stage.setResizable(false);
         Pane pane = new Pane();
-        BackgroundSize backgroundSize = new BackgroundSize(1280, 720, false, false, false, false);
-        Image image = new Image(Objects.requireNonNull(LoginMenu.class.getResource("/images/background/06.jpg")).toExternalForm());
+        BackgroundSize backgroundSize = new BackgroundSize(1920, 1080, false, false, false, false);
+        Image image = new Image(LoginMenu.class.getResource("/images/background/loginBack.jpg").toExternalForm());
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         pane.setBackground(new Background(backgroundImage));
         loginInfo(pane);
-        Scene scene = new Scene(pane, 1280, 720);
+        Scene scene = new Scene(pane,primScreenBounds.getWidth(), primScreenBounds.getHeight());
         stage.setScene(scene);
         stage.setTitle("Login Menu");
         stage.show();
@@ -53,59 +59,176 @@ public class LoginMenu extends Application {
         VBox vBox = new VBox();
         vBox.setSpacing(20);
         vBox.setAlignment(Pos.CENTER);
-        Label singIn = new Label("SIGN IN");
-        singIn.setFont(style.Font0(25));
-        singIn.setTextFill(Color.WHITE);
         TextField userName = new TextField();
-        userName.setFont(style.Font0(20));
-        TextField password = new TextField();
-        password.setFont(style.Font0(20));
-        style.textFiled0(userName,"Username" ,300, 60);
-        style.textFiled0(password,"Password" ,300, 60);
+        userName.setFont(style.Font0(24));
+        style.textFiled0(userName,"Username" ,400, 70);
+        userName.setPadding(new Insets(0,30,0,30));
+        HBox passwordFiled = new HBox();
+        passwordFiledDisableEnableHandle(passwordFiled);
         HBox hBox0 = new HBox();
         hBox0.setSpacing(7);
         hBox0.setAlignment(Pos.CENTER);
         Rectangle checkStayLogin = new Rectangle();
         style.checkBox0(checkStayLogin);
         Label stayLogin = new Label("Stay Login");
-        stayLogin.setTextFill(Color.WHITE);
-        stayLogin.setFont(style.Font0(15));
-        HBox.setMargin(stayLogin, new Insets(0, 55, 0 ,0));
+        stayLogin.setTextFill(Color.rgb(86,73,57,1));
+        stayLogin.setFont(style.Font0(20));
+        HBox.setMargin(stayLogin, new Insets(0, 95, 0 ,0));
         Label forgotPassword = new Label("Forgot Password?");
-        forgotPassword.setTextFill(Color.WHITE);
-        forgotPassword.setFont(style.Font0(15));
+        forgotPassword.setTextFill(Color.rgb(86,73,57,1));
+        forgotPassword.setFont(style.Font0(20));
         hBox0.getChildren().addAll(checkStayLogin, stayLogin, forgotPassword);
-
         Button login = new Button();
-        VBox.setMargin(login, new Insets(40, 0, 0 ,0));
-        style.button0(login, "LOGIN", 300, 60);
+        VBox.setMargin(login, new Insets(100, 0, 0 ,0));
+        style.button0(login, "LOGIN", 400, 60);
         login.setFont(style.Font0(20));
         HBox hBox1 = new HBox();
         hBox1.setAlignment(Pos.CENTER);
         hBox1.setSpacing(10);
         Label newToGame = new Label("New to Game?");
-        newToGame.setTextFill(Color.WHITE);
-        newToGame.setFont(style.Font0(15));
+        newToGame.setTextFill(Color.rgb(86,73,57,1));
+        newToGame.setFont(style.Font0(20));
         Label signUpMenu = new Label("Create an account");
-        signUpMenu.setTextFill(Color.WHITE);
-        signUpMenu.setFont(style.Font0(15));
+        signUpMenu.setTextFill(Color.rgb(86,73,57,1));
+        signUpMenu.setFont(style.Font0(20));
         hBox1.getChildren().addAll(newToGame, signUpMenu);
-        vBox.getChildren().addAll(singIn, userName, password, hBox0,login, hBox1);
-        vBox.setPrefSize(400, 500);
-        vBox.setLayoutX(800);  vBox.setLayoutY(110);
+        vBox.getChildren().addAll(userName, passwordFiled, hBox0);
+        makeCaptcha(vBox);
+        vBox.getChildren().addAll(login, hBox1);
+        vBox.setPrefSize(500, 700);
+        vBox.setLayoutX(850);  vBox.setLayoutY(122);
         vBox.setStyle("-fx-background-radius: 10;");
-        vBox.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         vBox.setPadding(new Insets(20,20,20,20));
         pane.getChildren().addAll(vBox);
+        hyperLinkHandel(forgotPassword, signUpMenu);
     }
 
     public void makeCaptcha(VBox vBox) {
+        HBox hBox0 = new HBox();
+        hBox0.setSpacing(40);
+        HBox hbox1 = new HBox();
+        hbox1.setStyle("-fx-background-color: rgba(86,73,57,0.3); -fx-background-radius: 10;");
+        hbox1.setAlignment(Pos.CENTER);
+        hbox1.setPrefSize(200, 60);
+        hbox1.setBorder(new Border(new BorderStroke(Color.rgb(86,73,57,1), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
+        hBox0.setAlignment(Pos.CENTER);
         Rectangle rectangle = new Rectangle();
-        Random random = new Random();
-        rectangle.setFill(new ImagePattern(new Image(LoginMenu.class.getResource("/images/captcha/" + (random.nextInt(8999) + 1000) + ".png").toExternalForm())));
-        vBox.getChildren().add(rectangle);
+        rectangle.setWidth(200);
+        rectangle.setHeight(60);
+        ImageView imageView = new ImageView(LoginMenu.class.getResource("/images/captcha/" + searchDirectory()).toExternalForm());
+        rectangle.setFill(new ImagePattern(imageView.getImage()));
+        rectangle.setOpacity(0.4);
+        rectangle.setBlendMode(BlendMode.MULTIPLY);
+        hbox1.getChildren().add(rectangle);
+        TextField textField = new TextField();
+        textField.setFont(style.Font0(24));
+        textField.setAlignment(Pos.CENTER);
+        textField.setPadding(new Insets(0, 25, 0, 25));
+        style.textFiled0(textField, "", 160, 60);
+        hBox0.getChildren().addAll(hbox1,textField);
+        vBox.getChildren().add(hBox0);
+        changeCaptchaImage(rectangle);
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 4) textField.setText(oldValue);
+            if (newValue.matches(".*[^\\d+].*")) textField.setText(oldValue);
+        });
+    }
+
+    public String searchDirectory() {
+        File directory = new File("src/main/resources/images/captcha");
+        File[] files = directory.listFiles();
+        Random fileSize = new Random();
+        int randomNumber;
+        do {randomNumber = fileSize.nextInt(49);}
+        while (files[randomNumber].getName().matches("\\..*"));
+        return files[randomNumber].getName();
+    }
+
+    public void changeCaptchaImage(Rectangle rectangle) {
+        rectangle.setOnMouseClicked(mouseEvent -> {
+            ImageView imageView = new ImageView(LoginMenu.class.getResource("/images/captcha/" + searchDirectory()).toExternalForm());
+            rectangle.setFill(new ImagePattern(imageView.getImage()));
+        });
+    }
+
+    public void hyperLinkHandel(Label forgotPassword, Label newAccount) {
+        newAccount.setOnMouseEntered(mouseEvent -> newAccount.setTextFill(Color.rgb(100, 100,100,1)));
+        newAccount.setOnMouseExited(mouseEvent -> newAccount.setTextFill(Color.rgb(86,73,57,1)));
+        newAccount.setOnMouseClicked(mouseEvent -> new SignUpMenu().start(stage));
+        forgotPassword.setOnMouseEntered(mouseEvent -> forgotPassword.setTextFill(Color.rgb(100, 100,100,1)));
+        forgotPassword.setOnMouseExited(mouseEvent -> forgotPassword.setTextFill(Color.rgb(86,73,57,1)));
+    }
+
+    public void passwordFiledDisableEnableHandle(HBox hBox) {
+        hBox.setPrefSize(400, 70);
+        hBox.setMaxSize(400, 70);
+        PasswordField password = new PasswordField();
+        password.setPrefSize(300, 70);
+        password.setBackground(Background.EMPTY);
+        password.setPromptText("Password");
+        password.setFont(style.Font0(24));
+        password.setStyle("-fx-text-fill: rgba(86,73,57,1); -fx-prompt-text-fill: rgba(86,73,57,0.5);");
+        password.setPadding(new Insets(0,0,0,30));
+        Button button = new Button();
+        button.setPrefSize(100, 70);
+        BackgroundSize backgroundSize = new BackgroundSize(30, 30, false, false, false, false);
+        Image image = new Image(LoginMenu.class.getResource("/images/buttons/invisi.png").toExternalForm());
+        BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+        button.setBackground(new Background(backgroundImage));
+        button.setOpacity(0.6);
+        hBox.getChildren().addAll(password, button);
+        hBox.setBorder(new Border(new BorderStroke(Color.rgb(86,73,57,1), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
+        button.setOnMouseEntered(mouseEvent -> button.setOpacity(0.2));
+        button.setOnMouseExited(mouseEvent -> button.setOpacity(0.6));
+        button.setOnMouseClicked(mouseEvent -> changeInvisiToVisi(hBox));
 
     }
+
+
+    public void changeInvisiToVisi(HBox hBox) {
+        TextField password;
+        if (((Button) hBox.getChildren().get(1)).getBackground().getImages().get(0).getImage().getUrl()
+                .equals(LoginMenu.class.getResource("/images/buttons/invisi.png").toExternalForm()))
+             password = new TextField();
+        else password = new PasswordField();
+        String passwordString = ((TextField) hBox.getChildren().get(0)).getText();
+        hBox.getChildren().remove(0);
+        password.setText(passwordString);
+        password.setPrefSize(300, 70);
+        password.setBackground(Background.EMPTY);
+        password.setPromptText("Password");
+        password.setFont(style.Font0(24));
+        password.setStyle("-fx-text-fill: rgba(86,73,57,1); -fx-prompt-text-fill: rgba(86,73,57,0.5);");
+        password.setPadding(new Insets(0,0,0,30));
+        hBox.getChildren().add(0, password);
+        BackgroundSize backgroundSize = new BackgroundSize(30, 30, false, false, false, false);
+        Image image;
+        if (((Button) hBox.getChildren().get(1)).getBackground().getImages().get(0).getImage().getUrl()
+                .equals(LoginMenu.class.getResource("/images/buttons/invisi.png").toExternalForm()))
+            image = new Image(LoginMenu.class.getResource("/images/buttons/visi.png").toExternalForm());
+        else image = new Image(LoginMenu.class.getResource("/images/buttons/invisi.png").toExternalForm());
+        BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+        ((Button)hBox.getChildren().get(1)).setBackground(new Background(backgroundImage));
+    }
+
+
+
+
+    public void particleMaker(Pane pane) {
+        Media media = new Media(LoginMenu.class.getResource("/movies/fire.mp4").toExternalForm());
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        MediaView mediaView = new MediaView(mediaPlayer);
+        mediaView.setFitHeight(1080);
+        mediaView.setFitHeight(1920);
+        mediaView.setBlendMode(BlendMode.LIGHTEN);
+        mediaView.setOpacity(0.8);
+        pane.getChildren().add(mediaView);
+        mediaPlayer.setCycleCount(-1);
+        mediaPlayer.setRate(0.3);
+        mediaPlayer.play();
+    }
+
+
 
 
 

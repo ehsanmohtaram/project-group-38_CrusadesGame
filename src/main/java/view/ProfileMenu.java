@@ -34,7 +34,7 @@ public class ProfileMenu extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        LoginMenu.stage = stage;
+        this.stage = stage;
         stage.setResizable(false);
         Pane pane = new Pane();
         pane.setBackground(Background.fill(Color.YELLOW));
