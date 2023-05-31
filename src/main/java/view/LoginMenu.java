@@ -107,8 +107,11 @@ public class LoginMenu extends Application {
         pane.getChildren().addAll(vBox);
         hyperLinkHandel(forgotPassword, signUpMenu);
         login.setOnMouseClicked(mouseEvent -> {
-            loginMenuController.getInfoFromMenu((TextField) (passwordFiled.getChildren().get(0)), userName, captchaInput, captchaImage, checkStayLogin);
+            loginMenuController.getInfoFromMenu(stage, (TextField) (passwordFiled.getChildren().get(0)), userName, captchaInput, captchaImage, checkStayLogin);
             loginMenuController.checkLoginValidation();
+            ImageView imageView = new ImageView(LoginMenu.class.getResource("/images/captcha/" + searchDirectory()).toExternalForm());
+            captchaImage.setFill(new ImagePattern(imageView.getImage()));
+
         });
     }
 

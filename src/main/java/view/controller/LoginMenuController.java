@@ -1,27 +1,35 @@
 package view.controller;
 import controller.LoginController;
-import javafx.scene.Node;
+import javafx.animation.ScaleTransition;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+import view.MainMenu;
+import view.Style;
 
 import java.util.HashMap;
 
 public class LoginMenuController {
     private final LoginController loginController;
+    private final Style style;
     private TextField password;
     private TextField username;
     private TextField captcha;
     private Rectangle captchaImage;
     private Rectangle stayLogin;
+    private Stage stage;
 
     public LoginMenuController() {
         loginController = new LoginController();
+        style = new Style();
     }
-    public void getInfoFromMenu(TextField password, TextField username, TextField captcha, Rectangle captchaImage, Rectangle stayLogin) {
+    public void getInfoFromMenu(Stage stage, TextField password, TextField username, TextField captcha, Rectangle captchaImage, Rectangle stayLogin) {
+        this.stage = stage;
         this.password = password;
         this.username = username;
         this.captcha = captcha;
@@ -41,26 +49,49 @@ public class LoginMenuController {
         valueMaker.put("C", imageName);
         valueMaker.put("c", captcha.getText() + ".png");
         result = loginController.login(valueMaker);
-        makeLoginAlert(result);
+        if (result.equals("login")) new MainMenu().start(stage);
+        else makeLoginAlert(result);
     }
 
     public void makeLoginAlert(String result) {
-        Rectangle popUp = new Rectangle();
-        popUp.setFill(Color.rgb(86,73,57,0.3));
-        popUp.setArcHeight(20);
-        popUp.setArcWidth(20);
-        popUp.setWidth(600);
-        popUp.setHeight(400);
-        popUp.setLayoutX(456);
-        popUp.setLayoutY(257);
+        VBox popUp = new VBox();
+        Button button = new Button();
         Pane pane = ((Pane)username.getScene().getRoot());
-        pane.getChildren().add(popUp);
+        style.popUp0(pane, popUp, button, 80, 50, 400, 295, 400, 100,200, 50, 450, 213, result, 20);
+        popUpTransition(popUp, 0, 1);
         pane.getChildren().get(0).setDisable(true);
-        for (Node node : ((VBox) pane.getChildren().get(0)).getChildren())
-            node.setDisable(true);
+        disableHBoxes(0.4);
+        button.setOnMouseClicked(mouseEvent -> {
+            popUpTransition(popUp, 1, 0);
+        });
+    }
+    public void popUpTransition(VBox popUp,int in, int out) {
+        ScaleTransition scaleTransition = new ScaleTransition(Duration.seconds(1));
+        scaleTransition.setNode(popUp);
+        scaleTransition.setFromX(in);
+        scaleTransition.setToX(out);
+        scaleTransition.setFromY(in);
+        scaleTransition.setToY(out);
+        scaleTransition.setCycleCount(1);
+        scaleTransition.play();
+        if (out == 0) {
+            scaleTransition.setOnFinished(actionEvent -> {
+                ((Pane) popUp.getParent()).getChildren().get(0).setDisable(false);
+                disableHBoxes(1);
+                ((Pane) popUp.getParent()).getChildren().remove(1);
+            });
+        }
     }
 
+    public void disableHBoxes(double opacity) {
+        ((HBox)(password.getParent())).setBorder(new Border(new BorderStroke(Color.rgb(86,73,57,opacity), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
+        ((HBox)(password.getParent())).getChildren().get(1).setOpacity(opacity);
+        captchaImage.getParent().setOpacity(opacity);
+        if (opacity != 1) captchaImage.setOpacity(0);
+        else captchaImage.setOpacity(1);
+        stayLogin.setOpacity(opacity);
 
+    }
 
 
 

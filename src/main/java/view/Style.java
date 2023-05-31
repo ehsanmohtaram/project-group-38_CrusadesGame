@@ -1,9 +1,8 @@
 package view;
 
 import javafx.animation.FadeTransition;
-import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -13,6 +12,8 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 
 public class Style {
@@ -50,6 +51,28 @@ public class Style {
             else checkBox.setFill(new ImagePattern(new Image(Style.class.getResource("/images/buttons/tick.png").toExternalForm())));
         });
 
+    }
+
+    public void popUp0(Pane pane, VBox popUp, Button ok,double spacing, double padding, double popUpWidth, double popUpHeight, double textFlowWidth, double textFlowHeight, int buttonWidth, int buttonHeight, double positionX, double positionY, String result, int fontSize) {
+        popUp.setSpacing(spacing);
+        popUp.setPadding(new Insets(padding));
+        popUp.setAlignment(Pos.TOP_CENTER);
+        popUp.setStyle("-fx-background-color: transparent; -fx-background-radius: 20;");
+        popUp.setBorder(new Border(new BorderStroke(Color.rgb(86,73,57,1), BorderStrokeStyle.SOLID, new CornerRadii(20), BorderStroke.THIN)));
+        popUp.setPrefSize(popUpWidth, popUpHeight);
+        popUp.setLayoutX(positionX);
+        popUp.setLayoutY(positionY);
+        TextFlow error = new TextFlow();
+        error.setLineSpacing(20);
+        error.setPrefSize(textFlowWidth, textFlowHeight);
+        Text text = new Text(result);
+        text.setFill(Color.rgb(170,139,100,0.6));
+        text.setFont(Font0(fontSize));
+        error.getChildren().add(text);
+        ok.setFont(Font0(fontSize));
+        button0(ok, "OK", buttonWidth, buttonHeight);
+        popUp.getChildren().addAll(error,ok);
+        pane.getChildren().add(popUp);
     }
 
 
