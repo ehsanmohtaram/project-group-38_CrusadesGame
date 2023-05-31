@@ -52,6 +52,8 @@ public class Style {
 
     }
 
+
+
     public void inputTransition(Pane pane) {
         FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1.5));
         fadeTransition.setFromValue(0);
