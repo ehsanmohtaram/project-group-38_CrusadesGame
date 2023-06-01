@@ -7,39 +7,36 @@ import view.*;
 import java.util.*;
 
 public class Controller {
-    private final MainMenu mainMenu;
     public static User currentUser = null;
     public static User loggedInUser = null;
     private Map gameMap;
 
     public Controller() {
-        this.mainMenu = new MainMenu(this);
-        Database.setArrayOfUsers();
         for (User user : User.users) if (user.getLoggedIn()) currentUser = loggedInUser = user;
     }
 
     public void run() {
-        LoginController loginController = new LoginController();
-        //if (currentUser == null) if (loginController.run().equals("exit")) return;
-        while (true) {
-            switch (mainMenu.run()) {
-                case "selectMap":
-                    MapDesignController mapDesignController = new MapDesignController(gameMap);
-                    mapDesignController.run();
-                    break;
-                case "profile":
-//                    ProfileController profileController = new ProfileController();
-//                    profileController.run();
+//        LoginController loginController = new LoginController();
+//        //if (currentUser == null) if (loginController.run().equals("exit")) return;
+//        while (true) {
+//            switch (mainMenu.run()) {
+//                case "selectMap":
+//                    MapDesignController mapDesignController = new MapDesignController(gameMap);
+//                    mapDesignController.run();
 //                    break;
-                case "previous map":
-                    GameController gameController = new GameController(gameMap);
-                    gameController.run();
-                    break;
-                case "logout":
-                    //if (loginController.run().equals("exit")) return;
-                    break;
-            }
-        }
+//                case "profile":
+////                    ProfileController profileController = new ProfileController();
+////                    profileController.run();
+////                    break;
+//                case "previous map":
+//                    GameController gameController = new GameController(gameMap);
+//                    gameController.run();
+//                    break;
+//                case "logout":
+//                    //if (loginController.run().equals("exit")) return;
+//                    break;
+//            }
+//        }
     }
 
     public String showDefaultMaps(){
