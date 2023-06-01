@@ -19,6 +19,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -36,6 +37,9 @@ public class ProfileMenu extends Application {
     private Style style;
     private Pane mainPane;
     private String name = "ehsan";
+    private String password = "ehsan1383";
+    private String nickName = "gordon";
+    private String email = "ehsan@gamil.com";
     public ProfileMenu() {
         this.style = new Style();
 //        this.profileController = profileController;
@@ -75,30 +79,48 @@ public class ProfileMenu extends Application {
         avatar.setFill(Color.WHITE);
         profilePane.getChildren().add(avatar);
         createText("Username:", 45, 260, 20, Color.BLACK, profilePane);
-        TextField username = createTextField(name, 75, 275, 45, 390, profilePane);
+        TextField usernameField = createTextField(name, 75, 275, 45, 390, profilePane);
         createText("Password:",45, 350, 20, Color.BLACK, profilePane);
-        TextField password = createTextField("ehsan@1383",75, 365, 45, 390, profilePane);
+        TextField passwordField = createTextField(password,75, 365, 45, 390, profilePane);
         createText("Nick Name:",45, 440, 20, Color.BLACK, profilePane);
-        TextField nickName = createTextField("ehsan khalaf",75, 455, 45, 390, profilePane);
+        TextField nickNameField = createTextField(nickName,75, 455, 45, 390, profilePane);
         createText("Email Address:",45, 530, 20, Color.BLACK, profilePane);
-        TextField email = createTextField("ehsanmohtaram@gmail.com",75, 545, 45, 390, profilePane);
-//        username.setDisable(true);
-//        password.setDisable(true);
-//        nickName.setDisable(true);
-//        email.setDisable(true);
-
+        TextField emailField = createTextField(email,75, 545, 45, 390, profilePane);
+//        Rectangle rectangle = new Rectangle();
+//        rectangle.setLayoutX(430);rectangle.setLayoutY(285);
+//        rectangle.setHeight(25);rectangle.setWidth(25);
+//        rectangle.setVisible(false);
+//        profilePane.getChildren().add(rectangle);
         ImageView editImageForName = createEdit(430, 283, profilePane);
+        ImageView editImageForPassword = createEdit(430, 373, profilePane);
+        ImageView editImageForNickName = createEdit(430, 463, profilePane);
+        ImageView editImageForEmail = createEdit(430, 553, profilePane);
+        Button scoreBord = createButton("ScoreBord", 170, 610, 60, 200, 30, profilePane);
+        scoreBord.setTextFill(Color.BLACK);
         editImageForName.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                editName(username, profilePane);
+                editName(usernameField, profilePane);
             }
         });
-
-
-
-        Button scoreBord = createButton("ScoreBord", 170, 610, 60, 200, 30, profilePane);
-        scoreBord.setTextFill(Color.BLACK);
+        editImageForPassword.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                editPassword(passwordField, profilePane);
+            }
+        });
+        editImageForNickName.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                editNickName(nickNameField, profilePane);
+            }
+        });
+        editImageForEmail.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                editEmail(emailField, profilePane);
+            }
+        });
         scoreBord.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -115,16 +137,16 @@ public class ProfileMenu extends Application {
         return text;
     }
 
-    public TextField createTextField(String containText, int x, int y, int height, int width, Pane pane) {
+    public TextField createTextField(String containText, int x, int y, int height, int width, Pane pane){
         TextField textField = new TextField();
         textField.setLayoutX(x);textField.setLayoutY(y);
         style.textFiled0(textField, containText,width, height);
-        textField.setStyle("-fx-prompt-text-fill: black; -fx-text-fill: black");
+//        textField.setStyle("-fx-prompt-text-fill: black; -fx-text-fill: black");
         textField.setFont(style.Font0(20));
         pane.getChildren().add(textField);
-        textField.setDisable(true);
         textField.setStyle("-fx-text-fill-disabled: #999999");
-    return textField;
+        textField.setDisable(true);
+        return textField;
     }
 
     public Button createButton(String containText, int x, int y, int height, int width, int fontSize, Pane pane){
@@ -153,30 +175,96 @@ public class ProfileMenu extends Application {
         scoreBord.getChildren().add(rectangle);
     }
 
-    private void editName(TextField username, Pane profilePane){
-        username.setDisable(false);
+    private void editName(TextField textField, Pane profilePane){
+        textField.setDisable(false);
         profilePane.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                name = username.getText();
-                username.setText("");
-                username.setPromptText("");
-                username.setDisable(true);
+                name = textField.getText();
+                textField.setText("");
+                textField.setPromptText("");
                 profileView(mainPane);
             }
         });
         profilePane.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                name = username.getText();
-                username.setText("");
-                username.setPromptText("");
-                username.setDisable(true);
+                name = textField.getText();
+                textField.setText("");
+                textField.setPromptText("");
                 profileView(mainPane);
             }
         });
-
     }
+
+    private void editPassword(TextField textField, Pane profilePane){
+        textField.setDisable(false);
+        profilePane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                password = textField.getText();
+                textField.setText("");
+                textField.setPromptText("");
+                profileView(mainPane);
+            }
+        });
+        profilePane.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                password = textField.getText();
+                textField.setText("");
+                textField.setPromptText("");
+                profileView(mainPane);
+            }
+        });
+    }
+
+    private void editNickName(TextField textField, Pane profilePane){
+        textField.setDisable(false);
+        profilePane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                nickName = textField.getText();
+                textField.setText("");
+                textField.setPromptText("");
+                profileView(mainPane);
+            }
+        });
+        profilePane.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                nickName = textField.getText();
+                textField.setText("");
+                textField.setPromptText("");
+                profileView(mainPane);
+            }
+        });
+    }
+
+    private void editEmail(TextField textField, Pane profilePane){
+        textField.setDisable(false);
+        profilePane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                email = textField.getText();
+                textField.setText("");
+                textField.setPromptText("");
+                profileView(mainPane);
+            }
+        });
+        profilePane.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                email = textField.getText();
+                textField.setText("");
+                textField.setPromptText("");
+                profileView(mainPane);
+            }
+        });
+    }
+
+
+
 
     public String run() {
 //        HashMap<String, String> optionPass;
