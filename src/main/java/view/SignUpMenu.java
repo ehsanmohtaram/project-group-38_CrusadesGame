@@ -183,7 +183,13 @@ public class SignUpMenu extends Application {
     }
 
     public void buttonHandel(HBox buttonBox) {
-        buttonBox.getChildren().get(1).setOnMouseClicked(mouseEvent -> new LoginMenu().start(stage));
+        buttonBox.getChildren().get(1).setOnMouseClicked(mouseEvent -> {
+            try {
+                new LoginMenu().start(stage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public void atMomentError(Label userError, Label nickNameError, Label emailError, TextField userName, TextField nickName, TextField email) {

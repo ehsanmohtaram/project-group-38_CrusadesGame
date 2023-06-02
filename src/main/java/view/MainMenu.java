@@ -55,6 +55,10 @@ public class MainMenu extends Application {
     }
 
     public void mainMenuButtonHandle(VBox vBox) {
+        vBox.getChildren().get(0).setOnMouseClicked(mouseEvent -> {
+            try {new DesignMapMenu().start(stage);}
+            catch (Exception ignored) {}
+        });
         vBox.getChildren().get(2).setOnMouseClicked(mouseEvent -> {
             try {new ProfileMenu().start(stage);}
             catch (Exception ignored) {}

@@ -13,30 +13,30 @@ import java.util.Random;
 
 public class MapDesignController {
     private final Map gameMap;
-    private final DesignMapMenu designMapMenu;
+//    private final DesignMapMenu designMapMenu;
     private final User currentUser;
     private int XofMap;
     private int YofMap;
 
     public MapDesignController(Map gameMap) {
         this.gameMap = gameMap;
-        designMapMenu = new DesignMapMenu(this);
+//        designMapMenu = new DesignMapMenu(this);
         currentUser = Controller.currentUser;
     }
 
     public void run(){
-        while (true){
-            switch (designMapMenu.run()) {
-                case "start":
-                    GameController gameController = new GameController(gameMap);
-                    gameController.run();
-                    return;
-                case "map":
-                    MapController mapController = new MapController(gameMap, currentUser, XofMap, YofMap);
-                    mapController.run();
-
-            }
-        }
+//        while (true){
+//            switch (designMapMenu.run()) {
+//                case "start":
+//                    GameController gameController = new GameController(gameMap);
+//                    gameController.run();
+//                    return;
+//                case "map":
+//                    MapController mapController = new MapController(gameMap, currentUser, XofMap, YofMap);
+//                    mapController.run();
+//
+//            }
+//        }
     }
 
     public String setTexture(HashMap<String , String> options) {

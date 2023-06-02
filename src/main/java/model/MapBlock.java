@@ -1,5 +1,8 @@
 package model;
 
+import javafx.scene.Group;
+import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Rectangle;
 import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitType;
@@ -7,7 +10,7 @@ import model.unit.UnitType;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MapBlock {
+public class MapBlock extends Rectangle {
 
     private Building buildings;
     private Building siege;
@@ -19,8 +22,14 @@ public class MapBlock {
     private final Integer xPosition;
     private final Integer yPosition;
     private HashMap<Tree , Integer> numberOfTrees;
+    private StackPane nodesInLocation;
 
     public MapBlock(Integer xPosition, Integer yPosition) {
+        super(xPosition * 10, yPosition * 10 , 10 ,10);
+        nodesInLocation = new StackPane();
+        nodesInLocation.setLayoutX(xPosition * 10);
+        nodesInLocation.setLayoutY(yPosition * 10);
+
         this.mapBlockType = MapBlockType.EARTH;
         this.xPosition = xPosition;
         this.yPosition = yPosition;

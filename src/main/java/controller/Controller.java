@@ -58,7 +58,7 @@ public class Controller {
             int index = Integer.parseInt(selectedIndex);
             gameMap = Map.getDefaultMap(index - 1);
             if(gameMap == null) return "invalid number";
-            return "Map was created successfully!";
+            return "successful";
         }
         catch (Exception IllegalArgumentException){
             return "invalid input, please select a number";
@@ -78,7 +78,7 @@ public class Controller {
         if(width < 0 || height < 0) return "invalid bounds!";
         gameMap = new Map(width, height, options.get("n"));
         currentUser.addToMyMap(gameMap);
-        return "Map was created successfully!";
+        return "successful";
     }
 
     public String chooseFromMyMap() {

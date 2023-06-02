@@ -44,7 +44,7 @@ public class LoginMenu extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws Exception {
         this.stage = stage;
         Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
         stage.setFullScreen(true);

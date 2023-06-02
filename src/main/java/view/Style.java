@@ -4,16 +4,14 @@ import javafx.animation.FadeTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
+import javafx.scene.text.*;
 import javafx.util.Duration;
 
 public class Style {
@@ -74,6 +72,17 @@ public class Style {
         button0(ok, "OK", buttonWidth, buttonHeight);
         popUp.getChildren().addAll(error,ok);
         pane.getChildren().add(popUp);
+    }
+
+    public void label0(Label label, int width, int height){
+        label.setBackground(Background.EMPTY);
+        label.setAlignment(Pos.CENTER);
+        label.setStyle("-fx-text-fill: rgba(170,139,100,0.8);");
+        label.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
+        label.setMaxWidth(width);
+        label.setMinWidth(width);
+        label.setTextAlignment(TextAlignment.CENTER);
+        label.setPrefHeight(height);
     }
 
 
