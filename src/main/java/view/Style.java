@@ -24,24 +24,24 @@ public class Style {
     public void textFiled0 (TextField textField, String fillText, int width, int height) {
         textField.setBackground(Background.EMPTY);
         textField.setPromptText(fillText);
-        textField.setStyle("-fx-text-fill: rgba(86,73,57,1); -fx-prompt-text-fill: rgba(86,73,57,0.5);");
-        textField.setBorder(new Border(new BorderStroke(Color.rgb(86,73,57,1), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
+        textField.setStyle("-fx-text-fill: rgba(170,139,100,0.8); -fx-prompt-text-fill: rgba(86,73,57,0.8);");
+        textField.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         textField.setMaxWidth(width);
         textField.setMinWidth(width);
         textField.setPrefHeight(height);
     }
     public void button0 (Button button, String fillText, int width, int height) {
         button.setPrefSize(width, height);
-        button.setStyle("-fx-text-fill: #484646;");
-        button.setStyle("-fx-background-color: rgba(86,73,57,1); -fx-background-radius: 10;");
+        button.setStyle("-fx-text-fill: rgba(170,139,100,1);");
+        button.setStyle("-fx-background-color: rgba(170,139,100,0.8); -fx-background-radius: 10;");
         button.setBackground(Background.EMPTY);
         button.setText(fillText);
         button.setOnMouseEntered(mouseEvent -> button.setStyle("-fx-background-color: rgba(185,182,182,0.5); -fx-background-radius: 10;"));
-        button.setOnMouseExited(mouseEvent -> button.setStyle("-fx-background-color: rgba(86,73,57,1); -fx-background-radius: 10;"));
+        button.setOnMouseExited(mouseEvent -> button.setStyle("-fx-background-color: rgba(170,139,100,0.8); -fx-background-radius: 10;"));
     }
 
     public void checkBox0 (Rectangle checkBox) {
-        checkBox.setStroke(Color.rgb(86,73,57,1));
+        checkBox.setStroke(Color.rgb(170,139,100,0.8));
         checkBox.setHeight(15);
         checkBox.setWidth(15);
         checkBox.setArcWidth(4);
@@ -59,7 +59,7 @@ public class Style {
         popUp.setPadding(new Insets(padding));
         popUp.setAlignment(Pos.TOP_CENTER);
         popUp.setStyle("-fx-background-color: transparent; -fx-background-radius: 20;");
-        popUp.setBorder(new Border(new BorderStroke(Color.rgb(86,73,57,1), BorderStrokeStyle.SOLID, new CornerRadii(20), BorderStroke.THIN)));
+        popUp.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(20), BorderStroke.THIN)));
         popUp.setPrefSize(popUpWidth, popUpHeight);
         popUp.setLayoutX(positionX);
         popUp.setLayoutY(positionY);

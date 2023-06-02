@@ -34,9 +34,7 @@ public class MainMenu extends Application {
     public void mainInfo(Pane pane) {
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
-        vBox.setPrefSize(500, 400);
         vBox.setSpacing(50);
-        vBox.setLayoutX(850);  vBox.setLayoutY(257);
         Button newMap = new Button();
         style.button0(newMap, "New Map", 400, 80);
         newMap.setFont(style.Font0(25));
@@ -50,8 +48,10 @@ public class MainMenu extends Application {
         style.button0(logout, "Logout", 400, 80);
         logout.setFont(style.Font0(25));
         vBox.getChildren().addAll(newMap, defaultMap, profileMenu, logout);
+        vBox.setLayoutX(890);  vBox.setLayoutY(213);
         pane.getChildren().add(vBox);
         mainMenuButtonHandle(vBox);
+
     }
 
     public void mainMenuButtonHandle(VBox vBox) {

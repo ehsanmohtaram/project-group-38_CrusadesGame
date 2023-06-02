@@ -39,7 +39,6 @@ public class Randomize {
 
     public static String randomPassword() {
         SecureRandom random = new SecureRandom();
-        String passwordConfirmation;
         int sumOfLength = 0;
         int length = random.nextInt(4) + 2;
         sumOfLength += length;
@@ -58,12 +57,7 @@ public class Randomize {
         CharacterRule SR = new CharacterRule(EnglishCharacterData.Special);
         SR.setNumberOfCharacters(length);
         PasswordGenerator passGen = new PasswordGenerator();
-        String password = passGen.generatePassword(sumOfLength, SR, LCR, UCR, DR);
-        System.out.println("Your random password is: " + password);
-        System.out.print("Please re-enter your password here: ");
-        passwordConfirmation = CommandParser.getScanner().nextLine();
-        if (!passwordConfirmation.equals(password)) {System.out.println("Password did not match with password confirmation!"); return null;}
-        return password;
+        return passGen.generatePassword(sumOfLength, SR, LCR, UCR, DR);
     }
 
     public static String randomSlogan() {

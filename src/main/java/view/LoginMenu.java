@@ -72,8 +72,6 @@ public class LoginMenu extends Application {
             }
         stage.setTitle("Login Menu");
         stage.show();
-        new ProfileMenu().start(stage);
-
     }
 
     public void loginInfo(Pane pane) {
@@ -92,11 +90,11 @@ public class LoginMenu extends Application {
         Rectangle checkStayLogin = new Rectangle();
         style.checkBox0(checkStayLogin);
         Label stayLogin = new Label("Stay Login");
-        stayLogin.setTextFill(Color.rgb(86,73,57,1));
+        stayLogin.setTextFill(Color.rgb(170,139,100,0.8));
         stayLogin.setFont(style.Font0(20));
         HBox.setMargin(stayLogin, new Insets(0, 95, 0 ,0));
         Label forgotPassword = new Label("Forgot Password?");
-        forgotPassword.setTextFill(Color.rgb(86,73,57,1));
+        forgotPassword.setTextFill(Color.rgb(170,139,100,0.8));
         forgotPassword.setFont(style.Font0(20));
         hBox0.getChildren().addAll(checkStayLogin, stayLogin, forgotPassword);
         Button login = new Button();
@@ -107,10 +105,10 @@ public class LoginMenu extends Application {
         hBox1.setAlignment(Pos.CENTER);
         hBox1.setSpacing(10);
         Label newToGame = new Label("New to Game?");
-        newToGame.setTextFill(Color.rgb(86,73,57,1));
+        newToGame.setTextFill(Color.rgb(170,139,100,0.8));
         newToGame.setFont(style.Font0(20));
         Label signUpMenu = new Label("Create an account");
-        signUpMenu.setTextFill(Color.rgb(86,73,57,1));
+        signUpMenu.setTextFill(Color.rgb(170,139,100,0.8));
         signUpMenu.setFont(style.Font0(20));
         hBox1.getChildren().addAll(newToGame, signUpMenu);
         vBox.getChildren().addAll(userName, passwordFiled, hBox0);
@@ -118,10 +116,7 @@ public class LoginMenu extends Application {
         TextField captchaInput = new TextField();
         makeCaptcha(vBox, captchaImage, captchaInput);
         vBox.getChildren().addAll(login, hBox1);
-        vBox.setPrefSize(500, 700);
-        vBox.setLayoutX(850);  vBox.setLayoutY(122);
-        vBox.setStyle("-fx-background-radius: 10;");
-        vBox.setPadding(new Insets(20,20,20,20));
+        vBox.setLayoutX(890);  vBox.setLayoutY(213);
         pane.getChildren().addAll(vBox);
         hyperLinkHandel(forgotPassword, signUpMenu);
         login.setOnMouseClicked(mouseEvent -> {
@@ -129,7 +124,6 @@ public class LoginMenu extends Application {
             loginMenuController.checkLoginValidation();
             ImageView imageView = new ImageView(LoginMenu.class.getResource("/images/captcha/" + searchDirectory()).toExternalForm());
             captchaImage.setFill(new ImagePattern(imageView.getImage()));
-
         });
     }
 
@@ -181,10 +175,10 @@ public class LoginMenu extends Application {
 
     public void hyperLinkHandel(Label forgotPassword, Label newAccount) {
         newAccount.setOnMouseEntered(mouseEvent -> newAccount.setTextFill(Color.rgb(100, 100,100,1)));
-        newAccount.setOnMouseExited(mouseEvent -> newAccount.setTextFill(Color.rgb(86,73,57,1)));
+        newAccount.setOnMouseExited(mouseEvent -> newAccount.setTextFill(Color.rgb(170,139,100,0.8)));
         newAccount.setOnMouseClicked(mouseEvent -> new SignUpMenu().start(stage));
         forgotPassword.setOnMouseEntered(mouseEvent -> forgotPassword.setTextFill(Color.rgb(100, 100,100,1)));
-        forgotPassword.setOnMouseExited(mouseEvent -> forgotPassword.setTextFill(Color.rgb(86,73,57,1)));
+        forgotPassword.setOnMouseExited(mouseEvent -> forgotPassword.setTextFill(Color.rgb(170,139,100,0.8)));
     }
 
     public void passwordFiledDisableEnableHandle(HBox hBox) {
@@ -195,7 +189,7 @@ public class LoginMenu extends Application {
         password.setBackground(Background.EMPTY);
         password.setPromptText("Password");
         password.setFont(style.Font0(24));
-        password.setStyle("-fx-text-fill: rgba(86,73,57,1); -fx-prompt-text-fill: rgba(86,73,57,0.5);");
+        password.setStyle("-fx-text-fill: rgba(170,139,100,0.8); -fx-prompt-text-fill: rgba(86,73,57,0.8);");
         password.setPadding(new Insets(0,0,0,30));
         Button button = new Button();
         button.setPrefSize(100, 70);
@@ -205,11 +199,10 @@ public class LoginMenu extends Application {
         button.setBackground(new Background(backgroundImage));
         button.setOpacity(0.6);
         hBox.getChildren().addAll(password, button);
-        hBox.setBorder(new Border(new BorderStroke(Color.rgb(86,73,57,1), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
+        hBox.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         button.setOnMouseEntered(mouseEvent -> button.setOpacity(0.2));
         button.setOnMouseExited(mouseEvent -> button.setOpacity(0.6));
         button.setOnMouseClicked(mouseEvent -> changeInvisiToVisi(hBox));
-
     }
 
 
@@ -226,7 +219,7 @@ public class LoginMenu extends Application {
         password.setBackground(Background.EMPTY);
         password.setPromptText("Password");
         password.setFont(style.Font0(24));
-        password.setStyle("-fx-text-fill: rgba(86,73,57,1); -fx-prompt-text-fill: rgba(86,73,57,0.5);");
+        password.setStyle("-fx-text-fill: rgba(170,139,100,0.8);; -fx-prompt-text-fill: rgba(86,73,57,0.8);");
         password.setPadding(new Insets(0,0,0,30));
         hBox.getChildren().add(0, password);
         BackgroundSize backgroundSize = new BackgroundSize(30, 30, false, false, false, false);
