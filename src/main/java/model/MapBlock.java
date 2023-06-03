@@ -1,16 +1,21 @@
 package model;
 
 import javafx.scene.Group;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitType;
+import view.LoginMenu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
-public class MapBlock extends Rectangle {
+public class MapBlock extends Group {
 
     private Building buildings;
     private Building siege;
@@ -25,11 +30,7 @@ public class MapBlock extends Rectangle {
     private StackPane nodesInLocation;
 
     public MapBlock(Integer xPosition, Integer yPosition) {
-        super(xPosition * 10, yPosition * 10 , 10 ,10);
-        nodesInLocation = new StackPane();
-        nodesInLocation.setLayoutX(xPosition * 10);
-        nodesInLocation.setLayoutY(yPosition * 10);
-
+        super();
         this.mapBlockType = MapBlockType.EARTH;
         this.xPosition = xPosition;
         this.yPosition = yPosition;
@@ -40,6 +41,17 @@ public class MapBlock extends Rectangle {
         units = new ArrayList<>();
         numberOfTrees = new HashMap<>();
         for (Tree tree: Tree.values()) numberOfTrees.put(tree , 0);
+
+
+//        setScaleX(100);
+//        setScaleY(100);
+        changeBackground();
+
+    }
+
+    public void setVisualPosition(){
+        setLayoutX(xPosition * 100);
+        setLayoutY(yPosition * 100);
     }
 
     public ArrayList<Unit> getUnits() {
@@ -177,6 +189,16 @@ public class MapBlock extends Rectangle {
             }
         }
         return normalDistance;
+    }
+
+    public void changeBackground(){
+        BackgroundSize backgroundSize = new BackgroundSize(100, 100, false, false, false, false);
+        Image image = new Image(LoginMenu.class.getResource(mapBlockType.getTextureAddress()).toExternalForm());
+        Rectangle backGround = new Rectangle(100 , 100);
+        backGround.setFill(new ImagePattern(image));
+//        setBackground(new Background(new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+//                BackgroundPosition.CENTER, backgroundSize)));
+        getChildren().add(backGround);
     }
 
 }

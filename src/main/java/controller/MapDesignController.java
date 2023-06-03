@@ -1,11 +1,14 @@
 package controller;
 
+import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import model.*;
 import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
-import view.DesignMapMenu;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -37,6 +40,18 @@ public class MapDesignController {
 //
 //            }
 //        }
+    }
+
+    public void addMapToPane(StackPane mapDesignPane){
+        mapDesignPane.getChildren().add(gameMap.getMapPane());
+//        mapDesignPane.setAlignment(mapDesignPane.getChildren().get(0) , Pos.CENTER_LEFT);
+//        gameMap.getMapPane().getChildren().add(new Label("hello word"));
+
+
+    }
+
+    public Pane getGameMapPane() {
+        return gameMap.getMapPane();
     }
 
     public String setTexture(HashMap<String , String> options) {

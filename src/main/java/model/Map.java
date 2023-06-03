@@ -1,5 +1,7 @@
 package model;
 
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import model.building.Building;
 import model.unit.Unit;
 
@@ -23,9 +25,15 @@ public class Map implements Cloneable {
     private int mapHeight;
     private HashMap<Building, Direction> gateDirection = new HashMap<>();
     private HashMap<Building, Flags> gateFlag = new HashMap<>();
+    private Pane mapPane;
 
     public Map(Integer mapWidth, Integer mapHeight, String mapName) {
         endGame = false;
+        mapPane = new Pane();
+//        mapPane.setLayoutX(100);
+//        mapPane.setLayoutY(110);
+//        mapPane.prefHeight(1080);
+//        mapPane.prefWidth(1920);
         this.mapName = mapName;
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
@@ -44,8 +52,11 @@ public class Map implements Cloneable {
             accessToRight[mapWidth - 1][i] = false;
 
         for (int i = 0; i < mapWidth; i++)
-            for (int j = 0; j < mapHeight; j++)
-                map[i][j] = new MapBlock(i , j);
+            for (int j = 0; j < mapHeight; j++) {
+                map[i][j] = new MapBlock(i, j);
+                mapPane.getChildren().add(map[i][j]);
+                map[i][j].setVisualPosition();
+            }
         Maps.add(this);
 //        for (MapBlock[] mapBlockHeight : map)
 //            for (MapBlock mapBlockWith : mapBlockHeight) mapBlockWith = new MapBlock();
@@ -105,8 +116,6 @@ public class Map implements Cloneable {
         gateFlag.put(building, flags);
     }
 
-
-
     public String getMapName() {
         return mapName;
     }
@@ -155,7 +164,11 @@ public class Map implements Cloneable {
         return (Map)(DEFAULT_MAPS.get(index).clone());
     }
 
-//    public void changeType(int x , int y, MapBlockType type){
+    public Pane getMapPane() {
+        return mapPane;
+    }
+
+    //    public void changeType(int x , int y, MapBlockType type){
 //        map[x][y].setMapBlockType(type);
 //    }
 

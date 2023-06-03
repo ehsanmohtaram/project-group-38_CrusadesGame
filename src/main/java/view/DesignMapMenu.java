@@ -4,9 +4,12 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import view.controller.MapDesignMenuController;
@@ -20,13 +23,16 @@ public class DesignMapMenu extends Application {
     private Integer finalWidth;
 
     private Integer finalHeight;
+    private String name;
+    private Label finalName;
 //    private final CommandParser commandParser;
 
     public DesignMapMenu() {
         menuController = new MapDesignMenuController();
         this.style = new Style();
-        finalWidth = 60;
-        finalHeight = 60;
+        finalWidth = 10;
+        finalHeight = 10;
+        name = "new map";
 //        commandParser = new CommandParser();
     }
 
@@ -46,52 +52,77 @@ public class DesignMapMenu extends Application {
     }
 
     private void createMenu(Pane pane) {
-        Label name = new Label("new map");
+        Label name = new Label(this.name);
+        this.finalName = name;
         style.label0(name, 250 , 70);
-        name.setAlignment(Pos.CENTER);
         name.setFont(style.Font0(35));
+        TextField changeName = new TextField();
+        style.textFiled0(changeName, null, 250 , 70);
+        changeName.setFont(style.Font0(35));
         Label width = new Label(finalWidth.toString());
-//        width.setFont(style.Font0(35));
         Label height = new Label(finalHeight.toString());
-//        height.setFont(style.Font0(35));
         Label cross = new Label("*");
-//        cross.setFont(style.Font0(35));
         HBox size = new HBox(width, cross , height);
+        size.setAlignment(Pos.CENTER);
         for (Node child : size.getChildren()) {
             ((Label) child).setFont(style.Font0(35));
             style.label0((Label) child , 80 , 70);
         }
-        size.setAlignment(Pos.CENTER);
         size.setSpacing(15);
-        VBox details = new VBox(name, size);
+        Button submit = new Button();
+        Button back = new Button();
+        style.button0(submit, "create", 150 , 50);
+        style.button0(back, "back" , 150 , 50);
+        submit.setFont(style.Font0(25));
+        back.setFont(style.Font0(25));
+        HBox buttons = new HBox(submit, back);
+        buttons.setSpacing(10);
+        VBox details = new VBox(name, size, buttons);
         details.setSpacing(15);
-        changeAttributes(width, height);
-//        details.setAlignment(Pos.CENTER);
+
+        changeAttributes(width, height, size);
+        processNameChange(name, changeName, details);
+        submit.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                startGame(pane);
+            }
+        });
+        details.setAlignment(Pos.CENTER);
         details.setLayoutX(1000);
         details.setLayoutY(300);
         pane.getChildren().add(details);
 
     }
 
-    private void changeAttributes(Label width, Label height) {
+    private void startGame(Pane pane) {
+        menuController.getInfoFromMenu(stage, finalWidth, finalHeight, finalName);
+        menuController.createNewMap();
+    }
+
+    private void changeAttributes(Label width, Label height, HBox size) {
         width.setOnMouseEntered(e -> {
             width.requestFocus();
             width.setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent keyEvent) {
                     if(keyEvent.getCode().getName().equals("Right")){
-                        finalWidth += 5;
-                        width.setText(finalWidth.toString());
+                        if(finalWidth < 100) {
+                            finalWidth += 5;
+                            width.setText(finalWidth.toString());
+                        }
                     }
                     if(keyEvent.getCode().getName().equals("Left")){
-                        finalWidth -= 5;
-                        width.setText(finalWidth.toString());
+                        if(finalWidth > 20) {
+                            finalWidth -= 5;
+                            width.setText(finalWidth.toString());
+                        }
                     }
                 }
             });
         });
         width.setOnMouseExited(e -> {
-            width.getParent().requestFocus();
+            size.requestFocus();
         });
         height.setOnMouseEntered(e -> {
             height.requestFocus();
@@ -99,20 +130,50 @@ public class DesignMapMenu extends Application {
                 @Override
                 public void handle(KeyEvent keyEvent) {
                     if(keyEvent.getCode().getName().equals("Right")){
-                        finalWidth += 5;
-                        height.setText(finalWidth.toString());
+                        if(finalHeight < 100) {
+                            finalHeight += 5;
+                            height.setText(finalHeight.toString());
+                        }
                     }
                     if(keyEvent.getCode().getName().equals("Left")){
-                        finalWidth -= 5;
-                        height.setText(finalWidth.toString());
+                        if(finalHeight > 20) {
+                            finalHeight -= 5;
+                            height.setText(finalHeight.toString());
+                        }
                     }
                 }
             });
         });
         height.setOnMouseExited(e -> {
-            height.getParent().requestFocus();
+            size.requestFocus();
+        });
+
+    }
+
+    public void processNameChange(Label name, TextField changeName, VBox details){
+        name.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if(mouseEvent.getClickCount() == 2){
+                    details.getChildren().remove(name);
+                    details.getChildren().add(0, changeName);
+                    changeName.requestFocus();
+                    changeName.setOnKeyPressed(new EventHandler<KeyEvent>() {
+                        @Override
+                        public void handle(KeyEvent keyEvent) {
+                            if(keyEvent.getCode().getName().equals("Enter")){
+                                name.setText(changeName.getText());
+                                details.getChildren().remove(changeName);
+                                details.getChildren().add(0, name);
+                                details.requestFocus();
+                            }
+                        }
+                    });
+                }
+            }
         });
     }
+
 
     public String run(){
 //        System.out.println("You can design your map here. When your map is ready input 'start game'");

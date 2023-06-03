@@ -1,9 +1,9 @@
 package controller;
 
-import model.Database;
+import javafx.stage.Stage;
 import model.Map;
 import model.User;
-import view.*;
+
 import java.util.*;
 
 public class Controller {
@@ -66,19 +66,19 @@ public class Controller {
     }
 
 
-    public String createNewMap(HashMap<String, String> options){
-        if(options.get("x") == null || options.get("y") == null)
-            return "you must choose width and height";
-        if (options.get("x").equals("") || options.get("y").equals(""))
-            return "Please input width & height correctly ";
-        if(options.get("n") == null || options.get("n").equals(""))
-            return "you must choose a name for your map. use -n.";
+    public MapDesignController createNewMap(HashMap<String, String> options){
+//        if(options.get("x") == null || options.get("y") == null)
+//            return "you must choose width and height";
+//        if (options.get("x").equals("") || options.get("y").equals(""))
+//            return "Please input width & height correctly ";
+//        if(options.get("n") == null || options.get("n").equals(""))
+//            return "you must choose a name for your map. double click on name to change it.";
         int width = Integer.parseInt(options.get("x"));
         int height = Integer.parseInt(options.get("y"));
-        if(width < 0 || height < 0) return "invalid bounds!";
+//        if(width < 0 || height < 0) return "invalid bounds!";
         gameMap = new Map(width, height, options.get("n"));
         currentUser.addToMyMap(gameMap);
-        return "successful";
+        return new MapDesignController(gameMap);
     }
 
     public String chooseFromMyMap() {
