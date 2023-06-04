@@ -4,6 +4,7 @@ import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import model.building.*;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class MapBlock extends Group {
+public class MapBlock extends StackPane {
 
     private Building buildings;
     private Building siege;
@@ -46,8 +47,10 @@ public class MapBlock extends Group {
 //        setScaleX(100);
 //        setScaleY(100);
         changeBackground();
+        selectionProcess();
 
     }
+
 
     public void setVisualPosition(){
         setLayoutX(xPosition * 100);
@@ -84,6 +87,7 @@ public class MapBlock extends Group {
 
     public void setMapBlockType(MapBlockType mapBlockType) {
         this.mapBlockType = mapBlockType;
+        changeBackground();
         if(mapBlockType.equals(MapBlockType.IRON)) {
             resource = ResourceType.IRON;
             resourceAmount = 60;
@@ -192,13 +196,24 @@ public class MapBlock extends Group {
     }
 
     public void changeBackground(){
-        BackgroundSize backgroundSize = new BackgroundSize(100, 100, false, false, false, false);
-        Image image = new Image(LoginMenu.class.getResource(mapBlockType.getTextureAddress()).toExternalForm());
+//        Image image = new Image(LoginMenu.class.getResource(mapBlockType.getTextureAddress()).toExternalForm());
+        BackgroundSize backgroundSize = new BackgroundSize(100 , 100 , false, false, false, false);
         Rectangle backGround = new Rectangle(100 , 100);
-        backGround.setFill(new ImagePattern(image));
-//        setBackground(new Background(new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
-//                BackgroundPosition.CENTER, backgroundSize)));
+        backGround.setFill(Color.rgb(0,0, 0 , 0));
+//        backGround.setFill(new ImagePattern(mapBlockType.getTexture()));
+        setBackground(new Background(new BackgroundImage(mapBlockType.getTexture(), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER, backgroundSize)));
         getChildren().add(backGround);
+    }
+
+
+    private void selectionProcess() {
+        this.setOnMouseEntered(e -> {
+            this.setBorder(new Border(new BorderStroke(Color.rgb(0,0,0), BorderStrokeStyle.SOLID, null, BorderStroke.THIN)));
+        });
+        this.setOnMouseExited(e -> {
+            this.setBorder(null);
+        });
     }
 
 }

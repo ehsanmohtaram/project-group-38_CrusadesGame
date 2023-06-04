@@ -3,9 +3,12 @@ package view.controller;
 import controller.Controller;
 import controller.MapDesignController;
 import javafx.animation.ScaleTransition;
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -24,6 +27,7 @@ public class MapDesignMenuController {
     private Integer height;
     private Label name;
     private StackPane mapDesignPane;
+    private Pane mapPane;
 
     public MapDesignMenuController() {
         controller = new Controller();
@@ -66,15 +70,32 @@ public class MapDesignMenuController {
 
     private void startDesignMap() {
         mapDesignPane = new StackPane();
+        stage.getScene().setRoot(mapDesignPane);
         BackgroundSize backgroundSize = new BackgroundSize(1920, 1080, false, false, false, false);
         Image image = new Image(Objects.requireNonNull(LoginMenu.class.getResource("/images/background/designMenu.jpg")).toExternalForm());
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         mapDesignPane.setBackground(new Background(backgroundImage));
-//        mapDesignPane.setAlignment(Pos.CENTER);
-        mapDesignController.addMapToPane(mapDesignPane);
-        stage.getScene().setRoot(mapDesignPane);
+        mapPane = mapDesignController.getGameMapPane();
+        mapDesignPane.getChildren().add(mapPane);
+        mapPane.setManaged(false);
+        cameraProcess();
         stage.setTitle("design Map");
         stage.show();
+    }
+
+    public void cameraProcess(){
+        mapPane.requestFocus();
+        mapPane.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                switch (keyEvent.getCode()){
+                    case LEFT: mapPane.setLayoutX(mapPane.getLayoutX() - 20);break;
+                    case RIGHT: mapPane.setLayoutX(mapPane.getLayoutX() + 20);break;
+                    case DOWN: mapPane.setLayoutY(mapPane.getLayoutY() + 20);break;
+                    case UP: mapPane.setLayoutY(mapPane.getLayoutY() - 20);break;
+                }
+            }
+        });
     }
 
 //    public void makeLoginAlert(String result) {
@@ -105,5 +126,30 @@ public class MapDesignMenuController {
                 ((Pane) popUp.getParent()).getChildren().remove(1);
             });
         }
+    }
+
+    public void processDefaultMapSelection(Stage stage, VBox details, Button defaultMaps) {
+        this.stage = stage;
+        defaultMaps.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                details.getChildren().remove(defaultMaps);
+//                int[] counter = {1};
+                for (String defaultMap : controller.showDefaultMaps()) {
+                    Button map = new Button();
+                    style.button0(map, defaultMap, 310 , 50);
+                    map.setFont(style.Font0(25));
+                    details.getChildren().add(map);
+                    map.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            mapDesignController = controller.selectDefaultMap(controller.showDefaultMaps().indexOf(defaultMap));
+                            startDesignMap();
+                        }
+                    });
+//                    counter[0] ++;
+                }
+            }
+        });
     }
 }

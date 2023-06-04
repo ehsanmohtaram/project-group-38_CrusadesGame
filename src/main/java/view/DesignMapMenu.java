@@ -71,17 +71,22 @@ public class DesignMapMenu extends Application {
         size.setSpacing(15);
         Button submit = new Button();
         Button back = new Button();
+        Button defaultMaps = new Button();
         style.button0(submit, "create", 150 , 50);
         style.button0(back, "back" , 150 , 50);
+        style.button0(defaultMaps, "use defaults" , 250 , 50);
         submit.setFont(style.Font0(25));
         back.setFont(style.Font0(25));
+        defaultMaps.setFont(style.Font0(25));
         HBox buttons = new HBox(submit, back);
         buttons.setSpacing(10);
-        VBox details = new VBox(name, size, buttons);
+
+        VBox details = new VBox(name, size, buttons, defaultMaps);
         details.setSpacing(15);
 
         changeAttributes(width, height, size);
         processNameChange(name, changeName, details);
+        menuController.processDefaultMapSelection(stage, details, defaultMaps);
         submit.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {

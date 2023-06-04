@@ -102,6 +102,10 @@ public class MapDesignController {
         return "type changed successfully";
     }
 
+    public void moveRight(){
+        gameMap.getMapPane().setLayoutX(gameMap.getMapPane().getLayoutX() + 100);
+    }
+
     private String checkLocationValidation (String xPosition , String yPosition){
         if(xPosition == null || yPosition == null) return "you must specify a location";
         if(!xPosition.matches("-?\\d+") || !yPosition.matches("-?\\d+")) return "please choose digits for location";

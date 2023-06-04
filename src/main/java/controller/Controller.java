@@ -39,29 +39,32 @@ public class Controller {
 //        }
     }
 
-    public String showDefaultMaps(){
+    public ArrayList<String> showDefaultMaps(){
         Map.createDefaultMaps();
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = null;
+        ArrayList<String> outputs = new ArrayList<>();
         int counter = 0;
         for (Map defaults: Map.DEFAULT_MAPS) {
+            result = new StringBuilder();
             counter++;
             result.append(counter).append(". ").append(defaults.getMapName()).append(": ")
                     .append(defaults.getMapWidth()).append(" * ")
                     .append(defaults.getMapHeight()).append("\n");
+            outputs.add(result.toString());
         }
         result.deleteCharAt(result.length() - 1);
-        return result.toString();
+        return outputs;
     }
 
-    public String selectDefaultMap(String selectedIndex){
+    public MapDesignController selectDefaultMap(int selectedIndex){
         try{
-            int index = Integer.parseInt(selectedIndex);
-            gameMap = Map.getDefaultMap(index - 1);
-            if(gameMap == null) return "invalid number";
-            return "successful";
+//            int index = Integer.parseInt(selectedIndex);
+            gameMap = Map.getDefaultMap(selectedIndex );
+            if(gameMap == null) return null;
+            return new MapDesignController(gameMap);
         }
         catch (Exception IllegalArgumentException){
-            return "invalid input, please select a number";
+            return null;
         }
     }
 
