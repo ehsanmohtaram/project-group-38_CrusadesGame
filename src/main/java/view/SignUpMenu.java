@@ -1,5 +1,8 @@
 package view;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import model.Randomize;
 
 public class SignUpMenu extends Application {
@@ -38,28 +42,32 @@ public class SignUpMenu extends Application {
 
     public void signUpInfo(Pane pane) {
         VBox vBox = new VBox();
-        vBox.setSpacing(10);
+        vBox.setSpacing(20);
         vBox.setAlignment(Pos.CENTER);
         HBox nickNameAndUserName = new HBox();
         Label userError = new Label();
+        userError.setPrefHeight(0);
+        userError.setTextFill(Color.TRANSPARENT);
         TextField userName = new TextField();
         Label nickNameError = new Label();
+        nickNameError.setTextFill(Color.TRANSPARENT);
         TextField nickName = new TextField();
         usernameAndNickname(nickNameAndUserName, userError, userName, nickNameError, nickName);
 
 
         VBox passwordAndConfirmationFiledVbox = new VBox();
         Rectangle checkRandomPassword = new Rectangle();
-        passwordAndConfirmationFiledVbox.setSpacing(10);
         Label passwordError = new Label();
-        passwordError.setFont(style.Font0(15));
+        passwordError.setTextFill(Color.TRANSPARENT);
+        passwordError.setFont(style.Font0(0));
         HBox passwordAndConfirmationHbox = new HBox();
         passwordAndConfirmationHbox.setSpacing(20);
         passwordAndConfirmationHbox.setAlignment(Pos.CENTER);
         HBox passwordFiled = new HBox();
-        passwordFiledDisableEnableHandle(passwordAndConfirmationHbox, passwordFiled, checkRandomPassword, passwordError,true);
-        HBox confirmation = new HBox();
-        passwordFiledDisableEnableHandle(passwordAndConfirmationHbox, confirmation, checkRandomPassword, passwordError,false);
+        PasswordField confirmation = new PasswordField();
+        style.textFiled0(confirmation, "Confirmation", 300, 70);
+        confirmation.setFont(style.Font0(24));
+        passwordFiledDisableEnableHandle(passwordAndConfirmationHbox, passwordFiled, confirmation,checkRandomPassword, passwordError);
         passwordAndConfirmationHbox.getChildren().addAll(passwordFiled, confirmation);
         passwordAndConfirmationFiledVbox.getChildren().addAll(passwordError, passwordAndConfirmationHbox);
 
@@ -74,10 +82,10 @@ public class SignUpMenu extends Application {
         randomPasswordFiled.getChildren().addAll(checkRandomPassword, randomPassword);
 
         VBox emailBox = new VBox();
-        emailBox.setSpacing(10);
         TextField email = new TextField();
         Label emailError = new Label();
-        emailError.setFont(style.Font0(15));
+        emailError.setTextFill(Color.TRANSPARENT);
+        emailError.setFont(style.Font0(0));
         email.setFont(style.Font0(24));
         style.textFiled0(email,"Email" ,620, 70);
         email.setPadding(new Insets(0,30,0,30));
@@ -100,7 +108,7 @@ public class SignUpMenu extends Application {
         vBox.setLayoutX(670);  vBox.setLayoutY(181);
         pane.getChildren().add(vBox);
         buttonHandel(buttonFiled);
-        atMomentError(userError, nickNameError, emailError, userName, nickName, email);
+        atMomentError(userError, emailError, userName, email);
     }
     public void usernameAndNickname(HBox nickNameAndUserName, Label userError, TextField userName, Label nickNameError, TextField nickName) {
         nickNameAndUserName.setSpacing(20);
@@ -121,15 +129,17 @@ public class SignUpMenu extends Application {
         nickNameAndUserName.getChildren().addAll(userFiled, nickNameFiled);
     }
 
-    public void passwordFiledDisableEnableHandle(HBox passwordAndConfirmationHbox,HBox hBox, Rectangle randomPassword, Label passwordError,boolean isPassword) {
+    public void passwordFiledDisableEnableHandle(HBox passwordAndConfirmationHbox,HBox hBox, TextField confirmation,Rectangle randomPassword, Label passwordError) {
         hBox.setPrefSize(300, 70);
         hBox.setMaxSize(300, 70);
         PasswordField password = new PasswordField();
         password.setPrefSize(240, 70);
         password.setBackground(Background.EMPTY);
-        if (isPassword) password.setPromptText("Password");
-        else password.setPromptText("Confirmation");
+        password.setPromptText("Password");
+        confirmation.setPromptText("Confirmation");
         password.setFont(style.Font0(24));
+        confirmation.setFont(style.Font0(24));
+        confirmation.setPadding(new Insets(0,30,0,30));
         password.setStyle("-fx-text-fill: rgba(170,139,100,0.8); -fx-prompt-text-fill: rgba(86,73,57,0.8);");
         password.setPadding(new Insets(0,0,0,30));
         Button button = new Button();
@@ -143,33 +153,46 @@ public class SignUpMenu extends Application {
         hBox.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         button.setOnMouseEntered(mouseEvent -> button.setOpacity(0.2));
         button.setOnMouseExited(mouseEvent -> button.setOpacity(0.6));
-        button.setOnMouseClicked(mouseEvent -> changeInvisiToVisi(hBox, passwordError,isPassword));
+        button.setOnMouseClicked(mouseEvent -> changeInvisiToVisi(passwordAndConfirmationHbox, hBox, confirmation,passwordError));
         randomPassword.fillProperty().addListener(((observableValue, paint, t1) -> {
-            if (t1 instanceof ImagePattern && !(paint instanceof ImagePattern) && isPassword)
+            if (t1 instanceof ImagePattern && !(paint instanceof ImagePattern))
                 ((TextField)hBox.getChildren().get(0)).setText(Randomize.randomPassword());
-            if (paint instanceof ImagePattern && !(t1 instanceof ImagePattern) && isPassword)
+            if (paint instanceof ImagePattern && !(t1 instanceof ImagePattern))
                 ((TextField)hBox.getChildren().get(0)).setText("");
         }));
-        passwordAndConfirmationListener(passwordAndConfirmationHbox, password, passwordError, isPassword);
+        passwordAndConfirmationListener(passwordAndConfirmationHbox, password, confirmation,passwordError);
     }
 
-    public void changeInvisiToVisi(HBox hBox, Label passwordError,boolean isPassword) {
+    public void changeInvisiToVisi(HBox passwordAndConfirmationHbox,HBox hBox, TextField confirmationBox, Label passwordError) {
         TextField password;
+        TextField confirmation;
         if (((Button) hBox.getChildren().get(1)).getBackground().getImages().get(0).getImage().getUrl()
-                .equals(LoginMenu.class.getResource("/images/buttons/invisi.png").toExternalForm()))
+                .equals(LoginMenu.class.getResource("/images/buttons/invisi.png").toExternalForm())) {
             password = new TextField();
-        else password = new PasswordField();
+            confirmation = new TextField();
+        }
+        else {
+            password = new PasswordField();
+            confirmation = new PasswordField();
+        }
         String passwordString = ((TextField) hBox.getChildren().get(0)).getText();
+        String confirmationString = confirmationBox.getText();
         hBox.getChildren().remove(0);
+        passwordAndConfirmationHbox.getChildren().remove(1);
         password.setText(passwordString);
+        confirmation.setText(confirmationString);
         password.setPrefSize(240, 70);
         password.setBackground(Background.EMPTY);
-        if (isPassword) password.setPromptText("Password");
-        else password.setPromptText("Confirmation");
+        password.setPromptText("Password");
+        confirmation.setPromptText("Confirmation");
+        style.textFiled0(confirmation, "Confirmation", 300, 70);
+        confirmation.setFont(style.Font0(24));
+        confirmation.setPadding(new Insets(0,30,0,30));
         password.setFont(style.Font0(24));
         password.setStyle("-fx-text-fill: rgba(170,139,100,0.8); -fx-prompt-text-fill: rgba(86,73,57,0.8);");
         password.setPadding(new Insets(0,0,0,30));
         hBox.getChildren().add(0, password);
+        passwordAndConfirmationHbox.getChildren().add(1, confirmation);
         BackgroundSize backgroundSize = new BackgroundSize(30, 30, false, false, false, false);
         Image image;
         if (((Button) hBox.getChildren().get(1)).getBackground().getImages().get(0).getImage().getUrl()
@@ -178,8 +201,7 @@ public class SignUpMenu extends Application {
         else image = new Image(LoginMenu.class.getResource("/images/buttons/invisi.png").toExternalForm());
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         ((Button)hBox.getChildren().get(1)).setBackground(new Background(backgroundImage));
-        //passwordAndConfirmationListener(password,passwordError,isPassword);
-
+        passwordAndConfirmationListener(passwordAndConfirmationHbox, password, confirmation,passwordError);
     }
 
     public void buttonHandel(HBox buttonBox) {
@@ -192,39 +214,112 @@ public class SignUpMenu extends Application {
         });
     }
 
-    public void atMomentError(Label userError, Label nickNameError, Label emailError, TextField userName, TextField nickName, TextField email) {
-        nickName.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            if (nickName.getText().length() == 0) nickNameError.setText("Please fill mandatory parts!");
-            else nickNameError.setText("");
-        });
+    public void atMomentError(Label userError, Label emailError, TextField userName, TextField email) {
         userName.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            if (userName.getText().length() == 0) userError.setText("Please fill mandatory parts!");
-            else if (userName.getText().matches(".*[^A-Za-z0-9_]+.*")) userError.setText("Incorrect format of username!");
-            else userError.setText("");
+            Timeline timelineUser = new Timeline();
+            timelineUser.setCycleCount(1);
+            if (userName.getText().matches(".*[^A-Za-z0-9_]+.*")) {
+                timelineUser.getKeyFrames().add( new KeyFrame(Duration.seconds(0)));
+                timelineUser.getKeyFrames().add( new KeyFrame(Duration.seconds(0.2), new KeyValue(userError.textFillProperty(), Color.INDIANRED)));
+                if (userError.getTextFill().equals(Color.TRANSPARENT)) {
+                    timelineUser.play();
+                    timelineUser.setOnFinished(actionEvent -> userError.setText("Incorrect format of username!"));
+                }
+                else userError.setText("Incorrect format of username!");
+            }
+            else {
+                timelineUser.getKeyFrames().add( new KeyFrame(Duration.seconds(0)));
+                timelineUser.getKeyFrames().add( new KeyFrame(Duration.seconds(0.2), new KeyValue(userError.textFillProperty(), Color.TRANSPARENT)));
+                if (userError.getTextFill().equals(Color.INDIANRED)) {
+                    timelineUser.play();
+                    timelineUser.setOnFinished(actionEvent -> userError.setText(""));
+                }
+                else userError.setText("");
+            }
         });
         email.textProperty().addListener((observableValue, oldValue, newValue) -> {
-           if (email.getText().length() == 0) email.setText("Please fill mandatory parts!");
-           else if (!email.getText().matches("^[A-Za-z0-9_]+@[A-Za-z0-9_]+\\.[A-Za-z0-9_]+$")) emailError.setText("Incorrect format of email!");
-           else emailError.setText("");
+            Timeline timelineEmail = new Timeline();
+            timelineEmail.setCycleCount(1);
+            if (!email.getText().matches("^[A-Za-z0-9_]+@[A-Za-z0-9_]+\\.[A-Za-z0-9_]+$")) {
+                timelineEmail.getKeyFrames().add( new KeyFrame(Duration.seconds(0)));
+                timelineEmail.getKeyFrames().add( new KeyFrame(Duration.seconds(0.2), new KeyValue(emailError.textFillProperty(), Color.INDIANRED),
+                        new KeyValue(emailError.fontProperty(), style.Font0(15)), new KeyValue(emailError.paddingProperty(), new Insets(5,0,10,0))));
+                if (emailError.getTextFill().equals(Color.TRANSPARENT)) {
+                    timelineEmail.play();
+                    timelineEmail.setOnFinished(actionEvent -> emailError.setText("Incorrect format of email!"));
+                }
+                else emailError.setText("Incorrect format of email!");
+
+            }
+           else {
+                timelineEmail.getKeyFrames().add( new KeyFrame(Duration.seconds(0)));
+                timelineEmail.getKeyFrames().add( new KeyFrame(Duration.seconds(0.2), new KeyValue(emailError.textFillProperty(), Color.TRANSPARENT),
+                        new KeyValue(emailError.fontProperty(), style.Font0(0)), new KeyValue(emailError.paddingProperty(), new Insets(0))));
+                if (emailError.getTextFill().equals(Color.INDIANRED)) {
+                    timelineEmail.play();
+                    timelineEmail.setOnFinished(actionEvent -> emailError.setText(""));
+                }
+                else emailError.setText("");
+
+            }
         });
     }
 
-    public void passwordAndConfirmationListener(HBox passwordAndConfirmationHbox, TextField password,Label passwordError,boolean isPassword) {
+    public void passwordAndConfirmationListener(HBox passwordAndConfirmationHbox, TextField password, TextField confirmation,Label passwordError) {
+        Timeline passwordTimeline = new Timeline();
+        passwordTimeline.setCycleCount(1);
         password.textProperty().addListener((observableValue, s, t1) -> {
-            if (isPassword) {
-                if (password.getText().length() == 0) passwordError.setText("Please fill mandatory parts!");
-                else if (password.getText().length() < 6 || !password.getText().matches(".*[a-z]+.*") ||
+                if (password.getText().length() < 6 || !password.getText().matches(".*[a-z]+.*") ||
                         !password.getText().matches(".*[A-Z]+.*") || !password.getText().matches(".*[0-9]+.*") ||
-                        !password.getText().matches(".*\\W+.*"))
-                    passwordError.setText("Weak password. Please set a strong password!");
-                else if (!((TextField)((HBox)((HBox)passwordAndConfirmationHbox.getChildren().get(1)).getChildren().get(1)).getChildren().get(0)).getText().equals(password.getText()))
-                    passwordError.setText("Confirmation did not match with password!");
-                else passwordError.setText("");
+                        !password.getText().matches(".*\\W+.*")) {
+                    passwordTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds(0)));
+                    passwordTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds(0.2), new KeyValue(passwordError.textFillProperty(), Color.INDIANRED),
+                            new KeyValue(passwordError.fontProperty(), style.Font0(15)), new KeyValue(passwordError.paddingProperty(), new Insets(5, 0, 10, 0))));
+                    if (passwordError.getTextFill().equals(Color.TRANSPARENT)) {
+                        passwordTimeline.play();
+                        passwordTimeline.setOnFinished(actionEvent -> passwordError.setText("Weak password. Please set a strong password!"));
+                    } else passwordError.setText("Weak password. Please set a strong password!");
+                } else if (!((TextField) (passwordAndConfirmationHbox.getChildren().get(1))).getText().equals(password.getText())) {
+                    passwordTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds(0)));
+                    passwordTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds(0.2), new KeyValue(passwordError.textFillProperty(), Color.INDIANRED),
+                            new KeyValue(passwordError.fontProperty(), style.Font0(15)), new KeyValue(passwordError.paddingProperty(), new Insets(5, 0, 10, 0))));
+                    if (passwordError.getTextFill().equals(Color.TRANSPARENT)) {
+                        passwordTimeline.play();
+                        passwordTimeline.setOnFinished(actionEvent -> passwordError.setText("Confirmation did not match with password!"));
+                    } else passwordError.setText("Confirmation did not match with password!");
+                } else {
+                    passwordTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds(0)));
+                    passwordTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds(0.2), new KeyValue(passwordError.textFillProperty(), Color.TRANSPARENT),
+                            new KeyValue(passwordError.fontProperty(), style.Font0(0)), new KeyValue(passwordError.paddingProperty(), new Insets(0))));
+                    if (passwordError.getTextFill().equals(Color.INDIANRED)) {
+                        passwordTimeline.play();
+                        passwordTimeline.setOnFinished(actionEvent -> passwordError.setText(""));
+                    } else passwordError.setText("");
+                }
+        });
+        confirmation.textProperty().addListener((observableValue, s, t1) -> {
+            if (!((TextField)((HBox)passwordAndConfirmationHbox.getChildren().get(0)).getChildren().get(0)).getText().equals(confirmation.getText())) {
+                passwordTimeline.getKeyFrames().add( new KeyFrame(Duration.seconds(0)));
+                passwordTimeline.getKeyFrames().add( new KeyFrame(Duration.seconds(0.2), new KeyValue(passwordError.textFillProperty(), Color.INDIANRED),
+                        new KeyValue(passwordError.fontProperty(), style.Font0(15)), new KeyValue(passwordError.paddingProperty(), new Insets(5,0,10,0))));
+                if (passwordError.getTextFill().equals(Color.TRANSPARENT)) {
+                    passwordTimeline.play();
+                    passwordTimeline.setOnFinished(actionEvent -> passwordError.setText("Confirmation did not match with password!"));
+                }
+                else passwordError.setText("Confirmation did not match with password!");
             }
             else {
-                if (password.getText().length() == 0) passwordError.setText("Please fill mandatory parts!");
-                else if (!((TextField)((HBox)((HBox)passwordAndConfirmationHbox.getChildren().get(1)).getChildren().get(1)).getChildren().get(0)).getText().equals(password.getText()))
-                    passwordError.setText("Confirmation did not match with password!");
+                passwordTimeline.getKeyFrames().add( new KeyFrame(Duration.seconds(0)));
+                passwordTimeline.getKeyFrames().add( new KeyFrame(Duration.seconds(0.2), new KeyValue(passwordError.textFillProperty(), Color.TRANSPARENT),
+                        new KeyValue(passwordError.fontProperty(), style.Font0(0)), new KeyValue(passwordError.paddingProperty(), new Insets(0))));
+                if (passwordError.getTextFill().equals(Color.INDIANRED)) {
+                    passwordTimeline.play();
+                    passwordTimeline.setOnFinished(actionEvent -> {
+                            passwordError.setText("");
+                                System.out.println(passwordError.getPadding().getTop());
+                        }
+                    );
+                }
                 else passwordError.setText("");
             }
         });
