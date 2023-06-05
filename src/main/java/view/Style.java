@@ -49,7 +49,6 @@ public class Style {
             if (checkBox.getFill() instanceof ImagePattern) checkBox.setFill(Color.TRANSPARENT);
             else checkBox.setFill(new ImagePattern(new Image(Style.class.getResource("/images/buttons/tick.png").toExternalForm())));
         });
-
     }
 
     public void popUp0(Pane pane, VBox popUp, Button ok,double spacing, double padding, double popUpWidth, double popUpHeight, double textFlowWidth, double textFlowHeight, int buttonWidth, int buttonHeight, double positionX, double positionY, String result, int fontSize) {

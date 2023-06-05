@@ -74,8 +74,8 @@ public class ProfileMenu extends Application {
         Pane profilePane = new Pane();
         profilePane.setPrefSize(550, 700);
         profilePane.setLayoutX(850);
-        profilePane.setLayoutY(122);
-        profilePane.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
+        profilePane.setLayoutY(65);
+//        profilePane.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         pane.getChildren().add(profilePane);
         Label profileLabel = new Label("Profile");
         profileLabel.setFont(style.Font0(40));
@@ -97,48 +97,21 @@ public class ProfileMenu extends Application {
         ImageView editImageForName = createEdit(430, 295, profilePane);
         ImageView editImageForNickName = createEdit(430, 410, profilePane);
         ImageView editImageForEmail = createEdit(430, 525, profilePane);
-        Button scoreBordButton = createButton("ScoreBord", 300, 610, 60, 200, 20, profilePane);
-        Button changePassword = createButton("Change password", 70,610, 60, 200, 20, profilePane);
-        changePassword.setTextFill(Color.BLACK);
+        Button scoreBordButton = createButton("ScoreBord", 285, 610, 60, 200, 21, profilePane);
+        Button changePassword = createButton("Change password", 55,610, 60, 200, 21, profilePane);
+        Button back = createButton("Back", 200, 685, 60, 150, 25, profilePane);
         scoreBordButton.setTextFill(Color.BLACK);
+        changePassword.setTextFill(Color.BLACK);
+        back.setTextFill(Color.BLACK);
         Pane changePasswordPane = changePassword(profilePane);
-        ScrollPane scoreBordPane = scoreBord(profilePane);
+//        ScrollPane scoreBordPane = scoreBord(profilePane);
 
-//        profilePane.getChildren().add(scoreBord);
-
-//        Pane scoreBordPane = scoreBord(profilePane);
-
-
-        editImageForName.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                editName(usernameField, profilePane);
-            }
-        });
-        editImageForNickName.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                editNickName(nickNameField, profilePane);
-            }
-        });
-        editImageForEmail.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                editEmail(emailField, profilePane);
-            }
-        });
-        scoreBordButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                scoreBordPane.setVisible(true);
-            }
-        });
-        changePassword.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                changePasswordPane.setVisible(true);
-            }
-        });
+        editImageForName.setOnMouseClicked(mouseEvent -> editName(usernameField, profilePane));
+        editImageForNickName.setOnMouseClicked(mouseEvent -> editNickName(nickNameField, profilePane));
+        editImageForEmail.setOnMouseClicked(mouseEvent -> editEmail(emailField, profilePane));
+        scoreBordButton.setOnMouseClicked(mouseEvent -> scoreBord(profilePane));
+        changePassword.setOnMouseClicked(mouseEvent -> changePasswordPane.setVisible(true));
+        back.setOnMouseClicked(mouseEvent -> new MainMenu().start(stage));
     }
 
     public Text createText(String containText,int x, int y, int font, Color color, Pane pane) {
@@ -209,16 +182,16 @@ public class ProfileMenu extends Application {
         scoreBordPane.setFitToWidth(true);
         scoreBordPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         profilePane.getChildren().add(scoreBordPane);
-        scoreBordPane.setVisible(false);
+//        scoreBordPane.setVisible(false);
         return scoreBordPane;
     }
 
     private Pane changePassword(Pane profilePane) {
         Pane changePasswordPane = new Pane();
         changePasswordPane.setPrefSize(400, 400);
-        changePasswordPane.setLayoutX(-420);
+        changePasswordPane.setLayoutX(-400);
         changePasswordPane.setLayoutY(300);
-        changePasswordPane.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
+//        changePasswordPane.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         profilePane.getChildren().add(changePasswordPane);
         createTextField("Old Password", 50, 20, 70, 300, changePasswordPane);
         createTextField("New Password", 50, 120, 70, 300, changePasswordPane);
@@ -311,4 +284,5 @@ public class ProfileMenu extends Application {
 //        }
         return null;
     }
+    
 }

@@ -1,6 +1,7 @@
 package model;
 
 import com.google.gson.annotations.Expose;
+import javafx.scene.image.ImageView;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ public class User {
     private String email;
     @Expose
     private String slogan;
+    @Expose
+    private ImageView avatar;
     @Expose
     private String nickName;
     @Expose
@@ -52,7 +55,15 @@ public class User {
         isDelayed.put(this,false);
     }
 
-    public static void addUser(String username, String nickname, String password, String email, String slogan, Integer securityQuestionNumber, String answerToSecurityQuestion) {
+    public ImageView getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(ImageView avatar) {
+        this.avatar = avatar;
+    }
+
+    public static void addUser(String username, String nickname, String password, String email, String slogan, Integer securityQuestionNumber, String answerToSecurityQuestion, ImageView avatar) {
         new User(username,nickname,password,email,slogan,securityQuestionNumber,answerToSecurityQuestion);
     }
 
