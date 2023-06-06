@@ -11,9 +11,9 @@ import java.util.HashMap;
 public class TradeTest {
     TradeController tradeController = new TradeController();
     User userSendder = new User("ali", "mohtaram", "alimohtaram", "alimohtaram2004@gmail.com",
-            "null", 1, "hi");
+            "null", 1, "hi", "D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\1.jpg");
     User userReceiver = new User("ehsan", "mohtaram", "ehsanmohtaram", "ehsanmohtaram@gmail.com",
-            "null", 1, "hi");
+            "null", 1, "hi", "D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\1.jpg");
     Trade difaultTrade = new Trade(ResourceType.WOOD, 10, 10, userSendder, userReceiver, "salam", 1);
     Trade releventDifaultTrade = new Trade(ResourceType.WOOD, 10, 10, userReceiver, userSendder, "salam", 2);
     Kingdom sendderKingdom = new Kingdom(Flags.RED, userSendder);
