@@ -137,6 +137,7 @@ public class SignUpMenu extends Application {
             if (checkForErrors(userError, nickNameError, emailError, passwordError, securityError)) {
                 info.updateAllInfoTogether(userName, nickName, email, confirmation, sloganText, securityAnswer, choiceBox.getValue());
             }
+
         });
     }
 
