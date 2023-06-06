@@ -57,6 +57,7 @@ public class LoginController {
         else return null;
     }
 
+
 //    public String forgetPassword(HashMap<String, String> options) {
 //        if (options.get("u") == null) return "Please input necessary options!";
 //        if (options.get("u").equals("")) return "Illegal value. Please fill the options!";
