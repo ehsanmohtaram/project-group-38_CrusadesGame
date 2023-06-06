@@ -60,6 +60,7 @@ public class InformationController {
     public String securityError(ChoiceBox<String> choiceBox) {
         if (securityAnswer.getText().length() == 0 || choiceBox.getValue() == null) return "Please fill mandatory filed!";
         else return null;
+
     }
 
     public void updateAllInfoTogether(TextField username, TextField nickName, TextField email, TextField password, TextField slogan,TextField securityAnswer, String securityValue) {
