@@ -26,7 +26,7 @@ import java.io.File;
 import java.util.Random;
 
 public class LoginMenu extends Application {
-    private static boolean firstLogin = false;
+    private static final boolean firstLogin = false;
     private final Style style;
     private final LoginMenuController loginMenuController;
     private Stage stage;
@@ -58,11 +58,11 @@ public class LoginMenu extends Application {
         if (!firstLogin) {
             Scene scene = new Scene(pane, primScreenBounds.getWidth(), primScreenBounds.getHeight());
             stage.setScene(scene);
-            firstLogin = true;
-            //Media media = new Media(LoginMenu.class.getResource("/musics/out.mp3").toExternalForm());
-            //startMedia = new MediaPlayer(media);
-            //startMedia.setCycleCount(-1);
-            //startMedia.play();
+//            firstLogin = true;
+//            Media media = new Media(LoginMenu.class.getResource("/musics/out.mp3").toExternalForm());
+//            startMedia = new MediaPlayer(media);
+//            startMedia.setCycleCount(-1);
+//            startMedia.play();
         }
         else stage.getScene().setRoot(pane);
         for (User user : User.users)
@@ -119,11 +119,25 @@ public class LoginMenu extends Application {
         vBox.setLayoutX(890);  vBox.setLayoutY(213);
         pane.getChildren().addAll(vBox);
         hyperLinkHandel(forgotPassword, signUpMenu);
+        TextField question = new TextField();
+        TextField answer = new TextField();
         login.setOnMouseClicked(mouseEvent -> {
-            loginMenuController.getInfoFromMenu(stage, (TextField) (passwordFiled.getChildren().get(0)), userName, captchaInput, captchaImage, checkStayLogin);
+            loginMenuController.getInfoFromMenu(stage, (TextField) (passwordFiled.getChildren().get(0)), userName, captchaInput, captchaImage, checkStayLogin, answer);
             loginMenuController.checkLoginValidation();
             ImageView imageView = new ImageView(LoginMenu.class.getResource("/images/captcha/" + searchDirectory()).toExternalForm());
             captchaImage.setFill(new ImagePattern(imageView.getImage()));
+        });
+        forgotPassword.setOnMouseClicked(mouseEvent -> {
+            boolean result;
+            if (vBox.getChildren().size() == 6) {
+                result = openForgotPasswordFiled(question, answer, vBox, userName.getText());
+                if (result) disablePasswordAndUsername(passwordFiled, userName, 0.4);
+            }
+            else {
+                vBox.getChildren().remove(3);  vBox.getChildren().remove(3); vBox.setLayoutY(181);
+                disablePasswordAndUsername(passwordFiled, userName, 0.8);
+                answer.setText("");
+            }
         });
     }
 
@@ -231,9 +245,32 @@ public class LoginMenu extends Application {
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         ((Button)hBox.getChildren().get(1)).setBackground(new Background(backgroundImage));
     }
-
-
-
+    public boolean openForgotPasswordFiled(TextField question, TextField answer,VBox vBox, String username) {
+        if (User.getUserByUsername(username) == null) return false;
+        vBox.setLayoutY(120);
+        question.setFont(style.Font0(24));
+        style.textFiled0(question,"",400, 70);
+        question.setText(User.getUserByUsername(username).getSecurityQuestionNumber());
+        question.setDisable(true);
+        question.setPadding(new Insets(0,30,0,30));
+        answer.setFont(style.Font0(24));
+        answer.setPadding(new Insets(0,30,0,30));
+        style.textFiled0(answer,"Security Answer",400, 70);
+        vBox.getChildren().add(3, question);
+        vBox.getChildren().add(4, answer);
+        return true;
+    }
+    public void disablePasswordAndUsername(HBox passwordFiled, TextField username, double opacity) {
+        if (opacity == 0.8) {
+            username.setDisable(false);
+            passwordFiled.setDisable(false);
+        }
+        else {
+            username.setDisable(true);
+            passwordFiled.setDisable(true);
+        }
+        passwordFiled.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,opacity), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
+    }
 
     public void particleMaker(Pane pane) {
         Media media = new Media(LoginMenu.class.getResource("/movies/fire.mp4").toExternalForm());
@@ -248,31 +285,4 @@ public class LoginMenu extends Application {
         mediaPlayer.setRate(0.3);
         mediaPlayer.play();
     }
-
-
-
-
-
-    public String run() {
-//        HashMap<String, String> optionPass;
-//        String command ,result;
-//        while (true) {
-//            command = CommandParser.getScanner().nextLine();
-//            if (commandParser.validate(command,"exit",null) != null) return "exit";
-//            if (commandParser.validate(command,"show current menu",null) != null) System.out.println("Login Menu");
-//            else if ((optionPass = commandParser.validate(command,"user create","u|username/?p|password/n|nickname/e|email/s|slogan")) != null) {
-//                result = loginController.createUser(optionPass);
-//                if (result != null) System.out.println(result);
-//            }
-//            else if ((optionPass = commandParser.validate(command,"user login","u|username/p|password/s|stay-logged-in")) != null) {
-//                result = loginController.login(optionPass);
-//                if (result.equals("login")) {System.out.println("User logged in successfully!"); return "login";}
-//                else System.out.println(result);
-//            }
-//            else if ((optionPass = commandParser.validate(command,"forgot my password","u|username")) != null)
-//                System.out.println(loginController.forgetPassword(optionPass));
-//            else System.out.println("Invalid command!");
-//        }
-        return null;
-        }
 }

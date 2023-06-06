@@ -23,18 +23,20 @@ public class LoginMenuController {
     private Rectangle captchaImage;
     private Rectangle stayLogin;
     private Stage stage;
+    private TextField answer;
 
     public LoginMenuController() {
         loginController = new LoginController();
         style = new Style();
     }
-    public void getInfoFromMenu(Stage stage, TextField password, TextField username, TextField captcha, Rectangle captchaImage, Rectangle stayLogin) {
+    public void getInfoFromMenu(Stage stage, TextField password, TextField username, TextField captcha, Rectangle captchaImage, Rectangle stayLogin, TextField answer) {
         this.stage = stage;
         this.password = password;
         this.username = username;
         this.captcha = captcha;
         this.captchaImage = captchaImage;
         this.stayLogin = stayLogin;
+        this.answer = answer;
     }
 
     public void checkLoginValidation() {
@@ -48,6 +50,9 @@ public class LoginMenuController {
         String imageName = pattern.getImage().getUrl().substring(pattern.getImage().getUrl().lastIndexOf("/") + 1);
         valueMaker.put("C", imageName);
         valueMaker.put("c", captcha.getText() + ".png");
+        if (username.isDisable()) valueMaker.put("A", "*");
+        else valueMaker.put("A", "-");
+        valueMaker.put("a", answer.getText());
         result = loginController.login(valueMaker);
         if (result.equals("login")) new MainMenu().start(stage);
         else makeLoginAlert(result);
