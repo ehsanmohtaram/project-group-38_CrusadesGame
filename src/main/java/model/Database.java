@@ -40,7 +40,7 @@ public class Database {
             for (Object jsonValue : jsonToArray) {
                 user = gson.fromJson(jsonValue.toString(),User.class);
                 new User(user.getUserName(), user.getNickName(), user.getPassword(), user.getEmail(),
-                        user.getSlogan(), user.getSecurityQuestionNumber(), user.getAnswerToSecurityQuestion());
+                        user.getSlogan(), user.getSecurityQuestionNumber(), user.getAnswerToSecurityQuestion(), user.getAvatar());
                 User.users.get(counter).setLoggedIn(user.getLoggedIn());
                 User.users.get(counter).setScore(user.getScore());
                 counter++;

@@ -66,9 +66,7 @@ public class LoginController {
                 Integer.parseInt(optionPass.get("q")) > 3) return "Out of bound. Please choose a digit between 1 to 3.";
         if (!optionPass.get("c").equals(optionPass.get("a"))) return "Answer did not match with confirmation";
         if (!Randomize.randomCaptcha().equals("done")) return "Captcha did not match with your input!";
-        ImageView avatar = new ImageView(new Image(LoginController.class.getResource("/images/avatars/1.jpg").toExternalForm()));
-        User.addUser(username,nikName,password,email,slogan,Integer.parseInt(optionPass.get("q")) - 1,optionPass.get("a"), avatar);
-
+        User.addUser(username,nikName,password,email,slogan,Integer.parseInt(optionPass.get("q")) - 1,optionPass.get("a"), "D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\1.jpg");
         return "User has been added successfully!";
     }
     public String login(HashMap<String, String> options) {

@@ -27,7 +27,7 @@ public class User {
     @Expose
     private String slogan;
     @Expose
-    private ImageView avatar;
+    private String avatar;
     @Expose
     private String nickName;
     @Expose
@@ -39,11 +39,12 @@ public class User {
     @Expose
     private String answerToSecurityQuestion;
     private ArrayList<Map> myMap = new ArrayList<>();
-    public User(String userName, String nickName,String password, String email, String slogan, Integer securityQuestionNumber, String answerToSecurityQuestion) {
+    public User(String userName, String nickName,String password, String email, String slogan, Integer securityQuestionNumber, String answerToSecurityQuestion, String avatar) {
         this.userName = userName;
         this.nickName = nickName;
         this.password = password;
         this.email = email;
+        this.avatar = avatar;
         if (slogan == null) slogan = "";
         this.slogan = slogan;
         this.securityQuestionNumber = securityQuestionNumber;
@@ -55,16 +56,8 @@ public class User {
         isDelayed.put(this,false);
     }
 
-    public ImageView getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(ImageView avatar) {
-        this.avatar = avatar;
-    }
-
-    public static void addUser(String username, String nickname, String password, String email, String slogan, Integer securityQuestionNumber, String answerToSecurityQuestion, ImageView avatar) {
-        new User(username,nickname,password,email,slogan,securityQuestionNumber,answerToSecurityQuestion);
+    public static void addUser(String username, String nickname, String password, String email, String slogan, Integer securityQuestionNumber, String answerToSecurityQuestion, String avatar) {
+        new User(username,nickname,password,email,slogan,securityQuestionNumber,answerToSecurityQuestion, avatar);
     }
 
     public static User getUserByUsername (String userName) {
@@ -103,6 +96,14 @@ public class User {
         return whenDelayStarted.get(user);
     }
 
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
 
     public String getUserName() {
         return userName;
