@@ -35,11 +35,11 @@ public class User {
     @Expose
     private Integer score;
     @Expose
-    private Integer securityQuestionNumber;
+    private String securityQuestionNumber;
     @Expose
     private String answerToSecurityQuestion;
     private ArrayList<Map> myMap = new ArrayList<>();
-    public User(String userName, String nickName,String password, String email, String slogan, Integer securityQuestionNumber, String answerToSecurityQuestion, String avatar) {
+    public User(String userName, String nickName,String password, String email, String slogan, String securityQuestionNumber, String answerToSecurityQuestion, String avatar) {
         this.userName = userName;
         this.nickName = nickName;
         this.password = password;
@@ -56,7 +56,7 @@ public class User {
         isDelayed.put(this,false);
     }
 
-    public static void addUser(String username, String nickname, String password, String email, String slogan, Integer securityQuestionNumber, String answerToSecurityQuestion, String avatar) {
+    public static void addUser(String username, String nickname, String password, String email, String slogan, String securityQuestionNumber, String answerToSecurityQuestion, String avatar) {
         new User(username,nickname,password,email,slogan,securityQuestionNumber,answerToSecurityQuestion, avatar);
     }
 
@@ -174,7 +174,7 @@ public class User {
         isLoggedIn = loggedIn;
     }
 
-    public Integer getSecurityQuestionNumber() {
+    public String getSecurityQuestionNumber() {
         return securityQuestionNumber;
     }
 

@@ -62,14 +62,21 @@ public class InformationController {
         else return null;
     }
 
-    public void updateAllInfoTogether(TextField userName, TextField nickName, TextField email, TextField password, TextField slogan,TextField securityAnswer, String securityValue) {
-        this.username = userName;
+    public void updateAllInfoTogether(TextField username, TextField nickName, TextField email, TextField password, TextField slogan,TextField securityAnswer, String securityValue) {
+        this.username = username;
         this.nickname = nickName;
         this.email = email;
         this.password = password;
         this.securityAnswer = securityAnswer;
         this.slogan = slogan;
         this.securityValue = securityValue;
+        if (username.getText().equals("")) {username.setText("h"); username.setText("");}
+        if (nickName.getText().equals("")) {nickName.setText("h"); nickName.setText("");}
+        if (email.getText().equals("")) {email.setText("h"); email.setText("");}
+        if (password.getText().equals("")) {password.setText("h"); password.setText("");}
+        if (securityAnswer.getText().equals("")) {securityAnswer.setText("h"); securityAnswer.setText("");}
+        if (slogan.getText().equals("")) {slogan.setText("h"); slogan.setText("");}
+        if (securityValue == null) {securityAnswer.setText("h"); securityAnswer.setText("");}
     }
 
 }

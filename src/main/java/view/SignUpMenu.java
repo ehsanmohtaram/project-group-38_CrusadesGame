@@ -1,5 +1,6 @@
 package view;
 
+import javafx.animation.ScaleTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,8 +11,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import model.Randomize;
 import model.User;
+import org.apache.commons.codec.digest.DigestUtils;
 import view.controller.InformationController;
 
 public class SignUpMenu extends Application {
@@ -134,15 +137,12 @@ public class SignUpMenu extends Application {
         buttonHandel(buttonFiled);
         atMomentError(userError, emailError, nickNameError, securityError,userName, email, nickName, securityAnswer, choiceBox);
         signUp.setOnMouseClicked(mouseEvent -> {
+            info.updateAllInfoTogether(userName, nickName, email, ((TextField) passwordFiled.getChildren().get(0)), sloganText, securityAnswer, choiceBox.getValue());
             if (checkForErrors(userError, nickNameError, emailError, passwordError, securityError)) {
-                info.updateAllInfoTogether(userName, nickName, email, confirmation, sloganText, securityAnswer, choiceBox.getValue());
+                makeSignUpAlert(pane, passwordFiled);
+                User.addUser(userName.getText(), nickName.getText(), DigestUtils.sha256Hex(((TextField) passwordFiled.getChildren().get(0)).getText()), email.getText(), slogan.getText(), choiceBox.getValue(),securityAnswer.getText(), null);
             }
-
         });
-    }
-
-    public boolean signUpFirstErrorHandling() {
-        return true;
     }
 
     public boolean checkForErrors(Label userError, Label nickNameError, Label emailError, Label passwordError, Label securityError) {
@@ -352,7 +352,38 @@ public class SignUpMenu extends Application {
             info.updateTextYouWant(password, 1);
             info.updateTextYouWant(confirmation, 2);
             setError(passwordError, info.confirmationError(), false);
+            setError(passwordError, info.passwordError(), false);
         });
     }
 
+    public void makeSignUpAlert(Pane pane, HBox password) {
+        VBox popUp = new VBox();
+        Button button = new Button();
+        style.popUp0(pane, popUp, button, 80, 50, 400, 295, 400, 100,200, 50, 210, 213, "User has been added to game successfully!", 20);
+        popUpTransition(popUp, 0, 1, password);
+        pane.getChildren().get(0).setDisable(true);
+        disableHBoxes(0.4, password);
+        button.setOnMouseClicked(mouseEvent -> popUpTransition(popUp, 1, 0, password));
+    }
+    public void popUpTransition(VBox popUp,int in, int out, HBox password) {
+        ScaleTransition scaleTransition = new ScaleTransition(Duration.seconds(0.5));
+        scaleTransition.setNode(popUp);
+        scaleTransition.setFromX(in);
+        scaleTransition.setToX(out);
+        scaleTransition.setFromY(in);
+        scaleTransition.setToY(out);
+        scaleTransition.setCycleCount(1);
+        scaleTransition.play();
+        if (out == 0) {
+            scaleTransition.setOnFinished(actionEvent -> {
+                ((Pane) popUp.getParent()).getChildren().get(0).setDisable(false);
+                disableHBoxes(1, password);
+                ((Pane) popUp.getParent()).getChildren().remove(1);
+                new SignUpMenu().start(stage);
+            });
+        }
+    }
+    public void disableHBoxes(double opacity, HBox password) {
+        password.setBorder(new Border(new BorderStroke(Color.rgb(86,73,57,opacity), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
+    }
 }
