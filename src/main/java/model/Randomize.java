@@ -72,8 +72,6 @@ public class Randomize {
                 "Live for something rather than die for nothing.",
                 "No Better Friend, No Worse Enemy"));
         SecureRandom random = new SecureRandom();
-        String chosenSlogan = slogans.get(random.nextInt(9));
-        System.out.println("Your slogan is : " + chosenSlogan);
-        return chosenSlogan;
+        return slogans.get(random.nextInt(9));
     }
 }
