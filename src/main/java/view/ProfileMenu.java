@@ -24,6 +24,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.ObservableFaceArray;
@@ -31,10 +32,13 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import model.User;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -70,20 +74,15 @@ public class ProfileMenu extends Application {
         stage.show();
     }
 
-    public void profileView(Pane pane) {
+    public void profileView(Pane pane) throws MalformedURLException {
         Pane profilePane = new Pane();
         profilePane.setPrefSize(550, 700);
         profilePane.setLayoutX(850);
-        profilePane.setLayoutY(65);
+        profilePane.setLayoutY(35);
 //        profilePane.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         pane.getChildren().add(profilePane);
-        Label profileLabel = new Label("Profile");
-        profileLabel.setFont(style.Font0(40));
-        profileLabel.setLayoutX(186);profileLabel.setLayoutY(10);
-        profileLabel.setTextFill(Color.BLACK);
-        profilePane.getChildren().add(profileLabel);
         Circle avatar = new Circle(250, 150, 70);
-        avatar.setFill(Color.WHITE);
+        avatar.setFill(new ImagePattern(new Image(currentUser.getAvatar())));
         profilePane.getChildren().add(avatar);
         createText("Username:", 45, 260, 25, Color.BLACK, profilePane);
         TextField usernameField = createTextField(currentUser.getUserName(), 75, 275, 70, 390, profilePane);
@@ -104,11 +103,13 @@ public class ProfileMenu extends Application {
         changePassword.setTextFill(Color.BLACK);
         back.setTextFill(Color.BLACK);
         Pane changePasswordPane = changePassword(profilePane);
+        Pane showAvatars = showAvatars(profilePane, avatar);
 //        ScrollPane scoreBordPane = scoreBord(profilePane);
 
         editImageForName.setOnMouseClicked(mouseEvent -> editName(usernameField, profilePane));
         editImageForNickName.setOnMouseClicked(mouseEvent -> editNickName(nickNameField, profilePane));
         editImageForEmail.setOnMouseClicked(mouseEvent -> editEmail(emailField, profilePane));
+        avatar.setOnMouseClicked(mouseEvent -> showAvatars.setVisible(true));
         scoreBordButton.setOnMouseClicked(mouseEvent -> scoreBord(profilePane));
         changePassword.setOnMouseClicked(mouseEvent -> changePasswordPane.setVisible(true));
         back.setOnMouseClicked(mouseEvent -> new MainMenu().start(stage));
@@ -197,14 +198,101 @@ public class ProfileMenu extends Application {
         createTextField("New Password", 50, 120, 70, 300, changePasswordPane);
         createTextField("Check New Password", 50, 220, 70, 300, changePasswordPane);
         Button accept = createButton("Accept", 125, 320, 50, 150, 25, changePasswordPane);
-        accept.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                changePasswordPane.setVisible(false);
-            }
-        });
+        accept.setOnMouseClicked(mouseEvent ->changePasswordPane.setVisible(false));
         changePasswordPane.setVisible(false);
         return changePasswordPane;
+    }
+
+    public Pane showAvatars(Pane profilePane, Circle mainAvatar){
+        Pane showAvatar = new Pane();
+        profilePane.getChildren().add(showAvatar);
+        showAvatar.setPrefSize(200, 700);
+        showAvatar.setLayoutX(-200);
+        showAvatar.setLayoutY(25);
+        Button fromFile = createButton("Select from files",0, 700, 50, 200, 20, showAvatar);
+        fromFile.setTextFill(Color.BLACK);
+        Circle avatar1 = new Circle(100, 50, 70);
+        Circle avatar2 = new Circle(100, 160, 70);
+        Circle avatar3 = new Circle(100, 270, 70);
+        Circle avatar4 = new Circle(100, 380, 70);
+        Circle avatar5 = new Circle(100, 490, 70);
+        Circle avatar6 = new Circle(100, 600, 70);
+        Image imageAvatar1 = new Image("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\1.jpg");
+        Image imageAvatar2 = new Image("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\2.jpg");
+        Image imageAvatar3 = new Image("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\3.jpg");
+        Image imageAvatar4 = new Image("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\4.jpg");
+        Image imageAvatar5 = new Image("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\5.jpg");
+        Image imageAvatar6 = new Image("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\6.jpg");
+        avatar1.setFill(new ImagePattern(imageAvatar1));
+        avatar2.setFill(new ImagePattern(imageAvatar2));
+        avatar3.setFill(new ImagePattern(imageAvatar3));
+        avatar4.setFill(new ImagePattern(imageAvatar4));
+        avatar5.setFill(new ImagePattern(imageAvatar5));
+        avatar6.setFill(new ImagePattern(imageAvatar6));
+        showAvatar.getChildren().add(avatar1);showAvatar.getChildren().add(avatar2);showAvatar.getChildren().add(avatar3);
+        showAvatar.getChildren().add(avatar4);showAvatar.getChildren().add(avatar5);showAvatar.getChildren().add(avatar6);
+        avatar1.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                currentUser.setAvatar("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\1.jpg");
+                mainAvatar.setFill(new ImagePattern(imageAvatar1));
+                showAvatar.setVisible(false);
+            }
+        });
+        avatar2.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                currentUser.setAvatar("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\2.jpg");
+                mainAvatar.setFill(new ImagePattern(imageAvatar2));
+                showAvatar.setVisible(false);
+            }
+        });
+        avatar3.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                currentUser.setAvatar("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\3.jpg");
+                mainAvatar.setFill(new ImagePattern(imageAvatar3));
+                showAvatar.setVisible(false);
+            }
+        });
+        avatar4.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                currentUser.setAvatar("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\4.jpg");
+                mainAvatar.setFill(new ImagePattern(imageAvatar4));
+                showAvatar.setVisible(false);
+            }
+        });
+        avatar5.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                currentUser.setAvatar("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\5.jpg");
+                mainAvatar.setFill(new ImagePattern(imageAvatar5));
+                showAvatar.setVisible(false);
+            }
+        });
+        avatar6.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                currentUser.setAvatar("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\6.jpg");
+                mainAvatar.setFill(new ImagePattern(imageAvatar6));
+                showAvatar.setVisible(false);
+            }
+        });
+        fromFile.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                FileChooser fileChooser = new FileChooser();
+                File file = fileChooser.showOpenDialog(stage);
+                currentUser.setAvatar(file.toURI().toString());
+                Image ownImage = new Image(file.toURI().toString());
+                mainAvatar.setFill(new ImagePattern(ownImage));
+                System.out.println(fileChooser.getInitialFileName());
+                showAvatar.setVisible(false);
+            }
+        });
+        showAvatar.setVisible(false);
+        return showAvatar;
     }
 
     private void editName(TextField textField, Pane profilePane){
