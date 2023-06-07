@@ -140,7 +140,7 @@ public class SignUpMenu extends Application {
             info.updateAllInfoTogether(userName, nickName, email, ((TextField) passwordFiled.getChildren().get(0)), sloganText, securityAnswer, choiceBox.getValue());
             if (checkForErrors(userError, nickNameError, emailError, passwordError, securityError)) {
                 makeSignUpAlert(pane, passwordFiled);
-                User.addUser(userName.getText(), nickName.getText(), DigestUtils.sha256Hex(((TextField) passwordFiled.getChildren().get(0)).getText()), email.getText(), slogan.getText(), choiceBox.getValue(),securityAnswer.getText(), "D:\\university\\code\\project-group-38\\src\\main\\resources\\images\\avatars\\2.jpg");
+                User.addUser(userName.getText(), nickName.getText(), DigestUtils.sha256Hex(((TextField) passwordFiled.getChildren().get(0)).getText()), email.getText(), slogan.getText(), choiceBox.getValue(),securityAnswer.getText(), SignUpMenu.class.getResource("/images/avatars/1.jpg").toString());
             }
         });
     }

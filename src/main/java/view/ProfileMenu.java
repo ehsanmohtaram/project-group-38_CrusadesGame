@@ -245,6 +245,7 @@ public class ProfileMenu extends Application {
                             @Override
                             public void run() {
                                 acceptError.setTextFill(Color.TRANSPARENT);
+                                this.cancel();
                             }
                         }, 1000);
                         changePasswordPane.setVisible(false);
@@ -275,12 +276,12 @@ public class ProfileMenu extends Application {
         Circle avatar4 = new Circle(100, 380, 70);
         Circle avatar5 = new Circle(100, 490, 70);
         Circle avatar6 = new Circle(100, 600, 70);
-        Image imageAvatar1 = new Image("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\1.jpg");
-        Image imageAvatar2 = new Image("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\2.jpg");
-        Image imageAvatar3 = new Image("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\3.jpg");
-        Image imageAvatar4 = new Image("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\4.jpg");
-        Image imageAvatar5 = new Image("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\5.jpg");
-        Image imageAvatar6 = new Image("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\6.jpg");
+        Image imageAvatar1 = new Image(ProfileMenu.class.getResource("/images/avatars/1.jpg").toExternalForm());
+        Image imageAvatar2 = new Image(ProfileMenu.class.getResource("/images/avatars/2.jpg").toExternalForm());
+        Image imageAvatar3 = new Image(ProfileMenu.class.getResource("/images/avatars/3.jpg").toExternalForm());
+        Image imageAvatar4 = new Image(ProfileMenu.class.getResource("/images/avatars/4.jpg").toExternalForm());
+        Image imageAvatar5 = new Image(ProfileMenu.class.getResource("/images/avatars/5.jpg").toExternalForm());
+        Image imageAvatar6 = new Image(ProfileMenu.class.getResource("/images/avatars/6.jpg").toExternalForm());
         avatar1.setFill(new ImagePattern(imageAvatar1));
         avatar2.setFill(new ImagePattern(imageAvatar2));
         avatar3.setFill(new ImagePattern(imageAvatar3));
@@ -292,7 +293,7 @@ public class ProfileMenu extends Application {
         avatar1.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                currentUser.setAvatar("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\1.jpg");
+                currentUser.setAvatar(ProfileMenu.class.getResource("/images/avatars/1.jpg").toString());
                 mainAvatar.setFill(new ImagePattern(imageAvatar1));
                 showAvatar.setVisible(false);
             }
@@ -300,7 +301,7 @@ public class ProfileMenu extends Application {
         avatar2.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                currentUser.setAvatar("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\2.jpg");
+                currentUser.setAvatar(ProfileMenu.class.getResource("/images/avatars/2.jpg").toString());
                 mainAvatar.setFill(new ImagePattern(imageAvatar2));
                 showAvatar.setVisible(false);
             }
@@ -308,7 +309,7 @@ public class ProfileMenu extends Application {
         avatar3.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                currentUser.setAvatar("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\3.jpg");
+                currentUser.setAvatar(ProfileMenu.class.getResource("/images/avatars/3.jpg").toString());
                 mainAvatar.setFill(new ImagePattern(imageAvatar3));
                 showAvatar.setVisible(false);
             }
@@ -316,7 +317,7 @@ public class ProfileMenu extends Application {
         avatar4.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                currentUser.setAvatar("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\4.jpg");
+                currentUser.setAvatar(ProfileMenu.class.getResource("/images/avatars/4.jpg").toString());
                 mainAvatar.setFill(new ImagePattern(imageAvatar4));
                 showAvatar.setVisible(false);
             }
@@ -324,7 +325,7 @@ public class ProfileMenu extends Application {
         avatar5.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                currentUser.setAvatar("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\5.jpg");
+                currentUser.setAvatar(ProfileMenu.class.getResource("/images/avatars/5.jpg").toString());
                 mainAvatar.setFill(new ImagePattern(imageAvatar5));
                 showAvatar.setVisible(false);
             }
@@ -332,7 +333,7 @@ public class ProfileMenu extends Application {
         avatar6.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                currentUser.setAvatar("D:\\university\\code\\project-group-3888\\src\\main\\resources\\images\\avatars\\6.jpg");
+                currentUser.setAvatar(ProfileMenu.class.getResource("/images/avatars/6.jpg").toString());
                 mainAvatar.setFill(new ImagePattern(imageAvatar6));
                 showAvatar.setVisible(false);
             }
@@ -382,10 +383,12 @@ public class ProfileMenu extends Application {
                         textField.setDisable(true);
                         labelError.setText("Changed succesful");
                         labelError.setTextFill(Color.GREEN);
-                        new Timer().schedule(new TimerTask() {
+                        Timer timer = new Timer();
+                        timer.schedule(new TimerTask() {
                             @Override
                             public void run() {
                                 labelError.setTextFill(Color.TRANSPARENT);
+                                timer.cancel();
                             }
                         }, 1000);
                     }
@@ -418,6 +421,7 @@ public class ProfileMenu extends Application {
                             @Override
                             public void run() {
                                 labelError.setTextFill(Color.TRANSPARENT);
+                                this.cancel();
                             }
                         }, 1000);
                     }
@@ -450,6 +454,7 @@ public class ProfileMenu extends Application {
                             @Override
                             public void run() {
                                 labelError.setTextFill(Color.TRANSPARENT);
+                                this.cancel();
                             }
                         }, 1000);
                     }
@@ -480,6 +485,7 @@ public class ProfileMenu extends Application {
                         @Override
                         public void run() {
                             labelError.setTextFill(Color.TRANSPARENT);
+                            this.cancel();
                         }
                     },1000);
                     textField.setDisable(true);
