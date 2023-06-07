@@ -1,20 +1,15 @@
 package model;
 
-import javafx.scene.Group;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
+import javafx.geometry.Insets;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitType;
-import view.LoginMenu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class MapBlock extends StackPane {
 
@@ -29,6 +24,8 @@ public class MapBlock extends StackPane {
     private final Integer yPosition;
     private HashMap<Tree , Integer> numberOfTrees;
     private StackPane nodesInLocation;
+    private Rectangle backgroundImage;
+    private boolean isSelected;
 
     public MapBlock(Integer xPosition, Integer yPosition) {
         super();
@@ -46,8 +43,9 @@ public class MapBlock extends StackPane {
 
 //        setScaleX(100);
 //        setScaleY(100);
+        isSelected = false;
         changeBackground();
-        selectionProcess();
+        hoverProcess();
 
     }
 
@@ -55,6 +53,7 @@ public class MapBlock extends StackPane {
     public void setVisualPosition(){
         setLayoutX(xPosition * 100);
         setLayoutY(yPosition * 100);
+        setPrefSize(100, 100);
     }
 
     public ArrayList<Unit> getUnits() {
@@ -142,6 +141,18 @@ public class MapBlock extends StackPane {
         units.remove(toRemove);
     }
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public Rectangle getBackgroundImage() {
+        return backgroundImage;
+    }
+
     public boolean addTree(Tree tree){
         if(!mapBlockType.isCultivable())
             return false;
@@ -198,21 +209,31 @@ public class MapBlock extends StackPane {
     public void changeBackground(){
 //        Image image = new Image(LoginMenu.class.getResource(mapBlockType.getTextureAddress()).toExternalForm());
         BackgroundSize backgroundSize = new BackgroundSize(100 , 100 , false, false, false, false);
-        Rectangle backGround = new Rectangle(100 , 100);
-        backGround.setFill(Color.rgb(0,0, 0 , 0));
+//        Rectangle backGround = new Rectangle(100 , 100);
+//        backGround.setFill(Color.rgb(0,0, 0 , 0));
 //        backGround.setFill(new ImagePattern(mapBlockType.getTexture()));
         setBackground(new Background(new BackgroundImage(mapBlockType.getTexture(), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.CENTER, backgroundSize)));
-        getChildren().add(backGround);
+//        getChildren().add(backGround);
+//        this.backgroundImage = backGround;
+    }
+
+    public void changeBorder(boolean shouldAdd){
+
+        if(shouldAdd)
+            this.setBorder(new Border(new BorderStroke(Color.rgb(0,0,0), BorderStrokeStyle.SOLID, null, BorderStroke.THIN, new Insets(1, 1 , 1 , 1))));
+        else
+            this.setBorder(null);
     }
 
 
-    private void selectionProcess() {
+    private void hoverProcess() {
         this.setOnMouseEntered(e -> {
-            this.setBorder(new Border(new BorderStroke(Color.rgb(0,0,0), BorderStrokeStyle.SOLID, null, BorderStroke.THIN)));
+            changeBorder(true);
         });
         this.setOnMouseExited(e -> {
-            this.setBorder(null);
+            if(!isSelected)
+                changeBorder(false);
         });
     }
 
