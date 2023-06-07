@@ -25,7 +25,6 @@ public class DesignMapMenu extends Application {
     private Integer finalHeight;
     private String name;
     private Label finalName;
-//    private final CommandParser commandParser;
 
     public DesignMapMenu() {
         menuController = new MapDesignMenuController();
@@ -33,16 +32,15 @@ public class DesignMapMenu extends Application {
         finalWidth = 10;
         finalHeight = 10;
         name = "new map";
-//        commandParser = new CommandParser();
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         this.stage = stage;
         stage.setResizable(false);
         Pane pane = new Pane();
         BackgroundSize backgroundSize = new BackgroundSize(1920, 1080, false, false, false, false);
-        Image image = new Image(Objects.requireNonNull(LoginMenu.class.getResource("/images/background/designMenu.jpg")).toExternalForm());
+        Image image = new Image(LoginMenu.class.getResource("/images/background/loginBack.jpg").toExternalForm());
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         pane.setBackground(new Background(backgroundImage));
         createMenu(pane);
