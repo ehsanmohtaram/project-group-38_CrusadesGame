@@ -3,6 +3,7 @@ package view;
 import controller.CommandParser;
 //import controller.ProfileController;
 import controller.Controller;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
@@ -41,9 +42,7 @@ import view.controller.InformationController;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 
 public class ProfileMenu extends Application {
     //    private final ProfileController profileController;
@@ -111,18 +110,20 @@ public class ProfileMenu extends Application {
         Pane showAvatars = showAvatars(profilePane, avatar);
 //        ScrollPane scoreBordPane = scoreBord(profilePane);
 
-        Label userError = createLabel("", 290, 250, profilePane);
-        Label nickNameError = createLabel("", 290, 365, profilePane);
-        Label emailError = createLabel("", 290, 480, profilePane);
+        Label userError = createLabel("", 270, 250, profilePane);
+        Label nickNameError = createLabel("", 270, 365, profilePane);
+        Label emailError = createLabel("", 270, 480, profilePane);
+        Label sloganError = createLabel("", 460, 720, profilePane);
         editImageForName.setOnMouseClicked(mouseEvent -> editName(usernameField, userError, profilePane));
         editImageForNickName.setOnMouseClicked(mouseEvent -> editNickName(nickNameField, nickNameError, profilePane));
         editImageForEmail.setOnMouseClicked(mouseEvent -> editEmail(emailField, emailError, profilePane));
-        editImageForSlogan.setOnMouseClicked(mouseEvent -> editSlogan(sloganField, profilePane));
+        editImageForSlogan.setOnMouseClicked(mouseEvent -> editSlogan(sloganField, sloganError, profilePane));
         avatar.setOnMouseClicked(mouseEvent -> showAvatars.setVisible(true));
         scoreBordButton.setOnMouseClicked(mouseEvent -> scoreBord(profilePane));
         changePassword.setOnMouseClicked(mouseEvent -> changePasswordPane.setVisible(true));
-        back.setOnMouseClicked(mouseEvent -> new MainMenu().start(stage));
+        back.setOnMouseClicked(mouseEvent -> back(userError, nickNameError, emailError));
     }
+
 
     public Text createText(String containText,int x, int y, int font, Color color, Pane pane) {
         Text text = new Text(x,y, containText);
@@ -318,6 +319,13 @@ public class ProfileMenu extends Application {
         return showAvatar;
     }
 
+    private void back(Label userError, Label nickNameError, Label emailError) {
+        if (!(userError.getTextFill().equals(Color.INDIANRED)) && !(nickNameError.getTextFill().equals(Color.INDIANRED)) && !(emailError.getTextFill().equals(Color.INDIANRED))){
+            new MainMenu().start(stage);
+        }
+    }
+
+
     private void editName(TextField textField,Label labelError, Pane profilePane){
         textField.setDisable(false);
         textField.setOpacity(0.5);
@@ -325,15 +333,26 @@ public class ProfileMenu extends Application {
             info.updateTextYouWant(textField, 0);
             setError(labelError, info.usernameError(), true);
         });
+        labelError.setFont(style.Font0(15));
         profilePane.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode().getName().equals("Enter")) {
-                    currentUser.setUserName(textField.getText());
-                    textField.setPromptText("");
-                    textField.setText(textField.getText());
-                    textField.setOpacity(1);
-                    textField.setDisable(true);
+                    if (!labelError.getTextFill().equals(Color.INDIANRED)) {
+                        currentUser.setUserName(textField.getText());
+                        textField.setPromptText("");
+                        textField.setText(textField.getText());
+                        textField.setOpacity(1);
+                        textField.setDisable(true);
+                        labelError.setText("changed succesful");
+                        labelError.setTextFill(Color.GREEN);
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                labelError.setTextFill(Color.TRANSPARENT);
+                            }
+                        }, 1000);
+                    }
                 }
             }
         });
@@ -346,15 +365,26 @@ public class ProfileMenu extends Application {
             info.updateTextYouWant(textField, 4);
             setError(labelError, info.nicknameError(), true);
         });
+        labelError.setFont(style.Font0(15));
         profilePane.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode().getName().equals("Enter")) {
-                    currentUser.setNickName(textField.getText());
-                    textField.setPromptText("");
-                    textField.setText(textField.getText());
-                    textField.setOpacity(1.0);
-                    textField.setDisable(true);
+                    if (!labelError.getTextFill().equals(Color.INDIANRED)) {
+                        currentUser.setNickName(textField.getText());
+                        textField.setPromptText("");
+                        textField.setText(textField.getText());
+                        textField.setOpacity(1.0);
+                        textField.setDisable(true);
+                        labelError.setText("changed succesful");
+                        labelError.setTextFill(Color.GREEN);
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                labelError.setTextFill(Color.TRANSPARENT);
+                            }
+                        }, 1000);
+                    }
                 }
             }
         });
@@ -364,26 +394,38 @@ public class ProfileMenu extends Application {
         textField.setDisable(false);
         textField.setOpacity(0.5);
         textField.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            info.updateTextYouWant(textField, 3);
-            setError(labelError, info.emailError(), false);
+            info.updateTextYouWant(textField, 4);
+            setError(labelError, info.nicknameError(), true);
         });
+        labelError.setFont(style.Font0(15));
         profilePane.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode().getName().equals("Enter")) {
-                    currentUser.setEmail(textField.getText());
-                    textField.setPromptText("");
-                    textField.setText(textField.getText());
-                    textField.setOpacity(1.0);
-                    textField.setDisable(true);
+                    if (!labelError.getTextFill().equals(Color.INDIANRED)) {
+                        currentUser.setEmail(textField.getText());
+                        textField.setPromptText("");
+                        textField.setText(textField.getText());
+                        textField.setOpacity(1.0);
+                        textField.setDisable(true);
+                        labelError.setText("changed succesful");
+                        labelError.setTextFill(Color.GREEN);
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                labelError.setTextFill(Color.TRANSPARENT);
+                            }
+                        }, 1000);
+                    }
                 }
             }
         });
     }
 
-    private void editSlogan(TextField textField, Pane profilePane){
+    private void editSlogan(TextField textField, Label labelError, Pane profilePane){
         textField.setDisable(false);
         textField.setOpacity(0.5);
+        labelError.setFont(style.Font0(20));
         textField.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
@@ -396,24 +438,17 @@ public class ProfileMenu extends Application {
                         currentUser.setSlogan("slogan is");
                         textField.setText("slogan is");
                     }
+                    labelError.setText("changed succesful");
+                    labelError.setTextFill(Color.GREEN);
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            labelError.setTextFill(Color.TRANSPARENT);
+                        }
+                    },1000);
                     textField.setDisable(true);
                 }
             }
-        });
-    }
-
-    public void atMomentError(Label userError, Label emailError, Label nicknameError,TextField userName, TextField email, TextField nickname) {
-        userName.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            info.updateTextYouWant(userName, 0);
-            setError(userError, info.usernameError(), true);
-        });
-        email.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            info.updateTextYouWant(email, 3);
-            setError(emailError, info.emailError(), false);
-        });
-        nickname.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            info.updateTextYouWant(nickname, 4);
-            setError(nicknameError, info.nicknameError(), true);
         });
     }
 
