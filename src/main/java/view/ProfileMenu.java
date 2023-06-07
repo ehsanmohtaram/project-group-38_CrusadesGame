@@ -37,6 +37,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import model.User;
+import view.controller.InformationController;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -48,11 +49,13 @@ public class ProfileMenu extends Application {
     //    private final ProfileController profileController;
 //    private final CommandParser commandParser;
     public Stage stage;
-    private Style style;
+    private final InformationController info;
+    private final Style style;
     private Pane mainPane;
     private User currentUser;
     public ProfileMenu() {
         this.style = new Style();
+        this.info = new InformationController();
 //        this.profileController = profileController;
 //        commandParser = new CommandParser();
     }
@@ -108,9 +111,12 @@ public class ProfileMenu extends Application {
         Pane showAvatars = showAvatars(profilePane, avatar);
 //        ScrollPane scoreBordPane = scoreBord(profilePane);
 
-        editImageForName.setOnMouseClicked(mouseEvent -> editName(usernameField, profilePane));
-        editImageForNickName.setOnMouseClicked(mouseEvent -> editNickName(nickNameField, profilePane));
-        editImageForEmail.setOnMouseClicked(mouseEvent -> editEmail(emailField, profilePane));
+        Label userError = createLabel("", 290, 250, profilePane);
+        Label nickNameError = createLabel("", 290, 365, profilePane);
+        Label emailError = createLabel("", 290, 480, profilePane);
+        editImageForName.setOnMouseClicked(mouseEvent -> editName(usernameField, userError, profilePane));
+        editImageForNickName.setOnMouseClicked(mouseEvent -> editNickName(nickNameField, nickNameError, profilePane));
+        editImageForEmail.setOnMouseClicked(mouseEvent -> editEmail(emailField, emailError, profilePane));
         editImageForSlogan.setOnMouseClicked(mouseEvent -> editSlogan(sloganField, profilePane));
         avatar.setOnMouseClicked(mouseEvent -> showAvatars.setVisible(true));
         scoreBordButton.setOnMouseClicked(mouseEvent -> scoreBord(profilePane));
@@ -130,12 +136,21 @@ public class ProfileMenu extends Application {
         TextField textField = new TextField();
         textField.setLayoutX(x);textField.setLayoutY(y);
         textField.setFont(style.Font0(25));
+        textField.setText(containText);
+        textField.setPromptText("");
         textField.setOpacity(1.0);
         textField.setDisable(true);
         textField.setOpacity(1.0);
         style.textFiled0(textField, containText,width, height);
         pane.getChildren().add(textField);
         return textField;
+    }
+
+    public Label createLabel(String containText, int x, int y, Pane pane){
+        Label label = new Label("");
+        label.setLayoutY(y);label.setLayoutX(x);
+        pane.getChildren().add(label);
+        return label;
     }
 
     public Button createButton(String containText, int x, int y, int height, int width, int fontSize, Pane pane){
@@ -303,44 +318,63 @@ public class ProfileMenu extends Application {
         return showAvatar;
     }
 
-    private void editName(TextField textField, Pane profilePane){
+    private void editName(TextField textField,Label labelError, Pane profilePane){
         textField.setDisable(false);
+        textField.setOpacity(0.5);
+        textField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            info.updateTextYouWant(textField, 0);
+            setError(labelError, info.usernameError(), true);
+        });
         profilePane.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode().getName().equals("Enter")) {
                     currentUser.setUserName(textField.getText());
-                    textField.setPromptText(textField.getText());
-                    textField.setText("");
-                    textField.setDisable(true);
-                }
-            }
-        });
-    }
-    private void editNickName(TextField textField, Pane profilePane){
-        textField.setDisable(false);
-        profilePane.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                if (keyEvent.getCode().getName().equals("Enter")) {
-                    currentUser.setNickName(textField.getText());
-                    textField.setPromptText(textField.getText());
-                    textField.setText("");
+                    textField.setPromptText("");
+                    textField.setText(textField.getText());
+                    textField.setOpacity(1);
                     textField.setDisable(true);
                 }
             }
         });
     }
 
-    private void editEmail(TextField textField, Pane profilePane){
+    private void editNickName(TextField textField, Label labelError, Pane profilePane){
         textField.setDisable(false);
+        textField.setOpacity(0.5);
+        textField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            info.updateTextYouWant(textField, 4);
+            setError(labelError, info.nicknameError(), true);
+        });
+        profilePane.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode().getName().equals("Enter")) {
+                    currentUser.setNickName(textField.getText());
+                    textField.setPromptText("");
+                    textField.setText(textField.getText());
+                    textField.setOpacity(1.0);
+                    textField.setDisable(true);
+                }
+            }
+        });
+    }
+
+    private void editEmail(TextField textField, Label labelError, Pane profilePane){
+        textField.setDisable(false);
+        textField.setOpacity(0.5);
+        textField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            info.updateTextYouWant(textField, 3);
+            setError(labelError, info.emailError(), false);
+        });
         profilePane.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode().getName().equals("Enter")) {
                     currentUser.setEmail(textField.getText());
-                    textField.setPromptText(textField.getText());
-                    textField.setText("");
+                    textField.setPromptText("");
+                    textField.setText(textField.getText());
+                    textField.setOpacity(1.0);
                     textField.setDisable(true);
                 }
             }
@@ -349,20 +383,58 @@ public class ProfileMenu extends Application {
 
     private void editSlogan(TextField textField, Pane profilePane){
         textField.setDisable(false);
+        textField.setOpacity(0.5);
         textField.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode().getName().equals("Enter")) {
                     currentUser.setSlogan(textField.getText());
-                    textField.setPromptText(textField.getText());
-                    textField.setText("");
+                    textField.setPromptText("");
+                    textField.setText(textField.getText());
+                    textField.setOpacity(1.0);
+                    if (textField.getText().equals("")) {
+                        currentUser.setSlogan("slogan is");
+                        textField.setText("slogan is");
+                    }
                     textField.setDisable(true);
                 }
             }
         });
     }
 
+    public void atMomentError(Label userError, Label emailError, Label nicknameError,TextField userName, TextField email, TextField nickname) {
+        userName.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            info.updateTextYouWant(userName, 0);
+            setError(userError, info.usernameError(), true);
+        });
+        email.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            info.updateTextYouWant(email, 3);
+            setError(emailError, info.emailError(), false);
+        });
+        nickname.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            info.updateTextYouWant(nickname, 4);
+            setError(nicknameError, info.nicknameError(), true);
+        });
+    }
 
+    public void setError(Label label, String result, boolean justColorChange) {
+        if (result != null) {
+            label.setTextFill(Color.INDIANRED);
+            if (!justColorChange) {
+                label.setPadding(new Insets(5, 0, 10, 0));
+                label.setFont(style.Font0(15));
+            }
+            label.setText(result);
+        }
+        else {
+            label.setTextFill(Color.TRANSPARENT);
+            if (!justColorChange) {
+                label.setPadding(new Insets(0));
+                label.setFont(style.Font0(0));
+            }
+            label.setText("");
+        }
+    }
 
 
     public String run() {

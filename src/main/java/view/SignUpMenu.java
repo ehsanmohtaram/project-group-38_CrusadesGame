@@ -339,7 +339,6 @@ public class SignUpMenu extends Application {
             info.updateTextYouWant(securityFiled, 5);
             setError(securityError, info.securityError(choiceBox), false);
         });
-
     }
 
     public void passwordAndConfirmationListener(TextField password, TextField confirmation,Label passwordError) {
