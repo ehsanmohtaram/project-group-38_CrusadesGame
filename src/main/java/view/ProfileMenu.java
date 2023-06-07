@@ -32,6 +32,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -44,7 +45,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class ProfileMenu extends Application {
-//    private final ProfileController profileController;
+    //    private final ProfileController profileController;
 //    private final CommandParser commandParser;
     public Stage stage;
     private Style style;
@@ -84,18 +85,19 @@ public class ProfileMenu extends Application {
         Circle avatar = new Circle(250, 150, 70);
         avatar.setFill(new ImagePattern(new Image(currentUser.getAvatar())));
         profilePane.getChildren().add(avatar);
+        TextField sloganField = createTextField(currentUser.getSlogan(),-10, 790, 80, 1560, pane);
+        sloganField.setOpacity(1.0);sloganField.setAlignment(Pos.CENTER);sloganField.setFont(style.Font0(30));
         createText("Username:", 45, 260, 25, Color.BLACK, profilePane);
         TextField usernameField = createTextField(currentUser.getUserName(), 75, 275, 70, 390, profilePane);
         createText("Nick Name:", 45, 375, 25, Color.BLACK, profilePane);
         TextField nickNameField = createTextField(currentUser.getNickName(), 75, 390, 70, 390, profilePane);
         createText("Email Address:", 45, 490, 25, Color.BLACK, profilePane);
         TextField emailField = createTextField(currentUser.getEmail(), 75, 505, 70, 390, profilePane);
-        usernameField.setDisable(true);
-        nickNameField.setDisable(true);
-        emailField.setDisable(true);
         ImageView editImageForName = createEdit(430, 295, profilePane);
         ImageView editImageForNickName = createEdit(430, 410, profilePane);
         ImageView editImageForEmail = createEdit(430, 525, profilePane);
+        ImageView editImageForSlogan = createEdit(625, 785, profilePane);
+        editImageForSlogan.setFitWidth(30);editImageForSlogan.setFitHeight(30);
         Button scoreBordButton = createButton("ScoreBord", 285, 610, 60, 200, 21, profilePane);
         Button changePassword = createButton("Change password", 55,610, 60, 200, 21, profilePane);
         Button back = createButton("Back", 200, 685, 60, 150, 25, profilePane);
@@ -109,6 +111,7 @@ public class ProfileMenu extends Application {
         editImageForName.setOnMouseClicked(mouseEvent -> editName(usernameField, profilePane));
         editImageForNickName.setOnMouseClicked(mouseEvent -> editNickName(nickNameField, profilePane));
         editImageForEmail.setOnMouseClicked(mouseEvent -> editEmail(emailField, profilePane));
+        editImageForSlogan.setOnMouseClicked(mouseEvent -> editSlogan(sloganField, profilePane));
         avatar.setOnMouseClicked(mouseEvent -> showAvatars.setVisible(true));
         scoreBordButton.setOnMouseClicked(mouseEvent -> scoreBord(profilePane));
         changePassword.setOnMouseClicked(mouseEvent -> changePasswordPane.setVisible(true));
@@ -127,6 +130,9 @@ public class ProfileMenu extends Application {
         TextField textField = new TextField();
         textField.setLayoutX(x);textField.setLayoutY(y);
         textField.setFont(style.Font0(25));
+        textField.setOpacity(1.0);
+        textField.setDisable(true);
+        textField.setOpacity(1.0);
         style.textFiled0(textField, containText,width, height);
         pane.getChildren().add(textField);
         return textField;
@@ -208,8 +214,8 @@ public class ProfileMenu extends Application {
         profilePane.getChildren().add(showAvatar);
         showAvatar.setPrefSize(200, 700);
         showAvatar.setLayoutX(-200);
-        showAvatar.setLayoutY(25);
-        Button fromFile = createButton("Select from files",0, 700, 50, 200, 20, showAvatar);
+        showAvatar.setLayoutY(0);
+        Button fromFile = createButton("Select from files",0, 680, 50, 200, 20, showAvatar);
         fromFile.setTextFill(Color.BLACK);
         Circle avatar1 = new Circle(100, 50, 70);
         Circle avatar2 = new Circle(100, 160, 70);
@@ -284,7 +290,9 @@ public class ProfileMenu extends Application {
             public void handle(MouseEvent mouseEvent) {
                 FileChooser fileChooser = new FileChooser();
                 File file = fileChooser.showOpenDialog(stage);
-                currentUser.setAvatar(file.toURI().toString());
+                try {
+                    currentUser.setAvatar(file.toURI().toString());
+                } catch (NullPointerException nullPointerException){}
                 Image ownImage = new Image(file.toURI().toString());
                 mainAvatar.setFill(new ImagePattern(ownImage));
                 System.out.println(fileChooser.getInitialFileName());
@@ -297,19 +305,15 @@ public class ProfileMenu extends Application {
 
     private void editName(TextField textField, Pane profilePane){
         textField.setDisable(false);
-//        profilePane.setOnMouseClicked(new EventHandler<MouseEvent>() {
-//            @Override
-//            public void handle(MouseEvent mouseEvent) {
-////                System.out.println("profile Pane selected");
-////                currentUser.setUserName(textField.getText());
-////                textField.setDisable(true);
-//            }
-//        });
         profilePane.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                currentUser.setUserName(textField.getText());
-                textField.setDisable(true);
+                if (keyEvent.getCode().getName().equals("Enter")) {
+                    currentUser.setUserName(textField.getText());
+                    textField.setPromptText(textField.getText());
+                    textField.setText("");
+                    textField.setDisable(true);
+                }
             }
         });
     }
@@ -318,28 +322,42 @@ public class ProfileMenu extends Application {
         profilePane.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                currentUser.setNickName(textField.getText());
-                textField.setDisable(true);
+                if (keyEvent.getCode().getName().equals("Enter")) {
+                    currentUser.setNickName(textField.getText());
+                    textField.setPromptText(textField.getText());
+                    textField.setText("");
+                    textField.setDisable(true);
+                }
             }
         });
     }
 
     private void editEmail(TextField textField, Pane profilePane){
         textField.setDisable(false);
-//        profilePane.setOnMouseClicked(new EventHandler<MouseEvent>() {
-//            @Override
-//            public void handle(MouseEvent mouseEvent) {
-//                currentUser.setEmail(textField.getText());
-//                textField.setText("");
-//                textField.setPromptText("");
-//                profileView(mainPane);
-//            }
-//        });
         profilePane.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                currentUser.setEmail(textField.getText());
-                textField.setDisable(true);
+                if (keyEvent.getCode().getName().equals("Enter")) {
+                    currentUser.setEmail(textField.getText());
+                    textField.setPromptText(textField.getText());
+                    textField.setText("");
+                    textField.setDisable(true);
+                }
+            }
+        });
+    }
+
+    private void editSlogan(TextField textField, Pane profilePane){
+        textField.setDisable(false);
+        textField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode().getName().equals("Enter")) {
+                    currentUser.setSlogan(textField.getText());
+                    textField.setPromptText(textField.getText());
+                    textField.setText("");
+                    textField.setDisable(true);
+                }
             }
         });
     }
@@ -372,5 +390,5 @@ public class ProfileMenu extends Application {
 //        }
         return null;
     }
-    
+
 }
