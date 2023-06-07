@@ -95,6 +95,13 @@ public class ProfileMenu extends Application {
         TextField nickNameField = createTextField(currentUser.getNickName(), 75, 390, 70, 390, profilePane);
         createText("Email Address:", 45, 490, 25, Color.BLACK, profilePane);
         TextField emailField = createTextField(currentUser.getEmail(), 75, 505, 70, 390, profilePane);
+        Label userError = createLabel("", 270, 250, profilePane);
+        Label nickNameError = createLabel("", 270, 365, profilePane);
+        Label emailError = createLabel("", 270, 480, profilePane);
+        Label sloganError = createLabel("", 460, 720, profilePane);
+        Label oldPasswordError = createLabel("", -120, 295, profilePane);
+        Label newPasswordError = createLabel("", -350, 395, profilePane);
+        Label acceptPassword = createLabel("", 72, 580, profilePane);
         ImageView editImageForName = createEdit(430, 295, profilePane);
         ImageView editImageForNickName = createEdit(430, 410, profilePane);
         ImageView editImageForEmail = createEdit(430, 525, profilePane);
@@ -106,14 +113,11 @@ public class ProfileMenu extends Application {
         scoreBordButton.setTextFill(Color.BLACK);
         changePassword.setTextFill(Color.BLACK);
         back.setTextFill(Color.BLACK);
-        Pane changePasswordPane = changePassword(profilePane);
+        Pane changePasswordPane = changePassword(newPasswordError, oldPasswordError, acceptPassword ,profilePane);
         Pane showAvatars = showAvatars(profilePane, avatar);
 //        ScrollPane scoreBordPane = scoreBord(profilePane);
 
-        Label userError = createLabel("", 270, 250, profilePane);
-        Label nickNameError = createLabel("", 270, 365, profilePane);
-        Label emailError = createLabel("", 270, 480, profilePane);
-        Label sloganError = createLabel("", 460, 720, profilePane);
+
         editImageForName.setOnMouseClicked(mouseEvent -> editName(usernameField, userError, profilePane));
         editImageForNickName.setOnMouseClicked(mouseEvent -> editNickName(nickNameField, nickNameError, profilePane));
         editImageForEmail.setOnMouseClicked(mouseEvent -> editEmail(emailField, emailError, profilePane));
@@ -149,6 +153,7 @@ public class ProfileMenu extends Application {
 
     public Label createLabel(String containText, int x, int y, Pane pane){
         Label label = new Label("");
+        label.setFont(style.Font0(20));
         label.setLayoutY(y);label.setLayoutX(x);
         pane.getChildren().add(label);
         return label;
@@ -209,18 +214,49 @@ public class ProfileMenu extends Application {
         return scoreBordPane;
     }
 
-    private Pane changePassword(Pane profilePane) {
+    private Pane changePassword(Label newPasswordError, Label oldPasswordError, Label acceptError, Pane profilePane) {
         Pane changePasswordPane = new Pane();
         changePasswordPane.setPrefSize(400, 400);
-        changePasswordPane.setLayoutX(-400);
+        changePasswordPane.setLayoutX(-460);
         changePasswordPane.setLayoutY(300);
 //        changePasswordPane.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         profilePane.getChildren().add(changePasswordPane);
-        createTextField("Old Password", 50, 20, 70, 300, changePasswordPane);
-        createTextField("New Password", 50, 120, 70, 300, changePasswordPane);
-        createTextField("Check New Password", 50, 220, 70, 300, changePasswordPane);
-        Button accept = createButton("Accept", 125, 320, 50, 150, 25, changePasswordPane);
-        accept.setOnMouseClicked(mouseEvent ->changePasswordPane.setVisible(false));
+        TextField oldPassword = createTextField("Old Password", 50, 20, 70, 400, changePasswordPane);
+        TextField newPassword = createTextField("New Password", 50, 120, 70, 400, changePasswordPane);
+        oldPassword.setText("");oldPassword.setPromptText("Old Password");oldPassword.setDisable(false);
+        newPassword.setText("");newPassword.setPromptText("New Password");newPassword.setDisable(false);
+        createTextField("Check New Password", 50, 220, 70, 400, changePasswordPane);
+        Button accept = createButton("Accept", 170, 320, 50, 150, 25, changePasswordPane);
+        newPassword.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            info.updateTextYouWant(newPassword, 1);
+            info.updateTextYouWant(newPassword, 2);
+            setError(newPasswordError, info.passwordError(), true);
+        });
+        newPasswordError.setFont(style.Font0(15));
+        accept.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (!(newPasswordError.getTextFill().equals(Color.INDIANRED))){
+                    if (currentUser.getPassword().equals(oldPassword.getText())){
+                        oldPasswordError.setTextFill(Color.TRANSPARENT);
+                        acceptError.setText("Changed succesful");
+                        acceptError.setTextFill(Color.GREEN);
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                acceptError.setTextFill(Color.TRANSPARENT);
+                            }
+                        }, 1000);
+                        changePasswordPane.setVisible(false);
+                        currentUser.setPassword(newPassword.getText());
+                    } else {
+                        oldPasswordError.setText("Incompatibility");
+                        oldPasswordError.setFont(style.Font0(15));
+                        oldPasswordError.setTextFill(Color.INDIANRED);
+                    }
+                }
+            }
+        });
         changePasswordPane.setVisible(false);
         return changePasswordPane;
     }
@@ -344,7 +380,7 @@ public class ProfileMenu extends Application {
                         textField.setText(textField.getText());
                         textField.setOpacity(1);
                         textField.setDisable(true);
-                        labelError.setText("changed succesful");
+                        labelError.setText("Changed succesful");
                         labelError.setTextFill(Color.GREEN);
                         new Timer().schedule(new TimerTask() {
                             @Override
@@ -376,7 +412,7 @@ public class ProfileMenu extends Application {
                         textField.setText(textField.getText());
                         textField.setOpacity(1.0);
                         textField.setDisable(true);
-                        labelError.setText("changed succesful");
+                        labelError.setText("Changed succesful");
                         labelError.setTextFill(Color.GREEN);
                         new Timer().schedule(new TimerTask() {
                             @Override
@@ -394,8 +430,8 @@ public class ProfileMenu extends Application {
         textField.setDisable(false);
         textField.setOpacity(0.5);
         textField.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            info.updateTextYouWant(textField, 4);
-            setError(labelError, info.nicknameError(), true);
+            info.updateTextYouWant(textField, 3);
+            setError(labelError, info.emailError(), true);
         });
         labelError.setFont(style.Font0(15));
         profilePane.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -438,7 +474,7 @@ public class ProfileMenu extends Application {
                         currentUser.setSlogan("slogan is");
                         textField.setText("slogan is");
                     }
-                    labelError.setText("changed succesful");
+                    labelError.setText("Changed succesful");
                     labelError.setTextFill(Color.GREEN);
                     new Timer().schedule(new TimerTask() {
                         @Override
