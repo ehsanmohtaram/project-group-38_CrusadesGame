@@ -1,7 +1,6 @@
 package controller;
 
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import model.*;
@@ -21,13 +20,11 @@ public class MapDesignController {
     private final User currentUser;
     private int XofMap;
     private int YofMap;
-    private ArrayList<MapBlock> selectedBlocks;
 
     public MapDesignController(Map gameMap) {
         this.gameMap = gameMap;
 //        designMapMenu = new DesignMapMenu(this);
         currentUser = Controller.currentUser;
-        selectedBlocks = new ArrayList<>();
     }
 
     public void run(){
@@ -55,31 +52,6 @@ public class MapDesignController {
 
     public Pane getGameMapPane() {
         return gameMap.getMapPane();
-    }
-
-    public void handelMapSelection(StackPane mapDesignPane){
-        Pane mapPane = gameMap.getMapPane();
-        mapPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-
-                for (MapBlock[] mapBlocks : gameMap.getMap())
-                    for (MapBlock mapBlock : mapBlocks)
-                        if (mapBlock.getBoundsInParent().contains(mouseEvent.getX(), mouseEvent.getY())) {
-                            if (!mouseEvent.isControlDown()) {
-                                for (MapBlock selectedBlock : selectedBlocks) {
-                                    selectedBlock.setSelected(false);
-                                    selectedBlock.changeBorder(false);
-                                }
-                                selectedBlocks.clear();
-                            }
-                            selectedBlocks.add(mapBlock);
-                            mapBlock.changeBorder(true);
-                            mapBlock.setSelected(true);
-                        }
-                System.out.println(selectedBlocks);
-            }
-        });
     }
 
     public String setTexture(HashMap<String , String> options) {
@@ -130,9 +102,9 @@ public class MapDesignController {
         return "type changed successfully";
     }
 
-//    public void moveRight(){
-//        gameMap.getMapPane().setLayoutX(gameMap.getMapPane().getLayoutX() + 100);
-//    }
+    public void moveRight(){
+        gameMap.getMapPane().setLayoutX(gameMap.getMapPane().getLayoutX() + 100);
+    }
 
     private String checkLocationValidation (String xPosition , String yPosition){
         if(xPosition == null || yPosition == null) return "you must specify a location";

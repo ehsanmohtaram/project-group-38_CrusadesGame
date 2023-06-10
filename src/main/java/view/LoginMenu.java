@@ -26,7 +26,7 @@ import java.io.File;
 import java.util.Random;
 
 public class LoginMenu extends Application {
-    private static final boolean firstLogin = false;
+    private static boolean firstLogin = false;
     private final Style style;
     private final LoginMenuController loginMenuController;
     private Stage stage;
@@ -58,7 +58,7 @@ public class LoginMenu extends Application {
         if (!firstLogin) {
             Scene scene = new Scene(pane, primScreenBounds.getWidth(), primScreenBounds.getHeight());
             stage.setScene(scene);
-//            firstLogin = true;
+            firstLogin = true;
 //            Media media = new Media(LoginMenu.class.getResource("/musics/out.mp3").toExternalForm());
 //            startMedia = new MediaPlayer(media);
 //            startMedia.setCycleCount(-1);

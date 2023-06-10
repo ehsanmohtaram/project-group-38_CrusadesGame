@@ -1,7 +1,6 @@
 package model;
 
 import com.google.gson.annotations.Expose;
-import javafx.scene.image.ImageView;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.ArrayList;

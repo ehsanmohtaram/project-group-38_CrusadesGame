@@ -17,7 +17,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -39,7 +38,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import model.User;
-import org.apache.commons.codec.digest.DigestUtils;
 import view.controller.InformationController;
 
 import java.io.File;
@@ -54,7 +52,6 @@ public class ProfileMenu extends Application {
     private final Style style;
     private Pane mainPane;
     private User currentUser;
-    private String imageText;
     public ProfileMenu() {
         this.style = new Style();
         this.info = new InformationController();
@@ -69,14 +66,14 @@ public class ProfileMenu extends Application {
         currentUser = Controller.currentUser;
         stage.setResizable(false);
         Pane pane = new Pane();
-        this.mainPane = pane;
+        mainPane = pane;
         BackgroundSize backgroundSize = new BackgroundSize(1920, 1080, false, false, false, false);
         Image image = new Image(Objects.requireNonNull(LoginMenu.class.getResource("/images/background/loginBack.jpg")).toExternalForm());
         BackgroundImage backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         pane.setBackground(new Background(backgroundImage));
         profileView(pane);
         stage.getScene().setRoot(pane);
-        stage.setTitle("Login Menu");
+        stage.setTitle("Profile Menu");
         stage.show();
     }
 
@@ -105,7 +102,6 @@ public class ProfileMenu extends Application {
         Label oldPasswordError = createLabel("", -120, 295, profilePane);
         Label newPasswordError = createLabel("", -350, 395, profilePane);
         Label acceptPassword = createLabel("", 72, 580, profilePane);
-        Label captchaError = createLabel("", -170, 496, profilePane);
         ImageView editImageForName = createEdit(430, 295, profilePane);
         ImageView editImageForNickName = createEdit(430, 410, profilePane);
         ImageView editImageForEmail = createEdit(430, 525, profilePane);
@@ -117,8 +113,10 @@ public class ProfileMenu extends Application {
         scoreBordButton.setTextFill(Color.BLACK);
         changePassword.setTextFill(Color.BLACK);
         back.setTextFill(Color.BLACK);
-        Pane changePasswordPane = changePassword(newPasswordError, oldPasswordError, acceptPassword, captchaError, profilePane);
+        Pane changePasswordPane = changePassword(newPasswordError, oldPasswordError, acceptPassword ,profilePane);
         Pane showAvatars = showAvatars(profilePane, avatar);
+//        ScrollPane scoreBordPane = scoreBord(profilePane);
+
 
         editImageForName.setOnMouseClicked(mouseEvent -> editName(usernameField, userError, profilePane));
         editImageForNickName.setOnMouseClicked(mouseEvent -> editNickName(nickNameField, nickNameError, profilePane));
@@ -179,7 +177,6 @@ public class ProfileMenu extends Application {
     }
 
     private ScrollPane scoreBord(Pane profilePane) {
-        Pane scorePane = new Pane();
         TableView<User> tableView = new TableView<>();
         tableView.setPrefWidth(405);
         tableView.setFixedCellSize(60.0);
@@ -206,44 +203,30 @@ public class ProfileMenu extends Application {
         ObservableList<User> data = FXCollections.observableArrayList(User.users);
         tableView.setItems(data);
 
-        ScrollPane scrollPane = new ScrollPane(tableView);
-        scrollPane.setLayoutX(-425);scrollPane.setLayoutY(20);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        scorePane.getChildren().add(scrollPane);
-        profilePane.getChildren().add(scorePane);
-
-        Button ok = createButton("Ok",-290, 685, 50, 150, 25, scorePane);
-        ok.setOnMouseClicked(mouseEvent -> scorePane.setVisible(false));
-//        scrollPane.setVisible(false);
-        return scrollPane;
+        ScrollPane scoreBordPane = new ScrollPane(tableView);
+        scoreBordPane.setLayoutX(-425);scoreBordPane.setLayoutY(20);
+        scoreBordPane.setFitToHeight(true);
+        scoreBordPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scoreBordPane.setFitToWidth(true);
+        scoreBordPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        profilePane.getChildren().add(scoreBordPane);
+//        scoreBordPane.setVisible(false);
+        return scoreBordPane;
     }
 
-    private Pane changePassword(Label newPasswordError, Label oldPasswordError, Label acceptError,Label captchaError, Pane profilePane) {
+    private Pane changePassword(Label newPasswordError, Label oldPasswordError, Label acceptError, Pane profilePane) {
         Pane changePasswordPane = new Pane();
         changePasswordPane.setPrefSize(400, 400);
         changePasswordPane.setLayoutX(-460);
         changePasswordPane.setLayoutY(300);
 //        changePasswordPane.setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         profilePane.getChildren().add(changePasswordPane);
-        VBox vBox = new VBox();
-        changePasswordPane.getChildren().add(vBox);
-        vBox.setSpacing(20);
-        vBox.setLayoutX(50);vBox.setLayoutY(220);
-        Rectangle captchaImage = new Rectangle();
-        TextField captchaInput = new TextField();
-        makeCaptcha(vBox, captchaImage, captchaInput);
-        ImagePattern pattern = (ImagePattern) captchaImage.getFill();
-        imageText = pattern.getImage().getUrl().substring(pattern.getImage().getUrl().lastIndexOf("/") + 1);
-
         TextField oldPassword = createTextField("Old Password", 50, 20, 70, 400, changePasswordPane);
         TextField newPassword = createTextField("New Password", 50, 120, 70, 400, changePasswordPane);
         oldPassword.setText("");oldPassword.setPromptText("Old Password");oldPassword.setDisable(false);
         newPassword.setText("");newPassword.setPromptText("New Password");newPassword.setDisable(false);
-        Button accept = createButton("Accept", 100, 320, 50, 150, 25, changePasswordPane);
-        Button back = createButton("Back", 270, 320, 50, 150, 25, changePasswordPane);
+        createTextField("Check New Password", 50, 220, 70, 400, changePasswordPane);
+        Button accept = createButton("Accept", 170, 320, 50, 150, 25, changePasswordPane);
         newPassword.textProperty().addListener((observableValue, oldValue, newValue) -> {
             info.updateTextYouWant(newPassword, 1);
             info.updateTextYouWant(newPassword, 2);
@@ -254,27 +237,19 @@ public class ProfileMenu extends Application {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (!(newPasswordError.getTextFill().equals(Color.INDIANRED))){
-                    if (currentUser.getPassword().equals(DigestUtils.sha256Hex(oldPassword.getText()))){
-                        if (imageText.equals(captchaInput.getText() + ".png")) {
-                            currentUser.setPassword(DigestUtils.sha256Hex(newPassword.getText()));
-                            oldPasswordError.setTextFill(Color.TRANSPARENT);
-                            captchaError.setTextFill(Color.TRANSPARENT);
-                            acceptError.setText("Changed succesful");
-                            acceptError.setTextFill(Color.GREEN);
-                            Timer timer = new Timer();
-                            timer.schedule(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    acceptError.setTextFill(Color.TRANSPARENT);
-                                    timer.cancel();
-                                }
-                            }, 1000);
-                            changePasswordPane.setVisible(false);
-                        } else {
-                            captchaError.setText("Incompatibility");
-                            captchaError.setFont(style.Font0(15));
-                            captchaError.setTextFill(Color.INDIANRED);
-                        }
+                    if (currentUser.getPassword().equals(oldPassword.getText())){
+                        oldPasswordError.setTextFill(Color.TRANSPARENT);
+                        acceptError.setText("Changed succesful");
+                        acceptError.setTextFill(Color.GREEN);
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                acceptError.setTextFill(Color.TRANSPARENT);
+                                this.cancel();
+                            }
+                        }, 1000);
+                        changePasswordPane.setVisible(false);
+                        currentUser.setPassword(newPassword.getText());
                     } else {
                         oldPasswordError.setText("Incompatibility");
                         oldPasswordError.setFont(style.Font0(15));
@@ -283,57 +258,8 @@ public class ProfileMenu extends Application {
                 }
             }
         });
-        back.setOnMouseClicked(mouseEvent -> changePasswordPane.setVisible(false));
         changePasswordPane.setVisible(false);
         return changePasswordPane;
-    }
-
-    public void makeCaptcha(VBox vBox, Rectangle rectangle, TextField textField) {
-        HBox hBox0 = new HBox();
-        hBox0.setSpacing(40);
-        HBox hbox1 = new HBox();
-        hbox1.setStyle("-fx-background-color: rgba(86,73,57,0.3); -fx-background-radius: 10;");
-        hbox1.setAlignment(Pos.CENTER);
-        hbox1.setPrefSize(200, 60);
-        hbox1.setBorder(new Border(new BorderStroke(Color.rgb(86,73,57,1), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
-        hBox0.setAlignment(Pos.CENTER);
-        rectangle.setWidth(200);
-        rectangle.setHeight(60);
-        ImageView imageView = new ImageView(LoginMenu.class.getResource("/images/captcha/" + searchDirectory()).toExternalForm());
-        rectangle.setFill(new ImagePattern(imageView.getImage()));
-        rectangle.setOpacity(0.4);
-        rectangle.setBlendMode(BlendMode.MULTIPLY);
-        hbox1.getChildren().add(rectangle);
-        textField.setFont(style.Font0(24));
-        textField.setAlignment(Pos.CENTER);
-        textField.setPadding(new Insets(0, 25, 0, 25));
-        style.textFiled0(textField, "", 160, 60);
-        hBox0.getChildren().addAll(hbox1,textField);
-        vBox.getChildren().add(hBox0);
-        changeCaptchaImage(rectangle);
-        textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.length() > 4) textField.setText(oldValue);
-            if (newValue.matches(".*[^\\d+].*")) textField.setText(oldValue);
-        });
-    }
-
-    public String searchDirectory() {
-        File directory = new File("src/main/resources/images/captcha");
-        File[] files = directory.listFiles();
-        Random fileSize = new Random();
-        int randomNumber;
-        do {randomNumber = fileSize.nextInt(49);}
-        while (files[randomNumber].getName().matches("\\..*"));
-        return files[randomNumber].getName();
-    }
-
-    public void changeCaptchaImage(Rectangle rectangle) {
-        rectangle.setOnMouseClicked(mouseEvent -> {
-            ImageView imageView = new ImageView(LoginMenu.class.getResource("/images/captcha/" + searchDirectory()).toExternalForm());
-            rectangle.setFill(new ImagePattern(imageView.getImage()));
-            ImagePattern pattern = (ImagePattern) rectangle.getFill();
-            imageText = pattern.getImage().getUrl().substring(pattern.getImage().getUrl().lastIndexOf("/") + 1);
-        });
     }
 
     public Pane showAvatars(Pane profilePane, Circle mainAvatar){
@@ -491,12 +417,11 @@ public class ProfileMenu extends Application {
                         textField.setDisable(true);
                         labelError.setText("Changed succesful");
                         labelError.setTextFill(Color.GREEN);
-                        Timer timer = new Timer();
-                        timer.schedule(new TimerTask() {
+                        new Timer().schedule(new TimerTask() {
                             @Override
                             public void run() {
                                 labelError.setTextFill(Color.TRANSPARENT);
-                                timer.cancel();
+                                this.cancel();
                             }
                         }, 1000);
                     }
@@ -525,12 +450,11 @@ public class ProfileMenu extends Application {
                         textField.setDisable(true);
                         labelError.setText("changed succesful");
                         labelError.setTextFill(Color.GREEN);
-                        Timer timer = new Timer();
-                        timer.schedule(new TimerTask() {
+                        new Timer().schedule(new TimerTask() {
                             @Override
                             public void run() {
                                 labelError.setTextFill(Color.TRANSPARENT);
-                                timer.cancel();
+                                this.cancel();
                             }
                         }, 1000);
                     }
@@ -557,14 +481,13 @@ public class ProfileMenu extends Application {
                     }
                     labelError.setText("Changed succesful");
                     labelError.setTextFill(Color.GREEN);
-                    Timer timer = new Timer();
-                    timer.schedule(new TimerTask() {
+                    new Timer().schedule(new TimerTask() {
                         @Override
                         public void run() {
                             labelError.setTextFill(Color.TRANSPARENT);
-                            timer.cancel();
+                            this.cancel();
                         }
-                    }, 1000);
+                    },1000);
                     textField.setDisable(true);
                 }
             }
