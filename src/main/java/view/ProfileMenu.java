@@ -54,6 +54,7 @@ public class ProfileMenu extends Application {
     private final Style style;
     private Pane mainPane;
     private User currentUser;
+    private String imageText;
     public ProfileMenu() {
         this.style = new Style();
         this.info = new InformationController();
@@ -118,7 +119,6 @@ public class ProfileMenu extends Application {
         back.setTextFill(Color.BLACK);
         Pane changePasswordPane = changePassword(newPasswordError, oldPasswordError, acceptPassword, captchaError, profilePane);
         Pane showAvatars = showAvatars(profilePane, avatar);
-//        ScrollPane scoreBordPane = scoreBord(profilePane);
 
         editImageForName.setOnMouseClicked(mouseEvent -> editName(usernameField, userError, profilePane));
         editImageForNickName.setOnMouseClicked(mouseEvent -> editNickName(nickNameField, nickNameError, profilePane));
@@ -179,6 +179,7 @@ public class ProfileMenu extends Application {
     }
 
     private ScrollPane scoreBord(Pane profilePane) {
+        Pane scorePane = new Pane();
         TableView<User> tableView = new TableView<>();
         tableView.setPrefWidth(405);
         tableView.setFixedCellSize(60.0);
@@ -205,15 +206,19 @@ public class ProfileMenu extends Application {
         ObservableList<User> data = FXCollections.observableArrayList(User.users);
         tableView.setItems(data);
 
-        ScrollPane scoreBordPane = new ScrollPane(tableView);
-        scoreBordPane.setLayoutX(-425);scoreBordPane.setLayoutY(20);
-        scoreBordPane.setFitToHeight(true);
-        scoreBordPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scoreBordPane.setFitToWidth(true);
-        scoreBordPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        profilePane.getChildren().add(scoreBordPane);
-//        scoreBordPane.setVisible(false);
-        return scoreBordPane;
+        ScrollPane scrollPane = new ScrollPane(tableView);
+        scrollPane.setLayoutX(-425);scrollPane.setLayoutY(20);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scorePane.getChildren().add(scrollPane);
+        profilePane.getChildren().add(scorePane);
+
+        Button ok = createButton("Ok",-290, 685, 50, 150, 25, scorePane);
+        ok.setOnMouseClicked(mouseEvent -> scorePane.setVisible(false));
+//        scrollPane.setVisible(false);
+        return scrollPane;
     }
 
     private Pane changePassword(Label newPasswordError, Label oldPasswordError, Label acceptError,Label captchaError, Pane profilePane) {
@@ -231,13 +236,14 @@ public class ProfileMenu extends Application {
         TextField captchaInput = new TextField();
         makeCaptcha(vBox, captchaImage, captchaInput);
         ImagePattern pattern = (ImagePattern) captchaImage.getFill();
-        String imageText = pattern.getImage().getUrl().substring(pattern.getImage().getUrl().lastIndexOf("/") + 1);
+        imageText = pattern.getImage().getUrl().substring(pattern.getImage().getUrl().lastIndexOf("/") + 1);
 
         TextField oldPassword = createTextField("Old Password", 50, 20, 70, 400, changePasswordPane);
         TextField newPassword = createTextField("New Password", 50, 120, 70, 400, changePasswordPane);
         oldPassword.setText("");oldPassword.setPromptText("Old Password");oldPassword.setDisable(false);
         newPassword.setText("");newPassword.setPromptText("New Password");newPassword.setDisable(false);
-        Button accept = createButton("Accept", 170, 320, 50, 150, 25, changePasswordPane);
+        Button accept = createButton("Accept", 100, 320, 50, 150, 25, changePasswordPane);
+        Button back = createButton("Back", 270, 320, 50, 150, 25, changePasswordPane);
         newPassword.textProperty().addListener((observableValue, oldValue, newValue) -> {
             info.updateTextYouWant(newPassword, 1);
             info.updateTextYouWant(newPassword, 2);
@@ -277,6 +283,7 @@ public class ProfileMenu extends Application {
                 }
             }
         });
+        back.setOnMouseClicked(mouseEvent -> changePasswordPane.setVisible(false));
         changePasswordPane.setVisible(false);
         return changePasswordPane;
     }
@@ -324,6 +331,8 @@ public class ProfileMenu extends Application {
         rectangle.setOnMouseClicked(mouseEvent -> {
             ImageView imageView = new ImageView(LoginMenu.class.getResource("/images/captcha/" + searchDirectory()).toExternalForm());
             rectangle.setFill(new ImagePattern(imageView.getImage()));
+            ImagePattern pattern = (ImagePattern) rectangle.getFill();
+            imageText = pattern.getImage().getUrl().substring(pattern.getImage().getUrl().lastIndexOf("/") + 1);
         });
     }
 
