@@ -38,6 +38,15 @@ public class Style {
         button.setOnMouseExited(mouseEvent -> button.setStyle("-fx-background-color: rgba(170,139,100,0.8); -fx-background-radius: 10;"));
     }
 
+    public void button1 (Button button, int width, int height) {
+        button.setPrefSize(width, height);
+        button.setStyle("-fx-text-fill: rgba(170,139,100,1);");
+        button.setStyle("-fx-background-color: rgba(170,139,100,0.8); -fx-background-radius: 10;");
+        button.setBackground(Background.EMPTY);
+        button.setOnMouseEntered(mouseEvent -> button.setStyle("-fx-background-color: rgba(185,182,182,0.5); -fx-background-radius: 10;"));
+        button.setOnMouseExited(mouseEvent -> button.setStyle("-fx-background-color: rgba(170,139,100,0.8); -fx-background-radius: 10;"));
+    }
+
     public void checkBox0 (Rectangle checkBox) {
         checkBox.setStroke(Color.rgb(170,139,100,0.8));
         checkBox.setHeight(15);

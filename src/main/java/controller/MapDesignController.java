@@ -22,6 +22,7 @@ public class MapDesignController {
     private int XofMap;
     private int YofMap;
     private ArrayList<MapBlock> selectedBlocks;
+    private Pane mapDesignPane;
 
     public MapDesignController(Map gameMap) {
         this.gameMap = gameMap;
@@ -45,7 +46,8 @@ public class MapDesignController {
 //        }
     }
 
-    public void addMapToPane(StackPane mapDesignPane){
+    public void addMapToPane(Pane mapDesignPane){
+        this.mapDesignPane = mapDesignPane;
         mapDesignPane.getChildren().add(gameMap.getMapPane());
 //        mapDesignPane.setAlignment(mapDesignPane.getChildren().get(0) , Pos.CENTER_LEFT);
 //        gameMap.getMapPane().getChildren().add(new Label("hello word"));
@@ -57,11 +59,12 @@ public class MapDesignController {
         return gameMap.getMapPane();
     }
 
-    public void handelMapSelection(StackPane mapDesignPane){
+    public void handelMapSelection(){
         Pane mapPane = gameMap.getMapPane();
         mapPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
+                mapPane.requestFocus();
 
                 for (MapBlock[] mapBlocks : gameMap.getMap())
                     for (MapBlock mapBlock : mapBlocks)
@@ -236,9 +239,11 @@ public class MapDesignController {
         if (User.getUserByUsername(options.get("u")) == null) return "User dose not exist. Please choose user from registered users";
         try {Flags.valueOf(options.get("f").toUpperCase());}
         catch (Exception ignored) {return "Your flag color did not exist in default colors!";}
-        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null ) return checkingResult;
-        int xPosition = Integer.parseInt(options.get("x")) , yPosition = Integer.parseInt(options.get("y"));
-        if (!gameMap.getMapBlockByLocation(xPosition,yPosition).getMapBlockType().isBuildable())
+//        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null ) return checkingResult;
+        if(selectedBlocks.size() == 0) return "no position has been selected yet to drop headquarter";
+        if(selectedBlocks.size() > 1) return "you have selected multiple locations";
+        int xPosition = selectedBlocks.get(0).getxPosition() , yPosition = selectedBlocks.get(0).getyPosition();
+        if (!selectedBlocks.get(0).getMapBlockType().isBuildable())
             return "You can not build your head quarter in this type of land!";
         if ((checkingResult = checkAroundHeadQuarterPosition(xPosition,yPosition)) != null) return checkingResult;
         if (gameMap.getKingdomByOwner(User.getUserByUsername(options.get("u"))) != null)
@@ -247,17 +252,17 @@ public class MapDesignController {
             if (kingdom.getFlag().name().equals(options.get("f").toUpperCase())) return "Another user choose this flag.";
         if (checkForMainStockPosition(xPosition, yPosition).size() == 0) return "There is no space around Head Quarter to put stock pile!";
         Kingdom kingdom = new Kingdom(Flags.valueOf(options.get("f").toUpperCase()), User.getUserByUsername(options.get("u")));
-        DefensiveStructure headQuarter = new DefensiveStructure(gameMap.getMapBlockByLocation(xPosition,yPosition), BuildingType.HEAD_QUARTER, kingdom);
+        DefensiveStructure headQuarter = new DefensiveStructure(selectedBlocks.get(0), BuildingType.HEAD_QUARTER, kingdom);
         int newXPosition = checkForMainStockPosition(xPosition, yPosition).get(0);
         int newYPosition = checkForMainStockPosition(xPosition, yPosition).get(1);
         Stock stock = new Stock(gameMap.getMapBlockByLocation(newXPosition, newYPosition), BuildingType.STOCKPILE, kingdom);
         gameMap.addPlayer(kingdom);
         kingdom.setHeadquarter(headQuarter); kingdom.addBuilding(headQuarter);
-        gameMap.getMapBlockByLocation(xPosition,yPosition).setBuildings(headQuarter);
+        selectedBlocks.get(0).setBuildings(headQuarter);
         kingdom.addBuilding(stock);
-        gameMap.getMapBlockByLocation(newXPosition,newYPosition).setBuildings(stock);
+        selectedBlocks.get(0).setBuildings(stock);
         User.getUserByUsername(options.get("u")).addToMyMap(gameMap);
-        return "User add to map successfully!";
+        return "successful";
     }
 
     public String dropUnit(HashMap<String , String> options){
