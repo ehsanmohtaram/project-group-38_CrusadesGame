@@ -79,6 +79,7 @@ public class MapDesignMenuController {
         mapDesignPane.getChildren().add(mapPane);
         mapPane.setManaged(false);
         cameraProcess();
+        mapDesignController.handelMapSelection(mapDesignPane);
         stage.setTitle("design Map");
         stage.show();
     }
