@@ -77,6 +77,7 @@ public class Map implements Cloneable {
     public static void createDefaultMaps(){
         Map defaultMap1 = new Map(60 , 50 , "jungle");
         Map defaultMap2 = new Map(60 , 60 , "graveyard");
+        DEFAULT_MAPS.clear();
         DEFAULT_MAPS.add(defaultMap1);
         DEFAULT_MAPS.add(defaultMap2);
         defaultMap1.changeType(0 , 0 , 59, 49, MapBlockType.GRASSLAND);

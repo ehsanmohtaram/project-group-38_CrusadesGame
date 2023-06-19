@@ -4,6 +4,8 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 import model.*;
 import model.building.*;
 import model.unit.Unit;
@@ -80,7 +82,6 @@ public class MapDesignController {
                             mapBlock.changeBorder(true);
                             mapBlock.setSelected(true);
                         }
-                System.out.println(selectedBlocks);
             }
         });
     }
@@ -199,8 +200,8 @@ public class MapDesignController {
     public String checkAroundHeadQuarterPosition(Integer xPosition, Integer yPosition) {
         int changeXToString;
         int changeYToString;
-        for (int i = -10; i < 10; i++) {
-            for (int j = -10; j < 10; j++) {
+        for (int i = -5; i < 5; i++) {
+            for (int j = -5; j < 5; j++) {
                 changeXToString = xPosition + i;
                 changeYToString = yPosition + j;
                 if (checkLocationValidation(Integer.toString(changeXToString), Integer.toString(changeYToString)) != null)
@@ -239,7 +240,6 @@ public class MapDesignController {
         if (User.getUserByUsername(options.get("u")) == null) return "User dose not exist. Please choose user from registered users";
         try {Flags.valueOf(options.get("f").toUpperCase());}
         catch (Exception ignored) {return "Your flag color did not exist in default colors!";}
-//        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null ) return checkingResult;
         if(selectedBlocks.size() == 0) return "no position has been selected yet to drop headquarter";
         if(selectedBlocks.size() > 1) return "you have selected multiple locations";
         int xPosition = selectedBlocks.get(0).getxPosition() , yPosition = selectedBlocks.get(0).getyPosition();
@@ -258,12 +258,21 @@ public class MapDesignController {
         Stock stock = new Stock(gameMap.getMapBlockByLocation(newXPosition, newYPosition), BuildingType.STOCKPILE, kingdom);
         gameMap.addPlayer(kingdom);
         kingdom.setHeadquarter(headQuarter); kingdom.addBuilding(headQuarter);
+        Rectangle rectangle0 = new Rectangle(100, 100);
+        rectangle0.setFill(new ImagePattern(BuildingType.HEAD_QUARTER.getTexture()));
+        selectedBlocks.get(0).getChildren().add(rectangle0);
         selectedBlocks.get(0).setBuildings(headQuarter);
+
         kingdom.addBuilding(stock);
-        selectedBlocks.get(0).setBuildings(stock);
+        Rectangle rectangle1 = new Rectangle(100, 100);
+        rectangle1.setFill(new ImagePattern(BuildingType.STOCKPILE.getTexture()));
+        gameMap.getMapBlockByLocation(newXPosition, newYPosition).getChildren().add(rectangle1);
+
+        gameMap.getMapBlockByLocation(newXPosition, newYPosition).setBuildings(stock);
         User.getUserByUsername(options.get("u")).addToMyMap(gameMap);
         return "successful";
     }
+
 
     public String dropUnit(HashMap<String , String> options){
         String checkingResult;

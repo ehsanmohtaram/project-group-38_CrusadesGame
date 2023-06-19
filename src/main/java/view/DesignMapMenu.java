@@ -12,6 +12,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import model.Map;
 import view.controller.MapDesignMenuController;
 
 import java.util.Objects;
@@ -52,10 +53,10 @@ public class DesignMapMenu extends Application {
     private void createMenu(Pane pane) {
         Label name = new Label(this.name);
         this.finalName = name;
-        style.label0(name, 250 , 70);
+        style.label0(name, 400 , 70);
         name.setFont(style.Font0(35));
         TextField changeName = new TextField();
-        style.textFiled0(changeName, null, 250 , 70);
+        style.textFiled0(changeName, null, 400 , 70);
         changeName.setFont(style.Font0(35));
         Label width = new Label(finalWidth.toString());
         Label height = new Label(finalHeight.toString());
@@ -64,36 +65,43 @@ public class DesignMapMenu extends Application {
         size.setAlignment(Pos.CENTER);
         for (Node child : size.getChildren()) {
             ((Label) child).setFont(style.Font0(35));
-            style.label0((Label) child , 80 , 70);
+            style.label0((Label) child , 100 , 70);
         }
-        size.setSpacing(15);
+        size.setSpacing(50);
         Button submit = new Button();
         Button back = new Button();
         Button defaultMaps = new Button();
-        style.button0(submit, "create", 150 , 50);
-        style.button0(back, "back" , 150 , 50);
-        style.button0(defaultMaps, "use defaults" , 250 , 50);
+        style.button0(submit, "create", 180 , 70);
+        style.button0(back, "back" , 180 , 70);
+        style.button0(defaultMaps, "use defaults" , 250 , 70);
         submit.setFont(style.Font0(25));
         back.setFont(style.Font0(25));
         defaultMaps.setFont(style.Font0(25));
         HBox buttons = new HBox(submit, back);
-        buttons.setSpacing(10);
+        buttons.setSpacing(40);
 
         VBox details = new VBox(name, size, buttons, defaultMaps);
-        details.setSpacing(15);
-
+        details.setSpacing(30);
         changeAttributes(width, height, size);
         processNameChange(name, changeName, details);
-        menuController.processDefaultMapSelection(stage, details, defaultMaps);
+        VBox vBox = new VBox();
+        vBox.setLayoutX(500);  vBox.setLayoutY(213);
+        vBox.setSpacing(30);
+        pane.getChildren().add(vBox);
+        menuController.processDefaultMapSelection(stage, vBox, defaultMaps);
         submit.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 startGame(pane);
             }
         });
+        back.setOnMouseClicked(mouseEvent -> {
+            new MainMenu().start(stage);
+            Map.DEFAULT_MAPS.clear();
+        });
         details.setAlignment(Pos.CENTER);
-        details.setLayoutX(1000);
-        details.setLayoutY(300);
+        details.setLayoutX(890);  details.setLayoutY(213);
+
         pane.getChildren().add(details);
 
     }

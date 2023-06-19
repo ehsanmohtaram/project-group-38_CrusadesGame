@@ -15,7 +15,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.Map;
+import view.DesignMapMenu;
 import view.LoginMenu;
+import view.MainMenu;
 import view.Style;
 
 import java.util.HashMap;
@@ -91,14 +94,21 @@ public class MapDesignMenuController {
 
     public void cameraProcess(){
         mapPane.requestFocus();
+//        if (mapPane.getLayoutX() + mapPane.getPrefWidth() == 1512) break;
+//        else if(mapPane.getLayoutX() + mapPane.getWidth() - 20 < 1512) mapPane.setLayoutX(-mapPane.getPrefWidth() + 1512);
+//        else mapPane.setLayoutX(mapPane.getLayoutX() - 20);
         mapPane.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 switch (keyEvent.getCode()){
-                    case LEFT: mapPane.setLayoutX(mapPane.getLayoutX() - 20);break;
-                    case RIGHT: mapPane.setLayoutX(mapPane.getLayoutX() + 20);break;
-                    case DOWN: mapPane.setLayoutY(mapPane.getLayoutY() + 20);break;
-                    case UP: mapPane.setLayoutY(mapPane.getLayoutY() - 20);break;
+                    case LEFT: if (mapPane.getLayoutX() + 20 == 0) break;
+                    else if (mapPane.getLayoutX() + 20 > 0 ) mapPane.setLayoutX(0);
+                    else mapPane.setLayoutX(mapPane.getLayoutX() + 20); break;
+                    case DOWN: mapPane.setLayoutY(mapPane.getLayoutY() - 20); break;
+                    case RIGHT: mapPane.setLayoutX(mapPane.getLayoutX() - 20); break;
+                    case UP: if (mapPane.getLayoutY() + 20 == 0) break;
+                    else if (mapPane.getLayoutY() + 20 > 0 ) mapPane.setLayoutY(0);
+                    else mapPane.setLayoutY(mapPane.getLayoutY() + 20); break;
                 }
             }
         });
@@ -106,15 +116,16 @@ public class MapDesignMenuController {
 
     public void addToolBar(){
         Button addUser = new Button("add user");
-        Button designMap = new Button("design map");
-        Button startGame = new Button("start game");
+        Button designMap = new Button("design");
+        Button startGame = new Button("start");
+        Button back = new Button("back");
         Label error = new Label("");
         error.setFont(style.Font0(10));
-        HBox controlButtons = new HBox(addUser, designMap, startGame);
+        HBox controlButtons = new HBox(addUser, designMap, startGame, back);
         controlButtons.setAlignment(Pos.CENTER);
         controlButtons.setSpacing(10);
         for (Node child : controlButtons.getChildren()) {
-            style.button1((Button) child, 200, 50);
+            style.button1((Button) child, 150, 50);
             ((Button) child).setFont(style.Font0(25));
         }
         VBox designControls = new VBox(controlButtons, error);
@@ -128,7 +139,7 @@ public class MapDesignMenuController {
         designControls.setBackground(new Background(backgroundImage));
         toolBar.setLayoutX(300);
         toolBar.setLayoutY(680);
-//        toolBar.setManaged(false);
+        startGame.setOnMouseClicked(mouseEvent -> startMap(error));
         designMap.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -144,8 +155,17 @@ public class MapDesignMenuController {
                 handelAddUser(designControls, error);
             }
         });
+        back.setOnMouseClicked(mouseEvent -> new DesignMapMenu().start(stage));
 
         mapDesignPane.getChildren().add(toolBar);
+    }
+
+    public void startMap(Label error) {
+        String result = mapDesignController.startPlaying();
+        if (!result.equals("start")) {
+            error.setText(result);
+            error.setFont(style.Font0(15));
+        }
     }
 
     private void handelAddUser(VBox designControls, Label error) {
@@ -169,28 +189,45 @@ public class MapDesignMenuController {
         flag8.setGraphic(new Rectangle(30 , 30 , Color.rgb(218, 100 , 34)));
         MenuButton flags = new MenuButton("flags");
         flags.getItems().addAll(flag1, flag2, flag3, flag4, flag5, flag6, flag7, flag8);
+        flags.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(3), BorderStroke.THIN)));
         flags.setFont(style.Font0(20));
         for (MenuItem item : flags.getItems()) {
             item.setOnAction(e -> {
                 options.put("f", item.getText());
+                flags.setText(item.getText());
+                flags.setFont(style.Font0(20));
             });
         }
+        flags.setStyle("-fx-background-color: transparent;");
         TextField userName = new TextField();
         style.textFiled0(userName, "enter username here", 250, 50);
         userName.setFont(style.Font0(18));
         Button submit = new Button();
-        style.button0(submit, "add to selected location", 250 , 50);
+        style.button0(submit, "add user", 100 , 50);
         submit.setFont(style.Font0(18));
+        Button back = new Button();
+        style.button0(back, "back", 100 , 50);
+        back.setFont(style.Font0(18));
         flags.setAlignment(Pos.CENTER);
-        HBox newUserInfo = new HBox(userName, flags, submit);
+        HBox newUserInfo = new HBox(userName, flags, submit, back);
         newUserInfo.setAlignment(Pos.CENTER);
         newUserInfo.setSpacing(10);
         designControls.getChildren().add(newUserInfo);
         submit.setOnMouseClicked(e -> {
             options.put("u" , userName.getText());
             String result = mapDesignController.addUserToMap(options);
-            if(!result.equals("successful"))
+            if(!result.equals("successful")) {
                 error.setText(result);
+            }
+            else {
+                flags.setText("flags");
+                flags.setFont(style.Font0(20));
+                userName.setText(""); userName.setFont(style.Font0(18));
+            }
+        });
+        back.setOnMouseClicked(mouseEvent -> {
+            addToolBar();
+            designControls.getChildren().remove(newUserInfo);
         });
     }
 
@@ -220,6 +257,7 @@ public class MapDesignMenuController {
         back.setFont(style.Font0(15));
         designCommands.add(back, 3 , 1);
         back.setAlignment(Pos.BOTTOM_CENTER);
+        back.setOnMouseClicked(mouseEvent -> addToolBar());
         designControls.getChildren().add(0,designCommands);
     }
 
@@ -253,26 +291,28 @@ public class MapDesignMenuController {
         }
     }
 
-    public void processDefaultMapSelection(Stage stage, VBox details, Button defaultMaps) {
+    public void processDefaultMapSelection(Stage stage, VBox mapButtons,Button defaultMaps) {
         this.stage = stage;
         defaultMaps.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                details.getChildren().remove(defaultMaps);
 //                int[] counter = {1};
-                for (String defaultMap : controller.showDefaultMaps()) {
-                    Button map = new Button();
-                    style.button0(map, defaultMap, 310 , 50);
-                    map.setFont(style.Font0(25));
-                    details.getChildren().add(map);
-                    map.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent mouseEvent) {
-                            mapDesignController = controller.selectDefaultMap(controller.showDefaultMaps().indexOf(defaultMap));
-                            startDesignMap();
-                        }
-                    });
+                if (mapButtons.getChildren().size() > 0) mapButtons.getChildren().clear();
+                else {
+                    for (String defaultMap : controller.showDefaultMaps()) {
+                        Button map = new Button();
+                        style.button0(map, defaultMap, 310, 70);
+                        map.setFont(style.Font0(25));
+                        mapButtons.getChildren().add(map);
+                        map.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent mouseEvent) {
+                                mapDesignController = controller.selectDefaultMap(controller.showDefaultMaps().indexOf(defaultMap));
+                                startDesignMap();
+                            }
+                        });
 //                    counter[0] ++;
+                    }
                 }
             }
         });
