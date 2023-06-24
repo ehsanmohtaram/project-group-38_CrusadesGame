@@ -7,6 +7,7 @@ import javafx.scene.shape.Rectangle;
 import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitType;
+import view.controller.GameUI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -230,6 +231,7 @@ public class MapBlock extends StackPane {
     private void hoverProcess() {
         this.setOnMouseEntered(e -> {
             changeBorder(true);
+            GameUI.mouseOnBlock = this;
         });
         this.setOnMouseExited(e -> {
             if(!isSelected)

@@ -39,7 +39,7 @@ public class Kingdom{
         taxRate = 0;
         this.flag = flag;
         this.owner = owner;
-        this.balance = 10000.0;
+        this.balance = 1000.0;
         for (ResourceType resourceType : ResourceType.values()) resources.put(resourceType, 50);
         for (Weapons weapon : Weapons.values()) weapons.put(weapon, 0);
         for (Food food : Food.values()) foods.put(food, 0);

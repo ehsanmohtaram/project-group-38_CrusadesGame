@@ -1,6 +1,5 @@
 package controller;
 
-import javafx.stage.Stage;
 import model.Map;
 import model.User;
 
@@ -9,7 +8,7 @@ import java.util.*;
 public class Controller {
     public static User currentUser = null;
     public static User loggedInUser = null;
-    private Map gameMap;
+    public Map gameMap;
 
     public Controller() {
         for (User user : User.users) if (user.getLoggedIn()) currentUser = loggedInUser = user;

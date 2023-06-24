@@ -3,7 +3,6 @@ package controller;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import model.*;
@@ -11,7 +10,6 @@ import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -19,7 +17,6 @@ import java.util.Random;
 
 public class MapDesignController {
     private final Map gameMap;
-//    private final DesignMapMenu designMapMenu;
     private final User currentUser;
     private int XofMap;
     private int YofMap;
@@ -31,6 +28,10 @@ public class MapDesignController {
 //        designMapMenu = new DesignMapMenu(this);
         currentUser = Controller.currentUser;
         selectedBlocks = new ArrayList<>();
+    }
+
+    public Map getGameMap() {
+        return gameMap;
     }
 
     public void run(){

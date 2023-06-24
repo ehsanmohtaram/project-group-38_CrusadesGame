@@ -1,7 +1,6 @@
 package view.controller;
 
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.User;
 
@@ -12,8 +11,6 @@ public class InformationController {
     private TextField email;
     private TextField nickname;
     private TextField securityAnswer;
-    private String securityValue;
-    private TextField slogan;
 
     public void updateTextYouWant(TextField textField, int type) {
         switch (type) {
@@ -69,8 +66,6 @@ public class InformationController {
         this.email = email;
         this.password = password;
         this.securityAnswer = securityAnswer;
-        this.slogan = slogan;
-        this.securityValue = securityValue;
         if (username.getText().equals("")) {username.setText("h"); username.setText("");}
         if (nickName.getText().equals("")) {nickName.setText("h"); nickName.setText("");}
         if (email.getText().equals("")) {email.setText("h"); email.setText("");}

@@ -1,28 +1,22 @@
 package view;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import model.Map;
 import view.controller.MapDesignMenuController;
 
-import java.util.Objects;
-
 public class DesignMapMenu extends Application {
     private final MapDesignMenuController menuController;
     private Stage stage;
-    private Style style;
+    private final Style style;
     private Integer finalWidth;
-
     private Integer finalHeight;
     private String name;
     private Label finalName;
@@ -89,12 +83,7 @@ public class DesignMapMenu extends Application {
         vBox.setSpacing(30);
         pane.getChildren().add(vBox);
         menuController.processDefaultMapSelection(stage, vBox, defaultMaps);
-        submit.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                startGame(pane);
-            }
-        });
+        submit.setOnMouseClicked(mouseEvent -> startGame());
         back.setOnMouseClicked(mouseEvent -> {
             new MainMenu().start(stage);
             Map.DEFAULT_MAPS.clear();
@@ -106,7 +95,7 @@ public class DesignMapMenu extends Application {
 
     }
 
-    private void startGame(Pane pane) {
+    private void startGame() {
         menuController.getInfoFromMenu(stage, finalWidth, finalHeight, finalName);
         menuController.createNewMap();
     }
@@ -114,116 +103,59 @@ public class DesignMapMenu extends Application {
     private void changeAttributes(Label width, Label height, HBox size) {
         width.setOnMouseEntered(e -> {
             width.requestFocus();
-            width.setOnKeyPressed(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent keyEvent) {
-                    if(keyEvent.getCode().getName().equals("Right")){
-                        if(finalWidth < 100) {
-                            finalWidth += 5;
-                            width.setText(finalWidth.toString());
-                        }
+            width.setOnKeyPressed(keyEvent -> {
+                if(keyEvent.getCode().getName().equals("Right")){
+                    if(finalWidth < 100) {
+                        finalWidth += 5;
+                        width.setText(finalWidth.toString());
                     }
-                    if(keyEvent.getCode().getName().equals("Left")){
-                        if(finalWidth > 20) {
-                            finalWidth -= 5;
-                            width.setText(finalWidth.toString());
-                        }
+                }
+                if(keyEvent.getCode().getName().equals("Left")){
+                    if(finalWidth > 20) {
+                        finalWidth -= 5;
+                        width.setText(finalWidth.toString());
                     }
                 }
             });
         });
-        width.setOnMouseExited(e -> {
-            size.requestFocus();
-        });
+        width.setOnMouseExited(e -> size.requestFocus());
         height.setOnMouseEntered(e -> {
             height.requestFocus();
-            height.setOnKeyPressed(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent keyEvent) {
-                    if(keyEvent.getCode().getName().equals("Right")){
-                        if(finalHeight < 100) {
-                            finalHeight += 5;
-                            height.setText(finalHeight.toString());
-                        }
+            height.setOnKeyPressed(keyEvent -> {
+                if(keyEvent.getCode().getName().equals("Right")){
+                    if(finalHeight < 100) {
+                        finalHeight += 5;
+                        height.setText(finalHeight.toString());
                     }
-                    if(keyEvent.getCode().getName().equals("Left")){
-                        if(finalHeight > 20) {
-                            finalHeight -= 5;
-                            height.setText(finalHeight.toString());
-                        }
+                }
+                if(keyEvent.getCode().getName().equals("Left")){
+                    if(finalHeight > 20) {
+                        finalHeight -= 5;
+                        height.setText(finalHeight.toString());
                     }
                 }
             });
         });
-        height.setOnMouseExited(e -> {
-            size.requestFocus();
-        });
+        height.setOnMouseExited(e -> size.requestFocus());
 
     }
 
     public void processNameChange(Label name, TextField changeName, VBox details){
-        name.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if(mouseEvent.getClickCount() == 2){
-                    details.getChildren().remove(name);
-                    details.getChildren().add(0, changeName);
-                    changeName.requestFocus();
-                    changeName.setOnKeyPressed(new EventHandler<KeyEvent>() {
-                        @Override
-                        public void handle(KeyEvent keyEvent) {
-                            if(keyEvent.getCode().getName().equals("Enter")){
-                                name.setText(changeName.getText());
-                                details.getChildren().remove(changeName);
-                                details.getChildren().add(0, name);
-                                details.requestFocus();
-                            }
-                        }
-                    });
-                }
+        name.setOnMouseClicked(mouseEvent -> {
+            if(mouseEvent.getClickCount() == 2){
+                details.getChildren().remove(name);
+                details.getChildren().add(0, changeName);
+                changeName.requestFocus();
+                changeName.setOnKeyPressed(keyEvent -> {
+                    if(keyEvent.getCode().getName().equals("Enter")){
+                        name.setText(changeName.getText());
+                        details.getChildren().remove(changeName);
+                        details.getChildren().add(0, name);
+                        details.requestFocus();
+                    }
+                });
             }
         });
     }
-
-
-    public String run(){
-//        System.out.println("You can design your map here. When your map is ready input 'start game'");
-//        HashMap<String , String> options;
-//        String input, result;
-//        while (true) {
-//            input = CommandParser.getScanner().nextLine();
-//            if ((options = commandParser.validate(input,"set texture",
-//                    "x|positionX/y|positionY/x1/y1/x2/y2/t|type")) != null)
-//                System.out.println(mapDesignController.setTexture(options));
-//            else if ((options = commandParser.validate(input,"clear","x|positionX/y|positionY")) != null) {
-//                System.out.println(mapDesignController.clear(options));
-//            }else if ((options = commandParser.validate(input,"drop rock","x|positionX/y|positionY/d|direction")) != null) {
-//                System.out.println(mapDesignController.dropRock(options));
-//            }else if ((options = commandParser.validate(input,"drop tree","x|positionX/y|positionY/t|type")) != null) {
-//                System.out.println(mapDesignController.dropTree(options));
-//            }else if ((options = commandParser.validate(input,"add user","x|positionX/y|positionY/u|user/f|flag")) != null) {
-//                System.out.println(mapDesignController.addUserToMap(options));
-//            }else if ((options = commandParser.validate(input,"drop building","x|positionX/y|positionY/t|type/f|flag")) != null) {
-//                System.out.println(mapDesignController.dropBuilding(options));
-//            }else if ((options = commandParser.validate(input,"drop unit","x|positionX/y|positionY/t|type/f|flag/c|count")) != null) {
-//                System.out.println(mapDesignController.dropUnit(options));
-//            }else if ((options = commandParser.validate(input,"show map","x|positionX/y|positionY")) != null) {
-//                result = mapDesignController.showMap(options);
-//                System.out.println(result);
-//                if(result.matches("map:\\sin[\\S\\s]+")) {
-//                    System.out.println("you entered map menu");
-//                    return "map";
-//                }
-//            }else if(commandParser.validate(input,"start game",null) != null) {
-//                result = mapDesignController.startPlaying();
-//                if (!result.equals("start")) System.out.println(result);
-//                else return "start";
-//            } else if (commandParser.validate(input,"show current menu",null) != null)
-//                System.out.println("design map Menu");
-//            else System.out.println("invalid command");
-//        }
-        return null;
-    }
-
 
 }

@@ -3,24 +3,18 @@ package view.controller;
 import controller.Controller;
 import controller.MapDesignController;
 import javafx.animation.ScaleTransition;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import model.Map;
 import view.DesignMapMenu;
 import view.LoginMenu;
-import view.MainMenu;
 import view.Style;
-
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -37,7 +31,6 @@ public class MapDesignMenuController {
 
     public MapDesignMenuController() {
         controller = new Controller();
-//        this.mapDesignController = new MapDesignController();
         this.style = new Style();
     }
 
@@ -68,9 +61,7 @@ public class MapDesignMenuController {
         popUpTransition(popUp, 0, 1);
         pane.getChildren().get(0).setDisable(true);
 //        disableHBoxes(0.4);
-        button.setOnMouseClicked(mouseEvent -> {
-            popUpTransition(popUp, 1, 0);
-        });
+        button.setOnMouseClicked(mouseEvent -> popUpTransition(popUp, 1, 0));
     }
 
     private void startDesignMap() {
@@ -97,19 +88,16 @@ public class MapDesignMenuController {
 //        if (mapPane.getLayoutX() + mapPane.getPrefWidth() == 1512) break;
 //        else if(mapPane.getLayoutX() + mapPane.getWidth() - 20 < 1512) mapPane.setLayoutX(-mapPane.getPrefWidth() + 1512);
 //        else mapPane.setLayoutX(mapPane.getLayoutX() - 20);
-        mapPane.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                switch (keyEvent.getCode()){
-                    case LEFT: if (mapPane.getLayoutX() + 20 == 0) break;
-                    else if (mapPane.getLayoutX() + 20 > 0 ) mapPane.setLayoutX(0);
-                    else mapPane.setLayoutX(mapPane.getLayoutX() + 20); break;
-                    case DOWN: mapPane.setLayoutY(mapPane.getLayoutY() - 20); break;
-                    case RIGHT: mapPane.setLayoutX(mapPane.getLayoutX() - 20); break;
-                    case UP: if (mapPane.getLayoutY() + 20 == 0) break;
-                    else if (mapPane.getLayoutY() + 20 > 0 ) mapPane.setLayoutY(0);
-                    else mapPane.setLayoutY(mapPane.getLayoutY() + 20); break;
-                }
+        mapPane.setOnKeyPressed(keyEvent -> {
+            switch (keyEvent.getCode()){
+                case LEFT: if (mapPane.getLayoutX() + 20 == 0) break;
+                else if (mapPane.getLayoutX() + 20 > 0 ) mapPane.setLayoutX(0);
+                else mapPane.setLayoutX(mapPane.getLayoutX() + 20); break;
+                case DOWN: mapPane.setLayoutY(mapPane.getLayoutY() - 20); break;
+                case RIGHT: mapPane.setLayoutX(mapPane.getLayoutX() - 20); break;
+                case UP: if (mapPane.getLayoutY() + 20 == 0) break;
+                else if (mapPane.getLayoutY() + 20 > 0 ) mapPane.setLayoutY(0);
+                else mapPane.setLayoutY(mapPane.getLayoutY() + 20); break;
             }
         });
     }
@@ -139,37 +127,35 @@ public class MapDesignMenuController {
         designControls.setBackground(new Background(backgroundImage));
         toolBar.setLayoutX(300);
         toolBar.setLayoutY(680);
-        startGame.setOnMouseClicked(mouseEvent -> startMap(error));
-        designMap.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                designControls.getChildren().remove(controlButtons);
-                handelDesignMap(designControls);
-            }
+        startGame.setOnMouseClicked(mouseEvent -> startMap(error, mapDesignPane));
+        designMap.setOnMouseClicked(mouseEvent -> {
+            designControls.getChildren().remove(controlButtons);
+            handelDesignMap(designControls);
         });
 
-        addUser.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                designControls.getChildren().remove(controlButtons);
-                handelAddUser(designControls, error);
-            }
+        addUser.setOnMouseClicked(mouseEvent -> {
+            designControls.getChildren().remove(controlButtons);
+            handelAddUser(designControls, error);
         });
         back.setOnMouseClicked(mouseEvent -> new DesignMapMenu().start(stage));
 
         mapDesignPane.getChildren().add(toolBar);
     }
 
-    public void startMap(Label error) {
+    public void startMap(Label error, Pane mapDesignPane) {
         String result = mapDesignController.startPlaying();
         if (!result.equals("start")) {
             error.setText(result);
             error.setFont(style.Font0(15));
         }
+        else {
+            mapDesignPane.getChildren().remove(1);
+            mapDesignPane.getChildren().remove(1);
+            new GameUI(mapDesignPane, mapDesignController.getGameMap()).runGame();
+        }
     }
 
     private void handelAddUser(VBox designControls, Label error) {
-
         HashMap<String, String> options = new HashMap<>();
         MenuItem flag1 = new MenuItem("red");
         flag1.setGraphic(new Rectangle(30 , 30 , Color.rgb(218, 34 , 34)));
@@ -223,6 +209,7 @@ public class MapDesignMenuController {
                 flags.setText("flags");
                 flags.setFont(style.Font0(20));
                 userName.setText(""); userName.setFont(style.Font0(18));
+                error.setText("");
             }
         });
         back.setOnMouseClicked(mouseEvent -> {
@@ -260,19 +247,6 @@ public class MapDesignMenuController {
         back.setOnMouseClicked(mouseEvent -> addToolBar());
         designControls.getChildren().add(0,designCommands);
     }
-
-    //    public void makeLoginAlert(String result) {
-//        VBox popUp = new VBox();
-//        Button button = new Button();
-//        Pane pane = ((Pane)width.getScene().getRoot());
-//        style.popUp0(pane, popUp, button, 80, 50, 400, 295, 400, 100,200, 50, 450, 213, result, 20);
-//        popUpTransition(popUp, 0, 1);
-//        pane.getChildren().get(0).setDisable(true);
-////        disableHBoxes(0.4);
-//        button.setOnMouseClicked(mouseEvent -> {
-//            popUpTransition(popUp, 1, 0);
-//        });
-//    }
     public void popUpTransition(VBox popUp,int in, int out) {
         ScaleTransition scaleTransition = new ScaleTransition(Duration.seconds(0.5));
         scaleTransition.setNode(popUp);
@@ -285,7 +259,6 @@ public class MapDesignMenuController {
         if (out == 0) {
             scaleTransition.setOnFinished(actionEvent -> {
                 ((Pane) popUp.getParent()).getChildren().get(0).setDisable(false);
-//                disableHBoxes(1);
                 ((Pane) popUp.getParent()).getChildren().remove(1);
             });
         }
@@ -293,26 +266,19 @@ public class MapDesignMenuController {
 
     public void processDefaultMapSelection(Stage stage, VBox mapButtons,Button defaultMaps) {
         this.stage = stage;
-        defaultMaps.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
+        defaultMaps.setOnMouseClicked(mouseEvent -> {
 //                int[] counter = {1};
-                if (mapButtons.getChildren().size() > 0) mapButtons.getChildren().clear();
-                else {
-                    for (String defaultMap : controller.showDefaultMaps()) {
-                        Button map = new Button();
-                        style.button0(map, defaultMap, 310, 70);
-                        map.setFont(style.Font0(25));
-                        mapButtons.getChildren().add(map);
-                        map.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                            @Override
-                            public void handle(MouseEvent mouseEvent) {
-                                mapDesignController = controller.selectDefaultMap(controller.showDefaultMaps().indexOf(defaultMap));
-                                startDesignMap();
-                            }
-                        });
-//                    counter[0] ++;
-                    }
+            if (mapButtons.getChildren().size() > 0) mapButtons.getChildren().clear();
+            else {
+                for (String defaultMap : controller.showDefaultMaps()) {
+                    Button map = new Button();
+                    style.button0(map, defaultMap, 310, 70);
+                    map.setFont(style.Font0(25));
+                    mapButtons.getChildren().add(map);
+                    map.setOnMouseClicked(mouseEvent1 -> {
+                        mapDesignController = controller.selectDefaultMap(controller.showDefaultMaps().indexOf(defaultMap));
+                        startDesignMap();
+                    });
                 }
             }
         });

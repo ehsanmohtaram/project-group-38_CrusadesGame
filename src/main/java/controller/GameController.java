@@ -267,23 +267,14 @@ public class GameController {
     }
 
     public String dropBuilding(HashMap<String, String> options) {
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        try {BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));}
-        catch (Exception ignored) {return "There is no such a building!";}
-        if (BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_")).specificConstant instanceof SiegeType)
-            return "There is no such a building!";
-        String result = positionValidate(options.get("x"),options.get("y"));
-        if (result != null) return result;
         MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
         if (!currentKingdom.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition())) return "This block is out of range!";
-        BuildingType buildingType = BuildingType.valueOf(options.get("t").toUpperCase().replaceAll(" ","_"));
+        BuildingType buildingType = BuildingType.valueOf(options.get("t"));
         if (!mapBlock.getMapBlockType().isBuildable() && !(buildingType.specificConstant instanceof MineType))
             return "You can not build your building here. Please choose another location!";
         if (buildingType.equals(BuildingType.OX_TETHER) && !mapBlock.getMapBlockType().isBuildable())
             return "You can not build your building here. Please choose another location!";
         if (mapBlock.getBuildings() != null || mapBlock.getSiege() != null) return "This block already has filled with another building!";
-        if (buildingType.equals(BuildingType.HEAD_QUARTER) || buildingType.specificConstant instanceof SiegeType) return "You can not buy this building!";
         if (buildingType.getGOLD() > currentKingdom.getBalance()) return "You do not have enough gold to buy this building.";
         if (buildingType.equals(BuildingType.BIG_STONE_GATEHOUSE) || buildingType.equals(BuildingType.SMALL_STONE_GATEHOUSE))
             if (checkGate(mapBlock) == null) return "You can not build your gate here cause it do not have access to other blocks!";
@@ -292,11 +283,12 @@ public class GameController {
             return "You do not have enough " + buildingType.getRESOURCES().name().toLowerCase() + " to buy this building.";
         if (currentKingdom.checkForAvailableNormalUnit(buildingType.getWorkerNeeded()) < buildingType.getNumberOfWorker())
             return "There are not enough available worker to put in this building!";
+        String result;
         result = checkSpecificBuilding(mapBlock, buildingType);
         if (result != null) return result;
         if (buildingType.equals(BuildingType.STAIRS)) if (!checkStairPosition(mapBlock)) return "You can not put your stairs here!";
         createBuilding(mapBlock, buildingType);
-        return buildingType.name().toLowerCase().replaceAll("_"," ") + " added successfully to kingdom.";
+        return "done";
     }
 
     public String selectBuilding(HashMap<String, String> options) {
