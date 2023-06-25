@@ -20,6 +20,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import model.Database;
+import model.MapBlock;
 import model.User;
 import view.controller.LoginMenuController;
 import java.io.File;

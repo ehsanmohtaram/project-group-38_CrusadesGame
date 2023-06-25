@@ -26,6 +26,7 @@ public class Turn {
             innCheck();
             produceHorse();
         }
+        illness();
         setReligiousBuildingPopularity();
         giveFood();
         getTax();
@@ -35,6 +36,18 @@ public class Turn {
         removeUnitsAndBuildingWith0Hp();
         patrolExecution();
         trapsReset();
+    }
+
+    private void illness() {
+        if (currentKingdom.getIllness() != null) {
+            currentKingdom.setPopularity(-1);
+            return;
+        }
+        int random = (int)(10 * Math.random());
+        if (random % 4 == 0){
+            MapBlock illnessBlock = new MapBlock((int)(Math.random() * 10000) % gameMap.getMapWidth(),(int)(Math.random() * 10000) % gameMap.getMapHeight());
+            currentKingdom.setIllness(illnessBlock);
+        }
     }
 
     public void growPopulation() {
@@ -478,5 +491,6 @@ public class Turn {
             }
         }
     }
+
 
 }

@@ -18,6 +18,7 @@ public class Kingdom{
     private Integer foodRate;
     private Integer taxRate;
     private Building headquarter;
+    private MapBlock illness = null;
     private ArrayList<Trade> myRequests = new ArrayList<>();
     private ArrayList<Trade> mySuggestion = new ArrayList<>();
     private ArrayList<Trade> notification = new ArrayList<>();
@@ -63,6 +64,14 @@ public class Kingdom{
 
     public Double getBalance() {
         return balance;
+    }
+
+    public MapBlock getIllness() {
+        return illness;
+    }
+
+    public void setIllness(MapBlock illness) {
+        this.illness = illness;
     }
 
     public void setBalance(Double balance) {
