@@ -317,6 +317,12 @@ public class Kingdom{
         return counter;
     }
 
+    public int getUnitNumberByType(UnitType unitType) {
+        int counter = 0;
+        for (Unit unit : units) if (unit.getUnitType().equals(unitType)) counter++;
+        return counter;
+    }
+
     public void changeNonWorkingUnitPosition(UnitType unitType, MapBlock mapBlock, int number) {
         Camp camp;
         int counter = 0;

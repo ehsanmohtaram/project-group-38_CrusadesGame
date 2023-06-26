@@ -78,6 +78,7 @@ public class GameUI {
         Rectangle siege = new Rectangle(50, 50);
         siege.setFill(new ImagePattern(new Image(GameUI.class.getResource("/images/buttons/building-B4.png").toExternalForm())));
         buttonHolder.getChildren().addAll(defensive, producer, camp, stock, siege);
+        buttonHolder.setViewOrder(-1);
         rectangles.add(defensive); rectangles.add(producer); rectangles.add(camp); rectangles.add(stock); rectangles.add(siege);
         mainPane.getChildren().add(buttonHolder);
         balanceShow(mainPane);
