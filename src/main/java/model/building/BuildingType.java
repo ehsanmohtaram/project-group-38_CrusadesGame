@@ -22,12 +22,12 @@ public enum BuildingType {
     //Siege equipment
     MANGONEL(50, null, 0, 100, UnitType.ENGINEER,2, SiegeType.MANGONEL, new Image(BuildingType.class.getResource("/images/building/head.png").toExternalForm())),
     BALLISTA(50, null, 0, 100, UnitType.ENGINEER,2,SiegeType.BALLISTA, new Image(BuildingType.class.getResource("/images/building/head.png").toExternalForm())),
-    CATAPULT(150, null, 0, 300, UnitType.ENGINEER,2,SiegeType.CATAPULT, new Image(BuildingType.class.getResource("/images/building/head.png").toExternalForm())),
-    TREBUCHET(150, null, 0, 500, UnitType.ENGINEER,3,SiegeType.TREBUCHET, new Image(BuildingType.class.getResource("/images/building/head.png").toExternalForm())),
-    SIEGE_TOWER(200, null, 0, 500, UnitType.ENGINEER, 4, SiegeType.SIEGE_TOWER, new Image(BuildingType.class.getResource("/images/building/head.png").toExternalForm())),
-    BATTERING_RAM(180, null, 0, 500, UnitType.ENGINEER, 4, SiegeType.BATTERING_RAM, new Image(BuildingType.class.getResource("/images/building/head.png").toExternalForm())),
+    CATAPULT(150, null, 0, 300, UnitType.ENGINEER,2,SiegeType.CATAPULT, new Image(BuildingType.class.getResource("/images/building/CATAPULT.png").toExternalForm())),
+    TREBUCHET(150, null, 0, 500, UnitType.ENGINEER,3,SiegeType.TREBUCHET, new Image(BuildingType.class.getResource("/images/building/TREBUCHET.png").toExternalForm())),
+    SIEGE_TOWER(200, null, 0, 500, UnitType.ENGINEER, 4, SiegeType.SIEGE_TOWER, new Image(BuildingType.class.getResource("/images/building/SIEGE_TOWER.png").toExternalForm())),
+    BATTERING_RAM(180, null, 0, 500, UnitType.ENGINEER, 4, SiegeType.BATTERING_RAM, new Image(BuildingType.class.getResource("/images/building/BATTERING_RAM.png").toExternalForm())),
     MANTLET(6, null, 0, 100, UnitType.ENGINEER, 1, SiegeType.MANTLET, new Image(BuildingType.class.getResource("/images/building/head.png").toExternalForm())),
-    FIRE_BALLISTA(150, null, 0, 400, UnitType.ENGINEER, 2, SiegeType.FIRE_BALLISTA, new Image(BuildingType.class.getResource("/images/building/head.png").toExternalForm())),
+    FIRE_BALLISTA(150, null, 0, 400, UnitType.ENGINEER, 2, SiegeType.FIRE_BALLISTA, new Image(BuildingType.class.getResource("/images/building/FIRE_BALLISTA.png").toExternalForm())),
     //Camp equipment
     BARRACK(0, ResourceType.ROCK,15,500,  UnitType.WORKER,0,CampType.BARRACK, new Image(BuildingType.class.getResource("/images/building/BARRACK.png").toExternalForm())),
     SIEGE_TENT(0 ,null, 0, 100,  UnitType.WORKER,0,CampType.SIEGE_TENT, new Image(BuildingType.class.getResource("/images/building/SIEGE_TENT.png").toExternalForm())),
@@ -55,13 +55,13 @@ public enum BuildingType {
     APPLE_GARDEN(0, ResourceType.WOOD, 10, 250, UnitType.WORKER,1,ProducerType.APPLE_GARDEN, new Image(BuildingType.class.getResource("/images/building/APPLE_GARDEN.png").toExternalForm())),
     BARLEY_FARM(0, ResourceType.WOOD, 10, 250, UnitType.WORKER,1,ProducerType.BARLEY_FARM, new Image(BuildingType.class.getResource("/images/building/BARLEY_FARM.png").toExternalForm())),
     //Mine
-    QUARRY(0, ResourceType.WOOD, 20, 300, UnitType.WORKER, 3, MineType.QUARRY, new Image(BuildingType.class.getResource("/images/building/QUARRY.png").toExternalForm())),
+    QUARRY(0, ResourceType.WOOD, 20, 300, UnitType.WORKER, 3, MineType.QUARRY, new Image(BuildingType.class.getResource("/images/building/QUARRY.gif").toExternalForm())),
     IRON_MINE(0, ResourceType.WOOD, 20, 300, UnitType.WORKER, 2, MineType.IRON_MINE, new Image(BuildingType.class.getResource("/images/building/IRON_MINE.png").toExternalForm())),
     WOOD_CUTTER(0, ResourceType.WOOD, 3, 100, UnitType.WORKER, 1, MineType.WOOD_CUTTER, new Image(BuildingType.class.getResource("/images/building/WOOD_CUTTER.png").toExternalForm())),
     PITCH_RIG(0 , ResourceType.WOOD, 20, 150, UnitType.WORKER, 1, MineType.PITCH_RIG, new Image(BuildingType.class.getResource("/images/building/PITCH_RIG.png").toExternalForm())),
     OX_TETHER(0, ResourceType.WOOD, 5, 200, UnitType.WORKER, 1, MineType.OX_TETHER, new Image(BuildingType.class.getResource("/images/building/OX_TETHER.png").toExternalForm())),
     //Other
-    SHOP(0, ResourceType.WOOD, 5, 300, UnitType.WORKER, 1, null, new Image(BuildingType.class.getResource("/images/building/SHOP.png").toExternalForm())),
+    SHOP(0, ResourceType.WOOD, 5, 300, UnitType.WORKER, 0, null, new Image(BuildingType.class.getResource("/images/building/SHOP.png").toExternalForm())),
     HOUSE(0, ResourceType.WOOD, 6, 200, UnitType.WORKER, 0, null, new Image(BuildingType.class.getResource("/images/building/HOUSE.gif").toExternalForm()));
     private final Integer GOLD;
     private final ResourceType RESOURCES;

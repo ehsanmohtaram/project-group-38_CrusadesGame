@@ -16,6 +16,7 @@ import view.DesignMapMenu;
 import view.LoginMenu;
 import view.Style;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Objects;
 
 public class MapDesignMenuController {
@@ -75,6 +76,7 @@ public class MapDesignMenuController {
 //        mapDesignPane.getChildren().add(mapPane);
         mapDesignController.addMapToPane(mapDesignPane);
 //        mapPane.setManaged(false);
+        if(mapDesignPane.getChildren().size() == 2) mapDesignPane.getChildren().remove(1);
         addToolBar();
         cameraProcess();
 
@@ -150,7 +152,7 @@ public class MapDesignMenuController {
         }
         else {
             mapDesignPane.getChildren().remove(1);
-            mapDesignPane.getChildren().remove(1);
+            System.out.println(mapDesignPane.getChildren());
             new GameUI(mapDesignPane, mapDesignController.getGameMap()).runGame();
         }
     }
@@ -213,6 +215,7 @@ public class MapDesignMenuController {
             }
         });
         back.setOnMouseClicked(mouseEvent -> {
+            if (mapDesignPane.getChildren().size() == 2) mapDesignPane.getChildren().remove(1);
             addToolBar();
             designControls.getChildren().remove(newUserInfo);
         });
@@ -244,7 +247,10 @@ public class MapDesignMenuController {
         back.setFont(style.Font0(15));
         designCommands.add(back, 3 , 1);
         back.setAlignment(Pos.BOTTOM_CENTER);
-        back.setOnMouseClicked(mouseEvent -> addToolBar());
+        back.setOnMouseClicked(mouseEvent -> {
+            if(mapDesignPane.getChildren().size() == 2) mapDesignPane.getChildren().remove(1);
+            addToolBar();
+        });
         designControls.getChildren().add(0,designCommands);
     }
     public void popUpTransition(VBox popUp,int in, int out) {

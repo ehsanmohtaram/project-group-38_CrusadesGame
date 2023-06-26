@@ -3,6 +3,7 @@ import controller.Controller;
 import controller.GameController;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.BlendMode;
@@ -13,12 +14,16 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
+import model.Kingdom;
 import model.Map;
 import model.MapBlock;
-import model.building.BuildingType;
-import model.building.SiegeType;
+import model.building.*;
+import view.BuildingMenu;
 import view.LoginMenu;
 import view.Style;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GameUI {
@@ -58,31 +63,46 @@ public class GameUI {
     }
 
     public void addMenuButton(Pane gameTools) {
+        ArrayList<Rectangle> rectangles = new ArrayList<>();
         Pane mainPane = new Pane();
+        addStockAndHeadButton(mainPane);
         HBox buttonHolder = new HBox();
-        Rectangle building = new Rectangle(50, 50);
-        building.setFill(new ImagePattern(new Image(GameUI.class.getResource("/images/buttons/building_B.png").toExternalForm())));
-        Rectangle weapon = new Rectangle(50, 50);
-        weapon.setFill(new ImagePattern(new Image(GameUI.class.getResource("/images/buttons/building_B.png").toExternalForm())));
-        Rectangle untitled = new Rectangle(50, 50);
-        untitled.setFill(new ImagePattern(new Image(GameUI.class.getResource("/images/buttons/building_B.png").toExternalForm())));
-        buttonHolder.getChildren().addAll(building, weapon, untitled);
+        Rectangle defensive = new Rectangle(50, 50);
+        defensive.setFill(new ImagePattern(new Image(GameUI.class.getResource("/images/buttons/building_B.png").toExternalForm())));
+        Rectangle producer = new Rectangle(50, 50);
+        producer.setFill(new ImagePattern(new Image(GameUI.class.getResource("/images/buttons/building-B1.png").toExternalForm())));
+        Rectangle camp = new Rectangle(50, 50);
+        camp.setFill(new ImagePattern(new Image(GameUI.class.getResource("/images/buttons/building-B2.png").toExternalForm())));
+        Rectangle stock = new Rectangle(50, 50);
+        stock.setFill(new ImagePattern(new Image(GameUI.class.getResource("/images/buttons/building-B3.png").toExternalForm())));
+        Rectangle siege = new Rectangle(50, 50);
+        siege.setFill(new ImagePattern(new Image(GameUI.class.getResource("/images/buttons/building-B4.png").toExternalForm())));
+        buttonHolder.getChildren().addAll(defensive, producer, camp, stock, siege);
+        rectangles.add(defensive); rectangles.add(producer); rectangles.add(camp); rectangles.add(stock); rectangles.add(siege);
         mainPane.getChildren().add(buttonHolder);
         balanceShow(mainPane);
         buttonHolder.setLayoutX(340);
         buttonHolder.setLayoutY(240);
         gameTools.getChildren().add(mainPane);
-        building.setOnMouseClicked(mouseEvent -> {
-            if(mainPane.getChildren().size() == 2) {
-                building.setOpacity(0.5);
-                buildingMenuShow(mainPane);
-            }
-            else {
-                building.setOpacity(1);
-                mainPane.getChildren().remove(1);
-            }
-
-        });
+        int counter = 0;
+        for (Rectangle rectangle : rectangles) {
+            int finalCounter = counter;
+            rectangle.setOnMouseClicked(mouseEvent -> {
+                if(mainPane.getChildren().size() == 4) {
+                    mainPane.getChildren().remove(2); mainPane.getChildren().remove(2);
+                }
+                for (Rectangle opacityManger : rectangles) opacityManger.setOpacity(1);
+                rectangle.setOpacity(0.5);
+                buildingMenuShow(mainPane , finalCounter);
+            });
+            counter++;
+        }
+    }
+    public void addStockAndHeadButton(Pane mainPane) {
+        for (Kingdom kingdom : gameMap.getPlayers()) {
+            redirectToBuildingMenu((Rectangle)kingdom.getHeadquarter().getPosition().getChildren().get(0), mainPane);
+            redirectToBuildingMenu((Rectangle)kingdom.getBuildings().get(1).getPosition().getChildren().get(0), mainPane);
+        }
     }
     public void balanceShow(Pane mainPane) {
         VBox balance = new VBox();
@@ -105,42 +125,55 @@ public class GameUI {
     }
 
     public void updateBalance() {
-        coinValue.setText(Double.toString(gameMap.getKingdomByOwner(Controller.currentUser).getBalance()));
+        DecimalFormat decimalFormat = new DecimalFormat("0.0");
+        coinValue.setText(decimalFormat.format(gameMap.getKingdomByOwner(Controller.currentUser).getBalance()));
     }
 
-    public void buildingMenuShow(Pane mainPane) {
+    public void buildingMenuShow(Pane mainPane, int type) {
+        Label buildingName = new Label();
+        buildingName.setFont(style.Font0(15));
+        buildingName.setTextFill(Color.BEIGE);
         HBox buildingHolder = new HBox();
         for (BuildingType buildingType : BuildingType.values()) {
-            if (!(buildingType.specificConstant instanceof SiegeType)) {
-                StackPane stackPane = new StackPane();
-                stackPane.setPrefSize(100, 100);
-                BackgroundSize backgroundSize = new BackgroundSize(100, 100, false, false, false, false);
-                BackgroundImage backgroundImage = new BackgroundImage(buildingType.getTexture(), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
-                stackPane.setBackground(new Background(backgroundImage));
-                buildingHolder.getChildren().add(stackPane);
-                Label name = new Label(buildingType.name());
-                HBox nameBox = new HBox();
-                nameBox.setAlignment(Pos.CENTER);
-                nameBox.setMaxSize(80, 10);
-                nameBox.setBackground(Background.fill(Color.GRAY));
-                nameBox.getChildren().add(name);
-                name.setFont(style.Font0(10));
-                stackPane.setOnMouseEntered(mouseEvent -> stackPane.getChildren().add(nameBox));
-                stackPane.setOnMouseExited(mouseEvent -> stackPane.getChildren().remove(nameBox));
-                dragAndDropBuilding(stackPane, buildingType);
+            if (type == 0 && ((buildingType.specificConstant instanceof DefensiveStructureType && !buildingType.name().equals(BuildingType.HEAD_QUARTER.name())) || buildingType.name().equals(BuildingType.STAIRS.name()))) {
+                addBuildingToPane(buildingType, buildingHolder, buildingName, mainPane);
+            }
+            else if (type == 1 && (buildingType.specificConstant instanceof ProducerType || buildingType.specificConstant instanceof MineType)) {
+                addBuildingToPane(buildingType, buildingHolder, buildingName, mainPane);
+            }
+            else if (type == 2 && buildingType.specificConstant instanceof CampType) {
+                addBuildingToPane(buildingType, buildingHolder, buildingName, mainPane);
+            }
+            else if (type == 3 && (buildingType.specificConstant instanceof StockType || buildingType.specificConstant == null)) {
+                addBuildingToPane(buildingType, buildingHolder, buildingName, mainPane);
+            }
+            else if (type == 4 && buildingType.specificConstant instanceof SiegeType) {
+                addBuildingToPane(buildingType, buildingHolder, buildingName, mainPane);
             }
         }
         ScrollPane scrollPane = new ScrollPane(buildingHolder);
         scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
         scrollPane.setBlendMode(BlendMode.DARKEN);
         scrollPane.setPrefSize(780, 120);
-        scrollPane.setLayoutX(350);
-        scrollPane.setLayoutY(120);
-        mainPane.getChildren().add(scrollPane);
+        scrollPane.setLayoutX(350); scrollPane.setLayoutY(120);
+        buildingName.setLayoutX(350); buildingName.setLayoutY(60);
+        mainPane.getChildren().addAll(buildingName, scrollPane);
+    }
+
+    public void addBuildingToPane(BuildingType buildingType, HBox buildingHolder, Label buildingName,Pane mainPane ) {
+        StackPane stackPane = new StackPane();
+        stackPane.setPrefSize(100, 100);
+        BackgroundSize backgroundSize = new BackgroundSize(100, 100, false, false, false, false);
+        BackgroundImage backgroundImage = new BackgroundImage(buildingType.getTexture(), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+        stackPane.setBackground(new Background(backgroundImage));
+        buildingHolder.getChildren().add(stackPane);
+        stackPane.setOnMouseEntered(mouseEvent -> buildingName.setText(buildingType.name().toLowerCase().replaceAll("_"," ")));
+        stackPane.setOnMouseExited(mouseEvent -> buildingName.setText(""));
+        dragAndDropBuilding(stackPane, buildingType ,mainPane);
     }
 
 
-    public void dragAndDropBuilding(StackPane stackPane, BuildingType buildingType) {
+    public void dragAndDropBuilding(StackPane stackPane, BuildingType buildingType, Pane mainPane) {
         Rectangle movingImage = new Rectangle(100, 100);
         stackPane.setOnDragDetected(mouseEvent -> {
             isDragActive = 1;
@@ -158,14 +191,14 @@ public class GameUI {
             if (isDragActive == 1) {
                 mapDesignMenu.getChildren().remove(mapDesignMenu.getChildren().size() - 1);
                 PauseTransition pauseTransition = new PauseTransition(Duration.millis(10));
-                pauseTransition.setOnFinished(actionEvent -> setBuilding(typeOfBuilding));
+                pauseTransition.setOnFinished(actionEvent -> setBuilding(typeOfBuilding, mainPane));
                 pauseTransition.play();
             }
             isDragActive = 0;
         });
     }
 
-    public void setBuilding(BuildingType buildingType) {
+    public void setBuilding(BuildingType buildingType, Pane mainPane) {
         HashMap<String, String> option = new HashMap<>();
         option.put("t", buildingType.name());
         option.put("x", Integer.toString(mouseOnBlock.getxPosition()));
@@ -173,6 +206,7 @@ public class GameUI {
         String result = gameController.dropBuilding(option);
         if (result.equals("done")) {
             Rectangle rectangle = new Rectangle(100, 100);
+            redirectToBuildingMenu(rectangle, mainPane);
             rectangle.setFill(new ImagePattern(buildingType.getTexture()));
             mouseOnBlock.getChildren().add(rectangle);
             updateBalance();
@@ -181,5 +215,19 @@ public class GameUI {
             System.out.println(result);
         }
     }
+
+    public void redirectToBuildingMenu(Rectangle building, Pane manePane) {
+        building.setOnMouseClicked(mouseEvent -> {
+            if (!((MapBlock)building.getParent()).getBuildings()
+                    .getOwner().equals(gameMap.getKingdomByOwner(Controller.currentUser))) return;
+            if(manePane.getChildren().size() == 4) {
+                manePane.getChildren().remove(2);
+                manePane.getChildren().remove(2);
+                for(Node node : ((HBox) manePane.getChildren().get(0)).getChildren()) node.setOpacity(1);
+            }
+            new BuildingMenu(manePane, ((MapBlock)building.getParent()).getBuildings().getBuildingType(), (MapBlock)building.getParent(),gameMap, coinValue).buildingMenuUISetup();
+        });
+    }
+
 
 }
