@@ -45,8 +45,7 @@ public class GameController {
                     tradeController.runTrade();
                     break;
                 case "building":
-                    BuildingController buildingController = new BuildingController();
-                    buildingController.run();
+                    //BuildingController buildingController = new BuildingController();
                     break;
                 case "unit":
                     UnitController unitController = new UnitController();
