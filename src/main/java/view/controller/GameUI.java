@@ -52,7 +52,7 @@ public class GameUI {
     public void addToolBar() {
         Pane gameTools = new StackPane();
         gameTools.setPrefSize(1540,300);
-        gameTools.setLayoutY(650);
+        gameTools.setLayoutY(630);
         gameTools.setLayoutX(-20);
         BackgroundSize backgroundSize = new BackgroundSize(1540, 300, false, false, false, false);
         Image image = new Image(LoginMenu.class.getResource("/images/menus/menu.png").toExternalForm());

@@ -150,10 +150,11 @@ public class BuildingMenu {
         units.setSpacing(36);
         if (buildingType.equals(BuildingType.BARRACK)) setUnitImages(units, 0);
         else if (buildingType.equals(BuildingType.MERCENARY_POST)) setUnitImages(units, 1);
+        else if (buildingType.equals(BuildingType.ENGINEER_GUILD)) setUnitImages(units, -1);
         buildingInformationHolder.getChildren().add(units);
         units.setLayoutX(17);
         units.setLayoutY(55);
-        if (buildingType.equals(BuildingType.BARRACK)) units.setLayoutY(50);
+        if (buildingType.equals(BuildingType.BARRACK) || buildingType.equals(BuildingType.ENGINEER_GUILD)) units.setLayoutY(50);
         buildingInformationHolder.setLayoutY(57);
         buildingInformationHolder.setLayoutX(335);
     }
