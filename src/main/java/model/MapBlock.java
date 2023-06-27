@@ -3,6 +3,7 @@ package model;
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import model.building.*;
 import model.unit.Unit;
@@ -11,6 +12,7 @@ import view.controller.GameUI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class MapBlock extends StackPane {
 
@@ -24,9 +26,9 @@ public class MapBlock extends StackPane {
     private final Integer xPosition;
     private final Integer yPosition;
     private HashMap<Tree , Integer> numberOfTrees;
-    private StackPane nodesInLocation;
     private Rectangle backgroundImage;
     private boolean isSelected;
+    private ArrayList<Rectangle> treeImage;
 
     public MapBlock(Integer xPosition, Integer yPosition) {
         super();
@@ -40,6 +42,7 @@ public class MapBlock extends StackPane {
         units = new ArrayList<>();
         numberOfTrees = new HashMap<>();
         for (Tree tree: Tree.values()) numberOfTrees.put(tree , 0);
+        treeImage = new ArrayList<>();
 
 
 //        setScaleX(100);
@@ -100,6 +103,12 @@ public class MapBlock extends StackPane {
             resource = ResourceType.RIG;
             resourceAmount = 60;
         }
+        if(!mapBlockType.isCultivable()) {
+            for (Tree tree : numberOfTrees.keySet()) {
+                numberOfTrees.put(tree, 0);
+                getChildren().remove(treeImage);
+            }
+        }
     }
 
     public Integer getxPosition() {
@@ -157,8 +166,18 @@ public class MapBlock extends StackPane {
     public boolean addTree(Tree tree){
         if(!mapBlockType.isCultivable())
             return false;
-        numberOfTrees.put(tree , numberOfTrees.get(tree) + 10);
+        numberOfTrees.put(tree , numberOfTrees.get(tree) + 1);
         resource = ResourceType.WOOD;
+        if(treeImage.size() < 4){
+            Rectangle image = new Rectangle(60, 60);
+            this.treeImage.add(image);
+            image.setFill(Color.rgb(0, 0, 0, 0));
+            image.setFill(new ImagePattern(tree.getTexture()));
+            image.setManaged(false);
+            image.setLayoutX(new Random().nextInt(50) );
+            image.setLayoutY(new Random().nextInt(50) );
+            getChildren().add(image);
+        }
         resourceAmount += (numberOfTrees.get(tree) * 20);
         return true;
     }

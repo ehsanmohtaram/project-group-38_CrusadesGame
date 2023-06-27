@@ -6,17 +6,21 @@ import javafx.animation.ScaleTransition;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.MapBlock;
+import model.MapBlockType;
+import model.Tree;
 import view.DesignMapMenu;
 import view.LoginMenu;
 import view.Style;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Objects;
 
 public class MapDesignMenuController {
@@ -29,6 +33,7 @@ public class MapDesignMenuController {
     private Label name;
     private Pane mapDesignPane;
     private Pane mapPane;
+    private VBox designControls;
 
     public MapDesignMenuController() {
         controller = new Controller();
@@ -119,6 +124,7 @@ public class MapDesignMenuController {
             ((Button) child).setFont(style.Font0(25));
         }
         VBox designControls = new VBox(controlButtons, error);
+        this.designControls = designControls;
         designControls.setSpacing(5);
         designControls.setAlignment(Pos.CENTER);
         Pane toolBar = new Pane(designControls);
@@ -132,12 +138,12 @@ public class MapDesignMenuController {
         startGame.setOnMouseClicked(mouseEvent -> startMap(error, mapDesignPane));
         designMap.setOnMouseClicked(mouseEvent -> {
             designControls.getChildren().remove(controlButtons);
-            handelDesignMap(designControls);
+            handelDesignMap();
         });
 
         addUser.setOnMouseClicked(mouseEvent -> {
             designControls.getChildren().remove(controlButtons);
-            handelAddUser(designControls, error);
+            handelAddUser(error);
         });
         back.setOnMouseClicked(mouseEvent -> new DesignMapMenu().start(stage));
 
@@ -157,7 +163,7 @@ public class MapDesignMenuController {
         }
     }
 
-    private void handelAddUser(VBox designControls, Label error) {
+    private void handelAddUser(Label error) {
         HashMap<String, String> options = new HashMap<>();
         MenuItem flag1 = new MenuItem("red");
         flag1.setGraphic(new Rectangle(30 , 30 , Color.rgb(218, 34 , 34)));
@@ -221,7 +227,7 @@ public class MapDesignMenuController {
         });
     }
 
-    private void handelDesignMap(VBox designControls) {
+    private void handelDesignMap() {
         GridPane designCommands = new GridPane();
         designCommands.setAlignment(Pos.CENTER);
         designCommands.setHgap(10);
@@ -239,20 +245,108 @@ public class MapDesignMenuController {
         designCommands.add(dropBuilding,1  ,1 );
         designCommands.add(clear, 2 , 1);
         for (Node child : designCommands.getChildren()) {
-            style.button1((Button) child, 150 , 50);
-            ((Button) child).setFont(style.Font0(20));
+            Button command = (Button) child;
+            style.button1(command, 150 , 50);
+            command.setFont(style.Font0(20));
+            child.setOnMouseClicked(mouseEvent -> {
+                handelDesignCommands(command.getText());
+            });
         }
         Button back = new Button("back");
         style.button1(back, 100, 25);
         back.setFont(style.Font0(15));
         designCommands.add(back, 3 , 1);
         back.setAlignment(Pos.BOTTOM_CENTER);
+        designControls.getChildren().add(designCommands);
         back.setOnMouseClicked(mouseEvent -> {
             if(mapDesignPane.getChildren().size() == 2) mapDesignPane.getChildren().remove(1);
             addToolBar();
         });
-        designControls.getChildren().add(0,designCommands);
     }
+
+    private void handelDesignCommands(String text) {
+        designControls.getChildren().remove(1);
+        HBox details = new HBox();
+        details.setAlignment(Pos.CENTER);
+        details.setSpacing(15);
+        Button back = new Button();
+        style.button0(back, "back" , 100 , 40);
+        back.setFont(style.Font0(15));
+        back.setOnMouseClicked(mouseEvent -> {
+            designControls.getChildren().remove(1);
+            handelDesignMap();
+        });
+
+        switch (text){
+            case "setTexture" : setTexture(details, false);break;
+            case "dropRock" : dropRock(details);break;
+            case "dropTree" : setTexture(details, true);break;
+            case "clear" : clearBlock(details);break;
+            case "dropUnit" : dropUnit(details);break;
+            case "dropBuilding" : dropBuilding(details);break;
+        }
+        details.getChildren().add(back);
+        designControls.getChildren().add(details);
+    }
+
+    private void dropRock(HBox details) {
+    }
+
+    private void clearBlock(HBox details){
+
+    }
+
+    private void dropUnit(HBox details){
+
+    }
+
+    private void dropBuilding(HBox details){
+
+    }
+
+    public void setTexture(HBox details, boolean isIncludeTreeProcess){
+        HBox textures = new HBox();
+        Label error = (Label) designControls.getChildren().get(0);
+        textures.setSpacing(5);
+        if(isIncludeTreeProcess) {
+            HashMap<Rectangle, Tree> choice = new HashMap<>();
+            for (Tree tree : Tree.values()) {
+                Rectangle control = new Rectangle(100, 100);
+                control.setFill(new ImagePattern(tree.getTexture()));
+                textures.getChildren().add(control);
+                choice.put(control, tree);
+                control.setOnMouseClicked(mouseEvent -> {
+                    String result = mapDesignController.dropTree(choice.get(control));
+                    if(!result.equals("successful")) {
+                        error.setText(result);
+                    }
+                });
+            }
+        }else {
+            for (MapBlockType blockType : MapBlockType.values()) {
+                HashMap<Rectangle, MapBlockType> choice = new HashMap<>();
+                Rectangle control = new Rectangle(100, 100);
+                control.setFill(new ImagePattern(blockType.getTexture()));
+                textures.getChildren().add(control);
+                choice.put(control, blockType);
+                control.setOnMouseClicked(mouseEvent -> {
+                    String result = mapDesignController.setTexture(choice.get(control));
+                    if(!result.equals("successful")) {
+                        error.setText(result);
+                    }
+                });
+            }
+        }
+        ScrollPane textureBar = new ScrollPane(textures);
+        textureBar.getStyleClass().add("edge-to-edge");
+        textureBar.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+        textureBar.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        textureBar.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        textureBar.setPrefSize(600, 120);
+        textureBar.setBlendMode(BlendMode.DARKEN);
+        details.getChildren().add(textureBar);
+    }
+
     public void popUpTransition(VBox popUp,int in, int out) {
         ScaleTransition scaleTransition = new ScaleTransition(Duration.seconds(0.5));
         scaleTransition.setNode(popUp);
