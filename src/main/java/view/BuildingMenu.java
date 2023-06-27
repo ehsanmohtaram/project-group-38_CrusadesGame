@@ -2,6 +2,7 @@ package view;
 
 import controller.BuildingController;
 import controller.Controller;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -9,16 +10,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import model.*;
 import model.building.*;
+import model.unit.UnitType;
 import view.controller.BuildingMenuController;
-
 import java.text.DecimalFormat;
 
 public class BuildingMenu {
@@ -76,7 +75,7 @@ public class BuildingMenu {
     public void defensiveBuildingRnu(Pane buildingInformationHolder) {
         HBox holder = new HBox();
         holder.setAlignment(Pos.CENTER);
-        holder.setSpacing(100);
+        holder.setSpacing(20);
         VBox hpAndText = new VBox();
         hpAndText.setAlignment(Pos.CENTER);
         hpAndText.setSpacing(15);
@@ -106,27 +105,68 @@ public class BuildingMenu {
             }
             else System.out.println(result);
         });
-//            else if ((optionPass = commandParser.validate(command, "gate", "a|access")) != null)
-//                System.out.println(buildingController.openAccess(optionPass));
-//            else System.out.println("Invalid command");
-//        }
+        HBox.setMargin(repairHolder, new Insets(0,0,0,80));
+        addAccess(holder);
+    }
 
+    public void addAccess(HBox holder) {
+        if (!buildingType.equals(BuildingType.BIG_STONE_GATEHOUSE) && !buildingType.equals(BuildingType.SMALL_STONE_GATEHOUSE) &&
+                !buildingType.equals(BuildingType.DRAWBRIDGE)) return;
+        Rectangle access = new Rectangle(100, 100);
+        Image open = new Image(BuildingMenu.class.getResource("/images/buttons/open.png").toExternalForm());
+        Image close = new Image(BuildingMenu.class.getResource("/images/buttons/close.png").toExternalForm());
+        Image open_c = new Image(BuildingMenu.class.getResource("/images/buttons/open-c.png").toExternalForm());
+        Image close_c = new Image(BuildingMenu.class.getResource("/images/buttons/close-c.png").toExternalForm());
+        if (buildingController.getAccessType()) access.setFill(new ImagePattern(open));
+        else access.setFill(new ImagePattern(close));
+        access.setOnMouseClicked(mouseEvent -> {
+            String result;
+            if (((ImagePattern) access.getFill()).getImage().equals(open_c)) result = buildingController.openAccess("close");
+            else result = buildingController.openAccess("open");
+            if (result.equals("done")) {
+                if (((ImagePattern) access.getFill()).getImage().equals(open_c)) access.setFill(new ImagePattern(close_c));
+                else access.setFill(new ImagePattern(open_c));
+            }
+            else System.out.println(result);
+        });
+        access.setOnMouseEntered(mouseEvent -> {
+            if (((ImagePattern) access.getFill()).getImage().equals(open)) access.setFill(new ImagePattern(open_c));
+            else access.setFill(new ImagePattern(close_c));
+        });
+        access.setOnMouseExited(mouseEvent -> {
+            if (((ImagePattern) access.getFill()).getImage().equals(open_c)) access.setFill(new ImagePattern(open));
+            else access.setFill(new ImagePattern(close));
+        });
+        holder.getChildren().add(access);
     }
 
     public void campBuildingRnu(Pane buildingInformationHolder) {
+        buildingInformationHolder.setPrefSize(808, 203);
+        BackgroundSize backgroundSize = new BackgroundSize(808, 203, false, false, false, false);
+        BackgroundImage backgroundImage = new BackgroundImage(new Image(BuildingMenu.class.getResource("/images/menus/barrack.png").toExternalForm()), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+        buildingInformationHolder.setBackground(new Background(backgroundImage));
+        HBox units = new HBox();
+        units.setAlignment(Pos.CENTER);
+        units.setSpacing(36);
+        if (buildingType.equals(BuildingType.BARRACK)) setUnitImages(units, 0);
+        else if (buildingType.equals(BuildingType.MERCENARY_POST)) setUnitImages(units, 1);
+        buildingInformationHolder.getChildren().add(units);
+        units.setLayoutX(17);
+        units.setLayoutY(55);
+        if (buildingType.equals(BuildingType.BARRACK)) units.setLayoutY(50);
+        buildingInformationHolder.setLayoutY(57);
+        buildingInformationHolder.setLayoutX(335);
+    }
 
-//        HashMap<String, String> optionPass;
-//        String command;
-//        System.out.println(buildingController.buildingHp());
-//        while (true) {
-//            command = CommandParser.getScanner().nextLine();
-//            if (commandParser.validate(command, "back", null) != null) return "back";
-//            if (commandParser.validate(command, "repair", null) != null)
-//                System.out.println(buildingController.repairBuilding());
-//            else if ((optionPass = commandParser.validate(command, "create unit","t|type/c|count")) != null)
-//                System.out.println(buildingController.createUnit(optionPass));
-//            else System.out.println("Invalid command");
-//        }
+    public void setUnitImages(HBox units, int type) {
+        for (UnitType unit : UnitType.values()) {
+            if (unit.getIS_ARAB().equals(type)) {
+                Rectangle unitHolder = new Rectangle(80, 140);
+                unitHolder.setOpacity(0.8);
+                unitHolder.setFill(new ImagePattern(unit.getMenuTexture()));
+                units.getChildren().add(unitHolder);
+            }
+        }
     }
 
     public void stockBuildingRun(Pane buildingInformationHolder) {

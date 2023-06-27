@@ -343,8 +343,8 @@ public class BuildingController {
                 if (j == i || (j + i == 0)) continue;
                 if (j + y > gameMap.getMapHeight() || j + y < 0) continue;
                 mapBlock = gameMap.getMapBlockByLocation(x + i, y + j);
-                if (mapBlock.getBuildings().getBuildingType().equals(BuildingType.SMALL_STONE_GATEHOUSE) ||
-                        mapBlock.getBuildings().getBuildingType().equals(BuildingType.BIG_STONE_GATEHOUSE)) {
+                if (mapBlock.getBuildings() != null && (mapBlock.getBuildings().getBuildingType().equals(BuildingType.SMALL_STONE_GATEHOUSE) ||
+                        mapBlock.getBuildings().getBuildingType().equals(BuildingType.BIG_STONE_GATEHOUSE))) {
                     if (gameMap.getGateDirection(mapBlock.getBuildings()).equals(Direction.NORTH) && (x == (x + i)))
                         return mapBlock;
                     if (gameMap.getGateDirection(mapBlock.getBuildings()).equals(Direction.EAST) && (y == (y + j)))
@@ -355,21 +355,13 @@ public class BuildingController {
         return null;
     }
 
-    public String openAccess(HashMap<String, String> options) {
+    public String openAccess(String access) {
         boolean check;
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        String access = options.get("a");
-        if (access.equals("open")) check = true;
-        else if (access.equals("close")) check = false;
-        else return "Please choose open or close for gate!";
-        if (!selectedBuilding.getBuildingType().equals(BuildingType.BIG_STONE_GATEHOUSE) &&
-                !selectedBuilding.getBuildingType().equals(BuildingType.SMALL_STONE_GATEHOUSE) &&
-                !selectedBuilding.getBuildingType().equals(BuildingType.DRAWBRIDGE)) return "Invalid command";
+        check = access.equals("open");
         if (!currentKingdom.getFlag().equals(gameMap.getGateFlag(selectedBuilding)))
             return "You can not open in this gate!";
         changeAccess(check);
-        return "Gate access change successfully!";
+        return "done";
     }
 
     public void changeAccess(boolean check) {
@@ -395,6 +387,16 @@ public class BuildingController {
                 gameMap.changeAccess(selectedBuilding.getPosition().getxPosition(), selectedBuilding.getPosition().getyPosition(), Direction.WEST, check);
             }
         }
+    }
+
+    public boolean getAccessType() {
+        int counter = 0;
+        for (Direction direction : Direction.values())
+            if (gameMap.checkAccess(selectedBuilding.getPosition().getxPosition(), selectedBuilding.getPosition().getyPosition(),direction)) {
+                counter ++;
+                if (counter == 2) return true;
+            }
+        return false;
     }
 
     public String attackOnUnit(HashMap<String, String> options) {
