@@ -3,8 +3,10 @@ package view.controller;
 import controller.Controller;
 import controller.MapDesignController;
 import javafx.animation.ScaleTransition;
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
@@ -102,11 +104,49 @@ public class MapDesignMenuController {
                 else mapPane.setLayoutX(mapPane.getLayoutX() + 20); break;
                 case DOWN: mapPane.setLayoutY(mapPane.getLayoutY() - 20); break;
                 case RIGHT: mapPane.setLayoutX(mapPane.getLayoutX() - 20); break;
-                case UP: if (mapPane.getLayoutY() + 20 == 0) break;
-                else if (mapPane.getLayoutY() + 20 > 0 ) mapPane.setLayoutY(0);
+                case UP:
+                    if (mapPane.getLayoutY() + 20 == 0) break;
+                else if (mapPane.getLayoutY() + 20 > 0) mapPane.setLayoutY(0);
                 else mapPane.setLayoutY(mapPane.getLayoutY() + 20); break;
+
             }
+//            if (mapPane.getLayoutBounds().getMinX() < 0)
+//            {
+//                mapPane.setLayoutX(0);
+//            }
+//            else if(mapPane.getLayoutBounds().getMaxX() > mapDesignPane.getScene().getWidth() )
+//            {
+//                mapPane.setLayoutX(mapPane.getLayoutX() - 20);
+//            }
         });
+
+        mapPane.setOnScroll(event -> {
+//            double zoomFactor = 1.01;
+//            double deltaY = event.getDeltaY();
+//            if (deltaY < 0){
+//                zoomFactor = 2.0 - zoomFactor;
+//            }
+//            mapPane.setScaleX(mapPane.getScaleX() * zoomFactor);
+//            mapPane.setScaleY(mapPane.getScaleY() * zoomFactor);
+            zoom(mapPane, Math.pow(1.005, event.getDeltaY()), event.getSceneX(), event.getSceneY());
+        });
+    }
+
+    public void zoom(Node node, double factor, double x, double y) {
+        double oldScale = node.getScaleX();
+        double scale = oldScale * factor;
+        if (scale < 1) scale = 1;
+        if (scale > 2)  scale = 2;
+        node.setScaleX(scale);
+        node.setScaleY(scale);
+
+        double  f = (scale / oldScale)-1;
+        Bounds bounds = node.localToScene(node.getBoundsInLocal());
+        double dx = (x - (bounds.getWidth()/2 + bounds.getMinX()));
+        double dy = (y - (bounds.getHeight()/2 + bounds.getMinY()));
+
+        node.setTranslateX(node.getTranslateX()-f*dx);
+        node.setTranslateY(node.getTranslateY()-f*dy);
     }
 
     public void addToolBar(){
