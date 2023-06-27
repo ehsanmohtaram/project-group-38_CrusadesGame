@@ -189,7 +189,12 @@ public class Map implements Cloneable {
     }
 
     public void clearBlock(int x , int y){
+        for (Direction value : Direction.values()) {
+            changeAccess(x, y , value, true);
+        }
         map[x][y] = new MapBlock(x , y);
+        mapPane.getChildren().add(map[x][y]);
+        map[x][y].setVisualPosition();
     }
 
     public void changeAccess(int xPosition , int yPosition , Direction direction, boolean isAccessible){

@@ -87,52 +87,80 @@ public class MapDesignController {
         });
     }
 
-    public String setTexture(HashMap<String , String> options) {
-        if(options.get("t") == null)
-            return "please choose a type to change texture";
-        MapBlockType mapBlockType;
-        if((mapBlockType = MapBlock.findEnumByLandType(options.get("t"))) == null)
-            return "no such type available for lands";
-        String checkingResult;
-        if(options.get("x") == null && options.get("y") == null) {
-            if(mapBlockType.equals(MapBlockType.BIG_POND) || mapBlockType.equals(MapBlockType.SMALL_POND))
-                return "ponds have static size";
-            if((checkingResult = checkLocationValidation(options.get("x1") , options.get("y1"))) != null )
-                return checkingResult;
-            if((checkingResult = checkLocationValidation(options.get("x2") , options.get("y2"))) != null )
-                return checkingResult;
-            int x1 = Integer.parseInt(options.get("x1"));
-            int x2 = Integer.parseInt(options.get("x2"));
-            int y1 = Integer.parseInt(options.get("y1"));
-            int y2 = Integer.parseInt(options.get("y2"));
-            gameMap.changeType(x1, y1, x2, y2, mapBlockType);
-        }else if(options.get("x") != null && options.get("y") != null){
-            if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
-                return checkingResult;
-            int x = Integer.parseInt(options.get("x"));
-            int y = Integer.parseInt(options.get("y"));
-            options.remove("x");
-            options.remove("y");
-            for (String key : options.keySet())
-                if (!key.equals("t") && options.get(key) != null)
-                    return "choose two or four digits to specify area!";
-            switch (mapBlockType){
+    public String setTexture(MapBlockType mapBlockType) {
+        if(selectedBlocks.size() == 0)
+            return "you have not selected a block yet";
+        int x = selectedBlocks.get(0).getxPosition();
+        int y = selectedBlocks.get(0).getyPosition();
+        switch (mapBlockType){
                 case BIG_POND:
+                    if(selectedBlocks.size() != 1)
+                        return "ponds have a fixed size. choose just one block";
                     if(gameMap.getMapBlockByLocation(x + 4 , y + 4)!= null)
                         gameMap.changeType(x, y , x + 4 , y + 4 , mapBlockType);
                     else
                         return "choose correct position for big pond";
                 break;
                 case SMALL_POND:
+                    if(selectedBlocks.size() != 1)
+                        return "ponds have a fixed size. choose just one block";
                     if(gameMap.getMapBlockByLocation(x + 2 , y + 2)!= null)
                         gameMap.changeType(x, y , x + 2 , y + 2 , mapBlockType);
                     else
                         return "choose correct position for small pond";
-                default:gameMap.changeType(x, y , x , y , mapBlockType);
+                default:
+                    for (MapBlock selectedBlock : selectedBlocks) {
+                    x = selectedBlock.getxPosition();
+                    y = selectedBlock.getyPosition();
+                    gameMap.changeType(x, y , x , y , mapBlockType);
+                }
             }
-        }else
-            return "you must choose at least two digits for bounds";
-        return "type changed successfully";
+        return "successful";
+//        if(options.get("t") == null)
+//            return "please choose a type to change texture";
+//        MapBlockType mapBlockType;
+//        if((mapBlockType = MapBlock.findEnumByLandType(options.get("t"))) == null)
+//            return "no such type available for lands";
+//        String checkingResult;
+//        if(options.get("x") == null && options.get("y") == null) {
+//            if(mapBlockType.equals(MapBlockType.BIG_POND) || mapBlockType.equals(MapBlockType.SMALL_POND))
+//                return "ponds have static size";
+//            if((checkingResult = checkLocationValidation(options.get("x1") , options.get("y1"))) != null )
+//                return checkingResult;
+//            if((checkingResult = checkLocationValidation(options.get("x2") , options.get("y2"))) != null )
+//                return checkingResult;
+//            int x1 = Integer.parseInt(options.get("x1"));
+//            int x2 = Integer.parseInt(options.get("x2"));
+//            int y1 = Integer.parseInt(options.get("y1"));
+//            int y2 = Integer.parseInt(options.get("y2"));
+//            gameMap.changeType(x1, y1, x2, y2, mapBlockType);
+//        }else if(options.get("x") != null && options.get("y") != null){
+//            if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
+//                return checkingResult;
+//            int x = Integer.parseInt(options.get("x"));
+//            int y = Integer.parseInt(options.get("y"));
+//            options.remove("x");
+//            options.remove("y");
+//            for (String key : options.keySet())
+//                if (!key.equals("t") && options.get(key) != null)
+//                    return "choose two or four digits to specify area!";
+//            switch (mapBlockType){
+//                case BIG_POND:
+//                    if(gameMap.getMapBlockByLocation(x + 4 , y + 4)!= null)
+//                        gameMap.changeType(x, y , x + 4 , y + 4 , mapBlockType);
+//                    else
+//                        return "choose correct position for big pond";
+//                break;
+//                case SMALL_POND:
+//                    if(gameMap.getMapBlockByLocation(x + 2 , y + 2)!= null)
+//                        gameMap.changeType(x, y , x + 2 , y + 2 , mapBlockType);
+//                    else
+//                        return "choose correct position for small pond";
+//                default:gameMap.changeType(x, y , x , y , mapBlockType);
+//            }
+//        }else
+//            return "you must choose at least two digits for bounds";
+//        return "type changed successfully";
     }
 
 //    public void moveRight(){
@@ -148,54 +176,54 @@ public class MapDesignController {
         return null;
     }
 
-    public String clear(HashMap<String , String> options) {
-        String checkingResult;
-        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
-            return checkingResult;
-
-        int x = Integer.parseInt(options.get("x"));
-        int y = Integer.parseInt(options.get("y"));
-        gameMap.clearBlock(x,y);
-        return "successfully cleared";
-    }
-    public String dropRock(HashMap<String , String> options) {
-        if(options.get("d") == null)
-            return "please enter necessary options";
-        if(!options.get("d").matches("[nswer]"))
-            return "no such direction";
-        String checkingResult;
-        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
-            return checkingResult;
-
-        int xPosition = Integer.parseInt(options.get("x"));
-        int yPosition = Integer.parseInt(options.get("y"));
-
-        if(options.get("d").charAt(0) == 'r'){
-            Random random = new Random();
-            options.put("d", String.valueOf("snwr".charAt(random.nextInt(4)) ));
+    public void clear() {
+        for (MapBlock selectedBlock : selectedBlocks) {
+            gameMap.getMapPane().getChildren().remove(selectedBlock);
+            gameMap.clearBlock(selectedBlock.getxPosition(), selectedBlock.getyPosition());
         }
-        Direction trueDirection = null;
-        for (Direction direction: Direction.values())
-            if(direction.name().toLowerCase().charAt(0) == options.get("d").charAt(0))
-                trueDirection = direction;
-
-        gameMap.changeAccess(xPosition , yPosition , trueDirection, false );
-        gameMap.getMapBlockByLocation(xPosition, yPosition).setMapBlockType(MapBlockType.ROCK);
-        return "successfully dropped";
     }
-    public String dropTree(HashMap<String , String> options) {
-        if(options.get("t") == null)
-            return "please choose a tree";
-        Tree tree;
-        if((tree = Tree.findEnumByName(options.get("t"))) == null)
-            return "no such type available for lands";
-        String checkingResult;
-        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
-            return checkingResult;
+    public String dropRock(Direction direction) {
+//        if(options.get("d") == null)
+//            return "please enter necessary options";
+//        if(!options.get("d").matches("[nswer]"))
+//            return "no such direction";
+//        String checkingResult;
+//        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
+//            return checkingResult;
+        if(direction == null){
+            Random random = new Random();
+            direction = Direction.values()[random.nextInt(4)];
+        }
+        if(selectedBlocks.size() == 0)
+            return "no selected block found";
+        for (MapBlock selectedBlock : selectedBlocks) {
+            int xPosition = selectedBlock.getxPosition();
+            int yPosition = selectedBlock.getyPosition();
+            gameMap.changeAccess(xPosition , yPosition , direction, false );
+            gameMap.getMapBlockByLocation(xPosition, yPosition).dropRock(direction);
+        }
 
-        if(!gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")), Integer.parseInt(options.get("y"))).addTree(tree))
-            return "here is not cultivable";
-        return "successfully dropped";
+//        Direction trueDirection = null;
+//        for (Direction direction: Direction.values())
+//            if(direction.name().toLowerCase().charAt(0) == options.get("d").charAt(0))
+//                trueDirection = direction;
+        return "successful";
+    }
+    public String dropTree(Tree tree) {
+//        if(options.get("t") == null)
+//            return "please choose a tree";
+//        Tree tree;
+//        if((tree = Tree.findEnumByName(options.get("t"))) == null)
+//            return "no such type available for lands";
+//        String checkingResult;
+//        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
+//            return checkingResult;
+
+        for (MapBlock mapBlock: selectedBlocks)
+            if (!mapBlock.addTree(tree))
+                return "one of selected blocks is not cultivable";
+
+        return "successful";
     }
 
     public String checkAroundHeadQuarterPosition(Integer xPosition, Integer yPosition) {
