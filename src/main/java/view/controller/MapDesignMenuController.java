@@ -14,7 +14,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import model.MapBlock;
+import model.Direction;
 import model.MapBlockType;
 import model.Tree;
 import view.DesignMapMenu;
@@ -221,6 +221,7 @@ public class MapDesignMenuController {
             }
         });
         back.setOnMouseClicked(mouseEvent -> {
+            error.setText("");
             if (mapDesignPane.getChildren().size() == 2) mapDesignPane.getChildren().remove(1);
             addToolBar();
             designControls.getChildren().remove(newUserInfo);
@@ -265,6 +266,12 @@ public class MapDesignMenuController {
     }
 
     private void handelDesignCommands(String text) {
+        Label error = (Label) designControls.getChildren().get(0);
+        if(text.equals("clear")) {
+            mapDesignController.clear();
+            error.setText("");
+            return;
+        }
         designControls.getChildren().remove(1);
         HBox details = new HBox();
         details.setAlignment(Pos.CENTER);
@@ -273,15 +280,15 @@ public class MapDesignMenuController {
         style.button0(back, "back" , 100 , 40);
         back.setFont(style.Font0(15));
         back.setOnMouseClicked(mouseEvent -> {
+            error.setText("");
             designControls.getChildren().remove(1);
             handelDesignMap();
         });
 
         switch (text){
-            case "setTexture" : setTexture(details, false);break;
-            case "dropRock" : dropRock(details);break;
-            case "dropTree" : setTexture(details, true);break;
-            case "clear" : clearBlock(details);break;
+            case "setTexture" : setTexture(details, false, error);break;
+            case "dropRock" : dropRock(details, error);break;
+            case "dropTree" : setTexture(details, true, error);break;
             case "dropUnit" : dropUnit(details);break;
             case "dropBuilding" : dropBuilding(details);break;
         }
@@ -289,11 +296,33 @@ public class MapDesignMenuController {
         designControls.getChildren().add(details);
     }
 
-    private void dropRock(HBox details) {
-    }
-
-    private void clearBlock(HBox details){
-
+    private void dropRock(HBox details, Label error) {
+        GridPane directions = new GridPane();
+        directions.setAlignment(Pos.CENTER);
+        directions.setHgap(8);
+        directions.setVgap(8);
+        HashMap<Rectangle, Direction> choice = new HashMap<>();
+        for (Direction dir : Direction.values()) {
+            Rectangle control = new Rectangle(70, 50);
+            control.setFill(new ImagePattern(dir.getImage()));
+            choice.put(control, dir);
+            directions.add(control, dir.getX(), dir.getY());
+            control.setOnMouseClicked(mouseEvent -> {
+                String result = mapDesignController.dropRock(choice.get(control));
+                if(!result.equals("successful"))
+                    error.setText(result);
+            });
+        }
+        Label random = new Label("Random");
+        style.label0(random, 70 , 50);
+        random.setFont(style.Font0(15));
+        directions.add(random, 1 , 1);
+        random.setOnMouseClicked(mouseEvent -> {
+            String result = mapDesignController.dropRock(null);
+            if(!result.equals("successful"))
+                error.setText(result);
+        });
+        details.getChildren().add(directions);
     }
 
     private void dropUnit(HBox details){
@@ -304,9 +333,8 @@ public class MapDesignMenuController {
 
     }
 
-    public void setTexture(HBox details, boolean isIncludeTreeProcess){
+    public void setTexture(HBox details, boolean isIncludeTreeProcess, Label error){
         HBox textures = new HBox();
-        Label error = (Label) designControls.getChildren().get(0);
         textures.setSpacing(5);
         if(isIncludeTreeProcess) {
             HashMap<Rectangle, Tree> choice = new HashMap<>();
@@ -324,6 +352,8 @@ public class MapDesignMenuController {
             }
         }else {
             for (MapBlockType blockType : MapBlockType.values()) {
+                if(blockType.equals(MapBlockType.ROCK) || blockType.equals(MapBlockType.HOLE))
+                    continue;
                 HashMap<Rectangle, MapBlockType> choice = new HashMap<>();
                 Rectangle control = new Rectangle(100, 100);
                 control.setFill(new ImagePattern(blockType.getTexture()));

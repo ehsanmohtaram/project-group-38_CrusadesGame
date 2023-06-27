@@ -176,40 +176,38 @@ public class MapDesignController {
         return null;
     }
 
-    public String clear(HashMap<String , String> options) {
-        String checkingResult;
-        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
-            return checkingResult;
-
-        int x = Integer.parseInt(options.get("x"));
-        int y = Integer.parseInt(options.get("y"));
-        gameMap.clearBlock(x,y);
-        return "successfully cleared";
-    }
-    public String dropRock(HashMap<String , String> options) {
-        if(options.get("d") == null)
-            return "please enter necessary options";
-        if(!options.get("d").matches("[nswer]"))
-            return "no such direction";
-        String checkingResult;
-        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
-            return checkingResult;
-
-        int xPosition = Integer.parseInt(options.get("x"));
-        int yPosition = Integer.parseInt(options.get("y"));
-
-        if(options.get("d").charAt(0) == 'r'){
-            Random random = new Random();
-            options.put("d", String.valueOf("snwr".charAt(random.nextInt(4)) ));
+    public void clear() {
+        for (MapBlock selectedBlock : selectedBlocks) {
+            gameMap.getMapPane().getChildren().remove(selectedBlock);
+            gameMap.clearBlock(selectedBlock.getxPosition(), selectedBlock.getyPosition());
         }
-        Direction trueDirection = null;
-        for (Direction direction: Direction.values())
-            if(direction.name().toLowerCase().charAt(0) == options.get("d").charAt(0))
-                trueDirection = direction;
+    }
+    public String dropRock(Direction direction) {
+//        if(options.get("d") == null)
+//            return "please enter necessary options";
+//        if(!options.get("d").matches("[nswer]"))
+//            return "no such direction";
+//        String checkingResult;
+//        if((checkingResult = checkLocationValidation(options.get("x") , options.get("y"))) != null )
+//            return checkingResult;
+        if(direction == null){
+            Random random = new Random();
+            direction = Direction.values()[random.nextInt(4)];
+        }
+        if(selectedBlocks.size() == 0)
+            return "no selected block found";
+        for (MapBlock selectedBlock : selectedBlocks) {
+            int xPosition = selectedBlock.getxPosition();
+            int yPosition = selectedBlock.getyPosition();
+            gameMap.changeAccess(xPosition , yPosition , direction, false );
+            gameMap.getMapBlockByLocation(xPosition, yPosition).dropRock(direction);
+        }
 
-        gameMap.changeAccess(xPosition , yPosition , trueDirection, false );
-        gameMap.getMapBlockByLocation(xPosition, yPosition).setMapBlockType(MapBlockType.ROCK);
-        return "successfully dropped";
+//        Direction trueDirection = null;
+//        for (Direction direction: Direction.values())
+//            if(direction.name().toLowerCase().charAt(0) == options.get("d").charAt(0))
+//                trueDirection = direction;
+        return "successful";
     }
     public String dropTree(Tree tree) {
 //        if(options.get("t") == null)

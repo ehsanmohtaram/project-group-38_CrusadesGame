@@ -8,7 +8,7 @@ public enum MapBlockType {
     EARTH(true , true , true, "\u001B[48;5;137m", true,  new Image(LoginMenu.class.getResource("/images/landTextures/earth.jpg").toExternalForm())),
     GRAVEL(true , true , true, "\u001B[48;5;137m", true, new Image(LoginMenu.class.getResource("/images/landTextures/gravel.jpg").toExternalForm())),
     SLATE(true , false , false, "\u001B[48;5;102m", false, new Image(LoginMenu.class.getResource("/images/landTextures/slate.jpg").toExternalForm())),
-    ROCK(false, false , false, "\u001B[48;5;241m", false, new Image(LoginMenu.class.getResource("/images/landTextures/rock.jpg").toExternalForm())),
+    ROCK(false, false , false, "\u001B[48;5;241m", false, new Image(LoginMenu.class.getResource("/images/landTextures/rock2.jpg").toExternalForm())),
     IRON(true , false , false, "\u001B[48;5;189m", false, new Image(LoginMenu.class.getResource("/images/landTextures/iron.jpg").toExternalForm())),
     GRASSLAND(true , true , true, "\u001B[48;5;107m", true, new Image(LoginMenu.class.getResource("/images/landTextures/grassland.jpg").toExternalForm())),
     MEADOW(true , true , true, "\u001B[48;5;70m", true, new Image(LoginMenu.class.getResource("/images/landTextures/meadow.jpg").toExternalForm())),
