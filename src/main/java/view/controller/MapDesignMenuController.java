@@ -88,6 +88,7 @@ public class MapDesignMenuController {
         if(mapDesignPane.getChildren().size() == 2) mapDesignPane.getChildren().remove(1);
         addToolBar();
         cameraProcess();
+        mapDesignController.addDetailsBox();
         mapDesignController.hoverProcess();
         mapDesignController.handelMapSelection();
         stage.setTitle("design Map");

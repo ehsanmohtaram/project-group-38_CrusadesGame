@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -16,6 +17,7 @@ import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
 import view.Style;
+import view.animation.RollingPaper;
 import view.controller.GameUI;
 import view.controller.MapDesignMenuController;
 
@@ -32,6 +34,8 @@ public class MapDesignController {
     private ArrayList<MapBlock> selectedBlocks;
     private Pane mapDesignPane;
     private Style style;
+    private StackPane detailsBox;
+    private RollingPaper rollingPaperAnimation;
 
     public MapDesignController(Map gameMap) {
         this.gameMap = gameMap;
@@ -63,9 +67,26 @@ public class MapDesignController {
     public void addMapToPane(Pane mapDesignPane){
         this.mapDesignPane = mapDesignPane;
         mapDesignPane.getChildren().add(gameMap.getMapPane());
+
 //        mapDesignPane.setAlignment(mapDesignPane.getChildren().get(0) , Pos.CENTER_LEFT);
 //        gameMap.getMapPane().getChildren().add(new Label("hello word"));
 
+
+    }
+
+    public void addDetailsBox(){
+        Label firstDetail = new Label("nothing selected yet!");
+        detailsBox = new StackPane();
+        detailsBox.setLayoutX(1150);
+        detailsBox.setLayoutY(50);
+        Rectangle background = new Rectangle(350 , 350);
+        background.setFill(Color.rgb(1 , 2 , 100));
+        rollingPaperAnimation = new RollingPaper(background);
+        detailsBox.getChildren().addAll(background, firstDetail);
+        mapDesignPane.getChildren().add(detailsBox);
+        rollingPaperAnimation.play();
+        rollingPaperAnimation.setAutoReverse(true);
+        rollingPaperAnimation.setCycleCount(2);
 
     }
 
@@ -137,8 +158,20 @@ public class MapDesignController {
                             mapBlock.changeBorder(true);
                             mapBlock.setSelected(true);
                         }
+
+                updateDetailsBox();
             }
         });
+    }
+
+    private void updateDetailsBox() {
+        int soldiers = 0; int minRate = 100; int maxRate = 0; int averageRate = 0;
+        for (MapBlock selectedBlock : selectedBlocks) {
+            soldiers += selectedBlock.getUnits().size();
+            //toDo brumand bia in lanatia ro hesab kon!
+        }
+        rollingPaperAnimation.setFirstTime(false);
+        rollingPaperAnimation.play();
     }
 
     public String setTexture(MapBlockType mapBlockType) {
