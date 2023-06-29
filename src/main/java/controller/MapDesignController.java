@@ -1,15 +1,24 @@
 package controller;
 
+import javafx.animation.PauseTransition;
 import javafx.event.EventHandler;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import model.*;
 import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
+import view.Style;
+import view.controller.GameUI;
+import view.controller.MapDesignMenuController;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -22,12 +31,14 @@ public class MapDesignController {
     private int YofMap;
     private ArrayList<MapBlock> selectedBlocks;
     private Pane mapDesignPane;
+    private Style style;
 
     public MapDesignController(Map gameMap) {
         this.gameMap = gameMap;
 //        designMapMenu = new DesignMapMenu(this);
         currentUser = Controller.currentUser;
         selectedBlocks = new ArrayList<>();
+        style = new Style();
     }
 
     public Map getGameMap() {
@@ -56,6 +67,49 @@ public class MapDesignController {
 //        gameMap.getMapPane().getChildren().add(new Label("hello word"));
 
 
+    }
+
+    public void hoverProcess() {
+        Label mapBlockDetails = new Label();
+        style.label0(mapBlockDetails, 0 , 0);
+        mapBlockDetails.setBackground(Background.fill(Color.rgb(50 , 50 , 50 , 0.8)));
+        mapBlockDetails.setFont(style.Font0(18));
+        for (MapBlock[] mapBlocks : gameMap.getMap()) {
+            for (MapBlock mapBlock : mapBlocks) {
+                PauseTransition pauseTransition = new PauseTransition(Duration.seconds(2));
+                mapBlock.setOnMouseEntered(e -> {
+                    mapBlock.changeBorder(true);
+                    GameUI.mouseOnBlock = mapBlock;
+                    pauseTransition.setOnFinished(event ->{
+                        String details = mapBlock.showDetails();
+
+                        mapBlockDetails.setLayoutX(mapBlock.getLayoutX());
+                        mapBlockDetails.setLayoutY(mapBlock.getLayoutY() + 100);
+                        int lines = 1; int lastChar = 0;int max = 1;
+                        for (int i = 0; i < details.length() ; i++) {
+                            if(details.charAt(i) == '\n') {
+                                if((i - lastChar) > max)
+                                    max = i - lastChar;
+                                lines++;
+                                lastChar = i;
+                            }
+                        }
+                        mapBlockDetails.setPrefSize(max * 11, lines * 29);
+                        mapBlockDetails.setText(details);
+                        gameMap.getMapPane().getChildren().add(mapBlockDetails);
+                    });
+                    pauseTransition.play();
+
+                });
+                mapBlock.setOnMouseExited(e -> {
+                    if (!mapBlock.isSelected())
+                        mapBlock.changeBorder(false);
+                    gameMap.getMapPane().getChildren().remove(mapBlockDetails);
+                    pauseTransition.stop();
+                });
+
+            }
+        }
     }
 
     public Pane getGameMapPane() {

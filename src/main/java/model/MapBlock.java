@@ -1,6 +1,7 @@
 package model;
 
 import javafx.geometry.Insets;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -11,6 +12,7 @@ import model.unit.Unit;
 import model.unit.UnitType;
 import view.LoginMenu;
 import view.controller.GameUI;
+import view.controller.MapDesignMenuController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +53,7 @@ public class MapBlock extends StackPane {
 //        setScaleY(100);
         isSelected = false;
         changeBackground();
-        hoverProcess();
+//        hoverProcess();
 
     }
 
@@ -208,6 +210,32 @@ public class MapBlock extends StackPane {
         return " ";
     }
 
+    public String showDetails(){
+        StringBuilder result = new StringBuilder("type: "
+                + getMapBlockType().name().toLowerCase().replaceAll("_", " ") + '\n');
+        result.append("Units:\n");
+        for (Unit unit: getUnits()) {
+            result.append(unit.getUnitType().name().toLowerCase().replaceAll("_", " ")).append(" -> owner: ")
+                    .append(unit.getOwner().getFlag().name()).append('\n') ;
+        }
+        result.append("building:\n");
+        if(getBuildings() != null){
+            result.append(getBuildings().getBuildingType().name().toLowerCase().replaceAll("_", " "))
+                    .append(" -> owner: ")
+                    .append(getBuildings().getOwner().getFlag().name()).append('\n') ;
+        }
+        result.append("siege:\n");
+        if(getSiege() != null){
+            result.append(getSiege().getBuildingType().name().toLowerCase().replaceAll("_", " "))
+                    .append(" -> owner: ")
+                    .append(getSiege().getOwner().getFlag().name()).append('\n') ;
+        }
+        if(getResources() != null){
+            result.append("resource:\n").append(getResourceAmount()).append(" units of ").append(getResources().name().toLowerCase());
+        }
+        return result.toString();
+    }
+
     public ArrayList<Unit> getUnitByUnitType(UnitType unitType, Kingdom owner) {
         ArrayList<Unit> selectedUnit = new ArrayList<>();
         for (Unit unit : units)
@@ -253,16 +281,16 @@ public class MapBlock extends StackPane {
     }
 
 
-    private void hoverProcess() {
-        this.setOnMouseEntered(e -> {
-            changeBorder(true);
-            GameUI.mouseOnBlock = this;
-        });
-        this.setOnMouseExited(e -> {
-            if(!isSelected)
-                changeBorder(false);
-        });
-    }
+//    private void hoverProcess() {
+//        this.setOnMouseEntered(e -> {
+//            changeBorder(true);
+//            MapDesignMenuController.mouseOnBlock = this;
+//        });
+//        this.setOnMouseExited(e -> {
+//            if(!isSelected)
+//                changeBorder(false);
+//        });
+//    }
 
     public void dropRock(Direction direction) {
         setMapBlockType(MapBlockType.ROCK);
