@@ -55,43 +55,11 @@ public class BuildingController {
         }
         camp.setCapacity(count);
         if (unitType.getIS_ARAB().equals(1)) currentKingdom.setBalance((double) -unitType.getPRICE() * count);
-        if (!unitType.equals(UnitType.BLACK_MONK)) currentKingdom.setNoneEmployed(-count);
-        else deleteMonkFromMap(count);
         if (unitType.equals(UnitType.KNIGHT)) deleteHorseFromMap(count);
         if (unitType.getWEAPON_NEEDED() != null) currentKingdom.setWeaponsAmount(unitType.getWEAPON_NEEDED(), -count);
         if (unitType.getArmour_Needed() != null) currentKingdom.setWeaponsAmount(unitType.getArmour_Needed(), -count);
     }
 
-    public void deleteMonkFromMap(int count) {
-        int marker = count;
-        int monkCounter;
-        for (Building building : currentKingdom.getBuildings()) {
-            if (building.getBuildingType().equals(BuildingType.CHURCH)) {
-                if (marker <= building.getPosition().getUnits().size()) monkCounter = count;
-                else monkCounter = building.getPosition().getUnits().size();
-                marker -= monkCounter;
-                int check = 0;
-                while (check != monkCounter) {
-                    currentKingdom.getUnits().remove(building.getPosition().getUnits().get(0));
-                    building.getPosition().getUnits().remove(0);
-                    ((Camp) building).setCapacity(-1);
-                    ((Camp) building).getUnits().remove(0);
-                    check++;
-                }
-            }
-            if (marker == 0) break;
-        }
-    }
-
-    public String checkCathedral(int count) {
-        int monkCounter = 0;
-        for (Building building : currentKingdom.getBuildings()) {
-            if (building.getBuildingType().equals(BuildingType.CHURCH))
-                monkCounter += building.getPosition().getUnits().size();
-        }
-        if (monkCounter < count) return "You do not have enough monk to make black monks!";
-        return "done";
-    }
 
     public String checkForKnightHorse(int count) {
         int horseCounter = 0;
@@ -148,30 +116,21 @@ public class BuildingController {
         }
         Camp camp = (Camp) selectedBuilding;
         if (campType.getCapacity() < camp.getCapacity() + count) return "Your camp is full. Please make a new camp!";
-        if (campType.equals(CampType.CATHEDRAL)) {
-            result = checkCathedral(count); if (!result.equals("done")) return result;
-        } else if (currentKingdom.getNoneEmployed() < count)
+        if (currentKingdom.getNoneEmployed() < count)
             return "You do not have enough population to make new units!";
         createUnitAdditional(unitType, count);
         return count + " " + unitType.name().toLowerCase().replaceAll("_", " ") + " has been made!";
     }
 
     public String setMode(HashMap<String, String> options) {
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet())
-            if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         String result;
-        try {
-            ProduceMode.valueOf(options.get("m").toUpperCase().replaceAll(" ", "_"));
-        } catch (Exception ignored) {
-            return "There is no such mode to change to it!";
-        }
-        ProduceMode produceMode = ProduceMode.valueOf(options.get("m").toUpperCase().replaceAll(" ", "_"));
+        ProduceMode.valueOf(options.get("m"));
+        ProduceMode produceMode = ProduceMode.valueOf(options.get("m"));
         Producer producer = (Producer) selectedBuilding;
         result = checkProduceMode();
         if (result != null) return result;
         producer.setMode(produceMode);
-        return "Produce mode has been changed successfully!";
+        return "done";
     }
 
     public String checkProduceMode() {
@@ -186,8 +145,6 @@ public class BuildingController {
             else if (check0 instanceof Food && currentKingdom.getBuildingFormKingdom(BuildingType.FOOD_STOCKPILE) == null)
                 return "You should build food stock first!";
         }
-        if (producer.getMode().equals(ProduceMode.SECOND) && check1 == null)
-            return "There is only one product exist in this building!";
         if (!producer.getMode().equals(ProduceMode.FIRST) && check1 != null)
             if (currentKingdom.getBuildingFormKingdom(BuildingType.ARMOURY) == null)
                 return "You should build armoury first!";
