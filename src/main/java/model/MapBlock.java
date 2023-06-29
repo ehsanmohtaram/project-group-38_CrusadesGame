@@ -1,6 +1,7 @@
 package model;
 
 import javafx.geometry.Insets;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -8,6 +9,7 @@ import javafx.scene.shape.Rectangle;
 import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitType;
+import view.LoginMenu;
 import view.controller.GameUI;
 
 import java.util.ArrayList;
@@ -66,6 +68,10 @@ public class MapBlock extends StackPane {
 
     public void setBuildings(Building buildings) {
         this.buildings = buildings;
+        for (Tree tree : numberOfTrees.keySet()) {
+            numberOfTrees.put(tree, 0);
+            getChildren().removeAll(treeImage);
+        }
     }
 
     public void setUnits(Unit unit) {
@@ -106,7 +112,7 @@ public class MapBlock extends StackPane {
         if(!mapBlockType.isCultivable()) {
             for (Tree tree : numberOfTrees.keySet()) {
                 numberOfTrees.put(tree, 0);
-                getChildren().remove(treeImage);
+                getChildren().removeAll(treeImage);
             }
         }
     }
@@ -258,4 +264,14 @@ public class MapBlock extends StackPane {
         });
     }
 
+    public void dropRock(Direction direction) {
+        setMapBlockType(MapBlockType.ROCK);
+        Image rockImage = new Image(LoginMenu.class.getResource("/images/landTextures/rock.png").toExternalForm());
+        Rectangle rock = new Rectangle(40 , 40);
+        rock.setFill(new ImagePattern(rockImage));
+        rock.setManaged(false);
+        rock.setLayoutX(direction.getX() * 32);
+        rock.setLayoutY(direction.getY() * 31);
+        getChildren().add(rock);
+    }
 }
