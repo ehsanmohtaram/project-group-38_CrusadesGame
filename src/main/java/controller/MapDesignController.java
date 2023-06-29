@@ -165,10 +165,21 @@ public class MapDesignController {
     }
 
     private void updateDetailsBox() {
-        int soldiers = 0; int minRate = 100; int maxRate = 0; int averageRate = 0;
+        int soldiers = 0; int minRate = 0; int maxRate = 0; int averageRate = 0;
         for (MapBlock selectedBlock : selectedBlocks) {
             soldiers += selectedBlock.getUnits().size();
-            //toDo brumand bia in lanatia ro hesab kon!
+            if (selectedBlock.getBuildings() != null && selectedBlock.getBuildings().getSpecificConstant() instanceof ProducerType) {
+                ProducerType producerType = (ProducerType) selectedBlock.getBuildings().getSpecificConstant();
+                averageRate = producerType.getProduceRate();
+                maxRate = averageRate + (int) ((double) producerType.getProduceRate() * 0.5);
+                minRate = averageRate - (int) ((double) producerType.getProduceRate() * 0.5);
+            }
+            else if (selectedBlock.getBuildings() != null && selectedBlock.getBuildings().getSpecificConstant() instanceof MineType) {
+                MineType mineType = (MineType) selectedBlock.getBuildings().getSpecificConstant();
+                averageRate = mineType.getProduceRate();
+                maxRate = averageRate + (int) ((double) mineType.getProduceRate() * 0.5);
+                minRate = averageRate - (int) ((double) mineType.getProduceRate() * 0.5);
+            }
         }
         rollingPaperAnimation.setFirstTime(false);
         rollingPaperAnimation.play();

@@ -45,7 +45,7 @@ public enum BuildingType {
     POLE_TURNER(100, ResourceType.WOOD, 10, 300, UnitType.WORKER,1,ProducerType.POLE_TURNER, new Image(BuildingType.class.getResource("/images/building/POLE_TURNER.png").toExternalForm())),
     OIL_SMELTER(100, ResourceType.WOOD, 10, 300, UnitType.ENGINEER,1,ProducerType.OIL_SMELTER, new Image(BuildingType.class.getResource("/images/building/OIL_SMELTER.png").toExternalForm())),
     BAKERY(0, ResourceType.WOOD, 10, 250, UnitType.WORKER,1,ProducerType.BAKERY, new Image(BuildingType.class.getResource("/images/building/BAKERY.png").toExternalForm())),
-    DAIRY_PRODUCTS(0, ResourceType.WOOD, 10, 250, UnitType.WORKER,0,ProducerType.DAIRY_PRODUCTS, new Image(BuildingType.class.getResource("/images/building/DAIRY_PRODUCTS.gif").toExternalForm())),
+    DAIRY_PRODUCTS(0, ResourceType.WOOD, 10, 250, UnitType.WORKER,1,ProducerType.DAIRY_PRODUCTS, new Image(BuildingType.class.getResource("/images/building/DAIRY_PRODUCTS.gif").toExternalForm())),
     BREWERY(0, ResourceType.WOOD, 10, 250, UnitType.WORKER,1,ProducerType.BREWERY, new Image(BuildingType.class.getResource("/images/building/BREWERY.png").toExternalForm())),
     MILL(0, ResourceType.WOOD, 20, 300, UnitType.WORKER, 3, ProducerType.MILL, new Image(BuildingType.class.getResource("/images/building/MILL.png").toExternalForm())),
     Hunting_ground(0, ResourceType.WOOD, 10, 250, UnitType.WORKER,1,ProducerType.Hunting_ground, new Image(BuildingType.class.getResource("/images/building/Hunting_ground.png").toExternalForm())),
