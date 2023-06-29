@@ -69,7 +69,7 @@ public class GameMenu {
             else if (commandParser.validate(input, "cheat 100", null) != null)
                 return "design map";
             else if (commandParser.validate(input, "next turn", null) != null)
-                return gameController.nextTurn();
+                return null;
             else System.out.println("invalid command");
         }
     }

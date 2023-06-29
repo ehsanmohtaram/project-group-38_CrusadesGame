@@ -4,6 +4,7 @@ import controller.GameController;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.BlendMode;
@@ -21,7 +22,6 @@ import model.building.*;
 import view.BuildingMenu;
 import view.LoginMenu;
 import view.Style;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,7 +81,7 @@ public class GameUI {
         buttonHolder.setViewOrder(-1);
         rectangles.add(defensive); rectangles.add(producer); rectangles.add(camp); rectangles.add(stock); rectangles.add(siege);
         mainPane.getChildren().add(buttonHolder);
-        balanceShow(mainPane);
+        balanceShowAndNextTurn(mainPane);
         buttonHolder.setLayoutX(340);
         buttonHolder.setLayoutY(240);
         gameTools.getChildren().add(mainPane);
@@ -101,14 +101,14 @@ public class GameUI {
     }
     public void addStockAndHeadButton(Pane mainPane) {
         for (Kingdom kingdom : gameMap.getPlayers()) {
-            redirectToBuildingMenu((Rectangle)kingdom.getHeadquarter().getPosition().getChildren().get(0), mainPane);
-            redirectToBuildingMenu((Rectangle)kingdom.getBuildings().get(1).getPosition().getChildren().get(0), mainPane);
+            redirectToBuildingMenu((Rectangle)kingdom.getHeadquarter().getPosition().getChildren().get(kingdom.getHeadquarter().getPosition().getChildren().size() - 1), mainPane);
+            redirectToBuildingMenu((Rectangle)kingdom.getBuildings().get(1).getPosition().getChildren().get(kingdom.getBuildings().get(1).getPosition().getChildren().size() - 1), mainPane);
         }
     }
-    public void balanceShow(Pane mainPane) {
+    public void balanceShowAndNextTurn(Pane mainPane) {
         VBox balance = new VBox();
         Rotate rotate = new Rotate();
-        rotate.setAngle(10);
+        rotate.setAngle(12);
         balance.getTransforms().add(rotate);
         balance.setAlignment(Pos.CENTER);
         Label coin = new Label(" COIN");
@@ -118,10 +118,23 @@ public class GameUI {
         updateBalance();
         coinValue.setFont(style.Font0(15));
         coinValue.setTextFill(Color.rgb(141,136 ,40));
-        balance.getChildren().addAll(coin, coinValue);
+        Label nextTurn = new Label("NEXT");
+        nextTurn.setFont(style.Font0(15));
+        nextTurn.setTextFill(Color.rgb(141,136 ,40));
+        nextTurn.setOnMouseEntered(mouseEvent -> nextTurn.setTextFill(Color.rgb(185,182,182,0.5)));
+        nextTurn.setOnMouseExited(mouseEvent -> nextTurn.setTextFill(Color.rgb(141,136 ,40)));
+        nextTurn.setOnMouseClicked(mouseEvent -> {
+            gameController.nextTurn();
+            if(mainPane.getChildren().size() == 4) {
+                mainPane.getChildren().remove(2); mainPane.getChildren().remove(2);
+            }
+            for (Node opacityManger : ((HBox)mainPane.getChildren().get(0)).getChildren()) opacityManger.setOpacity(1);
+            updateBalance();
+        });
+        balance.getChildren().addAll(coin, coinValue, nextTurn);
         balance.setSpacing(10);
-        balance.setLayoutX(1370);
-        balance.setLayoutY(175);
+        balance.setLayoutX(1372);
+        balance.setLayoutY(160);
         mainPane.getChildren().add(balance);
     }
 
@@ -206,14 +219,24 @@ public class GameUI {
         option.put("y", Integer.toString(mouseOnBlock.getyPosition()));
         String result = gameController.dropBuilding(option);
         if (result.equals("done")) {
-            Rectangle rectangle = new Rectangle(100, 100);
+            Rectangle rectangle = new Rectangle(70, 70);
             redirectToBuildingMenu(rectangle, mainPane);
             rectangle.setFill(new ImagePattern(buildingType.getTexture()));
             mouseOnBlock.getChildren().add(rectangle);
             updateBalance();
         }
         else {
-            System.out.println(result);
+            VBox popUp = new VBox();
+            Button ok = new Button();
+            style.popUp0(mainPane, popUp, ok, 20, 20, 450, 70, 180, 50, 100, 15,500, 100, result, 20);
+            popUp.setStyle("-fx-background-color: beige; -fx-background-radius: 20;");
+            mapDesignMenu.getChildren().get(0).setDisable(true);
+            for (int i = 0; i < mainPane.getChildren().size() - 1; i++) mainPane.getChildren().get(i).setDisable(true);
+            ok.setOnMouseClicked(mouseEvent -> {
+                mainPane.getChildren().remove(popUp);
+                mapDesignMenu.getChildren().get(0).setDisable(false);
+                for (int i = 0; i < mainPane.getChildren().size(); i++) mainPane.getChildren().get(i).setDisable(false);
+            });
         }
     }
 

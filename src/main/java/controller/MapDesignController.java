@@ -266,8 +266,6 @@ public class MapDesignController {
 
     public String addUserToMap(HashMap<String , String> options){
         String checkingResult;
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         if (User.getUserByUsername(options.get("u")) == null) return "User dose not exist. Please choose user from registered users";
         try {Flags.valueOf(options.get("f").toUpperCase());}
         catch (Exception ignored) {return "Your flag color did not exist in default colors!";}
@@ -289,13 +287,13 @@ public class MapDesignController {
         Stock stock = new Stock(gameMap.getMapBlockByLocation(newXPosition, newYPosition), BuildingType.STOCKPILE, kingdom);
         gameMap.addPlayer(kingdom);
         kingdom.setHeadquarter(headQuarter); kingdom.addBuilding(headQuarter);
-        Rectangle rectangle0 = new Rectangle(100, 100);
+        Rectangle rectangle0 = new Rectangle(70, 70);
         rectangle0.setFill(new ImagePattern(BuildingType.HEAD_QUARTER.getTexture()));
         selectedBlocks.get(0).getChildren().add(rectangle0);
         selectedBlocks.get(0).setBuildings(headQuarter);
 
         kingdom.addBuilding(stock);
-        Rectangle rectangle1 = new Rectangle(100, 100);
+        Rectangle rectangle1 = new Rectangle(70, 70);
         rectangle1.setFill(new ImagePattern(BuildingType.STOCKPILE.getTexture()));
         gameMap.getMapBlockByLocation(newXPosition, newYPosition).getChildren().add(rectangle1);
 

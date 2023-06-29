@@ -22,23 +22,21 @@ public class BuildingController {
     }
 
     public String repairBuilding() {
-        if (selectedBuilding.getBuildingType().equals(BuildingType.CATHEDRAL) ||
-                selectedBuilding.getBuildingType().equals(BuildingType.CHURCH)) return "Invalid command";
-        if (currentKingdom.checkForAvailableNormalUnit(UnitType.ENGINEER) == 0) return "There is no available workers";
+        if (currentKingdom.checkForAvailableNormalUnit(UnitType.ENGINEER) == 0) return "There is no available workers!";
         BuildingType buildingType = selectedBuilding.getBuildingType();
         if (currentKingdom.getResourceAmount(ResourceType.ROCK) < ((buildingType.getHP_IN_FIRST() - selectedBuilding.getHp()) / 200))
-            return "You do not have enough resource to repair your building!";
+            return "You do not have enough resource!";
         for (Unit unit : selectedBuilding.getPosition().getUnits())
             if (!unit.getOwner().equals(currentKingdom))
-                return "This block should be free of soldier enemies while building is being repaid.";
+                return "Enemies detected in the block!";
         int xPosition = selectedBuilding.getPosition().getxPosition();
         int yPosition = selectedBuilding.getPosition().getxPosition();
         for (int i = -2; i <= 2; i++)
             for (int j = -2; j <= 2; j++)
                 for (Unit unit : gameMap.getMapBlockByLocation(xPosition + i, yPosition + j).getUnits())
                     if (!unit.getOwner().equals(currentKingdom))
-                        return "Blocks that neat the building should be free of enemies troop!";
-        if (selectedBuilding.getHp().equals(buildingType.getHP_IN_FIRST())) return "Building hp is full.";
+                        return "Enemies detected around the block!";
+        if (selectedBuilding.getHp().equals(buildingType.getHP_IN_FIRST())) return "Building hp is already full!";
         currentKingdom.setResourceAmount(ResourceType.ROCK, (buildingType.getHP_IN_FIRST() - selectedBuilding.getHp()) / 200);
         selectedBuilding.damage(selectedBuilding.getHp() - selectedBuilding.getBuildingType().getHP_IN_FIRST());
         return "done";
@@ -226,10 +224,10 @@ public class BuildingController {
                 food = Food.valueOf(options);
                 if (food.getPrice() * amount > currentKingdom.getBalance()) return "You do not have enough balance!";
                 if (currentKingdom.getBuildingFormKingdom(BuildingType.FOOD_STOCKPILE) == null)
-                    return "You do not have any stock to put food in it!";
+                    return "You do not have food stockpile!";
                 if (currentKingdom.getNumberOfStock(BuildingType.FOOD_STOCKPILE) * StockType.FOOD_STOCKPILE.getCAPACITY() <
                         currentKingdom.getFoodAmount(food) + amount)
-                    return "You do not have enough space for this food!";
+                    return "You do not have enough space!";
                 currentKingdom.setFoodsAmount(food, amount);
                 currentKingdom.setBalance((double) -food.getPrice());
                 break;
@@ -237,10 +235,10 @@ public class BuildingController {
                 weapons = Weapons.valueOf(options);
                 if (weapons.getCost() * amount > currentKingdom.getBalance()) return "You do not have enough balance!";
                 if (currentKingdom.getBuildingFormKingdom(BuildingType.ARMOURY) == null)
-                    return "You do not have any stock to put weapon in it!";
+                    return "You do not have armoury!";
                 if (currentKingdom.getNumberOfStock(BuildingType.ARMOURY) * StockType.ARMOURY.getCAPACITY() <
                         currentKingdom.getWeaponAmount(weapons) + amount)
-                    return "You do not have enough space for this weapon!";
+                    return "You do not have enough space!";
                 currentKingdom.setWeaponsAmount(weapons, amount);
                 currentKingdom.setBalance((double) -weapons.getCost());
                 break;
@@ -250,7 +248,7 @@ public class BuildingController {
                     return "You do not have enough balance!";
                 if (currentKingdom.getNumberOfStock(BuildingType.STOCKPILE) * StockType.STOCKPILE.getCAPACITY() <
                         currentKingdom.getResourceAmount(resourceType) + amount)
-                    return "You do not have enough space for this resource!";
+                    return "You do not have enough space!";
                 currentKingdom.setResourceAmount(resourceType, amount);
                 currentKingdom.setBalance((double) -resourceType.getPrice());
                 break;
