@@ -14,7 +14,7 @@ public class MovingTroopAnimation extends Transition {
     private Rectangle rectangle;
 
     public MovingTroopAnimation(UnitType unitType, Rectangle soldier) {
-        this.folderName = folderName;
+        this.folderName = unitType.getAnimationCategory();
         this.isRight = true;
         this.rectangle = soldier;
         setCycleCount(-1);

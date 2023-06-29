@@ -153,10 +153,16 @@ public class MapBlock extends StackPane {
 
     public void addUnitHere(Unit toAdd){
         units.add(toAdd);
+        Rectangle unitImage = toAdd.getUnitImage();
+        unitImage.setManaged(false);
+        unitImage.setLayoutX((((units.size()-2) * 10) % 100) - 10 );
+        unitImage.setLayoutY(new Random().nextInt(60) - 10);
+        getChildren().add(unitImage);
     }
 
     public void removeUnitFromHere(Unit toRemove){
         units.remove(toRemove);
+        getChildren().remove(toRemove.getUnitImage());
     }
 
     public boolean isSelected() {
