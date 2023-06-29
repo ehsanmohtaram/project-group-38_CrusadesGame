@@ -5,11 +5,13 @@ import controller.MapDesignController;
 import javafx.animation.ScaleTransition;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -17,6 +19,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.Direction;
+import model.MapBlock;
 import model.MapBlockType;
 import model.Tree;
 import view.DesignMapMenu;
@@ -26,6 +29,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class MapDesignMenuController {
+//    public static MapBlock mouseOnBlock = null;
     private MapDesignController mapDesignController;
     private final Controller controller;
     private final Style style;
@@ -86,7 +90,8 @@ public class MapDesignMenuController {
         if(mapDesignPane.getChildren().size() == 2) mapDesignPane.getChildren().remove(1);
         addToolBar();
         cameraProcess();
-
+        mapDesignController.addDetailsBox();
+        mapDesignController.hoverProcess();
         mapDesignController.handelMapSelection();
         stage.setTitle("design Map");
         stage.show();
@@ -148,6 +153,8 @@ public class MapDesignMenuController {
         node.setTranslateX(node.getTranslateX()-f*dx);
         node.setTranslateY(node.getTranslateY()-f*dy);
     }
+
+
 
     public void addToolBar(){
         Button addUser = new Button("add user");

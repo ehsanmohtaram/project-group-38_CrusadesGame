@@ -33,8 +33,6 @@ public enum BuildingType {
     SIEGE_TENT(0 ,null, 0, 100,  UnitType.WORKER,0,CampType.SIEGE_TENT, new Image(BuildingType.class.getResource("/images/building/SIEGE_TENT.png").toExternalForm())),
     ENGINEER_GUILD(100, ResourceType.WOOD, 10, 500,  UnitType.WORKER,0,CampType.ENGINEER_GUILD, new Image(BuildingType.class.getResource("/images/building/ENGINEER_GUILD.png").toExternalForm())),
     MERCENARY_POST(0, ResourceType.WOOD, 10, 500,  UnitType.WORKER,0,CampType.MERCENARY_POST, new Image(BuildingType.class.getResource("/images/building/MERCENARY_POST.png").toExternalForm())),
-    CATHEDRAL(1000,null,0,500, UnitType.WORKER,0, CampType.CATHEDRAL, new Image(BuildingType.class.getResource("/images/building/CATHEDRAL.png").toExternalForm())),
-    CHURCH(250,null,0,200, UnitType.WORKER,0, CampType.CHURCH, new Image(BuildingType.class.getResource("/images/building/CHURCH.png").toExternalForm())),
     STABLE(400, ResourceType.WOOD, 20, 300, UnitType.WORKER, 0, CampType.STABLE, new Image(BuildingType.class.getResource("/images/building/STABLE.png").toExternalForm())),
     //Stock
     STOCKPILE(0 , null, 0, 300, UnitType.WORKER,0,StockType.STOCKPILE, new Image(BuildingType.class.getResource("/images/building/stock.png").toExternalForm())),
@@ -47,7 +45,7 @@ public enum BuildingType {
     POLE_TURNER(100, ResourceType.WOOD, 10, 300, UnitType.WORKER,1,ProducerType.POLE_TURNER, new Image(BuildingType.class.getResource("/images/building/POLE_TURNER.png").toExternalForm())),
     OIL_SMELTER(100, ResourceType.WOOD, 10, 300, UnitType.ENGINEER,1,ProducerType.OIL_SMELTER, new Image(BuildingType.class.getResource("/images/building/OIL_SMELTER.png").toExternalForm())),
     BAKERY(0, ResourceType.WOOD, 10, 250, UnitType.WORKER,1,ProducerType.BAKERY, new Image(BuildingType.class.getResource("/images/building/BAKERY.png").toExternalForm())),
-    DAIRY_PRODUCTS(0, ResourceType.WOOD, 10, 250, UnitType.WORKER,1,ProducerType.DAIRY_PRODUCTS, new Image(BuildingType.class.getResource("/images/building/DAIRY_PRODUCTS.gif").toExternalForm())),
+    DAIRY_PRODUCTS(0, ResourceType.WOOD, 10, 250, UnitType.WORKER,0,ProducerType.DAIRY_PRODUCTS, new Image(BuildingType.class.getResource("/images/building/DAIRY_PRODUCTS.gif").toExternalForm())),
     BREWERY(0, ResourceType.WOOD, 10, 250, UnitType.WORKER,1,ProducerType.BREWERY, new Image(BuildingType.class.getResource("/images/building/BREWERY.png").toExternalForm())),
     MILL(0, ResourceType.WOOD, 20, 300, UnitType.WORKER, 3, ProducerType.MILL, new Image(BuildingType.class.getResource("/images/building/MILL.png").toExternalForm())),
     Hunting_ground(0, ResourceType.WOOD, 10, 250, UnitType.WORKER,1,ProducerType.Hunting_ground, new Image(BuildingType.class.getResource("/images/building/Hunting_ground.png").toExternalForm())),
@@ -62,7 +60,9 @@ public enum BuildingType {
     OX_TETHER(0, ResourceType.WOOD, 5, 200, UnitType.WORKER, 1, MineType.OX_TETHER, new Image(BuildingType.class.getResource("/images/building/OX_TETHER.png").toExternalForm())),
     //Other
     SHOP(0, ResourceType.WOOD, 5, 300, UnitType.WORKER, 0, null, new Image(BuildingType.class.getResource("/images/building/SHOP.png").toExternalForm())),
-    HOUSE(0, ResourceType.WOOD, 6, 200, UnitType.WORKER, 0, null, new Image(BuildingType.class.getResource("/images/building/HOUSE.gif").toExternalForm()));
+    HOUSE(0, ResourceType.WOOD, 6, 200, UnitType.WORKER, 0, null, new Image(BuildingType.class.getResource("/images/building/HOUSE.gif").toExternalForm())),
+    CATHEDRAL(1000,null,0,500, UnitType.WORKER,0, null, new Image(BuildingType.class.getResource("/images/building/CATHEDRAL.png").toExternalForm())),
+    CHURCH(250,null,0,200, UnitType.WORKER,0, null, new Image(BuildingType.class.getResource("/images/building/CHURCH.png").toExternalForm())),;
     private final Integer GOLD;
     private final ResourceType RESOURCES;
     private final Integer RESOURCE_NUMBER;

@@ -41,8 +41,7 @@ public class GameController {
                     mapDesignController.run();
                     break;
                 case "trade":
-                    TradeController tradeController = new TradeController();
-                    tradeController.runTrade();
+
                     break;
                 case "building":
                     //BuildingController buildingController = new BuildingController();
@@ -52,26 +51,27 @@ public class GameController {
                     unitController.run();
                     break;
                 case "next turn":
-                    Turn turn = new Turn(); turn.runNextTurn();
-                    checkForHeadQuarters();
-                    if (gameMap.getPlayers().size() == 1) {
-                        gameMap.setEndGame(true); System.out.println(getListOfPlayers());
-                        Controller.currentUser = Controller.loggedInUser;
-                        return;
-                    }
+
                     break;
                 case "back": return;
             }
         }
     }
 
-    public String nextTurn(){
+    public void nextTurn(){
         int nextPerson = gameMap.getPlayers().indexOf(currentKingdom);
         Controller.currentUser = gameMap.getPlayers().get((nextPerson + 1) % gameMap.getPlayers().size()).getOwner();
         currentUser = Controller.currentUser;
         selectedUnit = new ArrayList<>(); selectedBuilding = null;
         currentKingdom = gameMap.getKingdomByOwner(currentUser);
-        return "next turn";
+        Turn turn = new Turn();
+        turn.runNextTurn();
+        checkForHeadQuarters();
+        if (gameMap.getPlayers().size() == 1) {
+            gameMap.setEndGame(true); System.out.println(getListOfPlayers());
+            Controller.currentUser = Controller.loggedInUser;
+            System.out.println("END");
+        }
     }
 
     public String getListOfPlayers () {
@@ -270,18 +270,18 @@ public class GameController {
         if (!currentKingdom.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition())) return "This block is out of range!";
         BuildingType buildingType = BuildingType.valueOf(options.get("t"));
         if (!mapBlock.getMapBlockType().isBuildable() && !(buildingType.specificConstant instanceof MineType))
-            return "You can not build your building here. Please choose another location!";
+            return "You can not build your building here.";
         if (buildingType.equals(BuildingType.OX_TETHER) && !mapBlock.getMapBlockType().isBuildable())
-            return "You can not build your building here. Please choose another location!";
-        if (mapBlock.getBuildings() != null || mapBlock.getSiege() != null) return "This block already has filled with another building!";
-        if (buildingType.getGOLD() > currentKingdom.getBalance()) return "You do not have enough gold to buy this building.";
+            return "You can not build your building here.";
+        if (mapBlock.getBuildings() != null || mapBlock.getSiege() != null) return "There is a building in this block!";
+        if (buildingType.getGOLD() > currentKingdom.getBalance()) return "You dont have enough balance!";
         if (buildingType.equals(BuildingType.BIG_STONE_GATEHOUSE) || buildingType.equals(BuildingType.SMALL_STONE_GATEHOUSE))
-            if (checkGate(mapBlock) == null) return "You can not build your gate here cause it do not have access to other blocks!";
+            if (checkGate(mapBlock) == null) return "You can not build your gate here!";
         if (buildingType.equals(BuildingType.DRAWBRIDGE)) if (checkBridgePosition(mapBlock) == null) return "You can not build your bridge here!";
         if (buildingType.getRESOURCES() != null && buildingType.getRESOURCE_NUMBER() > currentKingdom.getResourceAmount(buildingType.getRESOURCES()))
-            return "You do not have enough " + buildingType.getRESOURCES().name().toLowerCase() + " to buy this building.";
+            return "You do not have enough " + buildingType.getRESOURCES().name().toLowerCase() + "!";
         if (currentKingdom.checkForAvailableNormalUnit(buildingType.getWorkerNeeded()) < buildingType.getNumberOfWorker())
-            return "There are not enough available worker to put in this building!";
+            return "There are not enough available worker!";
         String result;
         result = checkSpecificBuilding(mapBlock, buildingType);
         if (result != null) return result;

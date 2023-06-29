@@ -143,9 +143,6 @@ public class Kingdom{
                         return camp;
                     if(unitType.getIS_ARAB().equals(0) && campType.equals(CampType.BARRACK))
                         return camp;
-                    if(unitType.getIS_ARAB().equals(-2) && campType.equals(CampType.CHURCH) ||
-                            unitType.getIS_ARAB().equals(-3) && campType.equals(CampType.CATHEDRAL))
-                        return camp;
                 }
             }
         }

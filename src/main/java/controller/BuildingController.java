@@ -22,23 +22,21 @@ public class BuildingController {
     }
 
     public String repairBuilding() {
-        if (selectedBuilding.getBuildingType().equals(BuildingType.CATHEDRAL) ||
-                selectedBuilding.getBuildingType().equals(BuildingType.CHURCH)) return "Invalid command";
-        if (currentKingdom.checkForAvailableNormalUnit(UnitType.ENGINEER) == 0) return "There is no available workers";
+        if (currentKingdom.checkForAvailableNormalUnit(UnitType.ENGINEER) == 0) return "There is no available workers!";
         BuildingType buildingType = selectedBuilding.getBuildingType();
         if (currentKingdom.getResourceAmount(ResourceType.ROCK) < ((buildingType.getHP_IN_FIRST() - selectedBuilding.getHp()) / 200))
-            return "You do not have enough resource to repair your building!";
+            return "You do not have enough resource!";
         for (Unit unit : selectedBuilding.getPosition().getUnits())
             if (!unit.getOwner().equals(currentKingdom))
-                return "This block should be free of soldier enemies while building is being repaid.";
+                return "Enemies detected in the block!";
         int xPosition = selectedBuilding.getPosition().getxPosition();
         int yPosition = selectedBuilding.getPosition().getxPosition();
         for (int i = -2; i <= 2; i++)
             for (int j = -2; j <= 2; j++)
                 for (Unit unit : gameMap.getMapBlockByLocation(xPosition + i, yPosition + j).getUnits())
                     if (!unit.getOwner().equals(currentKingdom))
-                        return "Blocks that neat the building should be free of enemies troop!";
-        if (selectedBuilding.getHp().equals(buildingType.getHP_IN_FIRST())) return "Building hp is full.";
+                        return "Enemies detected around the block!";
+        if (selectedBuilding.getHp().equals(buildingType.getHP_IN_FIRST())) return "Building hp is already full!";
         currentKingdom.setResourceAmount(ResourceType.ROCK, (buildingType.getHP_IN_FIRST() - selectedBuilding.getHp()) / 200);
         selectedBuilding.damage(selectedBuilding.getHp() - selectedBuilding.getBuildingType().getHP_IN_FIRST());
         return "done";
@@ -57,43 +55,11 @@ public class BuildingController {
         }
         camp.setCapacity(count);
         if (unitType.getIS_ARAB().equals(1)) currentKingdom.setBalance((double) -unitType.getPRICE() * count);
-        if (!unitType.equals(UnitType.BLACK_MONK)) currentKingdom.setNoneEmployed(-count);
-        else deleteMonkFromMap(count);
         if (unitType.equals(UnitType.KNIGHT)) deleteHorseFromMap(count);
         if (unitType.getWEAPON_NEEDED() != null) currentKingdom.setWeaponsAmount(unitType.getWEAPON_NEEDED(), -count);
         if (unitType.getArmour_Needed() != null) currentKingdom.setWeaponsAmount(unitType.getArmour_Needed(), -count);
     }
 
-    public void deleteMonkFromMap(int count) {
-        int marker = count;
-        int monkCounter;
-        for (Building building : currentKingdom.getBuildings()) {
-            if (building.getBuildingType().equals(BuildingType.CHURCH)) {
-                if (marker <= building.getPosition().getUnits().size()) monkCounter = count;
-                else monkCounter = building.getPosition().getUnits().size();
-                marker -= monkCounter;
-                int check = 0;
-                while (check != monkCounter) {
-                    currentKingdom.getUnits().remove(building.getPosition().getUnits().get(0));
-                    building.getPosition().getUnits().remove(0);
-                    ((Camp) building).setCapacity(-1);
-                    ((Camp) building).getUnits().remove(0);
-                    check++;
-                }
-            }
-            if (marker == 0) break;
-        }
-    }
-
-    public String checkCathedral(int count) {
-        int monkCounter = 0;
-        for (Building building : currentKingdom.getBuildings()) {
-            if (building.getBuildingType().equals(BuildingType.CHURCH))
-                monkCounter += building.getPosition().getUnits().size();
-        }
-        if (monkCounter < count) return "You do not have enough monk to make black monks!";
-        return "done";
-    }
 
     public String checkForKnightHorse(int count) {
         int horseCounter = 0;
@@ -150,30 +116,21 @@ public class BuildingController {
         }
         Camp camp = (Camp) selectedBuilding;
         if (campType.getCapacity() < camp.getCapacity() + count) return "Your camp is full. Please make a new camp!";
-        if (campType.equals(CampType.CATHEDRAL)) {
-            result = checkCathedral(count); if (!result.equals("done")) return result;
-        } else if (currentKingdom.getNoneEmployed() < count)
+        if (currentKingdom.getNoneEmployed() < count)
             return "You do not have enough population to make new units!";
         createUnitAdditional(unitType, count);
         return count + " " + unitType.name().toLowerCase().replaceAll("_", " ") + " has been made!";
     }
 
     public String setMode(HashMap<String, String> options) {
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet())
-            if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         String result;
-        try {
-            ProduceMode.valueOf(options.get("m").toUpperCase().replaceAll(" ", "_"));
-        } catch (Exception ignored) {
-            return "There is no such mode to change to it!";
-        }
-        ProduceMode produceMode = ProduceMode.valueOf(options.get("m").toUpperCase().replaceAll(" ", "_"));
+        ProduceMode.valueOf(options.get("m"));
+        ProduceMode produceMode = ProduceMode.valueOf(options.get("m"));
         Producer producer = (Producer) selectedBuilding;
         result = checkProduceMode();
         if (result != null) return result;
         producer.setMode(produceMode);
-        return "Produce mode has been changed successfully!";
+        return "done";
     }
 
     public String checkProduceMode() {
@@ -188,8 +145,6 @@ public class BuildingController {
             else if (check0 instanceof Food && currentKingdom.getBuildingFormKingdom(BuildingType.FOOD_STOCKPILE) == null)
                 return "You should build food stock first!";
         }
-        if (producer.getMode().equals(ProduceMode.SECOND) && check1 == null)
-            return "There is only one product exist in this building!";
         if (!producer.getMode().equals(ProduceMode.FIRST) && check1 != null)
             if (currentKingdom.getBuildingFormKingdom(BuildingType.ARMOURY) == null)
                 return "You should build armoury first!";
@@ -226,10 +181,10 @@ public class BuildingController {
                 food = Food.valueOf(options);
                 if (food.getPrice() * amount > currentKingdom.getBalance()) return "You do not have enough balance!";
                 if (currentKingdom.getBuildingFormKingdom(BuildingType.FOOD_STOCKPILE) == null)
-                    return "You do not have any stock to put food in it!";
+                    return "You do not have food stockpile!";
                 if (currentKingdom.getNumberOfStock(BuildingType.FOOD_STOCKPILE) * StockType.FOOD_STOCKPILE.getCAPACITY() <
                         currentKingdom.getFoodAmount(food) + amount)
-                    return "You do not have enough space for this food!";
+                    return "You do not have enough space!";
                 currentKingdom.setFoodsAmount(food, amount);
                 currentKingdom.setBalance((double) -food.getPrice());
                 break;
@@ -237,10 +192,10 @@ public class BuildingController {
                 weapons = Weapons.valueOf(options);
                 if (weapons.getCost() * amount > currentKingdom.getBalance()) return "You do not have enough balance!";
                 if (currentKingdom.getBuildingFormKingdom(BuildingType.ARMOURY) == null)
-                    return "You do not have any stock to put weapon in it!";
+                    return "You do not have armoury!";
                 if (currentKingdom.getNumberOfStock(BuildingType.ARMOURY) * StockType.ARMOURY.getCAPACITY() <
                         currentKingdom.getWeaponAmount(weapons) + amount)
-                    return "You do not have enough space for this weapon!";
+                    return "You do not have enough space!";
                 currentKingdom.setWeaponsAmount(weapons, amount);
                 currentKingdom.setBalance((double) -weapons.getCost());
                 break;
@@ -250,7 +205,7 @@ public class BuildingController {
                     return "You do not have enough balance!";
                 if (currentKingdom.getNumberOfStock(BuildingType.STOCKPILE) * StockType.STOCKPILE.getCAPACITY() <
                         currentKingdom.getResourceAmount(resourceType) + amount)
-                    return "You do not have enough space for this resource!";
+                    return "You do not have enough space!";
                 currentKingdom.setResourceAmount(resourceType, amount);
                 currentKingdom.setBalance((double) -resourceType.getPrice());
                 break;

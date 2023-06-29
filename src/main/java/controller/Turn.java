@@ -24,7 +24,7 @@ public class Turn {
             executeProducerBuilding();
             executeMines();
             innCheck();
-            produceHorse();
+            //produceHorse();
         }
         illness();
         setReligiousBuildingPopularity();

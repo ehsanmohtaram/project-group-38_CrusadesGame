@@ -87,8 +87,10 @@ public class Style {
         label.setAlignment(Pos.CENTER);
         label.setStyle("-fx-text-fill: rgba(170,139,100,0.8);");
         label.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
-        label.setMaxWidth(width);
-        label.setMinWidth(width);
+        if(width != 0 && height != 0) {
+            label.setMaxWidth(width);
+            label.setMinWidth(width);
+        }
         label.setTextAlignment(TextAlignment.CENTER);
         label.setPrefHeight(height);
     }

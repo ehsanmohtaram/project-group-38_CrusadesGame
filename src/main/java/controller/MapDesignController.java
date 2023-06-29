@@ -1,15 +1,26 @@
 package controller;
 
+import javafx.animation.PauseTransition;
 import javafx.event.EventHandler;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import model.*;
 import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
+import view.Style;
+import view.animation.RollingPaper;
+import view.controller.GameUI;
+import view.controller.MapDesignMenuController;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -22,12 +33,16 @@ public class MapDesignController {
     private int YofMap;
     private ArrayList<MapBlock> selectedBlocks;
     private Pane mapDesignPane;
+    private Style style;
+    private StackPane detailsBox;
+    private RollingPaper rollingPaperAnimation;
 
     public MapDesignController(Map gameMap) {
         this.gameMap = gameMap;
 //        designMapMenu = new DesignMapMenu(this);
         currentUser = Controller.currentUser;
         selectedBlocks = new ArrayList<>();
+        style = new Style();
     }
 
     public Map getGameMap() {
@@ -52,10 +67,70 @@ public class MapDesignController {
     public void addMapToPane(Pane mapDesignPane){
         this.mapDesignPane = mapDesignPane;
         mapDesignPane.getChildren().add(gameMap.getMapPane());
+
 //        mapDesignPane.setAlignment(mapDesignPane.getChildren().get(0) , Pos.CENTER_LEFT);
 //        gameMap.getMapPane().getChildren().add(new Label("hello word"));
 
 
+    }
+
+    public void addDetailsBox(){
+        Label firstDetail = new Label("nothing selected yet!");
+        detailsBox = new StackPane();
+        detailsBox.setLayoutX(1150);
+        detailsBox.setLayoutY(50);
+        Rectangle background = new Rectangle(350 , 350);
+        background.setFill(Color.rgb(1 , 2 , 100));
+        rollingPaperAnimation = new RollingPaper(background);
+        detailsBox.getChildren().addAll(background, firstDetail);
+        mapDesignPane.getChildren().add(detailsBox);
+        rollingPaperAnimation.play();
+        rollingPaperAnimation.setAutoReverse(true);
+        rollingPaperAnimation.setCycleCount(2);
+
+    }
+
+    public void hoverProcess() {
+        Label mapBlockDetails = new Label();
+        style.label0(mapBlockDetails, 0 , 0);
+        mapBlockDetails.setBackground(Background.fill(Color.rgb(50 , 50 , 50 , 0.8)));
+        mapBlockDetails.setFont(style.Font0(18));
+        for (MapBlock[] mapBlocks : gameMap.getMap()) {
+            for (MapBlock mapBlock : mapBlocks) {
+                PauseTransition pauseTransition = new PauseTransition(Duration.seconds(2));
+                mapBlock.setOnMouseEntered(e -> {
+                    mapBlock.changeBorder(true);
+                    GameUI.mouseOnBlock = mapBlock;
+                    pauseTransition.setOnFinished(event ->{
+                        String details = mapBlock.showDetails();
+
+                        mapBlockDetails.setLayoutX(mapBlock.getLayoutX());
+                        mapBlockDetails.setLayoutY(mapBlock.getLayoutY() + 100);
+                        int lines = 1; int lastChar = 0;int max = 1;
+                        for (int i = 0; i < details.length() ; i++) {
+                            if(details.charAt(i) == '\n') {
+                                if((i - lastChar) > max)
+                                    max = i - lastChar;
+                                lines++;
+                                lastChar = i;
+                            }
+                        }
+                        mapBlockDetails.setPrefSize(max * 11, lines * 29);
+                        mapBlockDetails.setText(details);
+                        gameMap.getMapPane().getChildren().add(mapBlockDetails);
+                    });
+                    pauseTransition.play();
+
+                });
+                mapBlock.setOnMouseExited(e -> {
+                    if (!mapBlock.isSelected())
+                        mapBlock.changeBorder(false);
+                    gameMap.getMapPane().getChildren().remove(mapBlockDetails);
+                    pauseTransition.stop();
+                });
+
+            }
+        }
     }
 
     public Pane getGameMapPane() {
@@ -83,8 +158,20 @@ public class MapDesignController {
                             mapBlock.changeBorder(true);
                             mapBlock.setSelected(true);
                         }
+
+                updateDetailsBox();
             }
         });
+    }
+
+    private void updateDetailsBox() {
+        int soldiers = 0; int minRate = 100; int maxRate = 0; int averageRate = 0;
+        for (MapBlock selectedBlock : selectedBlocks) {
+            soldiers += selectedBlock.getUnits().size();
+            //toDo brumand bia in lanatia ro hesab kon!
+        }
+        rollingPaperAnimation.setFirstTime(false);
+        rollingPaperAnimation.play();
     }
 
     public String setTexture(MapBlockType mapBlockType) {
@@ -264,8 +351,6 @@ public class MapDesignController {
 
     public String addUserToMap(HashMap<String , String> options){
         String checkingResult;
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
         if (User.getUserByUsername(options.get("u")) == null) return "User dose not exist. Please choose user from registered users";
         try {Flags.valueOf(options.get("f").toUpperCase());}
         catch (Exception ignored) {return "Your flag color did not exist in default colors!";}
@@ -287,13 +372,13 @@ public class MapDesignController {
         Stock stock = new Stock(gameMap.getMapBlockByLocation(newXPosition, newYPosition), BuildingType.STOCKPILE, kingdom);
         gameMap.addPlayer(kingdom);
         kingdom.setHeadquarter(headQuarter); kingdom.addBuilding(headQuarter);
-        Rectangle rectangle0 = new Rectangle(100, 100);
+        Rectangle rectangle0 = new Rectangle(70, 70);
         rectangle0.setFill(new ImagePattern(BuildingType.HEAD_QUARTER.getTexture()));
         selectedBlocks.get(0).getChildren().add(rectangle0);
         selectedBlocks.get(0).setBuildings(headQuarter);
 
         kingdom.addBuilding(stock);
-        Rectangle rectangle1 = new Rectangle(100, 100);
+        Rectangle rectangle1 = new Rectangle(70, 70);
         rectangle1.setFill(new ImagePattern(BuildingType.STOCKPILE.getTexture()));
         gameMap.getMapBlockByLocation(newXPosition, newYPosition).getChildren().add(rectangle1);
 
