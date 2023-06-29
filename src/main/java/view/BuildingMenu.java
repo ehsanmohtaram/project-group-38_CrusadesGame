@@ -20,6 +20,8 @@ import model.building.*;
 import model.unit.UnitType;
 import view.controller.BuildingMenuController;
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BuildingMenu {
     private final BuildingController buildingController;
@@ -66,11 +68,6 @@ public class BuildingMenu {
         else if (buildingType.specificConstant instanceof ProducerType) produceBuildingRun(buildingInformationHolder);
         else if (buildingType.specificConstant instanceof SiegeType) siegeRun(buildingInformationHolder);
         else if (buildingType.equals(BuildingType.SHOP)) runShop(buildingInformationHolder);
-        else mainBuildingClassRun(buildingInformationHolder);
-    }
-
-    public void mainBuildingClassRun(Pane buildingInformationHolder) {
-
     }
 
     public void defensiveBuildingRnu(Pane buildingInformationHolder) {
@@ -154,6 +151,7 @@ public class BuildingMenu {
     }
 
     public void campBuildingRnu(Pane buildingInformationHolder) {
+        if (buildingType.equals(BuildingType.STABLE) || buildingType.equals(BuildingType.SIEGE_TENT)) return;
         buildingInformationHolder.setPrefSize(808, 203);
         BackgroundSize backgroundSize = new BackgroundSize(808, 203, false, false, false, false);
         BackgroundImage backgroundImage = new BackgroundImage(new Image(BuildingMenu.class.getResource("/images/menus/barrack.png").toExternalForm()), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
@@ -252,15 +250,151 @@ public class BuildingMenu {
     }
 
     public void produceBuildingRun(Pane buildingInformationHolder) {
-//        HashMap<String, String> optionPass;
-//        String command;
-//        while (true) {
-//            command = CommandParser.getScanner().nextLine();
-//            if (commandParser.validate(command, "back", null) != null) return "back";
-//            else if ((optionPass = commandParser.validate(command, "set mode","m|mode")) != null)
-//                System.out.println(buildingController.setMode(optionPass));
-//            else System.out.println("Invalid command");
-//        }
+        HBox holder = new HBox();
+        holder.setSpacing(15);
+        holder.setAlignment(Pos.CENTER);
+        ProducerType producerType = (ProducerType) buildingType.specificConstant;
+        VBox vBox0 = new VBox();
+        vBox0.setAlignment(Pos.CENTER);
+        vBox0.setSpacing(10);
+        Rectangle rectangle0 = new Rectangle(20, 10);
+        rectangle0.setStroke(Color.rgb(170,139,100,0.8));
+        rectangle0.setStrokeWidth(2);
+        rectangle0.setFill(Color.TRANSPARENT);
+        Button button0 = new Button();
+        button0.setOpacity(0.4);
+        setButtons(button0, producerType.getTypeOfResource0());
+        vBox0.getChildren().addAll(button0, rectangle0);
+        VBox vBox_0 = new VBox();
+        vBox_0.setAlignment(Pos.CENTER);
+        vBox_0.setSpacing(10);
+        Rectangle rectangle_0 = new Rectangle(20, 10);
+        rectangle_0.setFill(Color.TRANSPARENT);
+        rectangle_0.setStroke(Color.rgb(170,139,100,0.8));
+        rectangle_0.setStrokeWidth(2);
+        Button button_0 = new Button();
+        setButtons(button_0, producerType.getTypeOfResource0());
+        vBox_0.getChildren().addAll(button_0, rectangle_0);
+        VBox vBox1 = new VBox();
+        vBox1.setAlignment(Pos.CENTER);
+        vBox1.setSpacing(10);
+        Rectangle rectangle1 = new Rectangle(20, 10);
+        rectangle1.setStroke(Color.rgb(170,139,100,0.8));
+        rectangle1.setStrokeWidth(2);
+        rectangle1.setFill(Color.TRANSPARENT);
+        Button button1 = new Button();
+        button1.setOpacity(0.4);
+        setButtons(button1, producerType.getTypeOfResource1());
+        vBox1.getChildren().addAll(button1, rectangle1);
+        VBox vBox_1 = new VBox();
+        vBox_1.setAlignment(Pos.CENTER);
+        vBox_1.setSpacing(10);
+        Rectangle rectangle_1 = new Rectangle(20, 10);
+        rectangle_1.setStroke(Color.rgb(170,139,100,0.8));
+        rectangle_1.setStrokeWidth(2);
+        rectangle_1.setFill(Color.TRANSPARENT);
+        Button button_1 = new Button();
+        setButtons(button_1 ,producerType.getTypeOfResource1());
+        vBox_1.getChildren().addAll(button_1, rectangle_1);
+        HBox.setMargin(vBox1, new Insets(0, 0, 0,60));
+        getResourceState((Producer) building ,rectangle0, rectangle_0, rectangle1, rectangle_1);
+        holder.getChildren().addAll(vBox0, vBox_0);
+        if (producerType.getTypeOfResource1() != null) holder.getChildren().addAll(vBox1, vBox_1);
+        buildingInformationHolder.getChildren().add(holder);
+        changeMode(rectangle0, rectangle_0, rectangle1, rectangle_1, (Producer) building);
+        buildingInformationHolder.setLayoutY(140);
+        buildingInformationHolder.setLayoutX(570);
+    }
+
+    public void getResourceState(Producer producer, Rectangle rectangle0, Rectangle rectangle_0, Rectangle rectangle1, Rectangle rectangle_1) {
+        rectangle_0.setFill(Color.TRANSPARENT); rectangle_1.setFill(Color.TRANSPARENT);
+        rectangle1.setFill(Color.TRANSPARENT); rectangle0.setFill(Color.TRANSPARENT);
+        if (producer.getMode().equals(ProduceMode.FIRST)) {
+            rectangle_0.setFill(Color.GOLD);
+            rectangle1.setFill(Color.GOLD);
+        }
+        else if(producer.getMode().equals(ProduceMode.SECOND)) {
+            rectangle0.setFill(Color.GOLD);
+            rectangle_1.setFill(Color.GOLD);
+        }
+        else if(producer.getMode().equals(ProduceMode.BOTH)) {
+            rectangle_0.setFill(Color.GOLD);
+            rectangle_1.setFill(Color.GOLD);
+        }
+        else if (producer.getMode().equals(ProduceMode.NON_ACTIVE)) {
+            rectangle0.setFill(Color.GOLD);
+            rectangle1.setFill(Color.GOLD);
+        }
+    }
+
+    public void changeMode(Rectangle rectangle0, Rectangle rectangle_0, Rectangle rectangle1, Rectangle rectangle_1, Producer producer) {
+        HashMap<String, String> options = new HashMap<>();
+        rectangle0.setOnMouseClicked(mouseEvent -> {
+            if (rectangle_0.getFill().equals(Color.GOLD) && rectangle1.getFill().equals(Color.GOLD)) options.put("m", ProduceMode.NON_ACTIVE.name());
+            else if (rectangle_1.getFill().equals(Color.GOLD) && rectangle0.getFill().equals(Color.GOLD)) options.put("m", ProduceMode.SECOND.name());
+            else if (rectangle_0.getFill().equals(Color.GOLD) && rectangle_1.getFill().equals(Color.GOLD)) options.put("m", ProduceMode.SECOND.name());
+            else if (rectangle0.getFill().equals(Color.GOLD) && rectangle1.getFill().equals(Color.GOLD)) options.put("m", ProduceMode.NON_ACTIVE.name());
+            String result = buildingController.setMode(options);
+            if (result != null) madeResourcePopUp(result);
+            getResourceState(producer, rectangle0, rectangle_0, rectangle1, rectangle_1);
+        });
+        rectangle_0.setOnMouseClicked(mouseEvent -> {
+            if (rectangle_0.getFill().equals(Color.GOLD) && rectangle1.getFill().equals(Color.GOLD)) options.put("m", ProduceMode.FIRST.name());
+            else if (rectangle_1.getFill().equals(Color.GOLD) && rectangle0.getFill().equals(Color.GOLD)) options.put("m", ProduceMode.BOTH.name());
+            else if (rectangle_0.getFill().equals(Color.GOLD) && rectangle_1.getFill().equals(Color.GOLD)) options.put("m", ProduceMode.BOTH.name());
+            else if (rectangle0.getFill().equals(Color.GOLD) && rectangle1.getFill().equals(Color.GOLD)) options.put("m", ProduceMode.FIRST.name());
+            buildingController.setMode(options);
+            String result = buildingController.setMode(options);
+            if (result != null) madeResourcePopUp(result);
+            getResourceState(producer, rectangle0, rectangle_0, rectangle1, rectangle_1);
+        });
+        rectangle1.setOnMouseClicked(mouseEvent -> {
+            if (rectangle_0.getFill().equals(Color.GOLD) && rectangle1.getFill().equals(Color.GOLD)) options.put("m", ProduceMode.FIRST.name());
+            else if (rectangle_1.getFill().equals(Color.GOLD) && rectangle0.getFill().equals(Color.GOLD)) options.put("m", ProduceMode.NON_ACTIVE.name());
+            else if (rectangle_0.getFill().equals(Color.GOLD) && rectangle_1.getFill().equals(Color.GOLD)) options.put("m", ProduceMode.FIRST.name());
+            else if (rectangle0.getFill().equals(Color.GOLD) && rectangle1.getFill().equals(Color.GOLD)) options.put("m", ProduceMode.NON_ACTIVE.name());
+            buildingController.setMode(options);
+            String result = buildingController.setMode(options);
+            if (result != null) madeResourcePopUp(result);
+            getResourceState(producer, rectangle0, rectangle_0, rectangle1, rectangle_1);
+        });
+        rectangle_1.setOnMouseClicked(mouseEvent -> {
+            if (rectangle_0.getFill().equals(Color.GOLD) && rectangle1.getFill().equals(Color.GOLD)) options.put("m", ProduceMode.BOTH.name());
+            else if (rectangle_1.getFill().equals(Color.GOLD) && rectangle0.getFill().equals(Color.GOLD)) options.put("m", ProduceMode.SECOND.name());
+            else if (rectangle_0.getFill().equals(Color.GOLD) && rectangle_1.getFill().equals(Color.GOLD)) options.put("m", ProduceMode.BOTH.name());
+            else if (rectangle0.getFill().equals(Color.GOLD) && rectangle1.getFill().equals(Color.GOLD)) options.put("m", ProduceMode.SECOND.name());
+            buildingController.setMode(options);
+            String result = buildingController.setMode(options);
+            if (result != null) madeResourcePopUp(result);
+            getResourceState(producer, rectangle0, rectangle_0, rectangle1, rectangle_1);
+        });
+    }
+
+    public void madeResourcePopUp(String result) {
+        VBox popUp = new VBox();
+        Button ok = new Button();
+        Pane mapDesignMenu = (Pane) mainPane.getParent().getParent();
+        style.popUp0(mainPane, popUp, ok, 20, 20, 450, 70, 180, 50, 100, 15,500, 100, result, 20);
+        popUp.setStyle("-fx-background-color: beige; -fx-background-radius: 20;");
+        mapDesignMenu.getChildren().get(0).setDisable(true);
+        for (int i = 0; i < mainPane.getChildren().size() - 1; i++) mainPane.getChildren().get(i).setDisable(true);
+        ok.setOnMouseClicked(mouseEvent2 -> {
+            mainPane.getChildren().remove(popUp);
+            mapDesignMenu.getChildren().get(0).setDisable(false);
+            for (int i = 0; i < mainPane.getChildren().size(); i++) mainPane.getChildren().get(i).setDisable(false);
+        });
+        updateBalance();
+    }
+
+    public void setButtons(Button button, Enum<?> type) {
+        button.setPrefSize(50, 50);
+        button.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
+        BackgroundSize backgroundSize = new BackgroundSize(50, 50, false, false, false, false);
+        try {button.setBackground(new Background(new BackgroundImage(((ResourceType) type).getTexture(), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize)));}
+        catch (Exception ignored) {
+            try {button.setBackground(new Background(new BackgroundImage(((Food) type).getTexture(), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize)));}
+            catch (Exception ignored0) {button.setBackground(new Background(new BackgroundImage(((Weapons) type).getTexture(), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize)));}
+        }
     }
 
     public void runShop(Pane buildingInformationHolder) {
