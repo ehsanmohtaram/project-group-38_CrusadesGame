@@ -64,7 +64,7 @@ public class BuildingMenu {
     public void redirect(Pane buildingInformationHolder) {
         if (buildingType.equals(BuildingType.HEAD_QUARTER)) headQuarterRun(buildingInformationHolder);
         else if (buildingType.specificConstant instanceof DefensiveStructureType) defensiveBuildingRnu(buildingInformationHolder);
-        else if (buildingType.specificConstant instanceof CampType) campBuildingRnu(buildingInformationHolder);
+        else if (buildingType.specificConstant instanceof CampType) campBuildingRun(buildingInformationHolder);
         else if (buildingType.specificConstant instanceof StockType) stockBuildingRun(buildingInformationHolder);
         else if (buildingType.specificConstant instanceof ProducerType) produceBuildingRun(buildingInformationHolder);
         else if (buildingType.specificConstant instanceof SiegeType) siegeRun(buildingInformationHolder);
