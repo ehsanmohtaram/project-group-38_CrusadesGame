@@ -1,14 +1,13 @@
 package model.unit;
 
 import controller.UnitController;
-import model.Direction;
+import javafx.scene.shape.Rectangle;
 import model.Kingdom;
 import model.MapBlock;
-import model.Trade;
 import model.building.*;
+import view.animation.MovingTroopAnimation;
 
 import java.util.ArrayList;
-import java.util.concurrent.locks.ReadWriteLock;
 
 public class Unit {
     public static ArrayList<Unit> AggressiveUnits = new ArrayList<>();
@@ -21,19 +20,27 @@ public class Unit {
     private Unit forAttack;
     private Integer movesLeft;
     private DefensiveStructure higherElevation;
+    private Rectangle unitImage;
+    private MovingTroopAnimation movingTroopAnimation;
     public Unit(UnitType unitType, MapBlock locationBlock , Kingdom owner) {
         this.unitType = unitType;
         this.locationBlock = locationBlock;
         this.owner = owner;
         hp = unitType.getHP_IN_START();
+
+        unitImage = new Rectangle(50 , 50);
+        movingTroopAnimation = new MovingTroopAnimation(unitType, unitImage);
+
         if (!unitType.getIS_ARAB().equals(-4)) {
             locationBlock.addUnitHere(this);
             owner.addUnit(this);
             unitState = UnitState.NOT_ACTIVE;
         }
-        else unitState = UnitState.OFFENSIVE;
-
+        else
+            unitState = UnitState.OFFENSIVE;
         movesLeft = unitType.getVELOCITY();
+
+
     }
 
     public Integer getHp() {
@@ -66,6 +73,14 @@ public class Unit {
 
     public Unit getForAttack() {
         return forAttack;
+    }
+
+    public Rectangle getUnitImage() {
+        return unitImage;
+    }
+
+    public MovingTroopAnimation getMovingTroopAnimation() {
+        return movingTroopAnimation;
     }
 
     public Integer getMovesLeft() {

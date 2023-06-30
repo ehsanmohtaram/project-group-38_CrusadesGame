@@ -305,7 +305,7 @@ public class BuildingMenu {
         holder.getChildren().add(access);
     }
 
-    public void campBuildingRnu(Pane buildingInformationHolder) {
+    public void campBuildingRun(Pane buildingInformationHolder) {
         if (buildingType.equals(BuildingType.STABLE) || buildingType.equals(BuildingType.SIEGE_TENT)) return;
         buildingInformationHolder.setPrefSize(808, 203);
         BackgroundSize backgroundSize = new BackgroundSize(808, 203, false, false, false, false);
@@ -324,13 +324,28 @@ public class BuildingMenu {
         buildingInformationHolder.setLayoutY(57);
         buildingInformationHolder.setLayoutX(335);
     }
-
+    //toDo unit
     public void setUnitImages(HBox units, int type) {
         for (UnitType unit : UnitType.values()) {
             if (unit.getIS_ARAB().equals(type)) {
                 Rectangle unitHolder = new Rectangle(80, 140);
                 unitHolder.setOpacity(0.8);
                 unitHolder.setFill(new ImagePattern(unit.getMenuTexture()));
+                unitHolder.setOnMouseClicked(e -> {
+                    String result = buildingController.createUnit(unit);
+                    if(!result.equals("successful")){
+                        VBox popUp0 = new VBox();
+                        Button ok = new Button();
+                        style.popUp0(mainPane, popUp0, ok, 20, 20, 450, 70, 180, 50, 100, 15,500, 100, result, 20);
+                        popUp0.setStyle("-fx-background-color: beige; -fx-background-radius: 20;");
+                        for (int i = 0; i < mainPane.getChildren().size() - 1; i++) mainPane.getChildren().get(i).setDisable(true);
+                        ok.setOnMouseClicked(mouseEvent2 -> {
+                            mainPane.getChildren().remove(popUp0);
+                            for (int i = 0; i < mainPane.getChildren().size(); i++) mainPane.getChildren().get(i).setDisable(false);
+                        });
+                    }
+
+                });
                 units.getChildren().add(unitHolder);
             }
         }
