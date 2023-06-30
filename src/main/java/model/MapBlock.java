@@ -14,9 +14,7 @@ import view.LoginMenu;
 import view.controller.GameUI;
 import view.controller.MapDesignMenuController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 public class MapBlock extends StackPane {
 
@@ -153,10 +151,16 @@ public class MapBlock extends StackPane {
 
     public void addUnitHere(Unit toAdd){
         units.add(toAdd);
+        Rectangle unitImage = toAdd.getUnitImage();
+        unitImage.setManaged(false);
+        unitImage.setLayoutX((((units.size()-2) * 10) % 100) - 10 );
+        unitImage.setLayoutY(new Random().nextInt(60) - 10);
+        getChildren().add(unitImage);
     }
 
     public void removeUnitFromHere(Unit toRemove){
         units.remove(toRemove);
+        getChildren().remove(toRemove.getUnitImage());
     }
 
     public boolean isSelected() {
@@ -214,26 +218,42 @@ public class MapBlock extends StackPane {
         StringBuilder result = new StringBuilder("type: "
                 + getMapBlockType().name().toLowerCase().replaceAll("_", " ") + '\n');
         result.append("Units:\n");
-        for (Unit unit: getUnits()) {
-            result.append(unit.getUnitType().name().toLowerCase().replaceAll("_", " ")).append(" -> owner: ")
-                    .append(unit.getOwner().getFlag().name()).append('\n') ;
+        HashMap<UnitType, Integer[]> numberOFEachUnit = unitDetailsByType();
+        for (UnitType unitType : numberOFEachUnit.keySet()) {
+            Integer[] unitDetails = numberOFEachUnit.get(unitType);
+            result.append(unitType.name().toLowerCase().replaceAll("_", " ")).append(" ->owner: ")
+                    .append(Flags.values()[unitDetails[2]].name()).append("\nhp: ").append(unitDetails[1])
+                    .append(" damage: ").append(unitType.getDAMAGE()).append(" *").append(unitDetails[0]).append('\n') ;
         }
         result.append("building:\n");
         if(getBuildings() != null){
             result.append(getBuildings().getBuildingType().name().toLowerCase().replaceAll("_", " "))
-                    .append(" -> owner: ")
+                    .append(" ->owner: ")
                     .append(getBuildings().getOwner().getFlag().name()).append('\n') ;
         }
         result.append("siege:\n");
         if(getSiege() != null){
             result.append(getSiege().getBuildingType().name().toLowerCase().replaceAll("_", " "))
-                    .append(" -> owner: ")
+                    .append(" ->owner: ")
                     .append(getSiege().getOwner().getFlag().name()).append('\n') ;
         }
         if(getResources() != null){
             result.append("resource:\n").append(getResourceAmount()).append(" units of ").append(getResources().name().toLowerCase());
         }
         return result.toString();
+    }
+
+    public HashMap<UnitType, Integer[]> unitDetailsByType(){
+        HashMap<UnitType, Integer[]> numberOFEachUnit = new HashMap<>();
+        for (Unit unit: getUnits()) {
+            if(!numberOFEachUnit.containsKey(unit.getUnitType())){
+                numberOFEachUnit.put(unit.getUnitType(), new Integer[]{1 , unit.getHp(), List.of(Flags.values()).indexOf(unit.getOwner().getFlag())});
+            }else {
+                numberOFEachUnit.get(unit.getUnitType())[0] ++;
+                numberOFEachUnit.get(unit.getUnitType())[1] += unit.getHp();
+            }
+        }
+        return numberOFEachUnit;
     }
 
     public ArrayList<Unit> getUnitByUnitType(UnitType unitType, Kingdom owner) {

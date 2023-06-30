@@ -90,19 +90,19 @@ public class BuildingController {
         }
     }
 
-    public String createUnit(HashMap<String, String> options) {
+    public String createUnit(UnitType unitType) {
         String result;
         if (selectedBuilding.getBuildingType().equals(BuildingType.STABLE)) return "Invalid command";
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        try {UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));}
-        catch (Exception ignored) {return "There is no such a unit found!";}
-        if (!options.get("c").matches("-?\\d+")) return "Please input a digit as count value!";
-        if (Integer.parseInt(options.get("c")) < 0 || Integer.parseInt(options.get("c")) > 20) return "Invalid bounds!";
-        UnitType unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));
+//        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+//        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+//        try {UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));}
+//        catch (Exception ignored) {return "There is no such a unit found!";}
+//        if (!options.get("c").matches("-?\\d+")) return "Please input a digit as count value!";
+//        if (Integer.parseInt(options.get("c")) < 0 || Integer.parseInt(options.get("c")) > 20) return "Invalid bounds!";
+//        UnitType unitType = UnitType.valueOf(options.get("t").toUpperCase().replaceAll(" ", "_"));
         CampType campType = (CampType) selectedBuilding.getBuildingType().specificConstant;
         if (!Objects.equals(campType.getIsArab(), unitType.getIS_ARAB())) return "You can not build this type of unit here!";
-        int count = Integer.parseInt(options.get("c"));
+        int count = 1;
         if (unitType.getIS_ARAB().equals(1) && unitType.getPRICE() * count > currentKingdom.getBalance())
             return "You do not have enough balance to buy this unit!";
         if (currentKingdom.getBuildingFormKingdom(BuildingType.ARMOURY) == null && selectedBuilding.getBuildingType().equals(BuildingType.BARRACK))
@@ -119,7 +119,7 @@ public class BuildingController {
         if (currentKingdom.getNoneEmployed() < count)
             return "You do not have enough population to make new units!";
         createUnitAdditional(unitType, count);
-        return count + " " + unitType.name().toLowerCase().replaceAll("_", " ") + " has been made!";
+        return "successful";
     }
 
     public String setMode(HashMap<String, String> options) {
@@ -130,7 +130,7 @@ public class BuildingController {
         result = checkProduceMode();
         if (result != null) return result;
         producer.setMode(produceMode);
-        return "done";
+        return null;
     }
 
     public String checkProduceMode() {

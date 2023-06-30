@@ -34,15 +34,15 @@ public class UnitController {
         else unitMenu.runUnit();
     }
 
-    public String moveUnit(HashMap<String, String > options) {
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        String result;
-        result = positionValidate(options.get("x"),options.get("y"));
-        if (result != null) return result;
-        MapBlock destination = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
-        if(destination == null)
-            return "invalid location";
+    public String moveUnit(MapBlock destination) {
+//        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+//        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+//        String result;
+//        result = positionValidate(options.get("x"),options.get("y"));
+//        if (result != null) return result;
+//        gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+//        if(destination == null)
+//            return "invalid location";
         Integer moveLength = 0;
         if(!currentUnit.get(0).getUnitType().equals(UnitType.ASSASSINS))
             if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),

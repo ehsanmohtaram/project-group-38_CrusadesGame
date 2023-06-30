@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class MapDesignMenuController {
-//    public static MapBlock mouseOnBlock = null;
     private MapDesignController mapDesignController;
     private final Controller controller;
     private final Style style;
@@ -40,6 +39,8 @@ public class MapDesignMenuController {
     private Pane mapDesignPane;
     private Pane mapPane;
     private VBox designControls;
+    private GameUI gameUI;
+
 
     public MapDesignMenuController() {
         controller = new Controller();
@@ -104,16 +105,21 @@ public class MapDesignMenuController {
 //        else mapPane.setLayoutX(mapPane.getLayoutX() - 20);
         mapPane.setOnKeyPressed(keyEvent -> {
             switch (keyEvent.getCode()){
-                case LEFT: if (mapPane.getLayoutX() + 20 == 0) break;
-                else if (mapPane.getLayoutX() + 20 > 0 ) mapPane.setLayoutX(0);
-                else mapPane.setLayoutX(mapPane.getLayoutX() + 20); break;
+                case LEFT:
+                    if (mapPane.getLayoutX() + 20 == 0) break;
+                    else if (mapPane.getLayoutX() + 20 > 0 ) mapPane.setLayoutX(0);
+                    else mapPane.setLayoutX(mapPane.getLayoutX() + 20); break;
                 case DOWN: mapPane.setLayoutY(mapPane.getLayoutY() - 20); break;
                 case RIGHT: mapPane.setLayoutX(mapPane.getLayoutX() - 20); break;
                 case UP:
                     if (mapPane.getLayoutY() + 20 == 0) break;
-                else if (mapPane.getLayoutY() + 20 > 0) mapPane.setLayoutY(0);
+                    else if (mapPane.getLayoutY() + 20 > 0) mapPane.setLayoutY(0);
                 else mapPane.setLayoutY(mapPane.getLayoutY() + 20); break;
-
+                case C: if (GameUI.clipboard != null) GameUI.copyProcess(); break;
+                case V: if (GameUI.clipboard != null) gameUI.pasteProcess();break;
+                case F : if (GameUI.clipboard != null) gameUI.selectHeadQuarter(0); break;
+                case T : if (GameUI.clipboard != null) gameUI.selectHeadQuarter(1); break;
+                case P : if (GameUI.clipboard != null) gameUI.selectHeadQuarter(2); break;
             }
 //            if (mapPane.getLayoutBounds().getMinX() < 0)
 //            {
@@ -206,7 +212,8 @@ public class MapDesignMenuController {
         else {
             mapDesignPane.getChildren().remove(1);
             System.out.println(mapDesignPane.getChildren());
-            new GameUI(mapDesignPane, mapDesignController.getGameMap()).runGame();
+            gameUI = new GameUI(mapDesignPane, mapDesignController.getGameMap());
+            gameUI.runGame();
         }
     }
 
