@@ -138,8 +138,10 @@ public class GameController {
             for (int j = startY; j <= finalY; j++)
                 selectedUnit.addAll(gameMap.getMapBlockByLocation(i, j).getUnits());
 
-        if(selectedUnit.size() == 0 )
+        if(selectedUnit.size() == 0 ) {
+            gameMap.getMapPane().setDisable(false);
             return;
+        }
         for (Unit unit : selectedUnit) {
             if(!numberOfEachUnit.containsKey(unit.getUnitType()))
                 numberOfEachUnit.put(unit.getUnitType(), new ArrayList<>(List.of(unit)));
@@ -152,7 +154,6 @@ public class GameController {
         Integer[] count = {0};
         Label number = new Label(count[0].toString());
         style.label0(number, 50 , 40);
-
         number.setFont(style.Font0(15));
         MenuButton menuButton = new MenuButton("unit");
         for (UnitType unitType : numberOfEachUnit.keySet()) {
@@ -197,7 +198,9 @@ public class GameController {
                 gameMap.getMapPane().setDisable(false);
                 selectedUnit = new ArrayList<>();
                 selectedUnit.addAll(numberOfEachUnit.get(selectedType[0]).subList(0, count[0]));
-                unitController = new UnitController();
+                if(unitController != null)
+                    unitController.freeSelection();
+                    unitController = new UnitController();
 
             }else
               error.setText("select a unitType");
@@ -453,6 +456,13 @@ public class GameController {
         return "building";
     }
 
+    public void handelUnitCommands(String text, MapBlock mouseOnBlock) {
+        String result = unitController.moveMultipleUnits(mouseOnBlock, text);
+        if(!result.equals(""))
+            System.out.println(result);
+
+    }
+
     public String showMap(HashMap<String, String> options){
         for (String key: options.keySet())
             if(options.get(key) == null)
@@ -582,4 +592,5 @@ public class GameController {
         target.setTrap(newTrap);
         return "trap added successfully";
     }
+
 }

@@ -1,7 +1,6 @@
 package model;
 
 import javafx.geometry.Insets;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -11,8 +10,6 @@ import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitType;
 import view.LoginMenu;
-import view.controller.GameUI;
-import view.controller.MapDesignMenuController;
 
 import java.util.*;
 
@@ -145,22 +142,31 @@ public class MapBlock extends StackPane {
         this.trap = trap;
     }
 
+    public ArrayList<Unit> getSelectedUnits(){
+        ArrayList<Unit> selectedUnits = new ArrayList<>();
+        for (Unit unit : units)
+            if(unit.isSelected())
+                selectedUnits.add(unit);
+
+        return selectedUnits;
+    }
+
     public HashMap<Tree, Integer> getNumberOfTrees() {
         return numberOfTrees;
     }
 
     public void addUnitHere(Unit toAdd){
         units.add(toAdd);
-        Rectangle unitImage = toAdd.getUnitImage();
+        Pane unitImage = toAdd.getUnitPane();
         unitImage.setManaged(false);
-        unitImage.setLayoutX((((units.size()-2) * 10) % 100) - 10 );
+        unitImage.setLayoutX(new Random().nextInt(60) - 10);
         unitImage.setLayoutY(new Random().nextInt(60) - 10);
         getChildren().add(unitImage);
     }
 
     public void removeUnitFromHere(Unit toRemove){
         units.remove(toRemove);
-        getChildren().remove(toRemove.getUnitImage());
+        getChildren().remove(toRemove.getUnitPane());
     }
 
     public boolean isSelected() {

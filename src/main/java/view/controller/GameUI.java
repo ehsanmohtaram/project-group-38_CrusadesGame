@@ -69,6 +69,43 @@ public class GameUI {
         addMenuButton(gameTools);
         mapDesignMenu.getChildren().add(gameTools);
         gameController.dragAndDropSelection();
+//        doubleClickOperation();
+    }
+//
+//
+//    public void doubleClickOperation() {
+//        gameMap.getMapPane().setOnMouseClicked(e ->{
+//            if(e.getClickCount() == 2){
+//                MapBlock targetBlock = mouseOnBlock;
+//                if(GameController.selectedUnit.size() == 0)
+//                    return;
+//                gameMap.getMapPane().setDisable(true);
+//                Button move = new Button("Move");
+//                Button attack = new Button("Button");
+//                Button patrol = new Button("Patrol");
+//                Button cancel = new Button("cancel");
+//                HBox commands = new HBox(move, attack, patrol);
+//                for (Node child : commands.getChildren()) {
+//                    Button control = (Button) child;
+//                    style.button1(control, 100, 50);
+//                    control.setOnMouseClicked(event -> {
+//                        mapDesignMenu.getChildren().remove(commands);
+//                        gameMap.getMapPane().setDisable(false);
+//                        gameController.handelUnitCommands(control.getText(), targetBlock);
+//                    });
+//                }
+//                commands.setSpacing(15);
+//                commands.setAlignment(Pos.CENTER);
+//                commands.setLayoutX(e.getScreenX());
+//                commands.setLayoutY(e.getScreenY());
+//                mapDesignMenu.getChildren().add(commands);
+//
+//            }
+//        });
+//    }
+
+    public void handelUnitCommands(String text, MapBlock targetBlock) {
+        gameController.handelUnitCommands(text, targetBlock);
     }
 
     public void addMenuButton(Pane gameTools) {

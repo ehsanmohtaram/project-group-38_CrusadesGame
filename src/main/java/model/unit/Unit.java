@@ -1,7 +1,15 @@
 package model.unit;
 
 import controller.UnitController;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
+import model.Direction;
 import model.Kingdom;
 import model.MapBlock;
 import model.building.*;
@@ -20,17 +28,22 @@ public class Unit {
     private Unit forAttack;
     private Integer movesLeft;
     private DefensiveStructure higherElevation;
+    private Pane unitPane;
     private Rectangle unitImage;
     private MovingTroopAnimation movingTroopAnimation;
+    private Rectangle selectedState;
+    private boolean isSelected;
     public Unit(UnitType unitType, MapBlock locationBlock , Kingdom owner) {
         this.unitType = unitType;
         this.locationBlock = locationBlock;
         this.owner = owner;
         hp = unitType.getHP_IN_START();
-
-        unitImage = new Rectangle(50 , 50);
+        selectedState = new Rectangle(20, 20);
+        selectedState.setFill(new ImagePattern(Direction.SOUTH.getImage()));
+        unitImage = new Rectangle(70, 70);
+        unitPane = new Pane(unitImage);
         movingTroopAnimation = new MovingTroopAnimation(unitType, unitImage);
-
+        isSelected = false;
         if (!unitType.getIS_ARAB().equals(-4)) {
             locationBlock.addUnitHere(this);
             owner.addUnit(this);
@@ -75,8 +88,8 @@ public class Unit {
         return forAttack;
     }
 
-    public Rectangle getUnitImage() {
-        return unitImage;
+    public Pane getUnitPane() {
+        return unitPane;
     }
 
     public MovingTroopAnimation getMovingTroopAnimation() {
@@ -101,6 +114,14 @@ public class Unit {
 
     public void setForAttack(Unit forAttack) {
         this.forAttack = forAttack;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 
     public void setUnitState(UnitState unitState) {
@@ -163,11 +184,42 @@ public class Unit {
         return true;
     }
 
-    public void moveTo(MapBlock destination, int length){
+    public void moveTo(MapBlock destination, int length, ArrayList<MapBlock> way){
         decreaseMoves(length);
-        locationBlock.removeUnitFromHere(this);
-        destination.addUnitHere(this);
-//        locationBlock.removeUnitFromHere(this);
+        Timeline XAnimation = new Timeline();
+        Timeline YAnimation = new Timeline();
+        if(way == null) {
+            locationBlock.removeUnitFromHere(this);
+            destination.addUnitHere(this);
+        }else{
+            if(way.get(way.size() - 1).getLayoutX() > locationBlock.getLayoutX())
+                movingTroopAnimation.setRight(true);
+            else
+                movingTroopAnimation.setRight(false);
+            movingTroopAnimation.play();
+            for (MapBlock mapBlock : way) {
+                XAnimation.getKeyFrames().add(new KeyFrame(Duration.seconds(way.size()), new KeyValue(unitPane.translateXProperty(), mapBlock.getLayoutX() - locationBlock.getLayoutX())));
+                YAnimation.getKeyFrames().add(new KeyFrame(Duration.seconds(way.size()), new KeyValue(unitPane.translateYProperty(), mapBlock.getLayoutY() - locationBlock.getLayoutY())));
+            }
+//            for (MapBlock mapBlock : way) {
+//                XAnimation.getKeyFrames().add(new KeyFrame(Duration.millis(way.size()), new KeyValue(unitPane.translateXProperty(), -mapBlock.getLayoutX() + locationBlock.getLayoutX())));
+//                YAnimation.getKeyFrames().add(new KeyFrame(Duration.millis(way.size()), new KeyValue(unitPane.translateYProperty(), -mapBlock.getLayoutY() + locationBlock.getLayoutY())));
+//            }
+            System.out.println("hoorra");
+            XAnimation.play();
+            YAnimation.play();
+            XAnimation.setOnFinished(e-> {
+                movingTroopAnimation.pause();
+                unitPane.setTranslateX(0);
+                unitPane.setTranslateY(0);
+                unitPane.setLayoutX(0);
+                unitPane.setLayoutY(0);
+                locationBlock.removeUnitFromHere(this);
+                destination.addUnitHere(this);
+            });
+        }
+            
+
         this.locationBlock = destination;
         Trap trap = destination.getTrap();
         if(trap != null)
@@ -177,6 +229,20 @@ public class Unit {
     private boolean checkEnemyCanAttack(Unit enemy){
         return false;
 
+    }
+
+    public void changeSelection(boolean shouldSelect){
+        selectedState.setX(25);
+        selectedState.setY(0);
+        if(shouldSelect) {
+            unitPane.getChildren().add(selectedState);
+            isSelected = true;
+        }
+        else {
+            if (unitPane.getChildren().contains(selectedState))
+                unitPane.getChildren().remove(selectedState);
+            isSelected = false;
+        }
     }
 
     public void unilateralFight(Unit enemy){

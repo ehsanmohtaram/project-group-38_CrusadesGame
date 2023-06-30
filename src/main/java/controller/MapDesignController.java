@@ -2,9 +2,13 @@ package controller;
 
 import javafx.animation.PauseTransition;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -35,6 +39,7 @@ public class MapDesignController {
     private Style style;
     private StackPane detailsBox;
     private RollingPaper rollingPaperAnimation;
+    private GameUI gameUI;
 
 
     public MapDesignController(Map gameMap) {
@@ -44,6 +49,10 @@ public class MapDesignController {
         selectedBlocks = new ArrayList<>();
         style = new Style();
 
+    }
+
+    public void setGameUI(GameUI gameUI) {
+        this.gameUI = gameUI;
     }
 
     public Map getGameMap() {
@@ -162,6 +171,32 @@ public class MapDesignController {
                         }
 
                 updateDetailsBox();
+                if(mouseEvent.getClickCount() == 2 && GameUI.clipboard != null){
+                    MapBlock targetBlock = GameUI.mouseOnBlock;
+                    if(GameController.selectedUnit.size() == 0)
+                        return;
+                    gameMap.getMapPane().setDisable(true);
+                    Button move = new Button("Move");
+                    Button attack = new Button("Attack");
+                    Button patrol = new Button("Patrol");
+                    Button cancel = new Button("Cancel");
+                    HBox commands = new HBox(move, attack, patrol, cancel);
+                    for (Node child : commands.getChildren()) {
+                        Button control = (Button) child;
+                        style.button1(control, 100, 50);
+                        control.setOnMouseClicked(event -> {
+                            mapDesignPane.getChildren().remove(commands);
+                            gameMap.getMapPane().setDisable(false);
+                            gameUI.handelUnitCommands(control.getText(), targetBlock);
+                        });
+                    }
+                    commands.setSpacing(15);
+                    commands.setAlignment(Pos.CENTER);
+                    commands.setLayoutX(mouseEvent.getScreenX());
+                    commands.setLayoutY(mouseEvent.getScreenY());
+                    mapDesignPane.getChildren().add(commands);
+
+                }
             }
         });
 

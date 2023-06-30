@@ -2,6 +2,7 @@ package view.animation;
 
 import javafx.animation.Transition;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;

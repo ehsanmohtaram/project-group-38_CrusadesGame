@@ -14,11 +14,19 @@ public class UnitController {
     private final Kingdom currentKingdom;
     private final UnitMenu unitMenu;
     public static ArrayList<Unit> currentUnit;
+    public static ArrayList<MapBlock> involvedBlocks;
 
     public UnitController() {
         this.gameMap = GameController.gameMap;
         this.currentKingdom = gameMap.getKingdomByOwner(Controller.currentUser);
+        involvedBlocks = new ArrayList<>();
         currentUnit = new ArrayList<>(GameController.selectedUnit);
+        for (Unit unit : currentUnit) {
+            if (!involvedBlocks.contains(unit.getLocationBlock()))
+                involvedBlocks.add(unit.getLocationBlock());
+            unit.changeSelection(true);
+        }
+
         this.unitMenu = new UnitMenu(this);
     }
 
@@ -34,7 +42,36 @@ public class UnitController {
         else unitMenu.runUnit();
     }
 
-    public String moveUnit(MapBlock destination) {
+    public String moveMultipleUnits(MapBlock destination, String command){
+        if(currentUnit == null)
+            return "no selection detected";
+        if(currentUnit.size() == 0)
+            return "no selection detected";
+        updateBlocksInvolved();
+        String result; String output = "";
+        for (MapBlock origin : involvedBlocks) {
+            if(command.equals("Move"))
+                result = moveUnit(origin, destination);
+            else if(command.equals("Attack"))
+                result = attackOnUnit(origin, destination);
+            else
+                result = patrolUnit(origin, destination);
+            if(!result.equals("successful"))
+                output += "in block " + origin.getxPosition() + "*" + origin.getyPosition() + " : " + result + "\n";
+        }
+        return output;
+    }
+
+    public void updateBlocksInvolved(){
+        involvedBlocks = new ArrayList<>();
+        for (Unit unit : currentUnit)
+            if (!involvedBlocks.contains(unit.getLocationBlock()))
+                involvedBlocks.add(unit.getLocationBlock());
+
+
+    }
+
+    public String moveUnit(MapBlock origin, MapBlock destination) {
 //        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
 //        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
 //        String result;
@@ -44,39 +81,40 @@ public class UnitController {
 //        if(destination == null)
 //            return "invalid location";
         Integer moveLength = 0;
-        if(!currentUnit.get(0).getUnitType().equals(UnitType.ASSASSINS))
-            if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
-                destination.getxPosition(), destination.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
-                return "They are too slow to reach such destination";
+        ArrayList<Unit> blockUnits = origin.getSelectedUnits();
+        if(!blockUnits.get(0).getUnitType().equals(UnitType.ASSASSINS)) {
+            if ((moveLength = gameMap.getShortestWayLength(blockUnits.get(0).getXPosition(), blockUnits.get(0).getYPosition(),
+                    destination.getxPosition(), destination.getyPosition(), blockUnits.get(0).getMovesLeft())) == null)
+                return "units speed limit error";
+        }
         else
-            if((moveLength = currentUnit.get(0).getOptimizedDistanceFrom(destination.getxPosition(), destination.getyPosition()
-                ,false)) > currentUnit.get(0).getMovesLeft())
-                return "Assassins can pass walls but still they have limits in one turn moves!";
+        if((moveLength = blockUnits.get(0).getOptimizedDistanceFrom(destination.getxPosition(), destination.getyPosition()
+                ,false)) > blockUnits.get(0).getMovesLeft())
+            return "units speed limit error";
         if(destination.getBuildings() instanceof DefensiveStructure){
             DefensiveStructure defensiveDestination = (DefensiveStructure) destination.getBuildings();
             DefensiveStructureType type = (DefensiveStructureType) destination.getBuildings().getSpecificConstant();
-            if(defensiveDestination.getCapacity() + currentUnit.size() > type.getUnitsCapacity())
-                return "the defensive structure is full. you can not add unit there";
-            for (Unit unit : currentUnit) {
+            if(defensiveDestination.getCapacity() + blockUnits.size() > type.getUnitsCapacity())
+                return "out of space building error";
+            for (Unit unit : blockUnits) {
                 unit.setHigherElevation(defensiveDestination);
             }
         }
 
-        for (Unit unit : currentUnit) {
-            unit.moveTo(destination, moveLength);
+        for (Unit unit : blockUnits) {
+            unit.moveTo(destination, moveLength, gameMap.getFinalWay());
             if (unit.getUnitState().equals(UnitState.PATROLLING))
                 unit.setUnitState(UnitState.STANDING);
         }
 
-        if(currentUnit.get(0).getUnitType().equals(UnitType.LADDER_MAN))
+        if(blockUnits.get(0).getUnitType().equals(UnitType.LADDER_MAN))
             for (Direction value : Direction.values())
                 if(!gameMap.checkAccess(destination.getxPosition(), destination.getyPosition(), value)) {
                     gameMap.changeAccess(destination.getxPosition(), destination.getyPosition(), value, true);
                     break;
                 }
 
-
-        return "moved successfully";
+        return "successful";
     }
 
     public String setSituation(HashMap<String, String> options) {
@@ -169,18 +207,18 @@ public class UnitController {
     }
 
 
-    public String attackOnUnit(HashMap<String, String> options) {
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        String result;
-        result = positionValidate(options.get("x"),options.get("y"));
-        if (result != null) return result;
-        MapBlock target = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
-        if(target == null)
-            return "invalid location";
+    public String attackOnUnit(MapBlock origin, MapBlock target) {
+//        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+//        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
+//        String result;
+//        result = positionValidate(options.get("x"),options.get("y"));
+//        if (result != null) return result;
+//        MapBlock target = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
+//        if(target == null)
+//            return "invalid location";
         if(target.getUnits().size() == 0 && target.getBuildings() == null)
             return "no enemy detected there";
-
+        ArrayList<Unit> currentUnit = origin.getSelectedUnits();
         if(currentUnit.get(0).getUnitType().getCAN_DO_AIR_ATTACK()) {
             if (target.getOptimizedDistanceFrom(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(), true) >
                     currentUnit.get(0).getOptimizedAttackRange())
@@ -201,7 +239,7 @@ public class UnitController {
         }else {
             battleWithBuilding(target);
         }
-        return "battle done!";
+        return "successful";
     }
 
     private void battleWithBuilding(MapBlock target){
@@ -219,36 +257,37 @@ public class UnitController {
         }
     }
 
-    public String patrolUnit(HashMap<String, String> options){
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";String result;
-        result = positionValidate(options.get("x1"),options.get("y1"));
-        if (result != null) return result;
-        result = positionValidate(options.get("x2"),options.get("y2"));
-        if (result != null) return result;
-        MapBlock origin = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x1")),Integer.parseInt(options.get("y1")));
-        MapBlock destination = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x2")),Integer.parseInt(options.get("y2")));
-        if(origin == null || destination == null)
-            return "invalid location";
+    public String patrolUnit(MapBlock origin, MapBlock destination){
+//        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
+//        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";String result;
+//        result = positionValidate(options.get("x1"),options.get("y1"));
+//        if (result != null) return result;
+//        result = positionValidate(options.get("x2"),options.get("y2"));
+//        if (result != null) return result;
+//        MapBlock origin = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x1")),Integer.parseInt(options.get("y1")));
+//        MapBlock destination = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x2")),Integer.parseInt(options.get("y2")));
+//        if(origin == null || destination == null)
+//            return "invalid location";
+        ArrayList<Unit> currentUnit = origin.getSelectedUnits();
         if(origin.getBuildings() != null || destination.getBuildings() != null )
             return "patrol is available just for free locations not in buildings";
         if(currentUnit.get(0).getUnitType().equals(UnitType.TUNNELER))
             return "no patrol option available for tunnelers. you should use them correctly";
-        Integer moveLength;
-        if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
-                origin.getxPosition(), origin.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
-            return "They are too slow to reach such destination";
+//        Integer moveLength;
+//        if((moveLength = gameMap.getShortestWayLength(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),
+//                origin.getxPosition(), origin.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
+//            return "They are too slow to reach such destination";
         Integer lengthBetween;
         if((lengthBetween = gameMap.getShortestWayLength(origin.getxPosition(), origin.getyPosition(),
                 destination.getxPosition(), destination.getyPosition(), currentUnit.get(0).getUnitType().getVELOCITY())) == null)
             return "They are too slow to move between such origin & destination";
 
         for (Unit unit : currentUnit) {
-            unit.moveTo(origin, moveLength);
+//            unit.moveTo(origin, moveLength);
             unit.setUnitState(UnitState.PATROLLING);
             unit.setPatrolDestination(destination);
         }
-        return "they will patrol between until you change their state or move them";
+        return "successful";
     }
 
     public String digTunnel(HashMap<String, String> options){
@@ -275,7 +314,7 @@ public class UnitController {
                 target.getxPosition(), target.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
             return "They are too slow to reach such destination";
         for (Unit unit : currentUnit) {
-            unit.moveTo(target, moveLength);
+            unit.moveTo(target, moveLength, gameMap.getFinalWay());
             if(unit.getUnitType().equals(UnitState.PATROLLING))
                 unit.setUnitState(UnitState.STANDING);
         }
@@ -305,7 +344,7 @@ public class UnitController {
                 target.getxPosition(), target.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
             return "They are too slow to reach such destination";
         for (Unit unit : currentUnit) {
-            unit.moveTo(currentUnit.get(0).getLocationBlock(), moveLength);
+            unit.moveTo(currentUnit.get(0).getLocationBlock(), moveLength, gameMap.getFinalWay());
             if (unit.getUnitState().equals(UnitState.PATROLLING))
                 unit.setUnitState(UnitState.STANDING);
         }
@@ -329,7 +368,7 @@ public class UnitController {
                 target.getxPosition(), target.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
             return "They are too slow to reach such destination";
         for (Unit unit : currentUnit) {
-            unit.moveTo(currentUnit.get(0).getLocationBlock(), moveLength);
+            unit.moveTo(currentUnit.get(0).getLocationBlock(), moveLength, gameMap.getFinalWay());
             if (unit.getUnitState().equals(UnitState.PATROLLING))
                 unit.setUnitState(UnitState.STANDING);
         }
@@ -412,4 +451,9 @@ public class UnitController {
     }
 
 
+    public void freeSelection() {
+        for (Unit unit : currentUnit) {
+            unit.changeSelection(false);
+        }
+    }
 }

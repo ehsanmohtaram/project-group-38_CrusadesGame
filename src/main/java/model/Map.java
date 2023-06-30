@@ -25,6 +25,7 @@ public class Map implements Cloneable {
     private HashMap<Building, Direction> gateDirection = new HashMap<>();
     private HashMap<Building, Flags> gateFlag = new HashMap<>();
     private Pane mapPane;
+    private ArrayList<MapBlock> finalWay ;
 
     public Map(Integer mapWidth, Integer mapHeight, String mapName) {
         endGame = false;
@@ -156,6 +157,10 @@ public class Map implements Cloneable {
         if(xPosition < mapWidth && yPosition < mapHeight && xPosition >= 0 && yPosition >= 0)
             return map[xPosition][yPosition];
         return null;
+    }
+
+    public ArrayList<MapBlock> getFinalWay() {
+        return finalWay;
     }
 
     public static Map getDefaultMap(int index) throws CloneNotSupportedException {
@@ -331,6 +336,7 @@ public class Map implements Cloneable {
     public Integer getShortestWayLength(int xPosition, int yPosition, int xOfDestination, int yOfDestination, Integer limit){
         boolean[][]mark = new boolean[mapWidth][mapHeight];
         AtomicInteger answer;
+        finalWay = new ArrayList<>();
         ArrayList<MapBlock> way = new ArrayList<>();
         if(limit == null)
             answer = new AtomicInteger(mapWidth * mapHeight + 1);
@@ -346,7 +352,8 @@ public class Map implements Cloneable {
             getWaysLengthByEast(mark, xPosition, yPosition, 0, xOfDestination, yOfDestination, answer, false, way);
         if((limit == null && (answer.get() == (mapWidth * mapHeight + 1)) || answer.get() == (limit + 1)))
             return null;
-        System.out.println(way);
+        System.out.println(finalWay);
+        System.out.println(answer.get());
         return answer.get();
     }
 
@@ -358,7 +365,9 @@ public class Map implements Cloneable {
         if(xPosition == xOfDestination && yPosition == yOfDestination) {
             minimum.set(length);
             way.add(map[xPosition][yPosition]);
-            System.out.println(way);
+            finalWay = new ArrayList<>();
+            finalWay.addAll(way);
+            System.out.println("+" + way);
             return;
         }
         if(mark[xPosition][yPosition] == true)
