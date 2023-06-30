@@ -48,7 +48,7 @@ public class BuildingMenu {
         buildingController = new BuildingController(gameMap, building);
     }
 
-    public void buildingMenuUISetup() {
+    public void buildingMenuUISetup(int type) {
         VBox vBox = new VBox();
         vBox.setSpacing(35);
         Label buildingName = new Label(buildingType.name().replaceAll("_", " "));
@@ -60,11 +60,11 @@ public class BuildingMenu {
         Pane buildingInformationHolder = new Pane();
         vBox.setLayoutX(350); vBox.setLayoutY(60);
         mainPane.getChildren().addAll(vBox, buildingInformationHolder);
-        redirect(buildingInformationHolder);
+        redirect(buildingInformationHolder, type);
     }
 
-    public void redirect(Pane buildingInformationHolder) {
-        if (buildingType.equals(BuildingType.HEAD_QUARTER)) headQuarterRun(buildingInformationHolder);
+    public void redirect(Pane buildingInformationHolder, int type) {
+        if (buildingType.equals(BuildingType.HEAD_QUARTER)) headQuarterRun(buildingInformationHolder, type);
         else if (buildingType.specificConstant instanceof DefensiveStructureType) defensiveBuildingRnu(buildingInformationHolder);
         else if (buildingType.specificConstant instanceof CampType) campBuildingRun(buildingInformationHolder);
         else if (buildingType.specificConstant instanceof StockType) stockBuildingRun(buildingInformationHolder);
@@ -73,7 +73,7 @@ public class BuildingMenu {
         else if (buildingType.equals(BuildingType.SHOP)) runShop(buildingInformationHolder);
     }
 
-    private void headQuarterRun(Pane buildingInformationHolder) {
+    private void headQuarterRun(Pane buildingInformationHolder, int type) {
         HBox holder = new HBox();
         holder.setSpacing(10);
         holder.setAlignment(Pos.CENTER);
@@ -138,6 +138,11 @@ public class BuildingMenu {
             rateChanger0.getChildren().clear();
             rateChanger0.getChildren().addAll(hBox0, hBox1);
         });
+        switch (type) {
+            case 0 : rateChanger0.getChildren().clear(); rateChanger0.getChildren().addAll(fearRateInfo, fear_L); break;
+            case 1 :rateChanger0.getChildren().clear(); rateChanger0.getChildren().addAll(taxRateInfo, tax_L); break;
+            case 2 : rateChanger0.getChildren().clear(); rateChanger0.getChildren().addAll(hBox0, hBox1); break;
+        }
         holder.getChildren().addAll(rateChange, rateChanger0, popularity);
         buildingInformationHolder.getChildren().add(holder);
         buildingInformationHolder.setLayoutY(120);

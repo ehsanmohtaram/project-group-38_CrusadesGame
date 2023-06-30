@@ -116,9 +116,10 @@ public class MapDesignMenuController {
                     else if (mapPane.getLayoutY() + 20 > 0) mapPane.setLayoutY(0);
                 else mapPane.setLayoutY(mapPane.getLayoutY() + 20); break;
                 case C: if (GameUI.clipboard != null) GameUI.copyProcess(); break;
-                case V: if (GameUI.clipboard != null) {
-                    gameUI.pasteProcess();
-                } break;
+                case V: if (GameUI.clipboard != null) gameUI.pasteProcess();break;
+                case F : if (GameUI.clipboard != null) gameUI.selectHeadQuarter(0); break;
+                case T : if (GameUI.clipboard != null) gameUI.selectHeadQuarter(1); break;
+                case P : if (GameUI.clipboard != null) gameUI.selectHeadQuarter(2); break;
             }
 //            if (mapPane.getLayoutBounds().getMinX() < 0)
 //            {
@@ -211,7 +212,7 @@ public class MapDesignMenuController {
         else {
             mapDesignPane.getChildren().remove(1);
             System.out.println(mapDesignPane.getChildren());
-            gameUI = new GameUI(mapDesignPane, mapDesignController.getGameMap(), mapPane);
+            gameUI = new GameUI(mapDesignPane, mapDesignController.getGameMap());
             gameUI.runGame();
         }
     }

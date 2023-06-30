@@ -34,19 +34,18 @@ public class GameUI {
     private final GameController gameController;
     private final Pane mapDesignMenu;
     private final Map gameMap;
-    private final Pane maPane;
     private int isDragActive;
     private Label coinValue;
+    private Pane mainPane;
     private BuildingType typeOfBuilding;
     public static MapBlock mouseOnBlock = null;
     public static Clipboard clipboard = null;
     public static ClipboardContent clipboardContent;
 
-    public GameUI(Pane mapDesignPane, Map gameMap, Pane mapPane) {
+    public GameUI(Pane mapDesignPane, Map gameMap) {
         clipboard = Clipboard.getSystemClipboard();
         clipboardContent = new ClipboardContent();
         this.mapDesignMenu = mapDesignPane;
-        this.maPane = mapPane;
         this.gameController = new GameController(gameMap);
         this.gameMap = gameMap;
         style = new Style();
@@ -73,7 +72,7 @@ public class GameUI {
 
     public void addMenuButton(Pane gameTools) {
         ArrayList<Rectangle> rectangles = new ArrayList<>();
-        Pane mainPane = new Pane();
+        mainPane = new Pane();
         addStockAndHeadButton(mainPane);
         HBox buttonHolder = new HBox();
         Rectangle defensive = new Rectangle(50, 50);
@@ -288,8 +287,18 @@ public class GameUI {
                 manePane.getChildren().remove(2);
                 for(Node node : ((HBox) manePane.getChildren().get(0)).getChildren()) node.setOpacity(1);
             }
-            new BuildingMenu(manePane, ((MapBlock)building.getParent()).getBuildings().getBuildingType(), (MapBlock)building.getParent(),gameMap, coinValue, gameController).buildingMenuUISetup();
+            new BuildingMenu(manePane, ((MapBlock)building.getParent()).getBuildings().getBuildingType(), (MapBlock)building.getParent(),gameMap, coinValue, gameController).buildingMenuUISetup(-1);
         });
+    }
+
+    public void selectHeadQuarter(int type) {
+        if(mainPane.getChildren().size() == 4) {
+            mainPane.getChildren().remove(2);
+            mainPane.getChildren().remove(2);
+            for(Node node : ((HBox) mainPane.getChildren().get(0)).getChildren()) node.setOpacity(1);
+        }
+        BuildingMenu buildingMenu = new BuildingMenu(mainPane, BuildingType.HEAD_QUARTER, gameMap.getKingdomByOwner(Controller.currentUser).getHeadquarter().getPosition() ,gameMap, coinValue, gameController);
+        buildingMenu.buildingMenuUISetup(type);
     }
 
     public static void copyProcess() {
