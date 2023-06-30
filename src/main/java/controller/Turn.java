@@ -1,9 +1,18 @@
 package controller;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 import model.*;
 import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitState;
 import model.unit.UnitType;
+import view.Style;
+import view.animation.FireAnimation;
 
 import java.util.ArrayList;
 
@@ -11,11 +20,14 @@ public class Turn {
 
     private final Map gameMap;
     private final Kingdom currentKingdom;
+    private final Style style;
+
 
     public Turn() {
         gameMap = GameController.gameMap;
         User currentUser = Controller.currentUser;
         currentKingdom = gameMap.getKingdomByOwner(currentUser);
+        this.style = new Style();
     }
 
 
@@ -27,6 +39,7 @@ public class Turn {
             //produceHorse();
         }
         illness();
+        fire();fireGraphic();
         setReligiousBuildingPopularity();
         giveFood();
         getTax();
@@ -38,17 +51,91 @@ public class Turn {
         trapsReset();
     }
 
+
     private void illness() {
         if (currentKingdom.getIllness() != null) {
             currentKingdom.setPopularity(-1);
             return;
         }
         int random = (int)(10 * Math.random());
-        if (random % 4 == 0){
-            MapBlock illnessBlock = new MapBlock((int)(Math.random() * 10000) % gameMap.getMapWidth(),(int)(Math.random() * 10000) % gameMap.getMapHeight());
+//        if (random % 4 == 0) {
+//        (int)(Math.random() * 10000) % gameMap.getMapWidth(),(int)(Math.random() * 10000) % gameMap.getMapHeight()
+            MapBlock illnessBlock = gameMap.getMapBlockByLocation(5, 5);
+            Rectangle rectangle = new Rectangle(100, 100);
+            rectangle.setFill(new ImagePattern(new Image(Turn.class.getResource("/images/background/illness.jpg").toExternalForm())));
+            illnessBlock.getChildren().add(rectangle);
             currentKingdom.setIllness(illnessBlock);
+            rectangle.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    if (mouseEvent.getButton().equals(MouseButton.SECONDARY)){
+                        Button button = new Button();
+                        style.button0(button, "Pay for health", 100, 50);
+                        illnessBlock.getChildren().add(button);
+                        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent mouseEvent) {
+                                illnessBlock.getChildren().remove(button);
+                                illnessBlock.getChildren().remove(rectangle);
+                                currentKingdom.setBalance(-3.);
+                                currentKingdom.setIllness(null);
+                            }
+                        });
+                    }
+                }
+            });
+            //todo یه دکمه یا یه عنی که وقتی یارو زد این بیماری برطرف بشه
+//        }
+    }
+
+    private void fire() {
+        for (Kingdom kingdom : gameMap.getPlayers()) {
+            for (Building building : kingdom.getBuildings()) {
+                if (building.getFire() == -1 && building.getHp() != 0) {
+                    mapBlockFor:
+                    for (MapBlock mapBlock : getSurrond(building)) {
+//                        for (Unit unit : mapBlock.getUnits()) {
+//                            if (!(unit.getOwner().equals(currentKingdom)) && (unit.getUnitType().equals(UnitType.SLAVES))) {
+                                building.setFire(3);
+//                                break mapBlockFor;
+//                            }
+//                        }
+                    }
+                }
+            }
         }
     }
+
+    private void fireGraphic() {
+        for (Kingdom kingdom : gameMap.getPlayers()) {
+            for (Building building : kingdom.getBuildings()) {
+                if (building.getFire() != -1) {
+                    if (building.getFire() != 0) {
+                        new FireAnimation(building, building.getFire()).play();
+                        building.setFire(building.getFire() - 1);
+                        System.out.println("1");
+                    } else {
+                        System.out.println("end");
+                        Rectangle rectangle = new Rectangle(100, 100);
+                        rectangle.setFill(new ImagePattern(new Image(Turn.class.getResource("/images/background/illness.jpg").toExternalForm())));
+                        building.getPosition().getChildren().add(rectangle);
+                    }
+                }
+            }
+        }
+    }
+
+
+    public ArrayList<MapBlock> getSurrond(Building building){
+        ArrayList<MapBlock> mapBlocks = new ArrayList<>();
+        int x = building.getPosition().getxPosition(), y = building.getPosition().getyPosition();
+        mapBlocks.add(gameMap.getMapBlockByLocation(x, y + 1));mapBlocks.add(gameMap.getMapBlockByLocation(x + 1, y + 1));
+        mapBlocks.add(gameMap.getMapBlockByLocation(x + 1, y));mapBlocks.add(gameMap.getMapBlockByLocation(x + 1, y - 1));
+        mapBlocks.add(gameMap.getMapBlockByLocation(x, y - 1));mapBlocks.add(gameMap.getMapBlockByLocation(x - 1, y - 1));
+        mapBlocks.add(gameMap.getMapBlockByLocation(x - 1, y));mapBlocks.add(gameMap.getMapBlockByLocation(x - 1, y + 1));
+        return mapBlocks;
+    }
+
 
     public void growPopulation() {
         int foodCounter = 0;

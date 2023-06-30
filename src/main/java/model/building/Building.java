@@ -3,8 +3,11 @@ package model.building;
 import model.Kingdom;
 import model.MapBlock;
 
+import java.util.ArrayList;
+
 public class Building {
     protected Integer hp;
+    private int fire = -1;
     private MapBlock position;
     private final BuildingType buildingType;
     private final Kingdom owner;
@@ -42,8 +45,15 @@ public class Building {
     public void setPosition(MapBlock position) {
         this.position = position;
     }
-
     public void decreaseHP(int amount){
         hp -= amount;
+    }
+
+    public int getFire() {
+        return fire;
+    }
+
+    public void setFire(int fire) {
+        this.fire = fire;
     }
 }
