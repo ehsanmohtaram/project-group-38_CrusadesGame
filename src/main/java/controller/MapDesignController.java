@@ -30,7 +30,7 @@ public class MapDesignController {
     private final User currentUser;
     private int XofMap;
     private int YofMap;
-    private ArrayList<MapBlock> selectedBlocks;
+    public static ArrayList<MapBlock> selectedBlocks;
     private Pane mapDesignPane;
     private Style style;
     private StackPane detailsBox;
