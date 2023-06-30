@@ -1,6 +1,7 @@
 package view.controller;
 import controller.Controller;
 import controller.GameController;
+import controller.MapDesignController;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -9,6 +10,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -31,13 +34,19 @@ public class GameUI {
     private final GameController gameController;
     private final Pane mapDesignMenu;
     private final Map gameMap;
+    private final Pane maPane;
     private int isDragActive;
     private Label coinValue;
     private BuildingType typeOfBuilding;
     public static MapBlock mouseOnBlock = null;
+    public static Clipboard clipboard = null;
+    public static ClipboardContent clipboardContent;
 
-    public GameUI(Pane mapDesignPane, Map gameMap) {
+    public GameUI(Pane mapDesignPane, Map gameMap, Pane mapPane) {
+        clipboard = Clipboard.getSystemClipboard();
+        clipboardContent = new ClipboardContent();
         this.mapDesignMenu = mapDesignPane;
+        this.maPane = mapPane;
         this.gameController = new GameController(gameMap);
         this.gameMap = gameMap;
         style = new Style();
@@ -132,10 +141,40 @@ public class GameUI {
             updateBalance();
         });
         balance.getChildren().addAll(coin, coinValue, nextTurn);
-        balance.setSpacing(10);
+        addClipboard(balance, mainPane);
+        balance.setSpacing(5);
         balance.setLayoutX(1372);
         balance.setLayoutY(160);
         mainPane.getChildren().add(balance);
+    }
+
+    public void addClipboard(VBox vBox, Pane mainPane) {
+        Rectangle rectangle = new Rectangle(25, 20, new ImagePattern(new Image(GameUI.class.getResource("/images/buttons/clipboard.png").toExternalForm())));
+        Rectangle buildingHolder = new Rectangle(70, 70);
+        rectangle.setOnMouseClicked(mouseEvent -> {
+            if (clipboard.hasImage()) {
+                VBox popUp = new VBox();
+                popUp.setViewOrder(-2);
+                Button ok = new Button();
+                Pane mapDesignMenu = (Pane) mainPane.getParent().getParent();
+                style.popUp0(mainPane, popUp, ok, 10, 10, 125, 125, 180, 50, 100, 15, 1200, 130, "", 20);
+                popUp.setStyle("-fx-background-color: beige; -fx-background-radius: 20;");
+                popUp.setAlignment(Pos.CENTER);
+                popUp.getChildren().clear();
+                mapDesignMenu.getChildren().get(0).setDisable(true);
+                for (int i = 0; i < mainPane.getChildren().size() - 1; i++)
+                    mainPane.getChildren().get(i).setDisable(true);
+                if (clipboard.getImage() != null) buildingHolder.setFill(new ImagePattern(clipboard.getImage()));
+                popUp.getChildren().add(buildingHolder);
+                popUp.setOnMouseClicked(mouseEvent2 -> {
+                    mainPane.getChildren().remove(popUp);
+                    mapDesignMenu.getChildren().get(0).setDisable(false);
+                    for (int i = 0; i < mainPane.getChildren().size(); i++)
+                        mainPane.getChildren().get(i).setDisable(false);
+                });
+            }
+        });
+        vBox.getChildren().add(rectangle);
     }
 
     public void updateBalance() {
@@ -251,6 +290,27 @@ public class GameUI {
             }
             new BuildingMenu(manePane, ((MapBlock)building.getParent()).getBuildings().getBuildingType(), (MapBlock)building.getParent(),gameMap, coinValue, gameController).buildingMenuUISetup();
         });
+    }
+
+    public static void copyProcess() {
+        if (MapDesignController.selectedBlocks.size() == 1 && MapDesignController.selectedBlocks.get(0).getBuildings() != null)
+            clipboardContent.putImage(MapDesignController.selectedBlocks.get(0).getBuildings().getBuildingType().getTexture());
+        clipboard.setContent(clipboardContent);
+    }
+
+    public void pasteProcess() {
+        if (MapDesignController.selectedBlocks.size() == 1 && clipboardContent.hasImage()) {
+            Rectangle rectangle = new Rectangle(70, 70, new ImagePattern(clipboardContent.getImage()));
+            HashMap<String, String> option = new HashMap<>();
+            BuildingType buildingType = null;
+            for (BuildingType buildingType1 : BuildingType.values())
+                if (buildingType1.getTexture().getUrl().equals(clipboardContent.getImage().getUrl())) buildingType = buildingType1;
+            option.put("t", buildingType.name());
+            option.put("x", Integer.toString(MapDesignController.selectedBlocks.get(0).getxPosition()));
+            option.put("y", Integer.toString(MapDesignController.selectedBlocks.get(0).getyPosition()));
+            String result = gameController.dropBuilding(option);
+            if (result.equals("done")) MapDesignController.selectedBlocks.get(0).getChildren().add(rectangle);
+        }
     }
 
 

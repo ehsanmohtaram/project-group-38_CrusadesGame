@@ -19,7 +19,6 @@ import model.unit.UnitType;
 import view.Style;
 import view.animation.RollingPaper;
 import view.controller.GameUI;
-import view.controller.MapDesignMenuController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +30,7 @@ public class MapDesignController {
     private final User currentUser;
     private int XofMap;
     private int YofMap;
-    private ArrayList<MapBlock> selectedBlocks;
+    public static ArrayList<MapBlock> selectedBlocks;
     private Pane mapDesignPane;
     private Style style;
     private StackPane detailsBox;

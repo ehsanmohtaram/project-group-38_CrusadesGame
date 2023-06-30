@@ -17,6 +17,8 @@ import model.*;
 import model.building.*;
 import model.unit.UnitType;
 import view.controller.BuildingMenuController;
+import view.controller.GameUI;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;

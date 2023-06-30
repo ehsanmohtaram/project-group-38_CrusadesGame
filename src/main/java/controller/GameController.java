@@ -269,6 +269,7 @@ public class GameController {
         MapBlock mapBlock = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
         if (!currentKingdom.checkOutOfRange(mapBlock.getxPosition(), mapBlock.getyPosition())) return "This block is out of range!";
         BuildingType buildingType = BuildingType.valueOf(options.get("t"));
+        if (buildingType.equals(BuildingType.HEAD_QUARTER)) return "end";
         if (!mapBlock.getMapBlockType().isBuildable() && !(buildingType.specificConstant instanceof MineType))
             return "You can not build your building here.";
         if (buildingType.equals(BuildingType.OX_TETHER) && !mapBlock.getMapBlockType().isBuildable())
