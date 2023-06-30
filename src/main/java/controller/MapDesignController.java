@@ -19,7 +19,6 @@ import model.unit.UnitType;
 import view.Style;
 import view.animation.RollingPaper;
 import view.controller.GameUI;
-import view.controller.MapDesignMenuController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,12 +36,14 @@ public class MapDesignController {
     private StackPane detailsBox;
     private RollingPaper rollingPaperAnimation;
 
+
     public MapDesignController(Map gameMap) {
         this.gameMap = gameMap;
 //        designMapMenu = new DesignMapMenu(this);
         currentUser = Controller.currentUser;
         selectedBlocks = new ArrayList<>();
         style = new Style();
+
     }
 
     public Map getGameMap() {
@@ -75,12 +76,14 @@ public class MapDesignController {
     }
 
     public void addDetailsBox(){
-        Label firstDetail = new Label("nothing selected yet!");
+        Label firstDetail = new Label("nothing selected");
+        style.label0(firstDetail, 150 , 300);
+        firstDetail.setBorder(null);
+        firstDetail.setFont(style.Font0(14));
         detailsBox = new StackPane();
         detailsBox.setLayoutX(1150);
         detailsBox.setLayoutY(50);
         Rectangle background = new Rectangle(350 , 350);
-        background.setFill(Color.rgb(1 , 2 , 100));
         rollingPaperAnimation = new RollingPaper(background);
         detailsBox.getChildren().addAll(background, firstDetail);
         mapDesignPane.getChildren().add(detailsBox);
@@ -143,7 +146,6 @@ public class MapDesignController {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 mapPane.requestFocus();
-
                 for (MapBlock[] mapBlocks : gameMap.getMap())
                     for (MapBlock mapBlock : mapBlocks)
                         if (mapBlock.getBoundsInParent().contains(mouseEvent.getX(), mouseEvent.getY())) {
@@ -162,10 +164,12 @@ public class MapDesignController {
                 updateDetailsBox();
             }
         });
+
     }
 
     private void updateDetailsBox() {
-        int soldiers = 0; int minRate = 0; int maxRate = 0; int averageRate = 0;
+        Label detail = (Label)detailsBox.getChildren().get(1);
+        Integer soldiers = 0; Integer minRate = 0; Integer maxRate = 0; Integer averageRate = 0;
         for (MapBlock selectedBlock : selectedBlocks) {
             soldiers += selectedBlock.getUnits().size();
             if (selectedBlock.getBuildings() != null && selectedBlock.getBuildings().getSpecificConstant() instanceof ProducerType) {
@@ -181,9 +185,20 @@ public class MapDesignController {
                 minRate = averageRate - (int) ((double) mineType.getProduceRate() * 0.5);
             }
         }
+        Integer[] toShowDetails = {soldiers, averageRate, minRate, maxRate};
         rollingPaperAnimation.setFirstTime(false);
+        detail.setText("");
         rollingPaperAnimation.play();
+        rollingPaperAnimation.setOnFinished(e -> {
+            if(selectedBlocks.size() == 0)
+                detail.setText("no selected block yet");
+            else
+                detail.setText("in selected blocks:\nunits: " + toShowDetails[0] + "\naverage rate: " +toShowDetails[1] +
+                        "\nmin rate: " +toShowDetails[2] + "\nmax rate: " +toShowDetails[3]);
+        });
     }
+
+
 
     public String setTexture(MapBlockType mapBlockType) {
         if(selectedBlocks.size() == 0)

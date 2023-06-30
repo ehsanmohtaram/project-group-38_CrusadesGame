@@ -1,7 +1,6 @@
 package model;
 
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import model.building.Building;
 import model.unit.Unit;
 
@@ -332,54 +331,60 @@ public class Map implements Cloneable {
     public Integer getShortestWayLength(int xPosition, int yPosition, int xOfDestination, int yOfDestination, Integer limit){
         boolean[][]mark = new boolean[mapWidth][mapHeight];
         AtomicInteger answer;
+        ArrayList<MapBlock> way = new ArrayList<>();
         if(limit == null)
             answer = new AtomicInteger(mapWidth * mapHeight + 1);
         else
             answer = new AtomicInteger(limit + 1);
         if(xPosition < xOfDestination && yPosition < yOfDestination)
-            getWaysLengthByEast(mark, xPosition, yPosition, 0, xOfDestination, yOfDestination, answer, true);
+            getWaysLengthByEast(mark, xPosition, yPosition, 0, xOfDestination, yOfDestination, answer, true, way);
         else if (xPosition > xOfDestination && yPosition < yOfDestination)
-            getWaysLengthByEast(mark, xOfDestination, yOfDestination, 0, xPosition, yPosition, answer, false);
+            getWaysLengthByEast(mark, xOfDestination, yOfDestination, 0, xPosition, yPosition, answer, false, way);
         else if (xPosition >= xOfDestination && yPosition >= yOfDestination)
-            getWaysLengthByEast(mark,  xOfDestination, yOfDestination, 0, xPosition, yPosition, answer, true);
+            getWaysLengthByEast(mark,  xOfDestination, yOfDestination, 0, xPosition, yPosition, answer, true, way);
         else
-            getWaysLengthByEast(mark, xPosition, yPosition, 0, xOfDestination, yOfDestination, answer, false);
+            getWaysLengthByEast(mark, xPosition, yPosition, 0, xOfDestination, yOfDestination, answer, false, way);
         if((limit == null && (answer.get() == (mapWidth * mapHeight + 1)) || answer.get() == (limit + 1)))
             return null;
+        System.out.println(way);
         return answer.get();
     }
 
-    private void getWaysLengthByEast(boolean[][]mark, int xPosition, int yPosition , int length , int xOfDestination, int yOfDestination , AtomicInteger minimum, boolean southPriority){
+    private void getWaysLengthByEast(boolean[][]mark, int xPosition, int yPosition , int length , int xOfDestination, int yOfDestination , AtomicInteger minimum, boolean southPriority, ArrayList<MapBlock> way){
         if(length >= minimum.get())
             return;
         if(getMapBlockByLocation(xPosition , yPosition) == null)
             return;
         if(xPosition == xOfDestination && yPosition == yOfDestination) {
             minimum.set(length);
+            way.add(map[xPosition][yPosition]);
+            System.out.println(way);
             return;
         }
         if(mark[xPosition][yPosition] == true)
             return;
         mark[xPosition][yPosition] = true;
+        way.add(map[xPosition][yPosition]);
         if(checkAccess(xPosition, yPosition, Direction.EAST))
-            getWaysLengthByEast(mark, xPosition + 1, yPosition , length + 1 , xOfDestination, yOfDestination, minimum, true);
+            getWaysLengthByEast(mark, xPosition + 1, yPosition , length + 1 , xOfDestination, yOfDestination, minimum, true, way);
         if(southPriority){
             if (checkAccess(xPosition, yPosition, Direction.SOUTH))
-                getWaysLengthByEast(mark, xPosition, yPosition + 1, length + 1, xOfDestination, yOfDestination, minimum, true);
+                getWaysLengthByEast(mark, xPosition, yPosition + 1, length + 1, xOfDestination, yOfDestination, minimum, true, way);
             if (checkAccess(xPosition, yPosition, Direction.WEST))
-                getWaysLengthByEast(mark, xPosition - 1, yPosition, length + 1, xOfDestination, yOfDestination, minimum, true);
+                getWaysLengthByEast(mark, xPosition - 1, yPosition, length + 1, xOfDestination, yOfDestination, minimum, true, way);
         }
         if(checkAccess(xPosition, yPosition, Direction.NORTH))
-            getWaysLengthByEast(mark, xPosition, yPosition - 1 , length + 1 , xOfDestination, yOfDestination, minimum, true);
+            getWaysLengthByEast(mark, xPosition, yPosition - 1 , length + 1 , xOfDestination, yOfDestination, minimum, true, way);
         if (!southPriority) {
             if (checkAccess(xPosition, yPosition, Direction.SOUTH))
-                getWaysLengthByEast(mark, xPosition, yPosition + 1, length + 1, xOfDestination, yOfDestination, minimum, true);
+                getWaysLengthByEast(mark, xPosition, yPosition + 1, length + 1, xOfDestination, yOfDestination, minimum, true, way);
             if (checkAccess(xPosition, yPosition, Direction.WEST))
-                getWaysLengthByEast(mark, xPosition - 1, yPosition, length + 1, xOfDestination, yOfDestination, minimum, true);
+                getWaysLengthByEast(mark, xPosition - 1, yPosition, length + 1, xOfDestination, yOfDestination, minimum, true, way);
         }
 
         if(mark[xPosition][yPosition] == true) {
             mark[xPosition][yPosition] = false;
+            way.remove(way.size() - 1);
         }
 
     }

@@ -60,7 +60,7 @@ public class Style {
         });
     }
 
-    public void popUp0(Pane pane, VBox popUp, Button ok,double spacing, double padding, double popUpWidth, double popUpHeight, double textFlowWidth, double textFlowHeight, int buttonWidth, int buttonHeight, double positionX, double positionY, String result, int fontSize) {
+    public Text popUp0(Pane pane, VBox popUp, Button ok,double spacing, double padding, double popUpWidth, double popUpHeight, double textFlowWidth, double textFlowHeight, int buttonWidth, int buttonHeight, double positionX, double positionY, String result, int fontSize) {
         popUp.setSpacing(spacing);
         popUp.setPadding(new Insets(padding));
         popUp.setAlignment(Pos.TOP_CENTER);
@@ -80,6 +80,7 @@ public class Style {
         button0(ok, "OK", buttonWidth, buttonHeight);
         popUp.getChildren().addAll(error,ok);
         pane.getChildren().add(popUp);
+        return text;
     }
 
     public void label0(Label label, int width, int height){

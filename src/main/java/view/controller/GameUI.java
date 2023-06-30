@@ -38,7 +38,7 @@ public class GameUI {
 
     public GameUI(Pane mapDesignPane, Map gameMap) {
         this.mapDesignMenu = mapDesignPane;
-        this.gameController = new GameController(gameMap);
+        this.gameController = new GameController(gameMap, mapDesignPane);
         this.gameMap = gameMap;
         style = new Style();
         isDragActive = 0;
@@ -60,6 +60,7 @@ public class GameUI {
         gameTools.setBackground(new Background(backgroundImage));
         addMenuButton(gameTools);
         mapDesignMenu.getChildren().add(gameTools);
+        gameController.dragAndDropSelection();
     }
 
     public void addMenuButton(Pane gameTools) {

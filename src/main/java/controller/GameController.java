@@ -1,5 +1,18 @@
 package controller;
 
+import javafx.animation.PauseTransition;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+import javafx.util.Duration;
 import model.*;
 import model.building.*;
 import model.unit.Unit;
@@ -7,7 +20,7 @@ import model.unit.UnitType;
 import view.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.List;
 
 
 public class GameController {
@@ -19,13 +32,20 @@ public class GameController {
     private Kingdom currentKingdom;
     private int XofMap;
     private int YofMap;
+    private Pane mapDesignPane;
+    private boolean isDragActive;
+    private Style style;
+    private UnitController unitController;
 
-    public GameController(Map gameMap) {
+    public GameController(Map gameMap, Pane mapDesignPane) {
         GameController.gameMap = gameMap;
         this.gameMenu = new GameMenu(this);
+        this.mapDesignPane = mapDesignPane;
         currentUser = Controller.currentUser;
         currentKingdom = gameMap.getKingdomByOwner(currentUser);
         selectedUnit = new ArrayList<>();
+        isDragActive = false;
+        style = new Style();
     }
 
     public void run() {
@@ -72,6 +92,116 @@ public class GameController {
             Controller.currentUser = Controller.loggedInUser;
             System.out.println("END");
         }
+    }
+
+    public void dragAndDropSelection() {
+        Pane mapPane = gameMap.getMapPane();
+        Rectangle movingRectangle = new Rectangle(100, 100);
+        double[] firstPos = new double[2];
+        mapPane.setOnDragDetected(e -> {
+            isDragActive = true;
+            movingRectangle.setFill(Color.rgb(100 , 100 , 100 , 0.5));
+            firstPos[0] = e.getX();
+            firstPos[1] = e.getY();
+            movingRectangle.setX(firstPos[0]);
+            movingRectangle.setY(firstPos[1]);
+            movingRectangle.setWidth(0);
+            movingRectangle.setHeight(0);
+            mapPane.getChildren().add(movingRectangle);
+        });
+        mapPane.setOnMouseDragged(e -> {
+            movingRectangle.setX(Math.min(e.getX(), firstPos[0]));
+            movingRectangle.setWidth(Math.abs(e.getX() - firstPos[0]));
+            movingRectangle.setY(Math.min(e.getY(), firstPos[1]));
+            movingRectangle.setHeight(Math.abs(e.getY() - firstPos[1]));
+        });
+        mapPane.setOnMouseReleased(mouseEvent -> {
+            if (isDragActive) {
+                mapPane.getChildren().remove(mapPane.getChildren().size() - 1);
+                PauseTransition pauseTransition = new PauseTransition(Duration.millis(10));
+                pauseTransition.setOnFinished(e -> {
+                    isDragActive = false;
+                    selectUnits(firstPos[0], firstPos[1], mouseEvent.getX() , mouseEvent.getY());
+                });
+                pauseTransition.play();
+            }
+        });
+    }
+
+    private void selectUnits(double x, double y, double x2, double y2) {
+        gameMap.getMapPane().setDisable(true);
+        selectedUnit = new ArrayList<>();
+        HashMap<UnitType, ArrayList<Unit>> numberOfEachUnit = new HashMap<>();
+        int finalY = (int)(Math.max(y, y2)/100);int finalX = (int)(Math.max(x, x2)/100);
+        int startY = (int)(Math.min(y, y2)/100);int startX = (int)(Math.min(x, x2)/100);
+        for (int i = startX; i <= finalX ; i++)
+            for (int j = startY; j <= finalY; j++)
+                selectedUnit.addAll(gameMap.getMapBlockByLocation(i, j).getUnits());
+
+        if(selectedUnit.size() == 0 )
+            return;
+        for (Unit unit : selectedUnit) {
+            if(!numberOfEachUnit.containsKey(unit.getUnitType()))
+                numberOfEachUnit.put(unit.getUnitType(), new ArrayList<>(List.of(unit)));
+            else
+                numberOfEachUnit.get(unit.getUnitType()).add(unit);
+        }
+        String details = "";
+        UnitType[] selectedType = new UnitType[1];
+        ArrayList<MenuItem> unitTypes = new ArrayList<>();
+        Integer[] count = {0};
+        Label number = new Label(count[0].toString());
+        style.label0(number, 50 , 40);
+
+        number.setFont(style.Font0(15));
+        MenuButton menuButton = new MenuButton("unit");
+        for (UnitType unitType : numberOfEachUnit.keySet()) {
+            String name = unitType.name().replaceAll("_", " ").toLowerCase();
+            details += numberOfEachUnit.get(unitType).size() + "x " + name +"\n";
+            MenuItem item = new MenuItem(name);
+            item.setOnAction(e-> {
+                selectedType[0] = unitType;
+                menuButton.setText(name);
+                count[0] = 0;
+                number.setText(count[0].toString());
+
+            });
+            unitTypes.add(item);
+        }
+        menuButton.getItems().addAll(unitTypes);
+        Label units = new Label(details);
+        units.setFont(style.Font0(15));
+        style.label0(units, 200 , 200);
+        number.setOnScroll(e -> {
+            if(selectedType[0] == null)
+                return;
+            int i = 1;
+            if(e.getDeltaY() < 0)
+                i = -1;
+            if(count[0] + i > 0 && numberOfEachUnit.get(selectedType[0]).size() >= count[0] + i)
+                count[0] += i;
+            number.setText(count[0].toString());
+        });
+        Button ok = new Button();
+        VBox holder = new VBox(units, menuButton, number);
+        holder.setPrefSize(220 , 250);
+        holder.setAlignment(Pos.CENTER);
+        holder.setSpacing(15);
+        VBox popUp = new VBox(holder);
+        Text error = style.popUp0(mapDesignPane, popUp, ok, 10, 20, 250, 350, 180, 50, 50, 15,900, 100, null, 15);
+        popUp.setStyle("-fx-background-color: beige; -fx-background-radius: 20;");
+        popUp.setAlignment(Pos.CENTER);
+        ok.setOnMouseClicked(e ->{
+            if(selectedType[0] != null){
+                mapDesignPane.getChildren().remove(popUp);
+                gameMap.getMapPane().setDisable(false);
+                selectedUnit = new ArrayList<>();
+                selectedUnit.addAll(numberOfEachUnit.get(selectedType[0]).subList(0, count[0]));
+                unitController = new UnitController();
+
+            }else
+              error.setText("select a unitType");
+        });
     }
 
     public String getListOfPlayers () {
