@@ -130,7 +130,7 @@ public class BuildingController {
         result = checkProduceMode();
         if (result != null) return result;
         producer.setMode(produceMode);
-        return "done";
+        return null;
     }
 
     public String checkProduceMode() {

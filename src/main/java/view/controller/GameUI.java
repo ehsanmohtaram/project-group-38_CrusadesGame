@@ -249,7 +249,7 @@ public class GameUI {
                 manePane.getChildren().remove(2);
                 for(Node node : ((HBox) manePane.getChildren().get(0)).getChildren()) node.setOpacity(1);
             }
-            new BuildingMenu(manePane, ((MapBlock)building.getParent()).getBuildings().getBuildingType(), (MapBlock)building.getParent(),gameMap, coinValue).buildingMenuUISetup();
+            new BuildingMenu(manePane, ((MapBlock)building.getParent()).getBuildings().getBuildingType(), (MapBlock)building.getParent(),gameMap, coinValue, gameController).buildingMenuUISetup();
         });
     }
 

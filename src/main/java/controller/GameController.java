@@ -360,10 +360,10 @@ public class GameController {
         return "unit";
     }
 
-    public String showPopularityFactors() {
-        return "Popularity factors:\nFood => " + showFoodRate() + "\nTax rate => " + showTaxRate() +
-                "\nReligion => " + showReligion() + "\nFear rate => " + showFearRate();
-    }
+//    public String showPopularityFactors() {
+//        return "Popularity factors:\nFood => " + showFoodRate() + "\nTax rate => " + showTaxRate() +
+//                "\nReligion => " + showReligion() + "\nFear rate => " + showFearRate();
+//    }
 
     public String showPopularity() {
         return "Popularity rate : " + currentKingdom.getPopularity();
@@ -377,12 +377,7 @@ public class GameController {
         return output.toString();
     }
 
-    public String setFoodRate(HashMap<String, String> options) {
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        if (!options.get("r").matches("-?\\d+"))  return "Please input digit as rate!";
-        int rateNumber = Integer.parseInt(options.get("r"));
-        if (rateNumber > 2 || rateNumber < -2) return "Invalid bound!";
+    public String setFoodRate(int rateNumber) {
         currentKingdom.setFoodRate(rateNumber);
         int getFood = (int) (((double)(currentKingdom.getFoodRate() + 2) / 2) * (double)currentKingdom.getPopulation());
         int foodCounter = 0;
@@ -393,7 +388,7 @@ public class GameController {
         }
         else {
             currentKingdom.setTaxRate(getFood);
-            return "Food rate settled successfully!";
+            return "done";
         }
     }
 
@@ -412,12 +407,7 @@ public class GameController {
         return "Religious building : " + counter;
     }
 
-    public String setTaxRate(HashMap<String, String> options) {
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet()) if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        if (!options.get("r").matches("-?\\d+"))  return "Please input digit as rate!";
-        int taxRate = Integer.parseInt(options.get("r"));
-        if (taxRate > 8 || taxRate < -3) return "Invalid bound!";
+    public String setTaxRate(int taxRate) {
         double getTax;
         if (currentKingdom.getTaxRate() < 0) getTax = currentKingdom.getTaxRate() * 0.2 - 0.4;
         else getTax = currentKingdom.getTaxRate() * 0.2 + 0.4;
@@ -427,24 +417,10 @@ public class GameController {
         }
         else {
             currentKingdom.setTaxRate(taxRate);
-            return "Tax rate settled successfully!";
+            return "done";
         }
     }
 
-    public String showTaxRate() {
-        return "Tax rate : " + currentKingdom.getTaxRate();
-    }
-
-    public String setFearRate(HashMap<String, String> options) {
-        for (String key : options.keySet()) if (options.get(key) == null) return "Please input necessary options!";
-        for (String key : options.keySet())
-            if (options.get(key).equals("")) return "Illegal value. Please fill the options!";
-        if (!options.get("r").matches("-?\\d+")) return "please in ut digit as your rate!";
-        int rateNumber = Integer.parseInt(options.get("r"));
-        if (rateNumber > 5 || rateNumber < -5) return "Invalid bounds!";
-        currentKingdom.setFearRate(rateNumber);
-        return "fear rate settled successfully!";
-    }
 
     public String showFearRate() {
         return "Fear rate : " + currentKingdom.getFearRate();

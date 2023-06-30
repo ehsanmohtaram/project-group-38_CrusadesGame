@@ -2,13 +2,11 @@ package view;
 
 import controller.BuildingController;
 import controller.Controller;
+import controller.GameController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
@@ -20,8 +18,8 @@ import model.building.*;
 import model.unit.UnitType;
 import view.controller.BuildingMenuController;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BuildingMenu {
     private final BuildingController buildingController;
@@ -33,12 +31,14 @@ public class BuildingMenu {
     private final BuildingType buildingType;
     private final Map gameMap;
     private final BuildingMenuController buildingMenuController;
+    private final GameController gameController;
 
-    public BuildingMenu(Pane mainPane, BuildingType buildingType,MapBlock mapBlock ,Map gameMap, Label coinValue) {
+    public BuildingMenu(Pane mainPane, BuildingType buildingType,MapBlock mapBlock ,Map gameMap, Label coinValue, GameController gameController) {
         style = new Style();
         this.mainPane = mainPane;
         this.buildingType = buildingType;
         this.buildingMenuController = new BuildingMenuController();
+        this.gameController = gameController;
         this.gameMap = gameMap;
         this.coinValue = coinValue;
         this.mapBlock = mapBlock;
@@ -62,13 +62,168 @@ public class BuildingMenu {
     }
 
     public void redirect(Pane buildingInformationHolder) {
-        if (buildingType.specificConstant instanceof DefensiveStructureType) defensiveBuildingRnu(buildingInformationHolder);
+        if (buildingType.equals(BuildingType.HEAD_QUARTER)) headQuarterRun(buildingInformationHolder);
+        else if (buildingType.specificConstant instanceof DefensiveStructureType) defensiveBuildingRnu(buildingInformationHolder);
         else if (buildingType.specificConstant instanceof CampType) campBuildingRnu(buildingInformationHolder);
         else if (buildingType.specificConstant instanceof StockType) stockBuildingRun(buildingInformationHolder);
         else if (buildingType.specificConstant instanceof ProducerType) produceBuildingRun(buildingInformationHolder);
         else if (buildingType.specificConstant instanceof SiegeType) siegeRun(buildingInformationHolder);
         else if (buildingType.equals(BuildingType.SHOP)) runShop(buildingInformationHolder);
     }
+
+    private void headQuarterRun(Pane buildingInformationHolder) {
+        HBox holder = new HBox();
+        holder.setSpacing(10);
+        holder.setAlignment(Pos.CENTER);
+        VBox rateChange = new VBox();
+        rateChange.setAlignment(Pos.CENTER);
+        rateChange.setSpacing(5);
+        VBox rateChanger0 = new VBox();
+        rateChanger0.setAlignment(Pos.CENTER);
+        rateChanger0.setSpacing(10);
+        rateChanger0.setPrefSize(300, 80);
+        rateChanger0.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
+
+        HBox fearRateInfo = new HBox();
+        Label fear_L = new Label();
+        slider(fearRateInfo, "( Fear Rate : ",  gameMap.getKingdomByOwner(Controller.currentUser).getFearRate(),-5, 0, 11, 212, fear_L);
+
+        HBox taxRateInfo = new HBox();
+        Label tax_L = new Label();
+        slider(taxRateInfo, "( Tax Rate : ", gameMap.getKingdomByOwner(Controller.currentUser).getTaxRate(), -3, 2, 12, 231, tax_L);
+
+        HBox foodRateInfo = new HBox();
+        Label food_L = new Label();
+        slider(foodRateInfo, "( Food Rate : ", gameMap.getKingdomByOwner(Controller.currentUser).getFoodRate(), -2, 1, 5, 99, food_L);
+
+        Button fear = new Button();
+        style.button0(fear, "FEAR", 100, 30);
+        fear.setFont(style.Font0(12));
+        fear.setOnMouseClicked(mouseEvent -> {
+            rateChanger0.getChildren().clear();
+            rateChanger0.getChildren().addAll(fearRateInfo, fear_L);
+        });
+        Button tax = new Button();
+        tax.setFont(style.Font0(12));
+        style.button0(tax, "TAX", 100, 30);
+        tax.setOnMouseClicked(mouseEvent -> {
+            rateChanger0.getChildren().clear();
+            rateChanger0.getChildren().addAll(taxRateInfo, tax_L);
+        });
+        Button food = new Button();
+        food.setFont(style.Font0(12));
+        style.button0(food, "FOOD", 100, 30);
+        food.setOnMouseClicked(mouseEvent -> {
+            rateChanger0.getChildren().clear();
+            rateChanger0.getChildren().addAll(foodRateInfo, food_L);
+        });
+        rateChange.getChildren().addAll(food, fear, tax);
+        Rectangle popularity = new Rectangle(100, 100, new ImagePattern(new Image(BuildingMenu.class.getResource("/images/buttons/face.png").toExternalForm())));
+        popularity.setOpacity(0.8);
+        popularity.setOnMouseEntered(event -> popularity.setOpacity(0.4));
+        popularity.setOnMouseExited(event -> popularity.setOpacity(0.8));
+        HBox face1 = new HBox(); HBox face2 = new HBox();  HBox face3 = new HBox(); HBox face4 = new HBox();
+        addPopularityFactor(face1, calculatePopularity(0) ," Tax"); addPopularityFactor(face2,calculatePopularity(1) ," Food"); addPopularityFactor(face3, calculatePopularity(2)," Religion"); addPopularityFactor(face4, calculatePopularity(3), "Fear Factor");
+        HBox hBox0 = new HBox();
+        hBox0.setSpacing(20);
+        hBox0.setAlignment(Pos.CENTER);
+        hBox0.getChildren().addAll(face1, face2);
+        HBox hBox1 = new HBox();
+        hBox1.setSpacing(20);
+        hBox1.setAlignment(Pos.CENTER);
+        hBox1.getChildren().addAll(face3, face4);
+        popularity.setOnMouseClicked(mouseEvent -> {
+            rateChanger0.getChildren().clear();
+            rateChanger0.getChildren().addAll(hBox0, hBox1);
+        });
+        holder.getChildren().addAll(rateChange, rateChanger0, popularity);
+        buildingInformationHolder.getChildren().add(holder);
+        buildingInformationHolder.setLayoutY(120);
+        buildingInformationHolder.setLayoutX(520);
+    }
+
+    public void slider(HBox fearRateInfo, String text, int firstValue, int min, int type, int range, int boxLen, Label value) {
+        fearRateInfo.setAlignment(Pos.CENTER);
+        fearRateInfo.setSpacing(10);
+        HBox fearRateBox = new HBox();
+        fearRateBox.setMinSize(boxLen, 31);
+        fearRateBox.setAlignment(Pos.CENTER);
+        fearRateBox.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(5), BorderStroke.THIN)));
+        fearRateBox.setSpacing(2);
+        ArrayList<Rectangle> fearRate = new ArrayList<>();
+        for (int i = 0; i  < range ; i++) {
+            Rectangle rectangle = new Rectangle(15, 25);
+            rectangle.setFill(Color.TRANSPARENT);
+            rectangle.setStroke(Color.rgb(170,139,100,0.8));
+            rectangle.setStrokeWidth(2);
+            rectangle.setArcWidth(5); rectangle.setArcHeight(5);
+            fearRate.add(rectangle);
+        }
+        value.setText(text + firstValue + " )");
+        for (int i = 0; i < firstValue - min + 1; i++) fearRate.get(i).setFill(Color.BEIGE);
+        value.setFont(style.Font0(20));
+        value.setAlignment(Pos.CENTER);
+        for (Rectangle rectangle : fearRate) {
+            rectangle.setOnMouseClicked(mouseEvent -> {
+                String result = "done";
+                if (type == 0) gameMap.getKingdomByOwner(Controller.currentUser).setFearRate(fearRate.indexOf(rectangle) + min);
+                else if (type == 1) result = gameController.setFoodRate(fearRate.indexOf(rectangle) + min);
+                else result = gameController.setTaxRate(fearRate.indexOf(rectangle) + min);
+                if (result.equals("done")) {
+                    for (Rectangle rectangle1 : fearRate) rectangle1.setFill(Color.TRANSPARENT);
+                    for (int i = 0; ; i++) {
+                        fearRate.get(i).setFill(Color.BEIGE);
+                        value.setText(text + (min + i) + " )");
+                        if (rectangle.equals(fearRate.get(i))) break;
+                    }
+                }
+            });
+        }
+        fearRateBox.getChildren().addAll(fearRate);
+        fearRateInfo.getChildren().addAll(fearRateBox);
+    }
+
+    public void addPopularityFactor(HBox holder ,int value, String text) {
+        holder.setSpacing(5);
+        Rectangle rectangle = new Rectangle(20 ,20);
+        Label text0 = new Label(value + " ");
+        text0.setFont(style.Font0(12));
+        Label text1 = new Label(text);
+        text1.setFont(style.Font0(12));
+        if (value < 0) {
+            text0.setTextFill(Color.INDIANRED);
+            rectangle.setFill(new ImagePattern(new Image(BuildingMenu.class.getResource("/images/buttons/red.png").toExternalForm())));
+        }
+        else if (value == 0) {
+            text0.setTextFill(Color.YELLOW);
+            rectangle.setFill(new ImagePattern(new Image(BuildingMenu.class.getResource("/images/buttons/yellow.png").toExternalForm())));
+        }
+        else {
+            text0.setTextFill(Color.GREEN);
+            rectangle.setFill(new ImagePattern(new Image(BuildingMenu.class.getResource("/images/buttons/green.png").toExternalForm())));
+        }
+        holder.getChildren().addAll(text0, rectangle, text1);
+
+    }
+
+    public int calculatePopularity(int type) {
+        Kingdom currentKingdom = gameMap.getKingdomByOwner(Controller.currentUser);
+        int value = 0, variety = 0;
+        switch (type) {
+            case 0 : if (currentKingdom.getTaxRate() <= 0) value = -currentKingdom.getTaxRate() * 2 + 1;
+                    else value = -currentKingdom.getTaxRate() * 2; break;
+            case 1 : for (Food food : currentKingdom.getFoods().keySet()) if (currentKingdom.getFoods().get(food) > 0) variety++;
+                    value =  currentKingdom.getFoodRate() * 4;
+                    if (variety != 0 ) value += 2; break;
+            case 2 : for (Building building : currentKingdom.getBuildings())
+                        if (building.getBuildingType().equals(BuildingType.CATHEDRAL) || building.getBuildingType().equals(BuildingType.CHURCH)) value += 2;
+                    break;
+            case 3 : value = -currentKingdom.getFearRate(); break;
+        }
+        return value;
+    }
+
+
 
     public void defensiveBuildingRnu(Pane buildingInformationHolder) {
         HBox holder = new HBox();
