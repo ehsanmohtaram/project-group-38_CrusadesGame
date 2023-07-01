@@ -18,6 +18,8 @@ import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitType;
 import view.*;
+import view.controller.MapDesignMenuController;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -456,11 +458,20 @@ public class GameController {
         return "building";
     }
 
-    public void handelUnitCommands(String text, MapBlock mouseOnBlock) {
+    public String handelUnitCommands(String text, MapBlock mouseOnBlock) {
+        if(mouseOnBlock == null) {
+            if (MapDesignController.selectedBlocks.size() != 1)
+                return "select just one block";
+            else
+                mouseOnBlock = MapDesignController.selectedBlocks.get(0);
+        }
+        if(unitController == null) {
+            return "first select units";
+        }
         String result = unitController.moveMultipleUnits(mouseOnBlock, text);
         if(!result.equals(""))
-            System.out.println(result);
-
+            return result;
+        return null;
     }
 
     public String showMap(HashMap<String, String> options){

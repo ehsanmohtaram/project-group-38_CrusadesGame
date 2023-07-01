@@ -116,8 +116,8 @@ public class MapDesignMenuController {
                 case F : if (GameUI.clipboard != null) gameUI.selectHeadQuarter(0); break;
                 case T : if (GameUI.clipboard != null) gameUI.selectHeadQuarter(1); break;
                 case P : if (GameUI.clipboard != null) gameUI.selectHeadQuarter(2); break;
-                case M : if (GameUI.clipboard != null) gameUI.selectHeadQuarter(2); break;
-                case A : if (GameUI.clipboard != null) gameUI.selectHeadQuarter(2); break;
+                case M : if (GameUI.clipboard != null) gameUI.handelUnitCommands("Move", null); break;
+                case A : if (GameUI.clipboard != null) gameUI.handelUnitCommands("Attack", null); break;
             }
 //            if (mapPane.getLayoutBounds().getMinX() < 0)
 //            {

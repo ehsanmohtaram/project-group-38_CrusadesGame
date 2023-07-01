@@ -185,7 +185,6 @@ public class Unit {
 
     public void moveTo(MapBlock destination, int length, ArrayList<MapBlock> way, Pane mapPane){
         decreaseMoves(length);
-        System.out.println("----" + length);
         Timeline XAnimation = new Timeline();
         Timeline YAnimation = new Timeline();
         if(way == null) {
@@ -201,7 +200,6 @@ public class Unit {
             else
                 movingTroopAnimation.setRight(false);
             movingTroopAnimation.play();
-            System.out.println("--------" + way);
             int counter = 0;
             for (MapBlock mapBlock : way) {
                 XAnimation.getKeyFrames().add(new KeyFrame(Duration.seconds(counter), new KeyValue(unitPane.translateXProperty(), mapBlock.getLayoutX() - locationBlock.getLayoutX())));

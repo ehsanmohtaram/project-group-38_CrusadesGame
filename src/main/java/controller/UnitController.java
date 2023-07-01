@@ -54,8 +54,10 @@ public class UnitController {
                 result = moveUnit(origin, destination);
             else if(command.equals("Attack"))
                 result = attackOnUnit(origin, destination);
-            else
+            else if(command.equals("Patrol"))
                 result = patrolUnit(origin, destination);
+            else
+                return output;
             if(!result.equals("successful"))
                 output += "in block " + origin.getxPosition() + "*" + origin.getyPosition() + " : " + result + "\n";
         }
@@ -269,8 +271,8 @@ public class UnitController {
 //        if(origin == null || destination == null)
 //            return "invalid location";
         ArrayList<Unit> currentUnit = origin.getSelectedUnits();
-        if(origin.getBuildings() != null || destination.getBuildings() != null )
-            return "patrol is available just for free locations not in buildings";
+//        if(destination.getBuildings() != null )
+//            return "patrol is available just for free locations not in buildings";
         if(currentUnit.get(0).getUnitType().equals(UnitType.TUNNELER))
             return "no patrol option available for tunnelers. you should use them correctly";
 //        Integer moveLength;
