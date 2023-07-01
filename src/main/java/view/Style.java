@@ -86,7 +86,8 @@ public class Style {
     public void label0(Label label, int width, int height){
         label.setBackground(Background.EMPTY);
         label.setAlignment(Pos.CENTER);
-        label.setStyle("-fx-text-fill: rgba(170,139,100,0.8);");
+//        label.setStyle("-fx-text-fill: rgba(170,139,100,0.8);");
+        label.setTextFill(Color.rgb(170,139,100,0.8));
         label.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         if(width != 0 && height != 0) {
             label.setMaxWidth(width);

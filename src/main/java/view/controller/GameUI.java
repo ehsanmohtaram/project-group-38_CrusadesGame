@@ -105,7 +105,19 @@ public class GameUI {
 //    }
 
     public void handelUnitCommands(String text, MapBlock targetBlock) {
-        gameController.handelUnitCommands(text, targetBlock);
+        String result = gameController.handelUnitCommands(text, targetBlock);
+        if(result != null){
+         Label error = new Label(result);
+         error.setLayoutX(50);
+         error.setLayoutY(50);
+         style.label0(error, 250, 50);
+         error.setFont(style.Font0(15));
+         error.setTextFill(Color.rgb(200, 60,60));
+         mapDesignMenu.getChildren().add(error);
+         PauseTransition pauseTransition = new PauseTransition(Duration.seconds(2));
+         pauseTransition.setOnFinished(e -> mapDesignMenu.getChildren().remove(error));
+         pauseTransition.play();
+        }
     }
 
     public void addMenuButton(Pane gameTools) {
