@@ -49,20 +49,20 @@ public class ChatMenu extends Application {
         chatRoom.setPrefSize(1300, 750);
         chatRoom.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(20), BorderStroke.THIN)));
         VBox contacts = new VBox();
-        contactsInfo(contacts);
         contacts.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(15), BorderStroke.THIN)));
         contacts.setPrefSize(400, 720);
         contacts.setMaxHeight(720);
-        VBox chatEnvironment = new VBox();
+        StackPane chatEnvironment = new StackPane();
         chatEnvironment.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(15), BorderStroke.THIN)));
         chatEnvironment.setPrefSize(855, 720);
         chatEnvironment.setMaxHeight(720);
+        contactsInfo(contacts, chatEnvironment);
         chatRoom.getChildren().addAll(contacts, chatEnvironment);
         chatRoom.setLayoutX(100); chatRoom.setLayoutY(100);
         pane.getChildren().add(chatRoom);
     }
 
-    public void contactsInfo(VBox contacts) {
+    public void contactsInfo(VBox contacts, StackPane chatEnvironment) {
         contacts.setAlignment(Pos.CENTER);
         contacts.setSpacing(15);
         StackPane userFiled = new StackPane();
@@ -72,40 +72,35 @@ public class ChatMenu extends Application {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setMaxSize(370, 650);
         scrollPane.setStyle("-fx-background-color: transparent; -fx-background : transparent;");
-        for (User user : User.users) {
-            HBox userHolder = new HBox();
-            userHolder.setOnMouseEntered(event ->
-                userHolder.setStyle("-fx-background-radius: 20; -fx-background-color: rgba(128,128,128, 0.4) ; -fx-background: rgba(128,128,128, 0.4);")
-            );
-            userHolder.setOnMouseExited(event -> userHolder.setStyle("-fx-background-radius: 20; -fx-background-color: transparent ; -fx-background: transparent;"));
-            userHolder.setPadding(new Insets(10));
-            userHolder.setAlignment(Pos.CENTER_LEFT);
-            Circle circle = new Circle(30, new ImagePattern(new Image(user.getAvatar())));
-            Label username = new Label(user.getUserName());
-            username.setPadding(new Insets(0,0,20,20));
-            username.setFont(style.Font0(25));
-            username.setTextFill(Color.BLACK);
-            userHolder.setPrefSize(360, 70);
-            userHolder.getChildren().addAll(circle, username);
-            usernames.getChildren().add(userHolder);
-        }
-        userFiled.getChildren().add(scrollPane);
+        TextField searchBox = new TextField();
+        style.textFiled0(searchBox, "Search Contacts", 290, 70);
+        searchBox.setPadding(new Insets(0,30,0,30));
+        searchBox.setFont(style.Font0(20));
+        Rectangle back = new Rectangle(70, 70, new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/back.png").toExternalForm())));
+        back.setOnMouseClicked(mouseEvent -> {
+            if (back.getFill().equals(new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/back.png").toExternalForm()))))
+                new MainMenu().start(stage);
+            else {
+                searchBox.setText("");
+                usernames.getChildren().clear();
+                userFiled.getChildren().clear();
+                back.setFill(new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/back.png").toExternalForm())));
+            }
+
+        });
+
+        addUser(usernames, searchBox, scrollPane, userFiled, back);
         StackPane newChatTypeBox = new StackPane();
         HBox backAndSearch = new HBox();
         backAndSearch.setAlignment(Pos.CENTER);
         backAndSearch.setSpacing(10);
         backAndSearch.setMaxSize(370,70);
-        TextField searchBox = new TextField();
-        style.textFiled0(searchBox, "Search Contacts", 290, 70);
-        searchBox.setFont(style.Font0(20));
-        Rectangle back = new Rectangle(70, 70, new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/back.png").toExternalForm())));
-        back.setOnMouseClicked(mouseEvent -> new MainMenu().start(stage));
         backAndSearch.getChildren().addAll(back, searchBox);
         userFiled.setOnMouseEntered(mouseEvent -> {
             userFiled.getChildren().add(newChatTypeBox);
             StackPane.setAlignment(newChatTypeBox, Pos.BOTTOM_RIGHT);
             StackPane.setMargin(newChatTypeBox, new Insets(0, 20, 20 ,0));
-            handleChatType(newChatTypeBox);
+            handleChatType(newChatTypeBox, chatEnvironment);
         });
         userFiled.setOnMouseExited(mouseEvent -> {
             userFiled.getChildren().remove(newChatTypeBox);
@@ -117,7 +112,7 @@ public class ChatMenu extends Application {
         contacts.getChildren().addAll(backAndSearch, userFiled);
     }
 
-    private void handleChatType(StackPane newChatTypeBox) {
+    private void handleChatType(StackPane newChatTypeBox, StackPane chatEnvironment) {
         newChatTypeBox.setMaxSize(60, 60);
         Image openChat = new Image(ChatMenu.class.getResource("/images/buttons/chat_open.png").toExternalForm());
         Image closeChat = new Image(ChatMenu.class.getResource("/images/buttons/chat_close.png").toExternalForm());
@@ -130,6 +125,7 @@ public class ChatMenu extends Application {
         typeOfChats.setMaxSize(200, 100);
         typeOfChats.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(15), BorderStroke.THIN)));
         makeChatType("Public Chat", typeOfChats, new Image(ChatMenu.class.getResource("/images/buttons/public.png").toExternalForm())); makeChatType("New Group", typeOfChats, new Image(ChatMenu.class.getResource("/images/buttons/group.png").toExternalForm())); makeChatType("New Message", typeOfChats, new Image(ChatMenu.class.getResource("/images/buttons/pv.png").toExternalForm()));
+        setEnvironmentByType(typeOfChats, chatEnvironment);
         newChatTypeBox.getChildren().addAll(chooseChatType);
         chooseChatType.setOnMouseClicked(mouseEvent -> {
             if (openChat.equals(((ImagePattern)chooseChatType.getFill()).getImage())) {
@@ -146,6 +142,12 @@ public class ChatMenu extends Application {
 
     }
 
+    private void setEnvironmentByType(VBox typeOfChats, StackPane chatEnvironment) {
+        typeOfChats.getChildren().get(0).setOnMouseClicked(mouseEvent -> setEnvironment(chatEnvironment));
+        typeOfChats.getChildren().get(1).setOnMouseClicked(mouseEvent -> setEnvironment(chatEnvironment));
+        typeOfChats.getChildren().get(2).setOnMouseClicked(mouseEvent -> setEnvironment(chatEnvironment));
+    }
+
     public void makeChatType(String text, VBox typeOfChat, Image image) {
         HBox hbox = new HBox();
         hbox.setOnMouseEntered(mouseEvent -> hbox.setStyle("-fx-background-radius: 15; -fx-background-color: gray; -fx-background: gray;"));
@@ -160,5 +162,56 @@ public class ChatMenu extends Application {
         label.setFont(style.Font0(15));
         hbox.getChildren().addAll(rectangle, label);
         typeOfChat.getChildren().add(hbox);
+    }
+
+    public void addUser(VBox usernames, TextField searchBox, ScrollPane scrollPane, StackPane userFiled, Rectangle back) {
+        searchBox.textProperty().addListener((observableValue, s, t1) -> {
+            back.setFill(new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/back1.png").toExternalForm())));
+            usernames.getChildren().clear();
+            userFiled.getChildren().clear();
+            for (User user : User.users) {
+                if (!user.getUserName().matches("^" + searchBox.getText() + ".*")) continue;
+                HBox userHolder = new HBox();
+                userHolder.setOnMouseEntered(event ->
+                        userHolder.setStyle("-fx-background-radius: 20; -fx-background-color: rgba(128,128,128, 0.4) ; -fx-background: rgba(128,128,128, 0.4);")
+                );
+                userHolder.setOnMouseExited(event -> userHolder.setStyle("-fx-background-radius: 20; -fx-background-color: transparent ; -fx-background: transparent;"));
+                userHolder.setPadding(new Insets(10));
+                userHolder.setAlignment(Pos.CENTER_LEFT);
+                Circle circle = new Circle(30, new ImagePattern(new Image(user.getAvatar())));
+                Label username = new Label(user.getUserName());
+                username.setPadding(new Insets(0,0,20,20));
+                username.setFont(style.Font0(25));
+                username.setTextFill(Color.rgb(170,139,100,0.8));
+                userHolder.setPrefSize(360, 70);
+                userHolder.getChildren().addAll(circle, username);
+                usernames.getChildren().add(userHolder);
+            }
+            userFiled.getChildren().add(scrollPane);
+        });
+
+    }
+
+    public void setEnvironment(StackPane chatEnvironment) {
+        chatEnvironment.getChildren().clear();
+        HBox hBox = new HBox();
+        hBox.setMaxSize(700, 70);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setSpacing(15);
+        Rectangle send = new Rectangle(70,70, new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/send.png").toExternalForm())));
+        send.setOpacity(0.3);
+        TextField chatSender = new TextField();
+        chatSender.textProperty().addListener((observableValue, s, t1) -> {
+            if(chatSender.getText().equals("")) send.setOpacity(0.3);
+            else send.setOpacity(1);
+        } );
+        hBox.getChildren().addAll(chatSender, send);
+        style.textFiled0(chatSender, "Message",615, 70);
+        chatSender.setPadding(new Insets(0,30, 0, 30));
+        chatSender.setFont(style.Font0(20));
+        StackPane.setMargin(hBox, new Insets(0,0,15,0));
+        StackPane.setAlignment(hBox, Pos.BOTTOM_CENTER);
+        chatEnvironment.getChildren().add(hBox);
+
     }
 }
