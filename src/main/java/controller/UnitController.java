@@ -86,15 +86,15 @@ public class UnitController {
 //            return "invalid location";
         Integer moveLength = 0;
         ArrayList<Unit> blockUnits = origin.getSelectedUnits();
-        if(!blockUnits.get(0).getUnitType().equals(UnitType.ASSASSINS)) {
+//        if(!blockUnits.get(0).getUnitType().equals(UnitType.ASSASSINS)) {
             if ((moveLength = gameMap.getShortestWayLength(blockUnits.get(0).getXPosition(), blockUnits.get(0).getYPosition(),
                     destination.getxPosition(), destination.getyPosition(), blockUnits.get(0).getMovesLeft())) == null)
                 return "units speed limit error";
-        }
-        else
-        if((moveLength = blockUnits.get(0).getOptimizedDistanceFrom(destination.getxPosition(), destination.getyPosition()
-                ,false)) > blockUnits.get(0).getMovesLeft())
-            return "units speed limit error";
+//        }
+//        else
+//        if((moveLength = blockUnits.get(0).getOptimizedDistanceFrom(destination.getxPosition(), destination.getyPosition()
+//                ,false)) > blockUnits.get(0).getMovesLeft())
+//            return "units speed limit error";
         if(destination.getBuildings() instanceof DefensiveStructure){
             DefensiveStructure defensiveDestination = (DefensiveStructure) destination.getBuildings();
             DefensiveStructureType type = (DefensiveStructureType) destination.getBuildings().getSpecificConstant();
