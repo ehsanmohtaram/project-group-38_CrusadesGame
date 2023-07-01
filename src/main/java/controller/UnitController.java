@@ -102,7 +102,7 @@ public class UnitController {
         }
 
         for (Unit unit : blockUnits) {
-            unit.moveTo(destination, moveLength, gameMap.getFinalWay());
+            unit.moveTo(destination, moveLength, gameMap.getFinalWay(), gameMap.getMapPane());
             if (unit.getUnitState().equals(UnitState.PATROLLING))
                 unit.setUnitState(UnitState.STANDING);
         }
@@ -314,7 +314,7 @@ public class UnitController {
                 target.getxPosition(), target.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
             return "They are too slow to reach such destination";
         for (Unit unit : currentUnit) {
-            unit.moveTo(target, moveLength, gameMap.getFinalWay());
+            unit.moveTo(target, moveLength, gameMap.getFinalWay(), gameMap.getMapPane());
             if(unit.getUnitType().equals(UnitState.PATROLLING))
                 unit.setUnitState(UnitState.STANDING);
         }
@@ -344,7 +344,7 @@ public class UnitController {
                 target.getxPosition(), target.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
             return "They are too slow to reach such destination";
         for (Unit unit : currentUnit) {
-            unit.moveTo(currentUnit.get(0).getLocationBlock(), moveLength, gameMap.getFinalWay());
+            unit.moveTo(currentUnit.get(0).getLocationBlock(), moveLength, gameMap.getFinalWay(), gameMap.getMapPane());
             if (unit.getUnitState().equals(UnitState.PATROLLING))
                 unit.setUnitState(UnitState.STANDING);
         }
@@ -368,7 +368,7 @@ public class UnitController {
                 target.getxPosition(), target.getyPosition(), currentUnit.get(0).getMovesLeft())) == null)
             return "They are too slow to reach such destination";
         for (Unit unit : currentUnit) {
-            unit.moveTo(currentUnit.get(0).getLocationBlock(), moveLength, gameMap.getFinalWay());
+            unit.moveTo(currentUnit.get(0).getLocationBlock(), moveLength, gameMap.getFinalWay(), gameMap.getMapPane());
             if (unit.getUnitState().equals(UnitState.PATROLLING))
                 unit.setUnitState(UnitState.STANDING);
         }

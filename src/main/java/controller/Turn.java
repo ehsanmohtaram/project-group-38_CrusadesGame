@@ -551,7 +551,7 @@ public class Turn {
         }
 
         for (Unit defender : enemies ) {
-            unit.moveTo(defender.getLocationBlock(), 0, null);
+            unit.moveTo(defender.getLocationBlock(), 0, null, gameMap.getMapPane());
             if(!unit.bilateralFightTillEnd(defender))
                 return;
         }
@@ -563,7 +563,7 @@ public class Turn {
             for (Unit unit : player.getUnits()) {
                 if(unit.getUnitState().equals(UnitState.PATROLLING)) {
                     MapBlock origin = unit.getLocationBlock();
-                    unit.moveTo(unit.getPatrolDestination(), 0, null);
+                    unit.moveTo(unit.getPatrolDestination(), 0, null, gameMap.getMapPane());
                     unit.setPatrolDestination(origin);
                 }
             }

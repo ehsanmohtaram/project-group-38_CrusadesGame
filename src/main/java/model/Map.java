@@ -4,9 +4,8 @@ import javafx.scene.layout.Pane;
 import model.building.Building;
 import model.unit.Unit;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.text.CollationElementIterator;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Map implements Cloneable {
@@ -352,6 +351,9 @@ public class Map implements Cloneable {
             getWaysLengthByEast(mark, xPosition, yPosition, 0, xOfDestination, yOfDestination, answer, false, way);
         if((limit == null && (answer.get() == (mapWidth * mapHeight + 1)) || answer.get() == (limit + 1)))
             return null;
+        if(finalWay.get(0).equals(map[xOfDestination][yOfDestination]))
+            Collections.reverse(finalWay);
+            
         System.out.println(finalWay);
         System.out.println(answer.get());
         return answer.get();
@@ -367,7 +369,7 @@ public class Map implements Cloneable {
             way.add(map[xPosition][yPosition]);
             finalWay = new ArrayList<>();
             finalWay.addAll(way);
-            System.out.println("+" + way);
+            way.remove(way.size() - 1);
             return;
         }
         if(mark[xPosition][yPosition] == true)
@@ -393,8 +395,9 @@ public class Map implements Cloneable {
 
         if(mark[xPosition][yPosition] == true) {
             mark[xPosition][yPosition] = false;
-            way.remove(way.size() - 1);
         }
+        way.remove(map[xPosition][yPosition]);
+
 
     }
 

@@ -3,7 +3,6 @@ package model.unit;
 import controller.UnitController;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
-import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.ImagePattern;
@@ -184,38 +183,39 @@ public class Unit {
         return true;
     }
 
-    public void moveTo(MapBlock destination, int length, ArrayList<MapBlock> way){
+    public void moveTo(MapBlock destination, int length, ArrayList<MapBlock> way, Pane mapPane){
         decreaseMoves(length);
+        System.out.println("----" + length);
         Timeline XAnimation = new Timeline();
         Timeline YAnimation = new Timeline();
         if(way == null) {
             locationBlock.removeUnitFromHere(this);
             destination.addUnitHere(this);
         }else{
+            locationBlock.removeUnitFromHere(this);
+            mapPane.getChildren().add(unitPane);
+            unitPane.setLayoutX(locationBlock.getLayoutX());
+            unitPane.setLayoutY(locationBlock.getLayoutY());
             if(way.get(way.size() - 1).getLayoutX() > locationBlock.getLayoutX())
                 movingTroopAnimation.setRight(true);
             else
                 movingTroopAnimation.setRight(false);
             movingTroopAnimation.play();
+            System.out.println("--------" + way);
+            int counter = 0;
             for (MapBlock mapBlock : way) {
-                XAnimation.getKeyFrames().add(new KeyFrame(Duration.seconds(way.size()), new KeyValue(unitPane.translateXProperty(), mapBlock.getLayoutX() - locationBlock.getLayoutX())));
-                YAnimation.getKeyFrames().add(new KeyFrame(Duration.seconds(way.size()), new KeyValue(unitPane.translateYProperty(), mapBlock.getLayoutY() - locationBlock.getLayoutY())));
+                XAnimation.getKeyFrames().add(new KeyFrame(Duration.seconds(counter), new KeyValue(unitPane.translateXProperty(), mapBlock.getLayoutX() - locationBlock.getLayoutX())));
+                YAnimation.getKeyFrames().add(new KeyFrame(Duration.seconds(counter), new KeyValue(unitPane.translateYProperty(), mapBlock.getLayoutY() - locationBlock.getLayoutY())));
+                counter ++;
             }
-//            for (MapBlock mapBlock : way) {
-//                XAnimation.getKeyFrames().add(new KeyFrame(Duration.millis(way.size()), new KeyValue(unitPane.translateXProperty(), -mapBlock.getLayoutX() + locationBlock.getLayoutX())));
-//                YAnimation.getKeyFrames().add(new KeyFrame(Duration.millis(way.size()), new KeyValue(unitPane.translateYProperty(), -mapBlock.getLayoutY() + locationBlock.getLayoutY())));
-//            }
-            System.out.println("hoorra");
             XAnimation.play();
             YAnimation.play();
             XAnimation.setOnFinished(e-> {
                 movingTroopAnimation.pause();
-                unitPane.setTranslateX(0);
-                unitPane.setTranslateY(0);
-                unitPane.setLayoutX(0);
-                unitPane.setLayoutY(0);
-                locationBlock.removeUnitFromHere(this);
+                mapPane.getChildren().remove(unitPane);
+                unitPane = new Pane(unitImage, selectedState);
                 destination.addUnitHere(this);
+
             });
         }
             
