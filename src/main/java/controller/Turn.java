@@ -38,8 +38,8 @@ public class Turn {
             innCheck();
             //produceHorse();
         }
-        illness();
-        fire();fireGraphic();
+        //illness();
+        //fire();fireGraphic();
         setReligiousBuildingPopularity();
         giveFood();
         getTax();
@@ -142,7 +142,9 @@ public class Turn {
         for (Food food : currentKingdom.getFoods().keySet()) foodCounter += currentKingdom.getFoods().get(food);
         int addPeople = currentKingdom.getMaxPopulation() - currentKingdom.getPopulation();
         int growthAmount = addPeople - (int)((((double) addPeople + (double) currentKingdom.getPopulation()) / (double) foodCounter) * (double) addPeople);
-        if (addPeople >= 0 && growthAmount >= 0) currentKingdom.setPopulation(growthAmount);
+        if (addPeople >= 0 && growthAmount >= 0) {
+            currentKingdom.setPopulation(growthAmount);
+        }
     }
 
     public void getTax() {

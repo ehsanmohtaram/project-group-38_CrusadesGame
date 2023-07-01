@@ -41,10 +41,13 @@ public class MainMenu extends Application {
         Button profileMenu = new Button();
         style.button0(profileMenu, "Profile", 400, 80);
         profileMenu.setFont(style.Font0(25));
+        Button chat = new Button();
+        style.button0(chat, "Chat", 400, 80);
+        chat.setFont(style.Font0(25));
         Button logout = new Button();
         style.button0(logout, "Logout", 400, 80);
         logout.setFont(style.Font0(25));
-        vBox.getChildren().addAll(startGame, profileMenu, logout);
+        vBox.getChildren().addAll(startGame, profileMenu, chat,logout);
         vBox.setLayoutX(890);  vBox.setLayoutY(213);
         pane.getChildren().add(vBox);
         mainMenuButtonHandle(vBox);
@@ -61,6 +64,10 @@ public class MainMenu extends Application {
             catch (Exception ignored) {}
         });
         vBox.getChildren().get(2).setOnMouseClicked(mouseEvent -> {
+            try {new ChatMenu().start(stage);}
+            catch (Exception ignored) {}
+        });
+        vBox.getChildren().get(3).setOnMouseClicked(mouseEvent -> {
             if (Controller.currentUser.getLoggedIn()) Controller.currentUser.setLoggedIn(false);
             Controller.currentUser = Controller.loggedInUser = null;
             try {new LoginMenu().start(stage);}

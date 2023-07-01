@@ -36,6 +36,7 @@ public class GameUI {
     private final Map gameMap;
     private int isDragActive;
     private Label coinValue;
+    private Label population;
     private Pane mainPane;
     private BuildingType typeOfBuilding;
     public static MapBlock mouseOnBlock = null;
@@ -161,7 +162,6 @@ public class GameUI {
         coin.setFont(style.Font0(15));
         coin.setTextFill(Color.rgb(141,136 ,40));
         coinValue = new Label();
-        updateBalance();
         coinValue.setFont(style.Font0(15));
         coinValue.setTextFill(Color.rgb(141,136 ,40));
         Label nextTurn = new Label("NEXT");
@@ -177,11 +177,16 @@ public class GameUI {
             for (Node opacityManger : ((HBox)mainPane.getChildren().get(0)).getChildren()) opacityManger.setOpacity(1);
             updateBalance();
         });
-        balance.getChildren().addAll(coin, coinValue, nextTurn);
+        Kingdom kingdom = gameMap.getKingdomByOwner(Controller.currentUser);
+        population = new Label(kingdom.getPopulation() + "/" + kingdom.getMaxPopulation());
+        population.setFont(style.Font0(15));
+        population.setTextFill(Color.rgb(141,136 ,40));
+        balance.getChildren().addAll(coin, coinValue, population,nextTurn);
+        updateBalance();
         addClipboard(balance, mainPane);
-        balance.setSpacing(5);
+        balance.setSpacing(2);
         balance.setLayoutX(1372);
-        balance.setLayoutY(160);
+        balance.setLayoutY(155);
         mainPane.getChildren().add(balance);
     }
 
@@ -216,7 +221,9 @@ public class GameUI {
 
     public void updateBalance() {
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
+        System.out.println(Controller.currentUser);
         coinValue.setText(decimalFormat.format(gameMap.getKingdomByOwner(Controller.currentUser).getBalance()));
+        population.setText(gameMap.getKingdomByOwner(Controller.currentUser).getPopulation() + "/" + gameMap.getKingdomByOwner(Controller.currentUser).getMaxPopulation());
     }
 
     public void buildingMenuShow(Pane mainPane, int type) {

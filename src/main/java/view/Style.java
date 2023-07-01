@@ -20,9 +20,8 @@ public class Style {
         return Font.font("Comic Sans MS", FontWeight.BOLD,size);
     }
     public void textFiled0 (TextField textField, String fillText, int width, int height) {
-        textField.setBackground(Background.EMPTY);
         textField.setPromptText(fillText);
-        textField.setStyle("-fx-text-fill: rgba(170,139,100,0.8); -fx-prompt-text-fill: rgba(86,73,57,0.8);");
+        textField.setStyle("-fx-text-fill: rgba(170,139,100,0.8); -fx-prompt-text-fill: rgba(86,73,57,0.8); -fx-background-color: transparent; -fx-background: transparent;");
         textField.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         textField.setMaxWidth(width);
         textField.setMinWidth(width);
