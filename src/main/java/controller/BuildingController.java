@@ -58,6 +58,7 @@ public class BuildingController {
         if (unitType.equals(UnitType.KNIGHT)) deleteHorseFromMap(count);
         if (unitType.getWEAPON_NEEDED() != null) currentKingdom.setWeaponsAmount(unitType.getWEAPON_NEEDED(), -count);
         if (unitType.getArmour_Needed() != null) currentKingdom.setWeaponsAmount(unitType.getArmour_Needed(), -count);
+
     }
 
 

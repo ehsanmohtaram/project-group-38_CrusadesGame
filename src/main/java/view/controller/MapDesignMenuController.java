@@ -119,14 +119,8 @@ public class MapDesignMenuController {
                 case M : if (GameUI.clipboard != null) gameUI.handelUnitCommands("Move", null); break;
                 case A : if (GameUI.clipboard != null) gameUI.handelUnitCommands("Attack", null); break;
             }
-//            if (mapPane.getLayoutBounds().getMinX() < 0)
-//            {
-//                mapPane.setLayoutX(0);
-//            }
-//            else if(mapPane.getLayoutBounds().getMaxX() > mapDesignPane.getScene().getWidth() )
-//            {
-//                mapPane.setLayoutX(mapPane.getLayoutX() - 20);
-//            }
+            if(GameUI.clipboard != null)
+                gameUI.updateMiniMap();
         });
 
         mapPane.setOnScroll(event -> {

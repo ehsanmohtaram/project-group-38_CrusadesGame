@@ -38,6 +38,7 @@ public class GameController {
     private boolean isDragActive;
     private Style style;
     private UnitController unitController;
+    public static Label fightBoard = new Label("");
 
     public GameController(Map gameMap, Pane mapDesignPane) {
         GameController.gameMap = gameMap;
@@ -48,6 +49,11 @@ public class GameController {
         selectedUnit = new ArrayList<>();
         isDragActive = false;
         style = new Style();
+        fightBoard.setFont(style.Font0(30));
+        fightBoard.setTextFill(Color.rgb(200, 210 , 0));
+        fightBoard.setLayoutX(650);
+        fightBoard.setLayoutY(20);
+        mapDesignPane.getChildren().add(fightBoard);
     }
 
     public void run() {
@@ -138,7 +144,7 @@ public class GameController {
         int startY = (int)(Math.min(y, y2)/100);int startX = (int)(Math.min(x, x2)/100);
         for (int i = startX; i <= finalX ; i++)
             for (int j = startY; j <= finalY; j++)
-                selectedUnit.addAll(gameMap.getMapBlockByLocation(i, j).getUnits());
+                selectedUnit.addAll(gameMap.getMapBlockByLocation(i, j).getUnitByOwner(currentKingdom));
 
         if(selectedUnit.size() == 0 ) {
             gameMap.getMapPane().setDisable(false);

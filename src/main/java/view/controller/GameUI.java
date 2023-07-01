@@ -4,12 +4,15 @@ import controller.GameController;
 import controller.MapDesignController;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.*;
@@ -17,6 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
+import javafx.stage.Screen;
 import javafx.util.Duration;
 import model.Kingdom;
 import model.Map;
@@ -39,6 +43,8 @@ public class GameUI {
     private Label population;
     private Pane mainPane;
     private BuildingType typeOfBuilding;
+    private Rectangle miniMap;
+    private boolean isUpdatingMap;
     public static MapBlock mouseOnBlock = null;
     public static Clipboard clipboard = null;
     public static ClipboardContent clipboardContent;
@@ -52,6 +58,7 @@ public class GameUI {
         style = new Style();
         isDragActive = 0;
         typeOfBuilding = null;
+        isUpdatingMap = false;
     }
 
 
@@ -70,40 +77,39 @@ public class GameUI {
         addMenuButton(gameTools);
         mapDesignMenu.getChildren().add(gameTools);
         gameController.dragAndDropSelection();
-//        doubleClickOperation();
+        addMiniMap();
     }
-//
-//
-//    public void doubleClickOperation() {
-//        gameMap.getMapPane().setOnMouseClicked(e ->{
-//            if(e.getClickCount() == 2){
-//                MapBlock targetBlock = mouseOnBlock;
-//                if(GameController.selectedUnit.size() == 0)
-//                    return;
-//                gameMap.getMapPane().setDisable(true);
-//                Button move = new Button("Move");
-//                Button attack = new Button("Button");
-//                Button patrol = new Button("Patrol");
-//                Button cancel = new Button("cancel");
-//                HBox commands = new HBox(move, attack, patrol);
-//                for (Node child : commands.getChildren()) {
-//                    Button control = (Button) child;
-//                    style.button1(control, 100, 50);
-//                    control.setOnMouseClicked(event -> {
-//                        mapDesignMenu.getChildren().remove(commands);
-//                        gameMap.getMapPane().setDisable(false);
-//                        gameController.handelUnitCommands(control.getText(), targetBlock);
-//                    });
-//                }
-//                commands.setSpacing(15);
-//                commands.setAlignment(Pos.CENTER);
-//                commands.setLayoutX(e.getScreenX());
-//                commands.setLayoutY(e.getScreenY());
-//                mapDesignMenu.getChildren().add(commands);
-//
-//            }
-//        });
-//    }
+
+    public void addMiniMap(){
+        miniMap = new Rectangle(256, 144);
+        Rectangle2D view = new Rectangle2D(0, 0, Screen.getPrimary().getVisualBounds().getWidth() * 2,
+                Screen.getPrimary().getVisualBounds().getHeight() * 2);
+        SnapshotParameters snapshotParameters = new SnapshotParameters();
+        snapshotParameters.setViewport(view);
+        WritableImage snapshot = gameMap.getMapPane().snapshot(snapshotParameters, null);
+        miniMap.setFill(new ImagePattern(snapshot));
+        miniMap.setX(40);
+        miniMap.setY(680);
+        mapDesignMenu.getChildren().add(miniMap);
+
+    }
+
+    public void updateMiniMap(){
+        if(!isUpdatingMap) {
+            isUpdatingMap = true;
+            PauseTransition pauseTransition = new PauseTransition(Duration.millis(200));
+            pauseTransition.setOnFinished(e->{
+                Rectangle2D view = new Rectangle2D(0,0,Screen.getPrimary().getVisualBounds().getWidth() *2 ,
+                        Screen.getPrimary().getVisualBounds().getHeight() *2);
+                SnapshotParameters snapshotParameters = new SnapshotParameters();
+                snapshotParameters.setViewport(view);
+                WritableImage snapshot = gameMap.getMapPane().snapshot(snapshotParameters, null);
+                miniMap.setFill(new ImagePattern(snapshot));
+                isUpdatingMap = false;
+            });
+            pauseTransition.play();
+        }
+    }
 
     public void handelUnitCommands(String text, MapBlock targetBlock) {
         String result = gameController.handelUnitCommands(text, targetBlock);

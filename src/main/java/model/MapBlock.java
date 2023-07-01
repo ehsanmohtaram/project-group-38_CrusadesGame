@@ -265,8 +265,17 @@ public class MapBlock extends StackPane {
 
     public ArrayList<Unit> getUnitByUnitType(UnitType unitType, Kingdom owner) {
         ArrayList<Unit> selectedUnit = new ArrayList<>();
+        if(unitType != null)
+            for (Unit unit : units)
+                if (unit.getUnitType().equals(unitType) && unit.getOwner().equals(owner)) selectedUnit.add(unit);
+
+        return selectedUnit;
+    }
+
+    public ArrayList<Unit> getUnitByOwner(Kingdom owner) {
+        ArrayList<Unit> selectedUnit = new ArrayList<>();
         for (Unit unit : units)
-            if(unit.getUnitType().equals(unitType) && unit.getOwner().equals(owner)) selectedUnit.add(unit);
+            if(unit.getOwner().equals(owner)) selectedUnit.add(unit);
         return selectedUnit;
     }
 

@@ -49,6 +49,7 @@ public class Turn {
         removeUnitsAndBuildingWith0Hp();
         patrolExecution();
         trapsReset();
+        freeSelection();
     }
 
 
@@ -554,7 +555,7 @@ public class Turn {
 
         for (Unit defender : enemies ) {
             unit.moveTo(defender.getLocationBlock(), 0, null, gameMap.getMapPane());
-            if(!unit.bilateralFightTillEnd(defender))
+            if(!unit.bilateralFightTillEnd(defender, GameController.fightBoard, true,null))
                 return;
         }
 //        unit.setUnitState(UnitState.STANDING);
@@ -580,6 +581,12 @@ public class Turn {
             }
         }
     }
-
+    public void freeSelection() {
+        if(UnitController.currentUnit != null) {
+            for (Unit unit : UnitController.currentUnit) {
+                unit.changeSelection(false);
+            }
+        }
+    }
 
 }

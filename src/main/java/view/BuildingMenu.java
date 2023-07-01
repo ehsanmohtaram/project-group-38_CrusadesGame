@@ -351,7 +351,7 @@ public class BuildingMenu {
                             for (int i = 0; i < mainPane.getChildren().size(); i++) mainPane.getChildren().get(i).setDisable(false);
                         });
                     }
-
+                    updateBalance();
                 });
                 units.getChildren().add(unitHolder);
             }

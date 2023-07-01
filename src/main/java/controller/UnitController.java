@@ -16,6 +16,7 @@ public class UnitController {
     public static ArrayList<Unit> currentUnit;
     public static ArrayList<MapBlock> involvedBlocks;
 
+
     public UnitController() {
         this.gameMap = GameController.gameMap;
         this.currentKingdom = gameMap.getKingdomByOwner(Controller.currentUser);
@@ -28,6 +29,7 @@ public class UnitController {
         }
 
         this.unitMenu = new UnitMenu(this);
+
     }
 
     public void run(){
@@ -218,9 +220,11 @@ public class UnitController {
 //        MapBlock target = gameMap.getMapBlockByLocation(Integer.parseInt(options.get("x")),Integer.parseInt(options.get("y")));
 //        if(target == null)
 //            return "invalid location";
+        System.out.println("horra");
         if(target.getUnits().size() == 0 && target.getBuildings() == null)
             return "no enemy detected there";
         ArrayList<Unit> currentUnit = origin.getSelectedUnits();
+        ArrayList<Unit> enemy = target.getUnits();
         if(currentUnit.get(0).getUnitType().getCAN_DO_AIR_ATTACK()) {
             if (target.getOptimizedDistanceFrom(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(), true) >
                     currentUnit.get(0).getOptimizedAttackRange())
@@ -229,12 +233,21 @@ public class UnitController {
         else if(target.getOptimizedDistanceFrom(currentUnit.get(0).getXPosition(), currentUnit.get(0).getYPosition(),false) >
                 currentUnit.get(0).getOptimizedAttackRange())
             return "out of attack range. first move your units";
+        boolean canEnemyAnswer = true;
+        if(enemy.get(0).getUnitType().getCAN_DO_AIR_ATTACK()) {
+            if (currentUnit.get(0).getLocationBlock().getOptimizedDistanceFrom(enemy.get(0).getXPosition(), enemy.get(0).getYPosition(), true) >
+                    enemy.get(0).getOptimizedAttackRange())
+                canEnemyAnswer = false;
+        }
+        else if(currentUnit.get(0).getLocationBlock().getOptimizedDistanceFrom(enemy.get(0).getXPosition(), enemy.get(0).getYPosition(),false) >
+                enemy.get(0).getOptimizedAttackRange())
+            canEnemyAnswer = false;
 
         if(target.isUnitsShouldBeAttackedFirst(currentUnit.get(0))){
             outer:
             for (Unit unit : currentUnit)
                 for (Unit targetUnit : target.getUnits())
-                    if(!unit.bilateralFightTillEnd(targetUnit))
+                    if(!unit.bilateralFightTillEnd(targetUnit, GameController.fightBoard, canEnemyAnswer, currentUnit))
                         continue outer;
             battleWithBuilding(target);
 

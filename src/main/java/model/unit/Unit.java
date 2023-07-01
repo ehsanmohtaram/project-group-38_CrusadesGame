@@ -4,6 +4,7 @@ import controller.UnitController;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -147,7 +148,7 @@ public class Unit {
     }
 
     public void removeUnit(){
-        locationBlock.getUnits().remove(this);
+        locationBlock.removeUnitFromHere(this);
         owner.getUnits().remove(this);
         if(UnitController.currentUnit != null)
             if(UnitController.currentUnit.contains(this))
@@ -199,6 +200,7 @@ public class Unit {
                 movingTroopAnimation.setRight(true);
             else
                 movingTroopAnimation.setRight(false);
+            movingTroopAnimation.setFight(false);
             movingTroopAnimation.play();
             int counter = 0;
             for (MapBlock mapBlock : way) {
@@ -269,23 +271,59 @@ public class Unit {
         }
     }
 
-    public boolean bilateralFightTillEnd(Unit enemy){
+    public boolean bilateralFightTillEnd(Unit enemy, Label fightBoard, boolean canEnemyAnswer, ArrayList<Unit> friends){
         if(hp <= 0)
             return false;
         if(enemy.getOwner().equals(owner))
             return true;
-        int strikes = enemy.getHp() / getOptimizedDamage() + 1;
-        int enemyStrikes = hp / enemy.getOptimizedDamage() + 1;
-        if(strikes > enemyStrikes){
-            decreaseHp(enemyStrikes * enemy.getOptimizedDamage());
-            enemy.decreaseHp(enemyStrikes * getOptimizedDamage());
-            return false; //false as dead
-        }else{
-            decreaseHp(strikes * enemy.getOptimizedDamage());
-            enemy.decreaseHp(strikes * getOptimizedDamage());
-            return true; //true as alive
+        if(enemy.getHp() <= 0)
+            return true;
+        boolean isAlive;
+        fightBoard.setText("attack!!");
+        MovingTroopAnimation fightAnimation = new MovingTroopAnimation(unitType, unitImage);
+        fightAnimation.setFight(true);
+        if (enemy.getLocationBlock().getLayoutX() < locationBlock.getLayoutX())
+            fightAnimation.setRight(false);
+        else
+            fightAnimation.setRight(true);
+        if(canEnemyAnswer) {
+            int strikes = enemy.getHp() / getOptimizedDamage() + 1;
+            int enemyStrikes = hp / enemy.getOptimizedDamage() + 1;
+
+            MovingTroopAnimation enemyFightAnimation = new MovingTroopAnimation(enemy.unitType, enemy.unitImage);
+            enemyFightAnimation.setFight(true);
+            enemyFightAnimation.setCycleCount(Math.min(strikes, enemyStrikes) * 2);
+            fightAnimation.setCycleCount(Math.min(strikes, enemyStrikes) * 2);
+            if (enemy.getLocationBlock().getLayoutX() < locationBlock.getLayoutX())
+                enemyFightAnimation.setRight(true);
+            else
+                enemyFightAnimation.setRight(false);
+            enemyFightAnimation.play();
+
+            if (strikes > enemyStrikes) {
+                decreaseHp(enemyStrikes * enemy.getOptimizedDamage());
+                enemy.decreaseHp(enemyStrikes * getOptimizedDamage());
+                isAlive = false;
+            } else {
+                decreaseHp(strikes * enemy.getOptimizedDamage());
+                enemy.decreaseHp(strikes * getOptimizedDamage());
+                isAlive = true;
+            }
+        }else {
+            fightAnimation.setCycleCount((int)(enemy.getHp()/getOptimizedDamage() + 1) * 2);
+            enemy.decreaseHp(enemy.getHp() + 1);
+            isAlive = true;
         }
 
+        if(friends != null) {
+            if (friends.get(friends.size() - 1).equals(this)) {
+                fightAnimation.setOnFinished(event -> {
+                    fightBoard.setText("");
+                });
+            }
+        }
+        fightAnimation.play();
+        return isAlive;
     }
 
     public void destroyBuilding(Building target, ArrayList<Unit> archers){
