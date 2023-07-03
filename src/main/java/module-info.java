@@ -7,6 +7,7 @@ module project.group {
     requires org.apache.commons.codec;
     requires jargs;
     requires passay;
+    requires jjwt.api;
 
     exports view;
     exports controller;
