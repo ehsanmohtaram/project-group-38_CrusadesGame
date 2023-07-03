@@ -432,6 +432,7 @@ public class ChatMenu extends Application {
             textMessage.widthProperty().addListener((observableValue, s, t1) -> {
                 if (!s.equals(t1)) System.out.println(t1);
             });
+
             textMessage.setTextFill(Color.rgb(170,139,100,0.8));
             textMessage.setFont(style.Font0(20));
             Label time = new Label(chat.getHours() + ":" + chat.getSeconds());
