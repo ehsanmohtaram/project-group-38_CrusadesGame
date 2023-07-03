@@ -2,6 +2,8 @@ package server;
 
 
 import model.Database;
+import model.ReceivePacket;
+import model.SendPacket;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 
 public class Server {
     public static ArrayList<UserConnection> sockets = new ArrayList<>();
+    public static ArrayList<SendPacket> waiting = new ArrayList<>();
     public Server() {
         try {
             ServerSocket serverSocket = new ServerSocket(8080);

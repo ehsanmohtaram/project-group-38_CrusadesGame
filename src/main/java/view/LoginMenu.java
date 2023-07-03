@@ -1,5 +1,6 @@
 package view;
 
+import controller.Connection;
 import controller.Controller;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -70,6 +71,10 @@ public class LoginMenu extends Application {
             if (user.getLoggedIn()) {
                 Controller.currentUser = Controller.loggedInUser = user;
                 new MainMenu().start(stage);
+                if (LoginMenuController.connection == null) {
+                    LoginMenuController.connection = new Connection();
+                    LoginMenuController.connection.startNewConnection();
+                }
             }
         stage.setTitle("Login Menu");
         stage.show();

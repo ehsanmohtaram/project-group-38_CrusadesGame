@@ -37,6 +37,8 @@ public class User {
     private String securityQuestionNumber;
     @Expose
     private String answerToSecurityQuestion;
+    //@Expose
+    private ArrayList<Chat> myChats;
     private ArrayList<Map> myMap = new ArrayList<>();
     public User(String userName, String nickName,String password, String email, String slogan, String securityQuestionNumber, String answerToSecurityQuestion, String avatar) {
         this.userName = userName;
@@ -46,6 +48,7 @@ public class User {
         this.avatar = avatar;
         if (slogan == null) slogan = "";
         this.slogan = slogan;
+        myChats = new ArrayList<>();
         this.securityQuestionNumber = securityQuestionNumber;
         this.answerToSecurityQuestion = answerToSecurityQuestion;
         isLoggedIn = false;
@@ -179,6 +182,14 @@ public class User {
 
     public String getAnswerToSecurityQuestion() {
         return answerToSecurityQuestion;
+    }
+
+    public ArrayList<Chat> getMyChats() {
+        return myChats;
+    }
+
+    public void setMyChats(Chat chat) {
+        myChats.add(chat);
     }
 
     public void addToMyMap(Map myNewMap) {

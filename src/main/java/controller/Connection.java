@@ -2,6 +2,7 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import model.ObjectType;
 import model.ReceivePacket;
 import model.SendPacket;
 import org.json.simple.JSONObject;
@@ -12,21 +13,17 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class Connection {
-    private Socket socket;
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
 
     public Connection() {
         try {
-            socket = new Socket("localhost", 8080);
+            Socket socket = new Socket("localhost", 8080);
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
             dataInputStream = new DataInputStream(socket.getInputStream());
             Thread receive = new Thread(() -> {
                 while(true) {handelReceived(receivePacket());}
             });
-//            Thread send = new Thread(() -> {
-//                while(true) {handleSentPackets(receivePacket());}
-//            });
             receive.join();
             receive.start();
         }
@@ -36,7 +33,7 @@ public class Connection {
     public void startNewConnection() {
         ArrayList<String> usernames = new ArrayList<>();
         usernames.add("Server");
-        SendPacket sendPacket = new SendPacket(Controller.currentUser.getUserName(), usernames, Controller.currentUser.getUserName() + " connect to server");
+        SendPacket sendPacket = new SendPacket(Controller.currentUser.getUserName(), usernames, ObjectType.String,Controller.currentUser.getUserName() + " connect to server");
         sendPacket(sendPacket);
     }
 
@@ -47,6 +44,7 @@ public class Connection {
             String jsonParser = gson.toJson(sendPacket);
             JSONObject jsonMakeObject = (JSONObject) parser.parse(jsonParser);
             dataOutputStream.writeUTF(jsonMakeObject.toString());
+            System.out.println(jsonMakeObject);
         }
         catch (IOException | ParseException ignored) {}
     }
@@ -59,12 +57,17 @@ public class Connection {
             JSONParser parser = new JSONParser();
             JSONObject jsonObject =(JSONObject) parser.parse(input);
             receivePacket = gson.fromJson(jsonObject.toString(), ReceivePacket.class);
+            if (receivePacket.getChat() != null) System.out.println(receivePacket.getChat().getMessageText());
         }
         catch (IOException | ParseException ignored) {}
         return receivePacket;
     }
 
     public void handelReceived(ReceivePacket receivePacket) {
-
+        switch (receivePacket.getObjectType()) {
+            case Kingdom:break;
+            case Chat: Controller.currentUser.setMyChats(receivePacket.getChat()); break;
+            case String:
+        }
     }
 }

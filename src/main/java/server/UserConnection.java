@@ -2,13 +2,13 @@ package server;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import model.ObjectType;
 import model.ReceivePacket;
 import model.SendPacket;
 import model.User;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
 import java.io.*;
 import java.net.Socket;
 
@@ -29,7 +29,6 @@ public class UserConnection {
             receive = new Thread(() -> {
                 while(true) {handleSentPackets(receivePacket());}
             });
-            //Thread send = new Thread(() -> sendPacket());
             heartBeat = new Thread(this::heatBeatSender);
             receive.join();
             heartBeat.join();
@@ -45,7 +44,7 @@ public class UserConnection {
     public void getUserInfo() throws IOException{
         SendPacket sendPacket = receivePacket();
         user = User.getUserByUsername(sendPacket.getUserSender());
-        System.out.println(sendPacket.getObject());
+        System.out.println(sendPacket.getString());
     }
 
     public SendPacket receivePacket() {
@@ -54,31 +53,58 @@ public class UserConnection {
             String input = dataInputStream.readUTF();
             Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
             JSONParser parser = new JSONParser();
-            JSONObject jsonObject =(JSONObject) parser.parse(input);
+            JSONObject jsonObject = (JSONObject) parser.parse(input);
             sendPacket = gson.fromJson(jsonObject.toString(), SendPacket.class);
         }
+
         catch (IOException | ParseException ignored) {}
         return sendPacket;
     }
 
     public void handleSentPackets(SendPacket sendPacket) {
-
+        try {
+            if (!sendPacket.getUserReceiver().get(0).equals("Server"))
+                for (String usernames : sendPacket.getUserReceiver())
+                    if (checkSocketByUsername(usernames) != null) {
+                        DataOutputStream sendData = new DataOutputStream(checkSocketByUsername(usernames).getSocket().getOutputStream());
+                        Thread thread = new Thread(() -> {
+                            try {sendData.writeUTF(sendReceivePacket(sendPacket));}
+                            catch (IOException e) {throw new RuntimeException(e);}
+                        });
+                        try {thread.join();}
+                        catch (InterruptedException e) {throw new RuntimeException(e);}
+                        thread.start();
+                    }
+                    else Server.waiting.add(sendPacket);
+        }
+        catch (IOException ignored) {}
     }
-    public void sendPacket() {
-        ReceivePacket receivePacket = null;
+
+    public String sendReceivePacket(SendPacket sendPacket) {
+        ReceivePacket  receivePacket= null;
+        if (sendPacket.getChat() != null) receivePacket = new ReceivePacket(sendPacket.getUserSender(), sendPacket.getObjectType(), sendPacket.getChat());
+        else if (sendPacket.getString() != null)  receivePacket = new ReceivePacket(sendPacket.getUserSender(), sendPacket.getObjectType(), sendPacket.getString());
+        else if (sendPacket.getKingdom() != null)  receivePacket = new ReceivePacket(sendPacket.getUserSender(), sendPacket.getObjectType(), sendPacket.getKingdom());
+        JSONObject jsonMakeObject = null;
         try {
             Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
             JSONParser parser = new JSONParser();
             String jsonParser = gson.toJson(receivePacket);
-            JSONObject jsonMakeObject = (JSONObject) parser.parse(jsonParser);
-            dataOutputStream.writeUTF(jsonMakeObject.toString());
+            jsonMakeObject = (JSONObject) parser.parse(jsonParser);
         }
-        catch (IOException | ParseException ignored) {}
+        catch (ParseException ignored) {}
+        return jsonMakeObject.toString();
+    }
+
+    public UserConnection checkSocketByUsername (String username) {
+       for (UserConnection userConnection : Server.sockets)
+           if (userConnection.getUser().equals(User.getUserByUsername(username))) return userConnection;
+       return null;
     }
 
     public void heatBeatSender() {
         while(true) {
-            ReceivePacket receivePacket = new ReceivePacket("Server", "0");
+            ReceivePacket receivePacket = new ReceivePacket("Server", ObjectType.String, "0");
             try {
                 Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
                 JSONParser parser = new JSONParser();
@@ -98,4 +124,11 @@ public class UserConnection {
         }
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
 }

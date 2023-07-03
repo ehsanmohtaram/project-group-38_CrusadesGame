@@ -25,6 +25,7 @@ public class LoginMenuController {
     private Rectangle stayLogin;
     private Stage stage;
     private TextField answer;
+    public static Connection connection;
 
     public LoginMenuController() {
         loginController = new LoginController();
@@ -56,8 +57,12 @@ public class LoginMenuController {
         valueMaker.put("a", answer.getText());
         result = loginController.login(valueMaker);
         if (result.equals("login")) {
-            new MainMenu().start(stage);
-            new Connection().startNewConnection();
+            if (connection == null) {
+                new MainMenu().start(stage);
+                connection = new Connection();
+                connection.startNewConnection();
+            }
+
         }
         else makeLoginAlert(result);
     }
