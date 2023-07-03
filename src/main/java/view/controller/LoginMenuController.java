@@ -1,4 +1,5 @@
 package view.controller;
+import controller.Connection;
 import controller.LoginController;
 import javafx.animation.ScaleTransition;
 import javafx.scene.control.Button;
@@ -54,7 +55,10 @@ public class LoginMenuController {
         else valueMaker.put("A", "-");
         valueMaker.put("a", answer.getText());
         result = loginController.login(valueMaker);
-        if (result.equals("login")) new MainMenu().start(stage);
+        if (result.equals("login")) {
+            new MainMenu().start(stage);
+            new Connection().startNewConnection();
+        }
         else makeLoginAlert(result);
     }
 
