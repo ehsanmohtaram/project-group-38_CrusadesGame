@@ -1,4 +1,6 @@
 package controller;
+import javafx.animation.Animation;
+import javafx.animation.Transition;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -13,6 +15,7 @@ import model.unit.UnitState;
 import model.unit.UnitType;
 import view.Style;
 import view.animation.FireAnimation;
+import view.animation.IllnessAnimation;
 
 import java.util.ArrayList;
 
@@ -50,6 +53,8 @@ public class Turn {
         patrolExecution();
         trapsReset();
         freeSelection();
+        illness();
+        fire();fireGraphic();
     }
 
 
@@ -59,14 +64,12 @@ public class Turn {
             return;
         }
         int random = (int)(10 * Math.random());
-//        if (random % 4 == 0) {
-//        (int)(Math.random() * 10000) % gameMap.getMapWidth(),(int)(Math.random() * 10000) % gameMap.getMapHeight()
-            MapBlock illnessBlock = gameMap.getMapBlockByLocation(5, 5);
-            Rectangle rectangle = new Rectangle(100, 100);
-            rectangle.setFill(new ImagePattern(new Image(Turn.class.getResource("/images/background/illness.jpg").toExternalForm())));
-            illnessBlock.getChildren().add(rectangle);
+        if (random % 4 == 0) {
+            MapBlock illnessBlock = gameMap.getMapBlockByLocation((int)(Math.random() * 10000) % gameMap.getMapWidth(),(int)(Math.random() * 10000) % gameMap.getMapHeight()
+            );
+            new IllnessAnimation(illnessBlock).play();
             currentKingdom.setIllness(illnessBlock);
-            rectangle.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            illnessBlock.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent mouseEvent) {
                     if (mouseEvent.getButton().equals(MouseButton.SECONDARY)){
@@ -77,7 +80,7 @@ public class Turn {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
                                 illnessBlock.getChildren().remove(button);
-                                illnessBlock.getChildren().remove(rectangle);
+                                illnessBlock.getChildren().remove(0);
                                 currentKingdom.setBalance(-3.);
                                 currentKingdom.setIllness(null);
                             }
@@ -85,22 +88,21 @@ public class Turn {
                     }
                 }
             });
-            //todo یه دکمه یا یه عنی که وقتی یارو زد این بیماری برطرف بشه
-//        }
+        }
     }
 
     private void fire() {
         for (Kingdom kingdom : gameMap.getPlayers()) {
             for (Building building : kingdom.getBuildings()) {
-                if (building.getFire() == -1 && building.getHp() != 0) {
+                if ((building.getFire()) == -1 && (building.getHp() != 0) && !(building.getBuildingType().equals(BuildingType.HEAD_QUARTER))) {
                     mapBlockFor:
                     for (MapBlock mapBlock : getSurrond(building)) {
-//                        for (Unit unit : mapBlock.getUnits()) {
-//                            if (!(unit.getOwner().equals(currentKingdom)) && (unit.getUnitType().equals(UnitType.SLAVES))) {
+                        for (Unit unit : mapBlock.getUnits()) {
+                            if (!(unit.getOwner().equals(currentKingdom)) && (unit.getUnitType().equals(UnitType.SLAVES))) {
                                 building.setFire(3);
-//                                break mapBlockFor;
-//                            }
-//                        }
+                                break mapBlockFor;
+                            }
+                        }
                     }
                 }
             }
@@ -112,13 +114,15 @@ public class Turn {
             for (Building building : kingdom.getBuildings()) {
                 if (building.getFire() != -1) {
                     if (building.getFire() != 0) {
+                        building.decreaseHP(building.getHp() / building.getFire());
+                        building.decreaseHP(-200);
                         new FireAnimation(building, building.getFire()).play();
                         building.setFire(building.getFire() - 1);
-                        System.out.println("1");
                     } else {
-                        System.out.println("end");
+                        building.decreaseHP(10000);
                         Rectangle rectangle = new Rectangle(100, 100);
-                        rectangle.setFill(new ImagePattern(new Image(Turn.class.getResource("/images/background/illness.jpg").toExternalForm())));
+                        rectangle.setFill(new ImagePattern(new Image(Turn.class.getResource("/images/background/soil.png").toExternalForm())));
+                        rectangle.setScaleX(2);rectangle.setScaleY(2);
                         building.getPosition().getChildren().add(rectangle);
                     }
                 }

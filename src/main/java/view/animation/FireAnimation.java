@@ -11,7 +11,6 @@ import model.building.Building;
 public class FireAnimation extends Transition {
     private Building building;
     private int state;
-//    private Rectangle fire = new Rectangle(100 , 100);
     private ImageView fire = new ImageView(new Image(FireAnimation.class.getResource("/images/fire/1.png").toExternalForm()));
     private Image image1 = new Image(FireAnimation.class.getResource("/images/fire/1.png").toExternalForm());
     private Image image2 = new Image(FireAnimation.class.getResource("/images/fire/2.png").toExternalForm());
@@ -24,8 +23,6 @@ public class FireAnimation extends Transition {
     public FireAnimation(Building building, int state) {
         this.building = building;
         this.state = state;
-        if (state < 3)
-            building.decreaseHP(building.getHp() / state + 1);
         building.getPosition().getChildren().add(fire);
         fire.setLayoutY(100);
         fire.setY(100);
@@ -35,72 +32,114 @@ public class FireAnimation extends Transition {
 
     @Override
     protected void interpolate(double v) {
-        if (v < 0.1666) {
-            if (state == 1) {
-                fire.setImage(image1);
-                fire.setScaleX(2);fire.setScaleY(2);
-            } else if (state == 2) {
-                fire.setImage(image1);
-                fire.setScaleX(1.5);fire.setScaleY(1.5);
+//        if (state > 0) {
+            if (v < 0.1666) {
+                if (state == 1) {
+                    fire.setImage(image1);
+                    fire.setScaleX(2);
+                    fire.setScaleY(2);
+                } else if (state == 2) {
+                    fire.setImage(image1);
+                    fire.setScaleX(1.5);
+                    fire.setScaleY(1.5);
+                } else if (state == 3) {
+                    fire.setImage(image1);
+                    fire.setScaleX(1);
+                    fire.setScaleY(1);
+                } else {
+                    building.getPosition().getChildren().remove(fire);
+                    this.stop();
+                }
+            } else if (v < 0.332) {
+                if (state == 1) {
+                    fire.setImage(image2);
+                    fire.setScaleX(2);
+                    fire.setScaleY(2);
+                } else if (state == 2) {
+                    fire.setImage(image2);
+                    fire.setScaleX(1.5);
+                    fire.setScaleY(1.5);
+                } else if (state == 3) {
+                    fire.setImage(image2);
+                    fire.setScaleX(1);
+                    fire.setScaleY(1);
+                } else {
+                    building.getPosition().getChildren().remove(fire);
+                    this.stop();
+                }
+            } else if (v < 0.499) {
+                if (state == 1) {
+                    fire.setImage(image3);
+                    fire.setScaleX(2);
+                    fire.setScaleY(2);
+                } else if (state == 2) {
+                    fire.setImage(image3);
+                    fire.setScaleX(1.5);
+                    fire.setScaleY(1.5);
+                } else if (state == 3) {
+                    fire.setImage(image3);
+                    fire.setScaleX(1);
+                    fire.setScaleY(1);
+                } else {
+                    building.getPosition().getChildren().remove(fire);
+                    this.stop();
+                }
+            } else if (v < 0.5666) {
+                if (state == 1) {
+                    fire.setImage(image4);
+                    fire.setScaleX(2);
+                    fire.setScaleY(2);
+                } else if (state == 2) {
+                    fire.setImage(image4);
+                    fire.setScaleX(1.5);
+                    fire.setScaleY(1.5);
+                } else if (state == 3) {
+                    fire.setImage(image4);
+                    fire.setScaleX(1);
+                    fire.setScaleY(1);
+                } else {
+                    building.getPosition().getChildren().remove(fire);
+                    this.stop();
+                }
+            } else if (v < 0.833) {
+                if (state == 1) {
+                    fire.setImage(image5);
+                    fire.setScaleX(2);
+                    fire.setScaleY(2);
+                } else if (state == 2) {
+                    fire.setImage(image5);
+                    fire.setScaleX(1.5);
+                    fire.setScaleY(1.5);
+                } else if (state == 3) {
+                    fire.setImage(image5);
+                    fire.setScaleX(1);
+                    fire.setScaleY(1);
+                } else {
+                    building.getPosition().getChildren().remove(fire);
+                    this.stop();
+                }
             } else {
-                fire.setImage(image1);
-                fire.setScaleX(1);fire.setScaleY(1);
+                if (state == 1) {
+                    fire.setImage(image6);
+                    fire.setScaleX(2);
+                    fire.setScaleY(2);
+                } else if (state == 2) {
+                    fire.setImage(image6);
+                    fire.setScaleX(1.5);
+                    fire.setScaleY(1.5);
+                } else if (state == 3) {
+                    fire.setImage(image6);
+                    fire.setScaleX(1);
+                    fire.setScaleY(1);
+                }
+//                else {
+//                    building.getPosition().getChildren().remove(fire);
+//                    this.stop();
+//                }
             }
-        } else if (v < 0.332) {
-            if (state == 1) {
-                fire.setImage(image2);
-                fire.setScaleX(2);fire.setScaleY(2);
-            } else if (state == 2) {
-                fire.setImage(image2);
-                fire.setScaleX(1.5);fire.setScaleY(1.5);
-            } else {
-                fire.setImage(image2);
-                fire.setScaleX(1);fire.setScaleY(1);
-            }
-        } else if (v < 0.499){
-            if (state == 1) {
-                fire.setImage(image3);
-                fire.setScaleX(2);fire.setScaleY(2);
-            } else if (state == 2) {
-                fire.setImage(image3);
-                fire.setScaleX(1.5);fire.setScaleY(1.5);
-            } else {
-                fire.setImage(image3);
-                fire.setScaleX(1);fire.setScaleY(1);
-            }
-        } else if (v < 0.5666) {
-            if (state == 1) {
-                fire.setImage(image4);
-                fire.setScaleX(2);fire.setScaleY(2);
-            } else if (state == 2) {
-                fire.setImage(image4);
-                fire.setScaleX(1.5);fire.setScaleY(1.5);
-            } else {
-                fire.setImage(image4);
-                fire.setScaleX(1);fire.setScaleY(1);
-            }
-        } else if (v < 0.833){
-            if (state == 1) {
-                fire.setImage(image5);
-                fire.setScaleX(2);fire.setScaleY(2);
-            } else if (state == 2) {
-                fire.setImage(image5);
-                fire.setScaleX(1.5);fire.setScaleY(1.5);
-            } else {
-                fire.setImage(image5);
-                fire.setScaleX(1);fire.setScaleY(1);
-            }
-        }   else {
-            if (state == 1) {
-                fire.setImage(image6);
-                fire.setScaleX(2);fire.setScaleY(2);
-            } else if (state == 2) {
-                fire.setImage(image6);
-                fire.setScaleX(1.5);fire.setScaleY(1.5);
-            } else {
-                fire.setImage(image6);
-                fire.setScaleX(1);fire.setScaleY(1);
-            }
-        }
+//        } else {
+//            building.getPosition().getChildren().remove(fire);
+//            System.out.println("ali");
+//        }
     }
 }
