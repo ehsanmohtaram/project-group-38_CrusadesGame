@@ -64,9 +64,9 @@ public class Turn {
             return;
         }
         int random = (int)(10 * Math.random());
-//        if (random % 4 == 0) {
-//        (int)(Math.random() * 10000) % gameMap.getMapWidth(),(int)(Math.random() * 10000) % gameMap.getMapHeight()
-            MapBlock illnessBlock = gameMap.getMapBlockByLocation(5, 5);
+        if (random % 4 == 0) {
+            MapBlock illnessBlock = gameMap.getMapBlockByLocation((int)(Math.random() * 10000) % gameMap.getMapWidth(),(int)(Math.random() * 10000) % gameMap.getMapHeight()
+            );
             new IllnessAnimation(illnessBlock).play();
             currentKingdom.setIllness(illnessBlock);
             illnessBlock.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -88,7 +88,7 @@ public class Turn {
                     }
                 }
             });
-//        }
+        }
     }
 
     private void fire() {
@@ -97,12 +97,12 @@ public class Turn {
                 if ((building.getFire()) == -1 && (building.getHp() != 0) && !(building.getBuildingType().equals(BuildingType.HEAD_QUARTER))) {
                     mapBlockFor:
                     for (MapBlock mapBlock : getSurrond(building)) {
-//                        for (Unit unit : mapBlock.getUnits()) {
-//                            if (!(unit.getOwner().equals(currentKingdom)) && (unit.getUnitType().equals(UnitType.SLAVES))) {
+                        for (Unit unit : mapBlock.getUnits()) {
+                            if (!(unit.getOwner().equals(currentKingdom)) && (unit.getUnitType().equals(UnitType.SLAVES))) {
                                 building.setFire(3);
                                 break mapBlockFor;
-//                            }
-//                        }
+                            }
+                        }
                     }
                 }
             }
