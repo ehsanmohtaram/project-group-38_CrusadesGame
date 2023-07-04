@@ -84,10 +84,13 @@ public class UserConnection {
     }
 
     public String sendReceivePacket(SendPacket sendPacket) {
+        if(sendPacket.getMap() != null)
+            System.out.println(sendPacket.getMap());
         ReceivePacket  receivePacket= null;
         if (sendPacket.getChat() != null) receivePacket = new ReceivePacket(sendPacket.getUserSender(), sendPacket.getObjectType(), sendPacket.getChat());
         else if (sendPacket.getString() != null)  receivePacket = new ReceivePacket(sendPacket.getUserSender(), sendPacket.getObjectType(), sendPacket.getString());
         else if (sendPacket.getKingdom() != null)  receivePacket = new ReceivePacket(sendPacket.getUserSender(), sendPacket.getObjectType(), sendPacket.getKingdom());
+        else if (sendPacket.getMap() != null)  receivePacket = new ReceivePacket(sendPacket.getUserSender(), sendPacket.getObjectType(), sendPacket.getMap());
         JSONObject jsonMakeObject = null;
         try {
             Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();

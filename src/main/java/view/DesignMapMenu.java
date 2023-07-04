@@ -65,16 +65,19 @@ public class DesignMapMenu extends Application {
         Button submit = new Button();
         Button back = new Button();
         Button defaultMaps = new Button();
+        Button myMap = new Button();
         style.button0(submit, "create", 180 , 70);
         style.button0(back, "back" , 180 , 70);
         style.button0(defaultMaps, "use defaults" , 250 , 70);
+        style.button0(myMap, "my map" , 250 , 70);
         submit.setFont(style.Font0(25));
         back.setFont(style.Font0(25));
         defaultMaps.setFont(style.Font0(25));
+        myMap.setFont(style.Font0(25));
         HBox buttons = new HBox(submit, back);
         buttons.setSpacing(40);
 
-        VBox details = new VBox(name, size, buttons, defaultMaps);
+        VBox details = new VBox(name, size, buttons, defaultMaps, myMap);
         details.setSpacing(30);
         changeAttributes(width, height, size);
         processNameChange(name, changeName, details);
@@ -82,7 +85,7 @@ public class DesignMapMenu extends Application {
         vBox.setLayoutX(500);  vBox.setLayoutY(213);
         vBox.setSpacing(30);
         pane.getChildren().add(vBox);
-        menuController.processDefaultMapSelection(stage, vBox, defaultMaps);
+        menuController.processMapSelection(stage, vBox, defaultMaps, myMap);
         submit.setOnMouseClicked(mouseEvent -> startGame());
         back.setOnMouseClicked(mouseEvent -> {
             new MainMenu().start(stage);

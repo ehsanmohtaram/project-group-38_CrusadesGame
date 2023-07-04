@@ -14,6 +14,8 @@ public class ReceivePacket implements Serializable {
     private String string;
     @Expose
     private Kingdom kingdom;
+    @Expose
+    private String map;
     private final Object object;
 
     public ReceivePacket(String userSender, ObjectType objectType, Object object) {
@@ -25,9 +27,10 @@ public class ReceivePacket implements Serializable {
 
     private void setObjectType() {
         switch (objectType) {
-            case Chat: chat = (Chat) object; string = null; kingdom = null; break;
-            case String: string = (String) object; chat = null; kingdom = null; break;
-            case Kingdom: kingdom = (Kingdom) object; chat = null; string = null; break;
+            case Chat: chat = (Chat) object; string = null; kingdom = null; map = null; break;
+            case String: string = (String) object; chat = null; kingdom = null; map = null; break;
+            case Kingdom: kingdom = (Kingdom) object; chat = null; string = null; map = null; break;
+            case Map: map = (String) object; chat = null; string = null; kingdom= null; break;
         }
     }
 
@@ -51,4 +54,7 @@ public class ReceivePacket implements Serializable {
         return kingdom;
     }
 
+    public String getMap() {
+        return map;
+    }
 }

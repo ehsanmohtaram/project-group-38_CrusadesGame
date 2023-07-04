@@ -25,9 +25,11 @@ import model.unit.UnitType;
 import view.Style;
 import view.animation.RollingPaper;
 import view.controller.GameUI;
+import view.controller.LoginMenuController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 
@@ -448,7 +450,16 @@ public class MapDesignController {
         gameMap.getMapBlockByLocation(newXPosition, newYPosition).getGraphics().getChildren().add(rectangle1);
 
         gameMap.getMapBlockByLocation(newXPosition, newYPosition).setBuildings(stock);
-        User.getUserByUsername(options.get("u")).addToMyMap(gameMap);
+        User toAdd = User.getUserByUsername(options.get("u"));
+        if(toAdd.equals(currentUser))
+            toAdd.addToMyMap(gameMap);
+        else {
+            ArrayList<String> usernames = new ArrayList<>(List.of(options.get("u")));
+            Gson gson = new GsonBuilder().create();
+            String result = gson.toJson(gameMap); //toDo it doesnt go
+            LoginMenuController.connection.sendPacket(new SendPacket(Controller.currentUser.getUserName(), usernames, ObjectType.Map, result));
+        }
+
         return "successful";
     }
 

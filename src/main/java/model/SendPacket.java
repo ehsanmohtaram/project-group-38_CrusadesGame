@@ -18,7 +18,7 @@ public class SendPacket implements Serializable {
     @Expose
     private Kingdom kingdom;
     @Expose
-    private Map map;
+    private String map;
     private final Object object;
 
     public SendPacket(String userSender, ArrayList<String> userReceiver, ObjectType objectType, Object object) {
@@ -34,7 +34,7 @@ public class SendPacket implements Serializable {
             case Chat: chat = (Chat) object; string = null; kingdom = null; map = null; break;
             case String: string = (String) object; chat = null; kingdom = null; map = null; break;
             case Kingdom: kingdom = (Kingdom) object; chat = null; string = null; map = null; break;
-            case Map: map = (Map) object; chat = null; string = null; kingdom= null; break;
+            case Map: map = (String) object; chat = null; string = null; kingdom= null; break;
         }
     }
 
@@ -60,5 +60,9 @@ public class SendPacket implements Serializable {
 
     public Kingdom getKingdom() {
         return kingdom;
+    }
+
+    public String getMap() {
+        return map;
     }
 }
