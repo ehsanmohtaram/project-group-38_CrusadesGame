@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -519,9 +520,16 @@ public class ChatMenu extends Application {
             holder.setMaxWidth(text.getLayoutBounds().getWidth() + 30 + text1.getLayoutBounds().getWidth());
             vBox1.getChildren().add(text1);
             holder.getChildren().addAll(text, vBox1);
-            holder.setOnMouseClicked(mouseEvent -> {
-                setEditEnvironment(mouseEvent,chatEnvironment, chat);
-            });
+            VBox mainHolder = new VBox();
+//            holder.setOnMouseClicked(mouseEvent -> {
+//                chatEnvironment.getChildren().remove(mainHolder);
+//                System.out.println(chatEnvironment.getChildren());
+//                setEditEnvironment(mouseEvent, mainHolder,chatEnvironment, chat);
+//
+//            });
+//            holder.setOnKeyPressed(mouseEvent -> {
+//               if (mouseEvent.getCode().equals(KeyCode.E)) chatEnvironment.getChildren().remove(mainHolder);
+//            });
             if (type == 2) {
                 if (chat.getChatType().equals(ChatType.PRIVATE_CHAT) &&
                         chat.getUserSender().equals(Controller.currentUser.getUserName()) && chat.getUserReceiver().equals(user.getUserName())) {
@@ -576,13 +584,10 @@ public class ChatMenu extends Application {
         chatEnvironment.getChildren().add(scrollPane);
     }
 
-    private void setEditEnvironment(MouseEvent mouseEvent, StackPane chatEnvironment, Chat chat) {
-        VBox mainHolder = new VBox();
-        mainHolder.setSpacing(10);
-        System.out.println(mouseEvent.getScreenX() + " " + mouseEvent.getScreenY());
+    private void setEditEnvironment(MouseEvent mouseEvent, VBox mainHolder,StackPane chatEnvironment, Chat chat) {
+        mainHolder.setSpacing(5);
         HBox emoji = new HBox();
         addEmoji(emoji);
-        StackPane.setMargin(mainHolder, new Insets(mouseEvent.getScreenX() - 400,mouseEvent.getScreenY() - 200,0,0));
         emoji.setStyle("-fx-background-color: rgba(91,85,60,0.3); -fx-background : rgba(91,85,60,0.3); -fx-background-radius: 10;");
         emoji.setMaxWidth(200);
         emoji.setPrefHeight(40);
@@ -595,7 +600,7 @@ public class ChatMenu extends Application {
         editBox.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         mainHolder.getChildren().addAll(emoji, editBox);
         chatEnvironment.getChildren().add(mainHolder);
-        chatEnvironment.setOnMouseDragged(mouseEvent1 -> chatEnvironment.getChildren().remove(mainHolder));
+        StackPane.setMargin(mainHolder, new Insets(430, 0, 0 ,560));
     }
 
     private void addEmoji(HBox emoji) {
