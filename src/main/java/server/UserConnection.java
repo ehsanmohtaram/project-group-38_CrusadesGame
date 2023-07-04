@@ -19,8 +19,10 @@ public class UserConnection {
     private Socket socket;
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
+    private final JwtGenerator jwtGenerator;
 
     public UserConnection(Socket socket) {
+        jwtGenerator = new JwtGenerator();
         try {
             this.socket = socket;
             dataInputStream = new DataInputStream(socket.getInputStream());
@@ -51,6 +53,7 @@ public class UserConnection {
         SendPacket sendPacket = null;
         try {
             String input = dataInputStream.readUTF();
+            input = jwtGenerator.decodeJWT(input);
             Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
             JSONParser parser = new JSONParser();
             JSONObject jsonObject = (JSONObject) parser.parse(input);
@@ -68,7 +71,7 @@ public class UserConnection {
                     if (checkSocketByUsername(usernames) != null) {
                         DataOutputStream sendData = new DataOutputStream(checkSocketByUsername(usernames).getSocket().getOutputStream());
                         Thread thread = new Thread(() -> {
-                            try {sendData.writeUTF(sendReceivePacket(sendPacket));}
+                            try {sendData.writeUTF(jwtGenerator.generateJwt(sendReceivePacket(sendPacket)));}
                             catch (IOException e) {throw new RuntimeException(e);}
                         });
                         try {thread.join();}
@@ -110,7 +113,7 @@ public class UserConnection {
                 JSONParser parser = new JSONParser();
                 String jsonParser = gson.toJson(receivePacket);
                 JSONObject jsonMakeObject = (JSONObject) parser.parse(jsonParser);
-                dataOutputStream.writeUTF(jsonMakeObject.toString());
+                dataOutputStream.writeUTF(jwtGenerator.generateJwt(jsonMakeObject.toString()));
             } catch (IOException | ParseException exception) {
                 if (exception instanceof IOException) {
                     System.out.println(user.getUserName() + " disconnected");

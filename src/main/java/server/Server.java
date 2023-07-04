@@ -2,7 +2,6 @@ package server;
 
 
 import model.Database;
-import model.ReceivePacket;
 import model.SendPacket;
 
 import java.io.IOException;
