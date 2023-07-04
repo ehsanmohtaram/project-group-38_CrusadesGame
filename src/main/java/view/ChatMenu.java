@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -374,7 +375,6 @@ public class ChatMenu extends Application {
             if(chatSender.getText().equals("")) send.setOpacity(0.3);
             else send.setOpacity(1);
         });
-        System.out.println(selectedUser0);
         sendMessage(chatEnvironment, send, chatSender, type, user, groupId, groupName, selectedUser0);
         hBox.getChildren().addAll(chatSender, send);
         style.textFiled0(chatSender, "Message",615, 70);
@@ -503,6 +503,9 @@ public class ChatMenu extends Application {
         StackPane.setMargin(scrollPane, new Insets(0,75,5,0));
         for (Chat chat : Controller.currentUser.getMyChats()) {
             HBox holder = new HBox();
+            VBox vBox1 = new VBox();
+            vBox1.setAlignment(Pos.CENTER);
+            vBox1.setSpacing(4);
             holder.setSpacing(10);
             holder.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
             holder.setStyle("-fx-background-color: rgba(170,139,100,0.3); -fx-background : rgba(170,139,100,0.3); -fx-background-radius: 10;");
@@ -514,7 +517,11 @@ public class ChatMenu extends Application {
             text1.setFill(Color.rgb(170,139,100,0.4));
             text1.setFont(style.Font0(12));
             holder.setMaxWidth(text.getLayoutBounds().getWidth() + 30 + text1.getLayoutBounds().getWidth());
-            holder.getChildren().addAll(text, text1);
+            vBox1.getChildren().add(text1);
+            holder.getChildren().addAll(text, vBox1);
+            holder.setOnMouseClicked(mouseEvent -> {
+                setEditEnvironment(mouseEvent,chatEnvironment, chat);
+            });
             if (type == 2) {
                 if (chat.getChatType().equals(ChatType.PRIVATE_CHAT) &&
                         chat.getUserSender().equals(Controller.currentUser.getUserName()) && chat.getUserReceiver().equals(user.getUserName())) {
@@ -532,6 +539,10 @@ public class ChatMenu extends Application {
                     vBox.getChildren().add(holder);
                 }
                 if (chat.getChatType().equals(ChatType.PUBLIC_CHAT) && !chat.getUserSender().equals(Controller.currentUser.getUserName())) {
+                    Label name = new Label(chat.getUserSender());
+                    name.setFont(style.Font0(15));
+                    name.setTextFill(Color.rgb(170,139,100,0.4));
+                    vBox1.getChildren().add(name);
                     HBox imageAndText = new HBox();
                     imageAndText.setSpacing(5);
                     Circle circle = new Circle(30 , new ImagePattern(new Image(User.getUserByUsername(chat.getUserSender()).getAvatar())));
@@ -547,6 +558,10 @@ public class ChatMenu extends Application {
                     vBox.getChildren().add(holder);
                 }
                 if (chat.getChatType().equals(ChatType.GROUP) && chat.getGroupId().equals(id) && !chat.getUserSender().equals(Controller.currentUser.getUserName())) {
+                    Label name = new Label(chat.getUserSender());
+                    name.setFont(style.Font0(15));
+                    name.setTextFill(Color.rgb(170,139,100,0.4));
+                    vBox1.getChildren().add(name);
                     HBox imageAndText = new HBox();
                     imageAndText.setSpacing(5);
                     Circle circle = new Circle(30 , new ImagePattern(new Image(User.getUserByUsername(chat.getUserSender()).getAvatar())));
@@ -559,6 +574,85 @@ public class ChatMenu extends Application {
             }
         }
         chatEnvironment.getChildren().add(scrollPane);
+    }
+
+    private void setEditEnvironment(MouseEvent mouseEvent, StackPane chatEnvironment, Chat chat) {
+        VBox mainHolder = new VBox();
+        mainHolder.setSpacing(10);
+        System.out.println(mouseEvent.getScreenX() + " " + mouseEvent.getScreenY());
+        HBox emoji = new HBox();
+        addEmoji(emoji);
+        StackPane.setMargin(mainHolder, new Insets(mouseEvent.getScreenX() - 400,mouseEvent.getScreenY() - 200,0,0));
+        emoji.setStyle("-fx-background-color: rgba(91,85,60,0.3); -fx-background : rgba(91,85,60,0.3); -fx-background-radius: 10;");
+        emoji.setMaxWidth(200);
+        emoji.setPrefHeight(40);
+        emoji.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
+        VBox editBox = new VBox();
+        addEditBox(editBox);
+        editBox.setMaxWidth(200);
+        editBox.setPrefHeight(150);
+        editBox.setStyle("-fx-background-color: rgba(91,85,60,0.3); -fx-background : rgba(91,85,60,0.3); -fx-background-radius: 10;");
+        editBox.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
+        mainHolder.getChildren().addAll(emoji, editBox);
+        chatEnvironment.getChildren().add(mainHolder);
+        chatEnvironment.setOnMouseDragged(mouseEvent1 -> chatEnvironment.getChildren().remove(mainHolder));
+    }
+
+    private void addEmoji(HBox emoji) {
+        emoji.setAlignment(Pos.CENTER);
+        Circle circle0 = new Circle(17, new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/e1.png").toExternalForm())));
+        Circle circle1 = new Circle(17, new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/e2.png").toExternalForm())));
+        Circle circle2 = new Circle(17, new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/e3.png").toExternalForm())));
+        Circle circle3 = new Circle(17, new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/e4.png").toExternalForm())));
+        emoji.setSpacing(10);
+        emoji.getChildren().addAll(circle0, circle1, circle2, circle3);
+    }
+
+    private void addEditBox(VBox editBox) {
+        editBox.setAlignment(Pos.CENTER);
+        HBox holder0 = new HBox();
+        holder0.setAlignment(Pos.CENTER_LEFT);
+        holder0.setPadding(new Insets(0, 0, 0, 5));
+        holder0.setSpacing(10);
+        holder0.setMaxSize(200, 50);
+        holder0.setPrefHeight(50);
+        Label name0 = new Label("Edit Message");
+        name0.setFont(style.Font0(18));
+        name0.setTextFill(Color.rgb(170,139,100,0.8));
+        Rectangle rectangle0 = new Rectangle(30, 30, new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/edit0.png").toExternalForm())));
+        holder0.setOnMouseEntered(event -> holder0.setStyle("-fx-background-radius: 20; -fx-background-color: rgba(128,128,128, 0.4) ; -fx-background: rgba(128,128,128, 0.4);"));
+        holder0.setOnMouseExited(event -> holder0.setStyle("-fx-background-radius: 20; -fx-background-color: transparent ; -fx-background: transparent;"));
+
+        holder0.getChildren().addAll(rectangle0,name0);
+
+        HBox holder1 = new HBox();
+        holder1.setAlignment(Pos.CENTER_LEFT);
+        holder1.setPadding(new Insets(0, 0, 0, 5));
+        holder1.setSpacing(10);
+        holder1.setMaxSize(200, 50);
+        holder1.setPrefHeight(50);
+        Label name1 = new Label("Delete For Me");
+        name1.setFont(style.Font0(18));
+        name1.setTextFill(Color.rgb(170,139,100,0.8));
+        Rectangle rectangle1 = new Rectangle(30, 30, new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/delete.png").toExternalForm())));
+        holder1.setOnMouseEntered(event -> holder1.setStyle("-fx-background-radius: 20; -fx-background-color: rgba(128,128,128, 0.4) ; -fx-background: rgba(128,128,128, 0.4);"));
+        holder1.setOnMouseExited(event -> holder1.setStyle("-fx-background-radius: 20; -fx-background-color: transparent ; -fx-background: transparent;"));
+        holder1.getChildren().addAll(rectangle1, name1);
+
+        HBox holder2 = new HBox();
+        holder2.setAlignment(Pos.CENTER_LEFT);
+        holder2.setPadding(new Insets(0, 0, 0, 5));
+        holder2.setSpacing(10);
+        holder2.setMaxSize(200, 50);
+        holder2.setPrefHeight(50);
+        Label name2 = new Label("Delete For all");
+        name2.setFont(style.Font0(18));
+        name2.setTextFill(Color.rgb(170,139,100,0.8));
+        Rectangle rectangle2 = new Rectangle(30, 30, new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/delete.png").toExternalForm())));
+        holder2.getChildren().addAll(rectangle2, name2);
+        holder2.setOnMouseEntered(event -> holder2.setStyle("-fx-background-radius: 20; -fx-background-color: rgba(128,128,128, 0.4) ; -fx-background: rgba(128,128,128, 0.4);"));
+        holder2.setOnMouseExited(event -> holder2.setStyle("-fx-background-radius: 20; -fx-background-color: transparent ; -fx-background: transparent;"));
+        editBox.getChildren().addAll(holder0, holder1, holder2);
     }
 
     public void showRecentChat(VBox usernames, TextField searchBox, ScrollPane scrollPane, StackPane userFiled, Rectangle back, StackPane chatEnvironment) {
