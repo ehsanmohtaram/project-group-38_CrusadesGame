@@ -8,6 +8,8 @@ import model.SendPacket;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import server.JwtGenerator;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -15,8 +17,10 @@ import java.util.ArrayList;
 public class Connection {
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
+    private final JwtGenerator jwtGenerator;
 
     public Connection() {
+        jwtGenerator = new JwtGenerator();
         try {
             Socket socket = new Socket("localhost", 8080);
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
@@ -43,8 +47,7 @@ public class Connection {
             JSONParser parser = new JSONParser();
             String jsonParser = gson.toJson(sendPacket);
             JSONObject jsonMakeObject = (JSONObject) parser.parse(jsonParser);
-            dataOutputStream.writeUTF(jsonMakeObject.toString());
-            System.out.println(jsonMakeObject);
+            dataOutputStream.writeUTF(jwtGenerator.generateJwt(jsonMakeObject.toString()));
         }
         catch (IOException | ParseException ignored) {}
     }
@@ -53,11 +56,11 @@ public class Connection {
         ReceivePacket receivePacket = null;
         try {
             String input = dataInputStream.readUTF();
+            input = jwtGenerator.decodeJWT(input);
             Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
             JSONParser parser = new JSONParser();
             JSONObject jsonObject =(JSONObject) parser.parse(input);
             receivePacket = gson.fromJson(jsonObject.toString(), ReceivePacket.class);
-            if (receivePacket.getChat() != null) System.out.println(receivePacket.getChat().getMessageText());
         }
         catch (IOException | ParseException ignored) {}
         return receivePacket;

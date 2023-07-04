@@ -2,6 +2,9 @@ package view;
 
 import controller.Connection;
 import controller.Controller;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -9,17 +12,17 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import model.*;
 import view.controller.LoginMenuController;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -27,10 +30,17 @@ public class ChatMenu extends Application {
     private final Style style;
     private Stage stage;
     private final Connection connection;
+    private ArrayList<String> userReceiver;
+    private ArrayList<User> selectedUser;
+    private Timeline timeline;
+    private int currentSize;
 
     public ChatMenu() {
         connection  = LoginMenuController.connection;
         style = new Style();
+        currentSize = Controller.currentUser.getMyChats().size();
+        userReceiver = new ArrayList<>();
+        selectedUser = new ArrayList<>();
     }
 
     @Override
@@ -86,8 +96,10 @@ public class ChatMenu extends Application {
         style.textFiled0(searchBox, "Search Contacts", 290, 70);
         searchBox.setPadding(new Insets(0,30,0,30));
         searchBox.setFont(style.Font0(20));
-        Rectangle back = new Rectangle(70, 70, new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/back.png").toExternalForm())));
+        Image image = new Image(ChatMenu.class.getResource("/images/buttons/back.png").toExternalForm());
+        Rectangle back = new Rectangle(70, 70, new ImagePattern(image));
         Rectangle chooseChatType = new Rectangle(60, 60);
+        showRecentChat(usernames, searchBox, scrollPane, userFiled, back, chatEnvironment);
         back.setOnMouseClicked(mouseEvent -> {
             if (((ImagePattern)back.getFill()).getImage().getUrl().equals(new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/back.png").toExternalForm())).getImage().getUrl()))
                 new MainMenu().start(stage);
@@ -97,6 +109,7 @@ public class ChatMenu extends Application {
                 userFiled.getChildren().clear();
                 chooseChatType.setFill(null);
                 back.setFill(new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/back.png").toExternalForm())));
+                showRecentChat(usernames, searchBox, scrollPane, userFiled, back, chatEnvironment);
             }
 
         });
@@ -162,7 +175,7 @@ public class ChatMenu extends Application {
         setEnvironmentByType(typeOfChats, chatEnvironment, searchBox, usernames, scrollPane, userFiled, back, chooseChatType, newChatTypeBox);
         if (!newChatTypeBox.getChildren().contains(chooseChatType)) newChatTypeBox.getChildren().addAll(chooseChatType);
         TextField groupName = new TextField();
-        ArrayList<User> selectedUser = new ArrayList<>();
+        selectedUser.clear();
         chooseChatType.setOnMouseClicked(mouseEvent -> {
             if (openChat.equals(((ImagePattern)chooseChatType.getFill()).getImage())) {
                 chooseChatType.setFill(new ImagePattern(closeChat));
@@ -193,16 +206,30 @@ public class ChatMenu extends Application {
                 userFiled.getChildren().clear();
                 usernames.getChildren().clear();
                 chooseChatType.setFill(null);
-                for (User user : selectedUser)
-                    Controller.currentUser.setMyChats(new Chat(Controller.currentUser.getUserName(), user.getUserName(), "You Invite To This Group " + Controller.currentUser.getUserName(), ChatType.GROUP, java.time.LocalDateTime.now().getHour(), java.time.LocalDateTime.now().getMinute()));
-                setEnvironment(chatEnvironment, 1, null, groupName.getText(), selectedUser.size());
+                userReceiver.clear();
+                int id = Chat.getIdForGroup();
+                ArrayList<String> chatSelectUser = new ArrayList<>();
+                ArrayList<String> connectionUser = new ArrayList<>();
+                for (User allUsers : selectedUser) {
+                    chatSelectUser.add(allUsers.getUserName());
+                    if (!Controller.currentUser.equals(allUsers)) connectionUser.add(allUsers.getUserName());
+                }
+                Chat chat = new Chat(Controller.currentUser.getUserName(), "Server", "You Invite To This Group By " + Controller.currentUser.getUserName(), ChatType.GROUP, id, groupName.getText(),chatSelectUser,java.time.LocalDateTime.now().getHour(),java.time.LocalDateTime.now().getMinute());
+                Controller.currentUser.setMyChats(chat);
+                SendPacket sendPacket = new SendPacket(Controller.currentUser.getUserName(), connectionUser, ObjectType.Chat, chat);
+                connection.sendPacket(sendPacket);
+                setEnvironment(chatEnvironment, 1, null, groupName.getText(), selectedUser.size(), id, groupName.getText(), userReceiver);
+                showRecentChat(usernames, searchBox, scrollPane, userFiled, back, chatEnvironment);
             }
         });
 
     }
 
     private void setEnvironmentByType(VBox typeOfChats, StackPane chatEnvironment, TextField searchBox, VBox usernames, ScrollPane scrollPane, StackPane userFiled, Rectangle back, Rectangle chooseChatType, StackPane newChatTypeBox) {
-        typeOfChats.getChildren().get(0).setOnMouseClicked(mouseEvent -> setEnvironment(chatEnvironment,0,null, "Public Chat", User.users.size()));
+        typeOfChats.getChildren().get(0).setOnMouseClicked(mouseEvent -> {
+            showRecentChat(usernames, searchBox, scrollPane, userFiled, back, chatEnvironment);
+            setEnvironment(chatEnvironment,0,null, "Public Chat", User.users.size(), -1, "", null);
+        });
         typeOfChats.getChildren().get(1).setOnMouseClicked(mouseEvent -> selectUserForGroup(usernames, searchBox, scrollPane, userFiled, back, chooseChatType, newChatTypeBox));
         typeOfChats.getChildren().get(2).setOnMouseClicked(mouseEvent -> {searchBox.setText("u"); searchBox.setText("");});
     }
@@ -231,7 +258,7 @@ public class ChatMenu extends Application {
             if (!user.getUserName().matches("^" + searchBox.getText() + ".*") || user.equals(Controller.currentUser)) continue;
             HBox userHolder = new HBox();
             userHolder.setOnMouseClicked(mouseEvent -> {
-                setEnvironment(chatEnvironment,2, user, "" , 2);
+                setEnvironment(chatEnvironment,2, user, "" , 2, -1, "", null);
                 searchBox.setText("");
                 usernames.getChildren().clear();
                 userFiled.getChildren().clear();
@@ -332,7 +359,9 @@ public class ChatMenu extends Application {
 
     }
 
-    public void setEnvironment(StackPane chatEnvironment, int type, User user, String profileText, int userNumber) {
+    public void setEnvironment(StackPane chatEnvironment, int type, User user, String profileText, int userNumber, int groupId, String groupName, ArrayList<String> selectedUser0) {
+        currentSize -= 1;
+        if (timeline != null && timeline.getStatus().equals(Animation.Status.RUNNING)) timeline.stop();
         chatEnvironment.getChildren().clear();
         HBox hBox = new HBox();
         hBox.setMaxSize(700, 70);
@@ -345,7 +374,8 @@ public class ChatMenu extends Application {
             if(chatSender.getText().equals("")) send.setOpacity(0.3);
             else send.setOpacity(1);
         });
-        sendMessage(chatEnvironment, send, chatSender, type, user);
+        System.out.println(selectedUser0);
+        sendMessage(chatEnvironment, send, chatSender, type, user, groupId, groupName, selectedUser0);
         hBox.getChildren().addAll(chatSender, send);
         style.textFiled0(chatSender, "Message",615, 70);
         chatSender.setPadding(new Insets(0,30, 0, 30));
@@ -384,34 +414,83 @@ public class ChatMenu extends Application {
         heading.setStyle("-fx-background-color: rgba(170,139,100,0.3); -fx-background: rgba(170,139,100,0.3); -fx-background-radius: 15 15 0 0;");
         StackPane.setAlignment(heading, Pos.TOP_CENTER);
         chatEnvironment.getChildren().addAll(hBox, heading);
+        if (type == 2) {
+            timeline = new Timeline(new KeyFrame(Duration.millis(100),
+                    actionEvent -> {
+                if(currentSize != Controller.currentUser.getMyChats().size()) {
+                    updateChatBox(chatEnvironment, 2, user,groupId);
+                    currentSize = Controller.currentUser.getMyChats().size();
+                }}
+            ));
+            timeline.setCycleCount(-1);
+            timeline.play();
+        }
+        if (type == 0) {
+            timeline = new Timeline(new KeyFrame(Duration.millis(100),
+                    actionEvent -> {
+                        if(currentSize != Controller.currentUser.getMyChats().size()) {
+                            updateChatBox(chatEnvironment, 0, user, groupId);
+                            currentSize = Controller.currentUser.getMyChats().size();
+                        }}
+            ));
+            timeline.setCycleCount(-1);
+            timeline.play();
+        }
+        if (type == 1) {
+            timeline = new Timeline(new KeyFrame(Duration.millis(100),
+                    actionEvent -> {
+                        if(currentSize != Controller.currentUser.getMyChats().size()) {
+                            updateChatBox(chatEnvironment, 1, user, groupId);
+                            currentSize = Controller.currentUser.getMyChats().size();
+                        }}
+            ));
+            timeline.setCycleCount(-1);
+            timeline.play();
+        }
     }
 
-    public void sendMessage(StackPane chatEnvironment, Rectangle send, TextField chatSender, int type, User user) {
-        ArrayList<String> userReceiver = new ArrayList<>();
+    public void sendMessage(StackPane chatEnvironment, Rectangle send, TextField chatSender, int type, User user, int id, String groupName, ArrayList<String> selectedUser0) {
         send.setOnMouseClicked(mouseEvent -> {
             if (send.getOpacity() == 1) {
                 if (type == 0) {
                     userReceiver.clear();
-                    for (User allUser : User.users)
-                        Controller.currentUser.setMyChats(new Chat(Controller.currentUser.getUserName(), allUser.getUserName(), chatSender.getText(), ChatType.PUBLIC_CHAT, java.time.LocalDateTime.now().getHour(), java.time.LocalDateTime.now().getMinute()));
+                    Chat chat = new Chat(Controller.currentUser.getUserName(), "Server", chatSender.getText(), ChatType.PUBLIC_CHAT, -1, "", null,java.time.LocalDateTime.now().getHour(), java.time.LocalDateTime.now().getMinute());
+                    Controller.currentUser.setMyChats(chat);
+                    for (User allUsers : User.users) if (!allUsers.equals(Controller.currentUser)) userReceiver.add(allUsers.getUserName());
+                    connection.sendPacket(new SendPacket(Controller.currentUser.getUserName(), userReceiver, ObjectType.Chat, chat));
+                    updateChatBox(chatEnvironment, type, user, id);
                 }
                 else if (type == 2) {
                     userReceiver.clear();
-                    Chat chat = new Chat(Controller.currentUser.getUserName(), user.getUserName(), chatSender.getText(), ChatType.PRIVATE_CHAT, LocalDateTime.now().getHour(), LocalDateTime.now().getMinute());
+                    Chat chat = new Chat(Controller.currentUser.getUserName(), user.getUserName(), chatSender.getText(), ChatType.PRIVATE_CHAT, -1, "", null,LocalDateTime.now().getHour(), LocalDateTime.now().getMinute());
                     Controller.currentUser.setMyChats(chat);
                     userReceiver.add(user.getUserName());
                     connection.sendPacket(new SendPacket(Controller.currentUser.getUserName(), userReceiver, ObjectType.Chat, chat));
-                    updateChatBox(chatEnvironment, type, user);
+                    updateChatBox(chatEnvironment, type, user, id);
+                }
+                else if (type == 1) {
+                    userReceiver.clear();
+                    ArrayList<String> member0 = new ArrayList<>();
+                    ArrayList<String> member1 = new ArrayList<>();
+                    for (Chat chat : Controller.currentUser.getMyChats())
+                        if (chat.getGroupId() == id) {member1 = chat.getGroupMember(); break; }
+                    for (String allUsers : member1) {
+                        if (!allUsers.equals(Controller.currentUser.getUserName())) member0.add(allUsers);
+                    }
+                    Chat chat = new Chat(Controller.currentUser.getUserName(), "Server", chatSender.getText(), ChatType.GROUP, id, groupName, member1,LocalDateTime.now().getHour(), LocalDateTime.now().getMinute());
+                    Controller.currentUser.setMyChats(chat);
+                    connection.sendPacket(new SendPacket(Controller.currentUser.getUserName(), member0, ObjectType.Chat, chat));
+                    updateChatBox(chatEnvironment, type, user, id);
                 }
                 chatSender.setText("");
             }
         });
     }
 
-    public void updateChatBox(StackPane chatEnvironment ,int type, User user) {
+    public void updateChatBox(StackPane chatEnvironment ,int type, User user, int id) {
         if (chatEnvironment.getChildren().size() == 3) chatEnvironment.getChildren().remove(2);
         VBox vBox = new VBox();
-        vBox.setMinSize(610, 540);
+        vBox.setMinSize(610, 530);
         vBox.setAlignment(Pos.BOTTOM_LEFT);
         vBox.setSpacing(5);
         ScrollPane scrollPane = new ScrollPane(vBox);
@@ -428,25 +507,132 @@ public class ChatMenu extends Application {
             holder.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
             holder.setStyle("-fx-background-color: rgba(170,139,100,0.3); -fx-background : rgba(170,139,100,0.3); -fx-background-radius: 10;");
             holder.setPadding(new Insets(10));
-            Label textMessage = new Label(chat.getMessageText());
-            textMessage.widthProperty().addListener((observableValue, s, t1) -> {
-                if (!s.equals(t1)) System.out.println(t1);
-            });
-
-            textMessage.setTextFill(Color.rgb(170,139,100,0.8));
-            textMessage.setFont(style.Font0(20));
-            Label time = new Label(chat.getHours() + ":" + chat.getSeconds());
-            time.setTextFill(Color.rgb(170,139,100,0.4));
-            time.setFont(style.Font0(12));
-            holder.getChildren().addAll(textMessage, time);
-            if (chat.getChatType().equals(ChatType.PRIVATE_CHAT) &&
-                    (chat.getUserSender().equals(Controller.currentUser.getUserName()) || chat.getUserReceiver().equals(Controller.currentUser.getUserName())))
-                vBox.getChildren().add(holder);
+            Text text = new Text(chat.getMessageText());
+            text.setFont(style.Font0(20));
+            text.setFill(Color.rgb(170,139,100,0.8));
+            Text text1 = new Text(chat.getHours() + ":" + chat.getSeconds());
+            text1.setFill(Color.rgb(170,139,100,0.4));
+            text1.setFont(style.Font0(12));
+            holder.setMaxWidth(text.getLayoutBounds().getWidth() + 30 + text1.getLayoutBounds().getWidth());
+            holder.getChildren().addAll(text, text1);
+            if (type == 2) {
+                if (chat.getChatType().equals(ChatType.PRIVATE_CHAT) &&
+                        chat.getUserSender().equals(Controller.currentUser.getUserName()) && chat.getUserReceiver().equals(user.getUserName())) {
+                    vBox.getChildren().add(holder);
+                }
+                if (chat.getChatType().equals(ChatType.PRIVATE_CHAT) &&
+                        chat.getUserSender().equals(user.getUserName()) && chat.getUserReceiver().equals(Controller.currentUser.getUserName())) {
+                    vBox.getChildren().add(holder);
+                    VBox.setMargin(holder, new Insets(0, 0, 0, 600 - holder.getMaxWidth()));
+                    holder.setStyle("-fx-background-color: rgba(91,85,60,0.3); -fx-background : rgba(91,85,60,0.3); -fx-background-radius: 10;");
+                }
+            }
+            if (type == 0) {
+                if (chat.getChatType().equals(ChatType.PUBLIC_CHAT) && chat.getUserSender().equals(Controller.currentUser.getUserName())) {
+                    vBox.getChildren().add(holder);
+                }
+                if (chat.getChatType().equals(ChatType.PUBLIC_CHAT) && !chat.getUserSender().equals(Controller.currentUser.getUserName())) {
+                    HBox imageAndText = new HBox();
+                    imageAndText.setSpacing(5);
+                    Circle circle = new Circle(30 , new ImagePattern(new Image(User.getUserByUsername(chat.getUserSender()).getAvatar())));
+                    HBox.setMargin(circle, new Insets(8, 0, 0 ,0));
+                    imageAndText.getChildren().addAll(holder, circle);
+                    vBox.getChildren().add(imageAndText);
+                    VBox.setMargin(imageAndText, new Insets(0, 0, 0, 600 - (holder.getMaxWidth() + 65)));
+                    holder.setStyle("-fx-background-color: rgba(91,85,60,0.3); -fx-background : rgba(91,85,60,0.3); -fx-background-radius: 10;");
+                }
+            }
+            if (type == 1) {
+                if (chat.getChatType().equals(ChatType.GROUP) && chat.getGroupId().equals(id) && chat.getUserSender().equals(Controller.currentUser.getUserName())) {
+                    vBox.getChildren().add(holder);
+                }
+                if (chat.getChatType().equals(ChatType.GROUP) && chat.getGroupId().equals(id) && !chat.getUserSender().equals(Controller.currentUser.getUserName())) {
+                    HBox imageAndText = new HBox();
+                    imageAndText.setSpacing(5);
+                    Circle circle = new Circle(30 , new ImagePattern(new Image(User.getUserByUsername(chat.getUserSender()).getAvatar())));
+                    HBox.setMargin(circle, new Insets(8, 0, 0 ,0));
+                    imageAndText.getChildren().addAll(holder, circle);
+                    vBox.getChildren().add(imageAndText);
+                    VBox.setMargin(imageAndText, new Insets(0, 0, 0, 600 - (holder.getMaxWidth() + 65)));
+                    holder.setStyle("-fx-background-color: rgba(91,85,60,0.3); -fx-background : rgba(91,85,60,0.3); -fx-background-radius: 10;");
+                }
+            }
         }
         chatEnvironment.getChildren().add(scrollPane);
     }
 
-    public void showRecentChat() {
-
+    public void showRecentChat(VBox usernames, TextField searchBox, ScrollPane scrollPane, StackPane userFiled, Rectangle back, StackPane chatEnvironment) {
+        back.setFill(new ImagePattern(new Image(ChatMenu.class.getResource("/images/buttons/back.png").toExternalForm())));
+        usernames.getChildren().clear();
+        userFiled.getChildren().clear();
+        ArrayList<Chat> chats = new ArrayList<>();
+        for (Chat chat : Controller.currentUser.getMyChats()) {
+            int flag = 0;
+            switch (chat.getChatType()) {
+                case GROUP: for (Chat chat0 : chats)
+                                if (chat0.getGroupId().equals(chat.getGroupId())) { flag = 1; break; }
+                            if (flag == 0) chats.add(chat); break;
+                case PUBLIC_CHAT: for (Chat chat0 : chats)
+                                    if (chat0.getChatType().equals(ChatType.PUBLIC_CHAT)) { flag = 1; break; }
+                                if (flag == 0) chats.add(chat); break;
+                case PRIVATE_CHAT: for (Chat chat0 : chats)
+                                        if (chat0.getChatType().equals(ChatType.PRIVATE_CHAT) &&
+                                                (chat0.getUserReceiver().equals(chat.getUserReceiver())) || chat0.getUserReceiver().equals(chat.getUserSender())) { flag = 1; break; }
+                                    if (flag == 0) chats.add(chat); break;
+            }
+        }
+        for (Chat chat : chats) {
+            User user;
+            if (chat.getUserSender().equals(Controller.currentUser.getUserName())) user = User.getUserByUsername(chat.getUserReceiver());
+            else user = User.getUserByUsername(chat.getUserSender());
+            HBox recentChat = new HBox();
+            recentChat.setPrefSize(360, 70);
+            User finalUser = user;
+            recentChat.setOnMouseClicked(mouseEvent -> {
+                if (chat.getChatType().equals(ChatType.PRIVATE_CHAT)) setEnvironment(chatEnvironment,2, finalUser, "" , 2, -1, "", null);
+                else if (chat.getChatType().equals(ChatType.PUBLIC_CHAT)) setEnvironment(chatEnvironment,0, null, "Public Chat" , User.users.size(), -1, "", null);
+                else if (chat.getChatType().equals(ChatType.GROUP)) setEnvironment(chatEnvironment,1, null, chat.getGroupName() , 2, chat.getGroupId(), chat.getGroupName(), chat.getGroupMember());
+                searchBox.setText("");
+                usernames.getChildren().clear();
+                userFiled.getChildren().clear();
+                showRecentChat(usernames, searchBox, scrollPane, userFiled, back, chatEnvironment);
+            });
+            recentChat.setOnMouseEntered(event -> recentChat.setStyle("-fx-background-radius: 20; -fx-background-color: rgba(128,128,128, 0.4) ; -fx-background: rgba(128,128,128, 0.4);"));
+            recentChat.setOnMouseExited(event -> recentChat.setStyle("-fx-background-radius: 20; -fx-background-color: transparent ; -fx-background: transparent;"));
+            recentChat.setPadding(new Insets(10));
+            recentChat.setAlignment(Pos.CENTER_LEFT);
+            Circle profile = new Circle(30);
+            Label name  = new Label();
+            name.setPadding(new Insets(0,0,0,20));
+            name.setTextFill(Color.rgb(170,139,100,0.8));
+            name.setFont(style.Font0(25));
+            Label profileHolder = new Label();
+            profileHolder.setPrefSize(60, 60);
+            profileHolder.setAlignment(Pos.CENTER);
+            profileHolder.setTextFill(Color.rgb(170,139,100,0.8));
+            profileHolder.setFont(style.Font0(30));
+            StackPane stackPane = new StackPane(profile, profileHolder);
+            stackPane.setAlignment(Pos.CENTER);
+            switch (chat.getChatType()) {
+                case PRIVATE_CHAT:
+                    if (chat.getUserSender().equals(Controller.currentUser.getUserName())) user = User.getUserByUsername(chat.getUserReceiver());
+                    else user = User.getUserByUsername(chat.getUserSender());
+                    profile.setFill(new ImagePattern(new Image(user.getAvatar())));
+                    name.setText(user.getUserName());
+                    recentChat.getChildren().addAll(profile, name); break;
+                case PUBLIC_CHAT:
+                    name.setText("Public Chat");
+                    profileHolder.setText("P");
+                    profile.setFill(Color.rgb(183,181,39,0.5));
+                    recentChat.getChildren().addAll(stackPane, name); break;
+                case GROUP:
+                    name.setText(chat.getGroupName());
+                    profile.setFill(Color.rgb(183,181,39,0.5));
+                    profileHolder.setText(String.valueOf(chat.getGroupName().toUpperCase().charAt(0)));
+                    recentChat.getChildren().addAll(stackPane, name);
+            }
+            usernames.getChildren().add(recentChat);
+        }
+        userFiled.getChildren().add(scrollPane);
     }
 }
