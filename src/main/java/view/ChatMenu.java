@@ -589,7 +589,6 @@ public class ChatMenu extends Application {
         emoji.setBorder(new Border(new BorderStroke(Color.rgb(170,139,100,0.8), BorderStrokeStyle.SOLID, new CornerRadii(10), BorderStroke.THIN)));
         VBox editBox = new VBox();
         addEditBox(editBox);
-
         editBox.setMaxWidth(200);
         editBox.setPrefHeight(150);
         editBox.setStyle("-fx-background-color: rgba(91,85,60,0.3); -fx-background : rgba(91,85,60,0.3); -fx-background-radius: 10;");
