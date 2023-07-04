@@ -98,7 +98,7 @@ public class Turn {
                     mapBlockFor:
                     for (MapBlock mapBlock : getSurrond(building)) {
                         for (Unit unit : mapBlock.getUnits()) {
-                            if (!(unit.getOwner().equals(currentKingdom)) && (unit.getUnitType().equals(UnitType.SLAVES))) {
+                            if (!(unit.getOwner().equals(currentKingdom)) && (unit.getUnitType().equals(UnitType.FIRE_THROWERS))) {
                                 building.setFire(3);
                                 break mapBlockFor;
                             }
@@ -134,10 +134,8 @@ public class Turn {
     public ArrayList<MapBlock> getSurrond(Building building){
         ArrayList<MapBlock> mapBlocks = new ArrayList<>();
         int x = building.getPosition().getxPosition(), y = building.getPosition().getyPosition();
-        mapBlocks.add(gameMap.getMapBlockByLocation(x, y + 1));mapBlocks.add(gameMap.getMapBlockByLocation(x + 1, y + 1));
-        mapBlocks.add(gameMap.getMapBlockByLocation(x + 1, y));mapBlocks.add(gameMap.getMapBlockByLocation(x + 1, y - 1));
-        mapBlocks.add(gameMap.getMapBlockByLocation(x, y - 1));mapBlocks.add(gameMap.getMapBlockByLocation(x - 1, y - 1));
-        mapBlocks.add(gameMap.getMapBlockByLocation(x - 1, y));mapBlocks.add(gameMap.getMapBlockByLocation(x - 1, y + 1));
+        mapBlocks.add(gameMap.getMapBlockByLocation(x, y + 1));mapBlocks.add(gameMap.getMapBlockByLocation(x + 1, y));
+        mapBlocks.add(gameMap.getMapBlockByLocation(x, y - 1));mapBlocks.add(gameMap.getMapBlockByLocation(x - 1, y));
         return mapBlocks;
     }
 

@@ -36,8 +36,8 @@ public class FireAnimation extends Transition {
             if (v < 0.1666) {
                 if (state == 1) {
                     fire.setImage(image1);
-                    fire.setScaleX(2);
-                    fire.setScaleY(2);
+                    fire.setScaleX(1.8);
+                    fire.setScaleY(1.8);
                 } else if (state == 2) {
                     fire.setImage(image1);
                     fire.setScaleX(1.5);
@@ -53,8 +53,8 @@ public class FireAnimation extends Transition {
             } else if (v < 0.332) {
                 if (state == 1) {
                     fire.setImage(image2);
-                    fire.setScaleX(2);
-                    fire.setScaleY(2);
+                    fire.setScaleX(1.8);
+                    fire.setScaleY(1.8);
                 } else if (state == 2) {
                     fire.setImage(image2);
                     fire.setScaleX(1.5);
@@ -70,8 +70,8 @@ public class FireAnimation extends Transition {
             } else if (v < 0.499) {
                 if (state == 1) {
                     fire.setImage(image3);
-                    fire.setScaleX(2);
-                    fire.setScaleY(2);
+                    fire.setScaleX(1.8);
+                    fire.setScaleY(1.8);
                 } else if (state == 2) {
                     fire.setImage(image3);
                     fire.setScaleX(1.5);
@@ -87,8 +87,8 @@ public class FireAnimation extends Transition {
             } else if (v < 0.5666) {
                 if (state == 1) {
                     fire.setImage(image4);
-                    fire.setScaleX(2);
-                    fire.setScaleY(2);
+                    fire.setScaleX(1.8);
+                    fire.setScaleY(1.8);
                 } else if (state == 2) {
                     fire.setImage(image4);
                     fire.setScaleX(1.5);
@@ -104,8 +104,8 @@ public class FireAnimation extends Transition {
             } else if (v < 0.833) {
                 if (state == 1) {
                     fire.setImage(image5);
-                    fire.setScaleX(2);
-                    fire.setScaleY(2);
+                    fire.setScaleX(1.8);
+                    fire.setScaleY(1.8);
                 } else if (state == 2) {
                     fire.setImage(image5);
                     fire.setScaleX(1.5);
@@ -121,8 +121,8 @@ public class FireAnimation extends Transition {
             } else {
                 if (state == 1) {
                     fire.setImage(image6);
-                    fire.setScaleX(2);
-                    fire.setScaleY(2);
+                    fire.setScaleX(1.8);
+                    fire.setScaleY(1.8);
                 } else if (state == 2) {
                     fire.setImage(image6);
                     fire.setScaleX(1.5);
