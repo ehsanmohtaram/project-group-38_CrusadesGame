@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Kingdom{
-    private final User owner;
+    private transient final User owner;
     private final Flags flag;
     private Integer population;
     private Integer noneEmployed;
@@ -18,7 +18,7 @@ public class Kingdom{
     private Integer foodRate;
     private Integer taxRate;
     private Building headquarter;
-    private MapBlock illness = null;
+    private transient MapBlock illness = null;
     private ArrayList<Trade> myRequests = new ArrayList<>();
     private ArrayList<Trade> mySuggestion = new ArrayList<>();
     private ArrayList<Trade> notification = new ArrayList<>();
@@ -31,7 +31,7 @@ public class Kingdom{
     private ArrayList<Unit> remainingUnitMove = new ArrayList<>();
     private ArrayList<Building> remainingBuildingMove = new ArrayList<>();
     private HashMap<Building, Integer> moveOfCows = new HashMap<>();
-    private ArrayList<Trap> traps = new ArrayList<>();
+    private transient ArrayList<Trap> traps = new ArrayList<>();
     public Kingdom(Flags flag, User owner) {
         population = noneEmployed = 10;
         popularity = 10;

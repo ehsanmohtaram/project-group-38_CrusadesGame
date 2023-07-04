@@ -13,21 +13,22 @@ import view.LoginMenu;
 
 import java.util.*;
 
-public class MapBlock extends StackPane {
+public class MapBlock  {
 
     private Building buildings;
     private Building siege;
     private ArrayList<Unit> units;
     private ResourceType resource;
     private int resourceAmount;
-    private Trap trap;
+    private transient Trap trap; //toDo trap pokide
     private MapBlockType mapBlockType;
     private final Integer xPosition;
     private final Integer yPosition;
     private HashMap<Tree , Integer> numberOfTrees;
-    private Rectangle backgroundImage;
+    private transient Rectangle backgroundImage;
     private boolean isSelected;
-    private ArrayList<Rectangle> treeImage;
+    private transient ArrayList<Rectangle> treeImage;
+    private transient StackPane graphics;
 
     public MapBlock(Integer xPosition, Integer yPosition) {
         super();
@@ -42,7 +43,7 @@ public class MapBlock extends StackPane {
         numberOfTrees = new HashMap<>();
         for (Tree tree: Tree.values()) numberOfTrees.put(tree , 0);
         treeImage = new ArrayList<>();
-
+        graphics = new StackPane();
 
 //        setScaleX(100);
 //        setScaleY(100);
@@ -52,11 +53,18 @@ public class MapBlock extends StackPane {
 
     }
 
+    public StackPane getGraphics() {
+        return graphics;
+    }
+
+    public void setGraphics(StackPane graphics) {
+        this.graphics = graphics;
+    }
 
     public void setVisualPosition(){
-        setLayoutX(xPosition * 100);
-        setLayoutY(yPosition * 100);
-        setPrefSize(100, 100);
+        graphics.setLayoutX(xPosition * 100);
+        graphics.setLayoutY(yPosition * 100);
+        graphics.setPrefSize(100, 100);
     }
 
     public ArrayList<Unit> getUnits() {
@@ -67,7 +75,7 @@ public class MapBlock extends StackPane {
         this.buildings = buildings;
         for (Tree tree : numberOfTrees.keySet()) {
             numberOfTrees.put(tree, 0);
-            getChildren().removeAll(treeImage);
+            graphics.getChildren().removeAll(treeImage);
         }
     }
 
@@ -109,7 +117,7 @@ public class MapBlock extends StackPane {
         if(!mapBlockType.isCultivable()) {
             for (Tree tree : numberOfTrees.keySet()) {
                 numberOfTrees.put(tree, 0);
-                getChildren().removeAll(treeImage);
+                graphics.getChildren().removeAll(treeImage);
             }
         }
     }
@@ -158,7 +166,7 @@ public class MapBlock extends StackPane {
     public void addUnitHere(Unit toAdd){
         units.add(toAdd);
         Pane unitImage = toAdd.getUnitPane();
-        getChildren().add(unitImage);
+        graphics.getChildren().add(unitImage);
         unitImage.setManaged(false);
         unitImage.setLayoutX(new Random().nextInt(60) - 10);
         unitImage.setLayoutY(new Random().nextInt(60) - 10);
@@ -167,7 +175,7 @@ public class MapBlock extends StackPane {
 
     public void removeUnitFromHere(Unit toRemove){
         units.remove(toRemove);
-        getChildren().remove(toRemove.getUnitPane());
+        graphics.getChildren().remove(toRemove.getUnitPane());
     }
 
     public boolean isSelected() {
@@ -195,7 +203,7 @@ public class MapBlock extends StackPane {
             image.setManaged(false);
             image.setLayoutX(new Random().nextInt(50) );
             image.setLayoutY(new Random().nextInt(50) );
-            getChildren().add(image);
+            graphics.getChildren().add(image);
         }
         resourceAmount += (numberOfTrees.get(tree) * 20);
         return true;
@@ -302,18 +310,18 @@ public class MapBlock extends StackPane {
 //        Rectangle backGround = new Rectangle(100 , 100);
 //        backGround.setFill(Color.rgb(0,0, 0 , 0));
 //        backGround.setFill(new ImagePattern(mapBlockType.getTexture()));
-        setBackground(new Background(new BackgroundImage(mapBlockType.getTexture(), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+        graphics.setBackground(new Background(new BackgroundImage(mapBlockType.getTexture(), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.CENTER, backgroundSize)));
-//        getChildren().add(backGround);
+//        graphics.getChildren().add(backGround);
 //        this.backgroundImage = backGround;
     }
 
     public void changeBorder(boolean shouldAdd){
 
         if(shouldAdd)
-            this.setBorder(new Border(new BorderStroke(Color.rgb(0,0,0), BorderStrokeStyle.SOLID, null, BorderStroke.THIN, new Insets(1, 1 , 1 , 1))));
+            graphics.setBorder(new Border(new BorderStroke(Color.rgb(0,0,0), BorderStrokeStyle.SOLID, null, BorderStroke.THIN, new Insets(1, 1 , 1 , 1))));
         else
-            this.setBorder(null);
+            graphics.setBorder(null);
     }
 
 
@@ -336,6 +344,6 @@ public class MapBlock extends StackPane {
         rock.setManaged(false);
         rock.setLayoutX(direction.getX() * 32);
         rock.setLayoutY(direction.getY() * 31);
-        getChildren().add(rock);
+        graphics.getChildren().add(rock);
     }
 }

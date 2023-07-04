@@ -4,13 +4,14 @@ import model.Kingdom;
 import model.MapBlock;
 
 import java.util.ArrayList;
+import com.google.gson.*;
 
 public class Building {
-    protected Integer hp;
+    public Integer hp;
     private int fire = -1;
-    private MapBlock position;
+    private transient MapBlock position;
     private final BuildingType buildingType;
-    private final Kingdom owner;
+    private transient final Kingdom owner;
     public Building(MapBlock position, BuildingType buildingType, Kingdom owner) {
         this.position = position;
         this.buildingType = buildingType;

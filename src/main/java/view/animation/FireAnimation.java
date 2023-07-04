@@ -23,7 +23,7 @@ public class FireAnimation extends Transition {
     public FireAnimation(Building building, int state) {
         this.building = building;
         this.state = state;
-        building.getPosition().getChildren().add(fire);
+        building.getPosition().getGraphics().getChildren().add(fire);
         fire.setLayoutY(100);
         fire.setY(100);
         this.setCycleDuration(Duration.seconds(2));
@@ -47,7 +47,7 @@ public class FireAnimation extends Transition {
                     fire.setScaleX(1);
                     fire.setScaleY(1);
                 } else {
-                    building.getPosition().getChildren().remove(fire);
+                    building.getPosition().getGraphics().getChildren().remove(fire);
                     this.stop();
                 }
             } else if (v < 0.332) {
@@ -64,7 +64,7 @@ public class FireAnimation extends Transition {
                     fire.setScaleX(1);
                     fire.setScaleY(1);
                 } else {
-                    building.getPosition().getChildren().remove(fire);
+                    building.getPosition().getGraphics().getChildren().remove(fire);
                     this.stop();
                 }
             } else if (v < 0.499) {
@@ -81,7 +81,7 @@ public class FireAnimation extends Transition {
                     fire.setScaleX(1);
                     fire.setScaleY(1);
                 } else {
-                    building.getPosition().getChildren().remove(fire);
+                    building.getPosition().getGraphics().getChildren().remove(fire);
                     this.stop();
                 }
             } else if (v < 0.5666) {
@@ -98,7 +98,7 @@ public class FireAnimation extends Transition {
                     fire.setScaleX(1);
                     fire.setScaleY(1);
                 } else {
-                    building.getPosition().getChildren().remove(fire);
+                    building.getPosition().getGraphics().getChildren().remove(fire);
                     this.stop();
                 }
             } else if (v < 0.833) {
@@ -115,7 +115,7 @@ public class FireAnimation extends Transition {
                     fire.setScaleX(1);
                     fire.setScaleY(1);
                 } else {
-                    building.getPosition().getChildren().remove(fire);
+                    building.getPosition().getGraphics().getChildren().remove(fire);
                     this.stop();
                 }
             } else {

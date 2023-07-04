@@ -69,18 +69,18 @@ public class Turn {
             );
             new IllnessAnimation(illnessBlock).play();
             currentKingdom.setIllness(illnessBlock);
-            illnessBlock.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            illnessBlock.getGraphics().setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent mouseEvent) {
                     if (mouseEvent.getButton().equals(MouseButton.SECONDARY)){
                         Button button = new Button();
                         style.button0(button, "Pay for health", 100, 50);
-                        illnessBlock.getChildren().add(button);
+                        illnessBlock.getGraphics().getChildren().add(button);
                         button.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
-                                illnessBlock.getChildren().remove(button);
-                                illnessBlock.getChildren().remove(0);
+                                illnessBlock.getGraphics().getChildren().remove(button);
+                                illnessBlock.getGraphics().getChildren().remove(0);
                                 currentKingdom.setBalance(-3.);
                                 currentKingdom.setIllness(null);
                             }
@@ -123,7 +123,7 @@ public class Turn {
                         Rectangle rectangle = new Rectangle(100, 100);
                         rectangle.setFill(new ImagePattern(new Image(Turn.class.getResource("/images/background/soil.png").toExternalForm())));
                         rectangle.setScaleX(2);rectangle.setScaleY(2);
-                        building.getPosition().getChildren().add(rectangle);
+                        building.getPosition().getGraphics().getChildren().add(rectangle);
                     }
                 }
             }

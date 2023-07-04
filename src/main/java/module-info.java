@@ -16,4 +16,7 @@ module project.group {
     opens model to com.google.gson, java.json;
     opens view to javafx.fxml;
     opens controller to com.google.gson, java.json;
+    opens model.building to com.google.gson;
+    opens model.unit to com.google.gson;
+
 }

@@ -21,17 +21,16 @@ public class Unit {
     public static ArrayList<Unit> AggressiveUnits = new ArrayList<>();
     private Integer hp;
     private UnitType unitType;
-    private MapBlock locationBlock;
-    private MapBlock PatrolDestination;
+    private transient MapBlock locationBlock;
+    private transient MapBlock PatrolDestination;
     private UnitState unitState;
-    private final Kingdom owner;
-    private Unit forAttack;
+    private transient final Kingdom owner;
     private Integer movesLeft;
-    private DefensiveStructure higherElevation;
-    private Pane unitPane;
-    private Rectangle unitImage;
-    private MovingTroopAnimation movingTroopAnimation;
-    private Rectangle selectedState;
+    private transient DefensiveStructure higherElevation;
+    private transient Pane unitPane;
+    private transient Rectangle unitImage;
+    private transient MovingTroopAnimation movingTroopAnimation;
+    private transient Rectangle selectedState;
     private boolean isSelected;
     public Unit(UnitType unitType, MapBlock locationBlock , Kingdom owner) {
         this.unitType = unitType;
@@ -84,10 +83,6 @@ public class Unit {
         return owner;
     }
 
-    public Unit getForAttack() {
-        return forAttack;
-    }
-
     public Pane getUnitPane() {
         return unitPane;
     }
@@ -110,10 +105,6 @@ public class Unit {
 
     public void setLocationBlock(MapBlock locationBlock) {
         this.locationBlock = locationBlock;
-    }
-
-    public void setForAttack(Unit forAttack) {
-        this.forAttack = forAttack;
     }
 
     public boolean isSelected() {
@@ -194,9 +185,9 @@ public class Unit {
         }else{
             locationBlock.removeUnitFromHere(this);
             mapPane.getChildren().add(unitPane);
-            unitPane.setLayoutX(locationBlock.getLayoutX());
-            unitPane.setLayoutY(locationBlock.getLayoutY());
-            if(way.get(way.size() - 1).getLayoutX() > locationBlock.getLayoutX())
+            unitPane.setLayoutX(locationBlock.getGraphics().getLayoutX());
+            unitPane.setLayoutY(locationBlock.getGraphics().getLayoutY());
+            if(way.get(way.size() - 1).getGraphics().getLayoutX() > locationBlock.getGraphics().getLayoutX())
                 movingTroopAnimation.setRight(true);
             else
                 movingTroopAnimation.setRight(false);
@@ -204,8 +195,8 @@ public class Unit {
             movingTroopAnimation.play();
             int counter = 0;
             for (MapBlock mapBlock : way) {
-                XAnimation.getKeyFrames().add(new KeyFrame(Duration.seconds(counter), new KeyValue(unitPane.translateXProperty(), mapBlock.getLayoutX() - locationBlock.getLayoutX())));
-                YAnimation.getKeyFrames().add(new KeyFrame(Duration.seconds(counter), new KeyValue(unitPane.translateYProperty(), mapBlock.getLayoutY() - locationBlock.getLayoutY())));
+                XAnimation.getKeyFrames().add(new KeyFrame(Duration.seconds(counter), new KeyValue(unitPane.translateXProperty(), mapBlock.getGraphics().getLayoutX() - locationBlock.getGraphics().getLayoutX())));
+                YAnimation.getKeyFrames().add(new KeyFrame(Duration.seconds(counter), new KeyValue(unitPane.translateYProperty(), mapBlock.getGraphics().getLayoutY() - locationBlock.getGraphics().getLayoutY())));
                 counter ++;
             }
             XAnimation.play();
@@ -282,7 +273,7 @@ public class Unit {
         fightBoard.setText("attack!!");
         MovingTroopAnimation fightAnimation = new MovingTroopAnimation(unitType, unitImage);
         fightAnimation.setFight(true);
-        if (enemy.getLocationBlock().getLayoutX() < locationBlock.getLayoutX())
+        if (enemy.getLocationBlock().getGraphics().getLayoutX() < locationBlock.getGraphics().getLayoutX())
             fightAnimation.setRight(false);
         else
             fightAnimation.setRight(true);
@@ -294,7 +285,7 @@ public class Unit {
             enemyFightAnimation.setFight(true);
             enemyFightAnimation.setCycleCount(Math.min(strikes, enemyStrikes) * 2);
             fightAnimation.setCycleCount(Math.min(strikes, enemyStrikes) * 2);
-            if (enemy.getLocationBlock().getLayoutX() < locationBlock.getLayoutX())
+            if (enemy.getLocationBlock().getGraphics().getLayoutX() < locationBlock.getGraphics().getLayoutX())
                 enemyFightAnimation.setRight(true);
             else
                 enemyFightAnimation.setRight(false);
