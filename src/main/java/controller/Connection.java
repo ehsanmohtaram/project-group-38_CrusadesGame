@@ -2,6 +2,7 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import model.Map;
 import model.ObjectType;
 import model.ReceivePacket;
 import model.SendPacket;
@@ -9,6 +10,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import server.JwtGenerator;
+import view.controller.GameUI;
 
 import java.io.*;
 import java.net.Socket;
@@ -45,6 +47,7 @@ public class Connection {
         try {
             Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
             JSONParser parser = new JSONParser();
+            System.out.println(sendPacket.getMap() + "lds;fjalkjfsssssssssssssssssssssssssssssssssss");
             String jsonParser = gson.toJson(sendPacket);
             JSONObject jsonMakeObject = (JSONObject) parser.parse(jsonParser);
             dataOutputStream.writeUTF(jwtGenerator.generateJwt(jsonMakeObject.toString()));
@@ -70,7 +73,23 @@ public class Connection {
         switch (receivePacket.getObjectType()) {
             case Kingdom:break;
             case Chat: Controller.currentUser.setMyChats(receivePacket.getChat()); break;
-            case String:
+            case String:break;
+            case Map: String mapJson = receivePacket.getMap();
+                System.out.println(mapJson + "lds;fjalkjfdddddddddddddddddddddddddddddddddddddddd"); //toDo it doesnt come here!!!!!
+                try {
+                    Gson gson = new GsonBuilder().create();
+                    JSONParser parser = new JSONParser();
+                    JSONObject jsonObject = null;
+                    jsonObject = (JSONObject) parser.parse(mapJson);
+                    Map recovered = gson.fromJson(jsonObject.toString(), Map.class);
+                    if(GameUI.clipboard != null)
+                        GameController.gameMap = recovered;
+                    else
+                        Controller.currentUser.addToMyMap(recovered);
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+
         }
     }
 }

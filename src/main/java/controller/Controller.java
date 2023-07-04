@@ -55,10 +55,12 @@ public class Controller {
         return outputs;
     }
 
-    public MapDesignController selectDefaultMap(int selectedIndex){
+    public MapDesignController selectMap(int selectedIndex, boolean isDefault){
         try{
-//            int index = Integer.parseInt(selectedIndex);
-            gameMap = Map.getDefaultMap(selectedIndex );
+            if(isDefault)
+                gameMap = Map.getDefaultMap(selectedIndex);
+            else
+                gameMap = currentUser.getMyMap().get(selectedIndex);
             if(gameMap == null) return null;
             return new MapDesignController(gameMap);
         }
@@ -83,17 +85,20 @@ public class Controller {
         return new MapDesignController(gameMap);
     }
 
-    public String chooseFromMyMap() {
+    public ArrayList<String> chooseFromMyMap() {
+        StringBuilder result = null;
+        ArrayList<String> outputs = new ArrayList<>();
         int counter = 0;
-        if (currentUser.getMyMap().size() == 0) return "You do not have any map from past";
-        StringBuilder stringBuilder = new StringBuilder();
-        for (Map map : currentUser.getMyMap()) {
-            stringBuilder.append(counter + 1).append(". ")
-                    .append(map.getMapName()).append(": ")
-                    .append(map.getMapWidth()).append(" * ")
-                    .append(map.getMapHeight());
+        for (Map defaults: currentUser.getMyMap()) {
+            result = new StringBuilder();
+            counter++;
+            result.append(counter).append(". ").append(defaults.getMapName()).append(": ")
+                    .append(defaults.getMapWidth()).append(" * ")
+                    .append(defaults.getMapHeight()).append("\n");
+            outputs.add(result.toString());
         }
-        return stringBuilder.toString();
+//        result.deleteCharAt(result.length() - 1);
+        return outputs;
     }
     public String chooseNumber(String command) {
         if (!command.matches("-?\\d+")) return "Please input a digit as your value.";

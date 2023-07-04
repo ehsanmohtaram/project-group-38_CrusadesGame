@@ -1,7 +1,5 @@
 package view.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import controller.Controller;
 import controller.MapDesignController;
 import javafx.animation.ScaleTransition;
@@ -444,7 +442,7 @@ public class MapDesignMenuController {
         }
     }
 
-    public void processDefaultMapSelection(Stage stage, VBox mapButtons,Button defaultMaps) {
+    public void processMapSelection(Stage stage, VBox mapButtons, Button defaultMaps, Button myMap) {
         this.stage = stage;
         defaultMaps.setOnMouseClicked(mouseEvent -> {
 //                int[] counter = {1};
@@ -456,7 +454,22 @@ public class MapDesignMenuController {
                     map.setFont(style.Font0(25));
                     mapButtons.getChildren().add(map);
                     map.setOnMouseClicked(mouseEvent1 -> {
-                        mapDesignController = controller.selectDefaultMap(controller.showDefaultMaps().indexOf(defaultMap));
+                        mapDesignController = controller.selectMap(controller.showDefaultMaps().indexOf(defaultMap), true);
+                        startDesignMap();
+                    });
+                }
+            }
+        });
+        myMap.setOnMouseClicked(mouseEvent -> {
+            if (mapButtons.getChildren().size() > 0) mapButtons.getChildren().clear();
+            else {
+                for (String myMaps : controller.chooseFromMyMap()) {
+                    Button map = new Button();
+                    style.button0(map, myMaps, 310, 70);
+                    map.setFont(style.Font0(25));
+                    mapButtons.getChildren().add(map);
+                    map.setOnMouseClicked(mouseEvent1 -> {
+                        mapDesignController = controller.selectMap(controller.chooseFromMyMap().indexOf(myMaps), false);
                         startDesignMap();
                     });
                 }

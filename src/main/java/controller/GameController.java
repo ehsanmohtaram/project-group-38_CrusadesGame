@@ -93,12 +93,14 @@ public class GameController {
     public void nextTurn(){
         int nextPerson = gameMap.getPlayers().indexOf(currentKingdom);
         User nextUser = gameMap.getPlayers().get((nextPerson + 1) % gameMap.getPlayers().size()).getOwner();
-        Controller.currentUser = nextUser;
 
+        ArrayList<String> usernames = new ArrayList<>(List.of(nextUser.getUserName()));
         Gson gson = new GsonBuilder().create();
+        String result = gson.toJson(gameMap); //toDo update for everyOne
         System.out.println(gson.toJson(gameMap));
-//        connection.sendPacket(new SendPacket(Controller.currentUser.getUserName(), userReceiver, ObjectType.Map, gameMap));
+        connection.sendPacket(new SendPacket(Controller.currentUser.getUserName(), usernames, ObjectType.Map, result));
 
+        Controller.currentUser = nextUser;
         currentUser = Controller.currentUser;
         selectedUnit = new ArrayList<>(); selectedBuilding = null;
         currentKingdom = gameMap.getKingdomByOwner(currentUser);
