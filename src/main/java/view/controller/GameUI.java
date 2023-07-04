@@ -166,8 +166,8 @@ public class GameUI {
     }
     public void addStockAndHeadButton(Pane mainPane) {
         for (Kingdom kingdom : gameMap.getPlayers()) {
-            redirectToBuildingMenu((Rectangle)kingdom.getHeadquarter().getPosition().getChildren().get(kingdom.getHeadquarter().getPosition().getChildren().size() - 1), mainPane);
-            redirectToBuildingMenu((Rectangle)kingdom.getBuildings().get(1).getPosition().getChildren().get(kingdom.getBuildings().get(1).getPosition().getChildren().size() - 1), mainPane);
+            redirectToBuildingMenu((Rectangle)kingdom.getHeadquarter().getPosition().getGraphics().getChildren().get(kingdom.getHeadquarter().getPosition().getGraphics().getChildren().size() - 1), mainPane);
+            redirectToBuildingMenu((Rectangle)kingdom.getBuildings().get(1).getPosition().getGraphics().getChildren().get(kingdom.getBuildings().get(1).getPosition().getGraphics().getChildren().size() - 1), mainPane);
         }
     }
     public void balanceShowAndNextTurn(Pane mainPane) {
@@ -321,9 +321,9 @@ public class GameUI {
         String result = gameController.dropBuilding(option);
         if (result.equals("done")) {
             Rectangle rectangle = new Rectangle(70, 70);
-            redirectToBuildingMenu(rectangle, mainPane);
             rectangle.setFill(new ImagePattern(buildingType.getTexture()));
-            mouseOnBlock.getChildren().add(rectangle);
+            mouseOnBlock.getGraphics().getChildren().add(rectangle);
+            redirectToBuildingMenu(rectangle, mainPane);
             updateBalance();
         }
         else {
@@ -342,15 +342,22 @@ public class GameUI {
     }
 
     public void redirectToBuildingMenu(Rectangle building, Pane manePane) {
+        MapBlock[] target = new MapBlock[1];
+        for (MapBlock[] mapBlocks : gameMap.getMap()) {
+            for (MapBlock mapBlock : mapBlocks) {
+                if(mapBlock.getGraphics().equals((StackPane) building.getParent()))
+                    target[0] = mapBlock;
+            }
+        }
         building.setOnMouseClicked(mouseEvent -> {
-            if (!((MapBlock)building.getParent()).getBuildings()
+            if (!target[0].getBuildings()
                     .getOwner().equals(gameMap.getKingdomByOwner(Controller.currentUser))) return;
             if(manePane.getChildren().size() == 4) {
                 manePane.getChildren().remove(2);
                 manePane.getChildren().remove(2);
                 for(Node node : ((HBox) manePane.getChildren().get(0)).getChildren()) node.setOpacity(1);
             }
-            new BuildingMenu(manePane, ((MapBlock)building.getParent()).getBuildings().getBuildingType(), (MapBlock)building.getParent(),gameMap, coinValue, gameController).buildingMenuUISetup(-1);
+            new BuildingMenu(manePane, target[0].getBuildings().getBuildingType(), target[0] ,gameMap, coinValue, gameController).buildingMenuUISetup(-1);
         });
     }
 
@@ -381,7 +388,7 @@ public class GameUI {
             option.put("x", Integer.toString(MapDesignController.selectedBlocks.get(0).getxPosition()));
             option.put("y", Integer.toString(MapDesignController.selectedBlocks.get(0).getyPosition()));
             String result = gameController.dropBuilding(option);
-            if (result.equals("done")) MapDesignController.selectedBlocks.get(0).getChildren().add(rectangle);
+            if (result.equals("done")) MapDesignController.selectedBlocks.get(0).getGraphics().getChildren().add(rectangle);
         }
     }
 

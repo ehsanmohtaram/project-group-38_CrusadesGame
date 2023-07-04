@@ -18,7 +18,7 @@ public class IllnessAnimation extends Transition {
 
     public IllnessAnimation(MapBlock mapBlock) {
         this.mapBlock = mapBlock;
-        mapBlock.getChildren().add(0,imageView);
+        mapBlock.getGraphics().getChildren().add(0,imageView);
         this.setCycleDuration(Duration.seconds(1.5));
         this.setCycleCount(-1);
     }

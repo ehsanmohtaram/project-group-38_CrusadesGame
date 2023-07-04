@@ -1,5 +1,7 @@
 package view.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import controller.Controller;
 import controller.MapDesignController;
 import javafx.animation.ScaleTransition;
@@ -92,6 +94,7 @@ public class MapDesignMenuController {
         mapDesignController.handelMapSelection();
         stage.setTitle("design Map");
         stage.show();
+
     }
 
     public void cameraProcess(){

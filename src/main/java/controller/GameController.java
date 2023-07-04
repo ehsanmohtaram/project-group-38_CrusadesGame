@@ -1,5 +1,7 @@
 package controller;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -18,6 +20,7 @@ import model.building.*;
 import model.unit.Unit;
 import model.unit.UnitType;
 import view.*;
+import view.controller.LoginMenuController;
 import view.controller.MapDesignMenuController;
 
 import java.util.ArrayList;
@@ -38,6 +41,7 @@ public class GameController {
     private boolean isDragActive;
     private Style style;
     private UnitController unitController;
+    private Connection connection = LoginMenuController.connection;
     public static Label fightBoard = new Label("");
 
     public GameController(Map gameMap, Pane mapDesignPane) {
@@ -88,7 +92,13 @@ public class GameController {
 
     public void nextTurn(){
         int nextPerson = gameMap.getPlayers().indexOf(currentKingdom);
-        Controller.currentUser = gameMap.getPlayers().get((nextPerson + 1) % gameMap.getPlayers().size()).getOwner();
+        User nextUser = gameMap.getPlayers().get((nextPerson + 1) % gameMap.getPlayers().size()).getOwner();
+        Controller.currentUser = nextUser;
+
+        Gson gson = new GsonBuilder().create();
+        System.out.println(gson.toJson(gameMap));
+//        connection.sendPacket(new SendPacket(Controller.currentUser.getUserName(), userReceiver, ObjectType.Map, gameMap));
+
         currentUser = Controller.currentUser;
         selectedUnit = new ArrayList<>(); selectedBuilding = null;
         currentKingdom = gameMap.getKingdomByOwner(currentUser);
@@ -100,6 +110,7 @@ public class GameController {
             Controller.currentUser = Controller.loggedInUser;
             System.out.println("END");
         }
+
     }
 
     public void dragAndDropSelection() {

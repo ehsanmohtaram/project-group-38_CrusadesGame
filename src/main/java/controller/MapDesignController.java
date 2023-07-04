@@ -1,5 +1,7 @@
 package controller;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.animation.PauseTransition;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -77,6 +79,8 @@ public class MapDesignController {
     public void addMapToPane(Pane mapDesignPane){
         this.mapDesignPane = mapDesignPane;
         mapDesignPane.getChildren().add(gameMap.getMapPane());
+//        Gson gson = new GsonBuilder().create();
+//        System.out.println(gson.toJson(gameMap));
 
 //        mapDesignPane.setAlignment(mapDesignPane.getChildren().get(0) , Pos.CENTER_LEFT);
 //        gameMap.getMapPane().getChildren().add(new Label("hello word"));
@@ -110,14 +114,14 @@ public class MapDesignController {
         for (MapBlock[] mapBlocks : gameMap.getMap()) {
             for (MapBlock mapBlock : mapBlocks) {
                 PauseTransition pauseTransition = new PauseTransition(Duration.seconds(2));
-                mapBlock.setOnMouseEntered(e -> {
+                mapBlock.getGraphics().setOnMouseEntered(e -> {
                     mapBlock.changeBorder(true);
                     GameUI.mouseOnBlock = mapBlock;
                     pauseTransition.setOnFinished(event ->{
                         String details = mapBlock.showDetails();
 
-                        mapBlockDetails.setLayoutX(mapBlock.getLayoutX());
-                        mapBlockDetails.setLayoutY(mapBlock.getLayoutY() + 100);
+                        mapBlockDetails.setLayoutX(mapBlock.getGraphics().getLayoutX());
+                        mapBlockDetails.setLayoutY(mapBlock.getGraphics().getLayoutY() + 100);
                         int lines = 1; int lastChar = 0;int max = 1;
                         for (int i = 0; i < details.length() ; i++) {
                             if(details.charAt(i) == '\n') {
@@ -134,7 +138,7 @@ public class MapDesignController {
                     pauseTransition.play();
 
                 });
-                mapBlock.setOnMouseExited(e -> {
+                mapBlock.getGraphics().setOnMouseExited(e -> {
                     if (!mapBlock.isSelected())
                         mapBlock.changeBorder(false);
                     gameMap.getMapPane().getChildren().remove(mapBlockDetails);
@@ -157,7 +161,7 @@ public class MapDesignController {
                 mapPane.requestFocus();
                 for (MapBlock[] mapBlocks : gameMap.getMap())
                     for (MapBlock mapBlock : mapBlocks)
-                        if (mapBlock.getBoundsInParent().contains(mouseEvent.getX(), mouseEvent.getY())) {
+                        if (mapBlock.getGraphics().getBoundsInParent().contains(mouseEvent.getX(), mouseEvent.getY())) {
                             if (!mouseEvent.isControlDown()) {
                                 for (MapBlock selectedBlock : selectedBlocks) {
                                     selectedBlock.setSelected(false);
@@ -435,13 +439,13 @@ public class MapDesignController {
         kingdom.setHeadquarter(headQuarter); kingdom.addBuilding(headQuarter);
         Rectangle rectangle0 = new Rectangle(70, 70);
         rectangle0.setFill(new ImagePattern(BuildingType.HEAD_QUARTER.getTexture()));
-        selectedBlocks.get(0).getChildren().add(rectangle0);
+        selectedBlocks.get(0).getGraphics().getChildren().add(rectangle0);
         selectedBlocks.get(0).setBuildings(headQuarter);
 
         kingdom.addBuilding(stock);
         Rectangle rectangle1 = new Rectangle(70, 70);
         rectangle1.setFill(new ImagePattern(BuildingType.STOCKPILE.getTexture()));
-        gameMap.getMapBlockByLocation(newXPosition, newYPosition).getChildren().add(rectangle1);
+        gameMap.getMapBlockByLocation(newXPosition, newYPosition).getGraphics().getChildren().add(rectangle1);
 
         gameMap.getMapBlockByLocation(newXPosition, newYPosition).setBuildings(stock);
         User.getUserByUsername(options.get("u")).addToMyMap(gameMap);

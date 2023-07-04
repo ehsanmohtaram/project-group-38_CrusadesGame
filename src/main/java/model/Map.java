@@ -1,5 +1,6 @@
 package model;
 
+import com.google.gson.annotations.Expose;
 import javafx.scene.layout.Pane;
 import model.building.Building;
 import model.unit.Unit;
@@ -15,16 +16,19 @@ public class Map implements Cloneable {
     private ArrayList<Kingdom> deadPlayers = new ArrayList<>();
     private boolean endGame;
     private String mapName;
+
     private MapBlock[][] map;
     private Boolean[][] accessToRight;
     private Boolean[][] accessToDown;
-    private ArrayList<Character> directions = new ArrayList<Character>(List.of('w' , 'e' , 'n' , 's'));
     private int mapWidth;
     private int mapHeight;
-    private HashMap<Building, Direction> gateDirection = new HashMap<>();
-    private HashMap<Building, Flags> gateFlag = new HashMap<>();
-    private Pane mapPane;
-    private ArrayList<MapBlock> finalWay ;
+
+    private transient HashMap<Building, Direction> gateDirection = new HashMap<>();
+
+    private transient HashMap<Building, Flags> gateFlag = new HashMap<>();
+
+    private transient Pane mapPane;
+    private transient ArrayList<MapBlock> finalWay ;
 
     public Map(Integer mapWidth, Integer mapHeight, String mapName) {
         endGame = false;
@@ -53,7 +57,7 @@ public class Map implements Cloneable {
         for (int i = 0; i < mapWidth; i++)
             for (int j = 0; j < mapHeight; j++) {
                 map[i][j] = new MapBlock(i, j);
-                mapPane.getChildren().add(map[i][j]);
+                mapPane.getChildren().add(map[i][j].getGraphics());
                 map[i][j].setVisualPosition();
             }
         Maps.add(this);
@@ -196,7 +200,7 @@ public class Map implements Cloneable {
             changeAccess(x, y , value, true);
         }
         map[x][y] = new MapBlock(x , y);
-        mapPane.getChildren().add(map[x][y]);
+        mapPane.getChildren().add(map[x][y].getGraphics());
         map[x][y].setVisualPosition();
     }
 

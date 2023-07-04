@@ -5,7 +5,7 @@ import model.*;
 import java.util.*;
 
 public class Stock extends Building{
-    private HashMap<Enum<?>, Integer> resourceValues = new HashMap<>();
+    private transient HashMap<Enum<?>, Integer> resourceValues = new HashMap<>();
     public Stock(MapBlock position, BuildingType buildingType, Kingdom owner) {
         super(position, buildingType, owner);
         if (buildingType.specificConstant.name().equals(BuildingType.ARMOURY.name()))
